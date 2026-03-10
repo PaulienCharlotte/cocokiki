@@ -268,17 +268,19 @@ const App: React.FC = () => {
         </nav>
 
         {/* Main Content Area: Map & Overlays */}
-        <main className="relative lg:col-span-6 flex flex-col min-h-0 bg-[#caf0f8] rounded-[2rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl border-[4px] md:border-[12px] border-white">
-          <InteractiveMap 
-            selectedProvince={selectedProvince} 
-            selectedCluster={selectedCluster}
-            onLocationClick={handleLocationClick}
-            highlightedLocation={mode === 'explore' ? activeLocation?.id : null}
-            activeGameLocation={mode !== 'explore' ? activeLocation?.id : null}
-            showLabels={showLabels}
-            gameMode={mode}
-            isRevealed={isRevealed}
-          />
+        <main className="relative lg:col-span-6 flex flex-col min-h-0 bg-[#caf0f8] rounded-[2rem] md:rounded-[3.5rem] shadow-2xl border-[4px] md:border-[12px] border-white overflow-hidden">
+          <div className="flex-1 min-h-0 relative">
+            <InteractiveMap 
+              selectedProvince={selectedProvince} 
+              selectedCluster={selectedCluster}
+              onLocationClick={handleLocationClick}
+              highlightedLocation={mode === 'explore' ? activeLocation?.id : null}
+              activeGameLocation={mode !== 'explore' ? activeLocation?.id : null}
+              showLabels={showLabels}
+              gameMode={mode}
+              isRevealed={isRevealed}
+            />
+          </div>
 
           {/* CRITICAL: ONLY ONE GameEngine instance rendered at the top level of the map to prevent conflicts */}
           <div className={`absolute z-[4500] pointer-events-none transition-all duration-300 
@@ -302,24 +304,25 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobiel Fact Overlay (Bottom Sheet) */}
+          {/* Fact Card (Bottom of map container, in-flow) */}
           <AnimatePresence>
             {activeLocation && mode === 'explore' && (
               <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                className="absolute bottom-2 left-2 right-2 lg:static lg:mt-4 z-[4500] pointer-events-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.25 }}
+                className="flex-none p-2 z-[4500]"
               >
                 <div 
-                  className="bg-white/95 backdrop-blur-md p-4 rounded-[2rem] shadow-2xl border-4"
+                  className="bg-white/95 backdrop-blur-md p-3 md:p-4 rounded-2xl md:rounded-[2rem] shadow-lg border-4"
                   style={{ borderColor: getTypeColor(activeLocation.type) }}
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl bg-white p-1 rounded-xl shadow-sm">{currentEmoji}</span>
-                    <h4 className="text-base font-black text-[#5D4E60]">{activeLocation.name}</h4>
+                    <span className="text-xl md:text-2xl bg-white p-1 rounded-xl shadow-sm">{currentEmoji}</span>
+                    <h4 className="text-sm md:text-base font-black text-[#5D4E60]">{activeLocation.name}</h4>
                   </div>
-                  <div className="bg-[#FFF5F7] p-2.5 rounded-2xl border-2 border-pink-100">
+                  <div className="bg-[#FFF5F7] p-2 md:p-2.5 rounded-xl md:rounded-2xl border-2 border-pink-100">
                     {loadingFact ? (
                       <div className="flex justify-center py-2"><div className="w-5 h-5 border-3 border-pink-400 border-t-transparent rounded-full animate-spin"></div></div>
                     ) : (
