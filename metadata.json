@@ -1,0 +1,7 @@
+{
+  "name": "Topo Coco - Groep 6",
+  "description": "Een interactieve en visueel aantrekkelijke app om Nederlandse topografie te leren voor basisschoolleerlingen, inclusief spellingoefeningen en een AI-hulpje.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
