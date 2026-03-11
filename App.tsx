@@ -212,8 +212,8 @@ const App: React.FC = () => {
         </motion.div>
 
         {/* Center Image */}
-        <div className="hidden sm:flex flex-1 justify-center px-4">
-          <img src="/images/headertopo.svg" alt="Header decoratie" className="h-12 md:h-20 lg:h-24 object-contain" />
+        <div className="flex flex-1 justify-center px-1 md:px-4">
+          <img src="/images/headertopo.svg" alt="Header decoratie" className="h-8 sm:h-12 md:h-20 lg:h-24 object-contain" />
         </div>
 
         <div className="flex items-center gap-2">
