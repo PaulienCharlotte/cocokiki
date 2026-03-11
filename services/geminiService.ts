@@ -148,6 +148,133 @@ const FALLBACK_DATA: Record<string, LocationData> = {
     emoji: "🏰",
     mnemonic: "Gor-in-chem, wees stil en stem. 🏰",
     fact: "Gorinchem is de mooiste vestingsstad van Nederland, je kunt er wandelen over de oude stadswallen! 🏰"
+  },
+  
+  // --- FRIESLAND ---
+  "Leeuwarden": {
+    emoji: "🦁",
+    mnemonic: "Een leeuw met een zwaard dat is wel wat waard! 🦁",
+    fact: "Leeuwarden is de hoofdstad van Friesland en staat bekend om de scheve toren: de Oldehove! ⛪"
+  },
+  "Drachten": {
+    emoji: "🎭",
+    mnemonic: "Dracht-en, je hoeft niet op de kunst te wachten! 🎭",
+    fact: "Drachten is de op één na grootste 'plaats' van Friesland, stiekem is het geen stad maar een heel groot dorp! 🏘️"
+  },
+  "Sneek": {
+    emoji: "⛵",
+    mnemonic: "In de Sneekweek, vaar je door de kreek! ⛵",
+    fact: "Sneek is beroemd om de Waterpoort en het grote zeilfeest dat de 'Sneekweek' heet! 🚤"
+  },
+  "Heerenveen": {
+    emoji: "⛸️",
+    mnemonic: "Heren in het veen die schaatsen op één been. ⛸️",
+    fact: "Hier ligt Thialf, het allergrootste en bekendste schaatsstadion van Nederland! 🧊"
+  },
+  "Harlingen": {
+    emoji: "⛴️",
+    mnemonic: "Harlingen is fris, hier vangen we een boel vis! 🐟",
+    fact: "Harlingen is de belangrijkste havenstad van Friesland, vanaf hier varen de boten naar Terschelling en Vlieland! ⛴️"
+  },
+  "Dokkum": {
+    emoji: "⛪",
+    mnemonic: "In Dokkum stopten ze ermee, voor Bonifatius aan zee! ⛪",
+    fact: "Dokkum is de noordelijkste stad van Nederland en bekend omdat lang geleden de heilige Bonifatius hier werd vermoord! ⚔️"
+  },
+  "Lemmer": {
+    emoji: "🏖️",
+    mnemonic: "Zwemmer, neem een duik in Lemmer! 🛟",
+    fact: "Lemmer is een bekende watersportplaats en ligt direct aan het grote IJsselmeer! ⛵"
+  },
+  "Stavoren": {
+    emoji: "🌾",
+    mnemonic: "Sta van voren, kijk naar het vrouwtje van graan en koren! 🌾",
+    fact: "In Stavoren staat een standbeeld van het 'Vrouwtje van Stavoren', een oud volksverhaal over een rijke koopmansvrouw. 👑"
+  },
+  "Franeker": {
+    emoji: "🪐",
+    mnemonic: "In de stad Franeker staan boeken in de grote kamer! 📚",
+    fact: "In Franeker vind je het oudste werkende planetarium ter wereld, gemaakt door Eise Eisinga in z'n eigen woonkamer! 🌟"
+  },
+  "Bolsward": {
+    emoji: "🚴",
+    mnemonic: "Bols-ward is hard, speciaal op het kaatspart! 🎾",
+    fact: "Bolsward is een oude handelsstad en staat bekend om de start van de 'Fietselfstedentocht'! 🚲"
+  },
+  "Joure": {
+    emoji: "☕",
+    mnemonic: "Jouw koffie krijg je puur in Joure! ☕",
+    fact: "In Joure is Douwe Egberts ontstaan, hier werd vroeger de allereerste koffie gebrand! ☕"
+  },
+  "Wolvega": {
+    emoji: "🐎",
+    mnemonic: "De grote wolf die at heel snel in Wolvega. 🐺",
+    fact: "Wolvega was vroeger heel beroemd om zijn paardenraces (draf- en rensport) op een grote zandbaan! 🐎"
+  },
+  "Appelscha": {
+    emoji: "🌲",
+    mnemonic: "Appels eten in de scha van het grote Drentse bos! 🍎",
+    fact: "Appelscha ligt prachtig op de grens van Friesland en Drenthe en wordt omringd door enorme bossen! 🌲"
+  },
+  "Gaasterland": {
+    emoji: "⛰️",
+    mnemonic: "In het Gaasterland is zand voor iedereen charmant! 🏖️",
+    fact: "Gaasterland is heel bijzonder in Friesland omdat het geen plat landschap is, maar juist heuvels met bossen heeft! 🌲"
+  },
+  "Vlieland": {
+    emoji: "🦅",
+    mnemonic: "Vlieg met je deken over het strand van Vlieland heen. 🦅",
+    fact: "Vlieland is hét eiland met de grootste zandvlakte van Nederland, genaamd de 'Vliehors', waar militaire oefeningen zijn! 🪖"
+  },
+  "Terschelling": {
+    emoji: "🔥",
+    mnemonic: "Ter-schelling, hier klinkt een bel aan een grote lier. 🔔",
+    fact: "Terschelling heeft de beroemde vuurtoren genaamd de Brandaris, dat is de oudste vuurtoren van heel Nederland! 🗼"
+  },
+  "Ameland": {
+    emoji: "🚲",
+    mnemonic: "Ame-land is fijn en ligt verborgen achter het schiereiland. 🏖️",
+    fact: "Ameland heeft prachtige stranden en duinen, waar in het voorjaar duizenden vogels broeden! 🐦"
+  },
+  "Schiermonnikoog": {
+    emoji: "🙏",
+    mnemonic: "Schier-monnik-oog is stil en hoog, de vogels vliegen in de boog. 🙏",
+    fact: "Dit was ooit een eiland waar monniken woonden (zij hadden 'schiere' oftewel grijze kleren aan)! Het is ook nog eens het kleinste waddeneiland! 🏝️"
+  },
+  "Waddenzee": {
+    emoji: "🦭",
+    mnemonic: "De Wad-den-zee is nat net als het theekopje in je schoot. ☕",
+    fact: "Als de zee hier laag water is (eb), dan kun je letterlijk over de zeebodem wandelen ('wadlopen')! 🥾"
+  },
+  "Noordzee": {
+    emoji: "🌊",
+    mnemonic: "Noord-zee met golven zo breed als een matras! 🌊",
+    fact: "De Noordzee zit vol met bijzondere dieren! Van kabeljauwen en haaien, tot zeehonden en makrelen. 🦈"
+  },
+  "IJsselmeer": {
+    emoji: "🦆",
+    mnemonic: "IJssel-meer hier is overal wel water als een beer. 🐻",
+    fact: "Vroeger was dit meer nóg groter en zout. Toen de Afsluitdijk in 1932 gebouwd werd veranderde het langzaam in zacht, zoet water! 💧"
+  },
+  "Sneekermeer": {
+    emoji: "🚤",
+    mnemonic: "Sneeker-meer met bootjes in de nacht kletsnat als een veertje! 🪶",
+    fact: "Het Sneekermeer is één van de belangrijkste watergebieden voor sportvissers en watersporters (denk aan zeilen & suppen)! 🎣"
+  },
+  "Fluessen": {
+    emoji: "🦢",
+    mnemonic: "De Flu-essen zit vol zwanen wit. 🦢",
+    fact: "De Fluessen is na het Tjeukemeer het op één na grootste meer van Friesland, de bodem werd gevormd in de ijstijd! 🧊"
+  },
+  "Slotermeer": {
+    emoji: "⛵",
+    mnemonic: "Op het Sloter-meer vaar je heen en weer. ⛵",
+    fact: "Dit meer is uniek omdat het bijna helemaal cirkelvormig is! ⭕"
+  },
+  "Tjeukemeer": {
+    emoji: "💧",
+    mnemonic: "Tjeuke-meer daar is zoveel te doen, de natuur zo groen! 🌲",
+    fact: "Dit oppervlaktewater is zelfs het állergrootste natuurlijke binnenmeer in Friesland! En stiekem is het nergens heel diep! 🤿"
   }
 };
 

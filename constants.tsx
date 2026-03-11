@@ -17,10 +17,17 @@ export const PROVINCES: Province[] = [
 ];
 
 export const CLUSTERS: Cluster[] = [
+  // --- ZUID-HOLLAND ---
   { id: 'kust', name: 'De Kust', icon: '🏖️', provinceId: 'zh' },
   { id: 'maas', name: 'Rond de Maas', icon: '🚢', provinceId: 'zh' },
   { id: 'groen', name: 'Steden & Groen', icon: '🌳', provinceId: 'zh' },
   { id: 'wateren', name: 'Water & Eilanden', icon: '⚓', provinceId: 'zh' },
+
+  // --- FRIESLAND ---
+  { id: 'wadden', name: 'Waddeneilanden e.o.', icon: '⛴️', provinceId: 'fr' },
+  { id: 'meren', name: 'Friese Meren', icon: '⛵', provinceId: 'fr' },
+  { id: 'wouden', name: 'Friese Wouden', icon: '🌳', provinceId: 'fr' },
+  { id: 'steden', name: 'Noordwest / Terpenland', icon: '🏙️', provinceId: 'fr' },
 ];
 
 export const LOCATIONS: Location[] = [
@@ -56,7 +63,7 @@ export const LOCATIONS: Location[] = [
   // --- OVERIGE ---
   { id: 'cap-1', name: 'Assen', provinceId: 'dr', type: 'city', lat: 52.9927, lng: 6.5642 },
   { id: 'cap-2', name: 'Lelystad', provinceId: 'fl', type: 'city', lat: 52.5185, lng: 5.4714 },
-  { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999 },
+  { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999, clusterId: 'steden' },
   { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987 },
   { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665 },
   { id: 'cap-6', name: 'Maastricht', provinceId: 'li', type: 'city', lat: 50.8514, lng: 5.6910 },
@@ -66,4 +73,35 @@ export const LOCATIONS: Location[] = [
   { id: 'cap-10', name: 'Utrecht', provinceId: 'ut', type: 'city', lat: 52.0907, lng: 5.1214 },
   { id: 'cap-11', name: 'Middelburg', provinceId: 'ze', type: 'city', lat: 51.4988, lng: 3.6110 },
   { id: 'city-nh-1', name: 'Amsterdam', provinceId: 'nh', type: 'city', lat: 52.3676, lng: 4.9041 },
+
+  // --- FRIESLAND ---
+  // Plaatsen (Leeuwarden is al aanwezig als cap-3)
+  { id: 'fr-2', name: 'Drachten', provinceId: 'fr', type: 'city', lat: 53.1100, lng: 6.0960, clusterId: 'wouden' },
+  { id: 'fr-3', name: 'Sneek', provinceId: 'fr', type: 'city', lat: 53.0320, lng: 5.6600, clusterId: 'meren' },
+  { id: 'fr-4', name: 'Heerenveen', provinceId: 'fr', type: 'city', lat: 52.9590, lng: 5.9220, clusterId: 'wouden' },
+  { id: 'fr-5', name: 'Harlingen', provinceId: 'fr', type: 'city', lat: 53.1740, lng: 5.4260, clusterId: 'wadden' },
+  { id: 'fr-6', name: 'Dokkum', provinceId: 'fr', type: 'city', lat: 53.3280, lng: 5.9960, clusterId: 'steden' },
+  { id: 'fr-7', name: 'Lemmer', provinceId: 'fr', type: 'city', lat: 52.8460, lng: 5.7140, clusterId: 'meren' },
+  { id: 'fr-8', name: 'Stavoren', provinceId: 'fr', type: 'city', lat: 52.8850, lng: 5.3580, clusterId: 'meren' },
+  { id: 'fr-9', name: 'Franeker', provinceId: 'fr', type: 'city', lat: 53.1850, lng: 5.5420, clusterId: 'steden' },
+  { id: 'fr-10', name: 'Bolsward', provinceId: 'fr', type: 'city', lat: 53.0640, lng: 5.5250, clusterId: 'steden' },
+  { id: 'fr-11', name: 'Joure', provinceId: 'fr', type: 'city', lat: 52.9660, lng: 5.7950, clusterId: 'meren' },
+  { id: 'fr-12', name: 'Wolvega', provinceId: 'fr', type: 'city', lat: 52.8760, lng: 6.0020, clusterId: 'wouden' },
+  { id: 'fr-13', name: 'Appelscha', provinceId: 'fr', type: 'city', lat: 52.9530, lng: 6.3570, clusterId: 'wouden' },
+
+  // Gebieden
+  { id: 'fr-A', name: 'Gaasterland', provinceId: 'fr', type: 'region', lat: 52.8590, lng: 5.5560, clusterId: 'meren' },
+  { id: 'fr-B', name: 'Vlieland', provinceId: 'fr', type: 'region', lat: 53.2670, lng: 4.9660, clusterId: 'wadden' },
+  { id: 'fr-C', name: 'Terschelling', provinceId: 'fr', type: 'region', lat: 53.4000, lng: 5.3160, clusterId: 'wadden' },
+  { id: 'fr-D', name: 'Ameland', provinceId: 'fr', type: 'region', lat: 53.4500, lng: 5.7660, clusterId: 'wadden' },
+  { id: 'fr-E', name: 'Schiermonnikoog', provinceId: 'fr', type: 'region', lat: 53.4830, lng: 6.1830, clusterId: 'wadden' },
+
+  // Wateren
+  { id: 'fr-I', name: 'Waddenzee', provinceId: 'fr', type: 'water', lat: 53.3330, lng: 5.4160, clusterId: 'wadden' },
+  { id: 'fr-II', name: 'Noordzee', provinceId: 'fr', type: 'water', lat: 53.5000, lng: 4.5000, clusterId: 'wadden' },
+  { id: 'fr-III', name: 'IJsselmeer', provinceId: 'fr', type: 'water', lat: 52.8330, lng: 5.3330, clusterId: 'meren' },
+  { id: 'fr-IV', name: 'Sneekermeer', provinceId: 'fr', type: 'water', lat: 53.0330, lng: 5.7500, clusterId: 'meren' },
+  { id: 'fr-V', name: 'Fluessen', provinceId: 'fr', type: 'water', lat: 52.9330, lng: 5.5160, clusterId: 'meren' },
+  { id: 'fr-VI', name: 'Slotermeer', provinceId: 'fr', type: 'water', lat: 52.9000, lng: 5.6160, clusterId: 'meren' },
+  { id: 'fr-VII', name: 'Tjeukemeer', provinceId: 'fr', type: 'water', lat: 52.8830, lng: 5.8000, clusterId: 'meren' },
 ];
