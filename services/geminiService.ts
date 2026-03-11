@@ -1,7 +1,20 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const API_KEY = process.env.API_KEY || process.env.GEMINI_API_KEY || '';
+
+let ai: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI | null {
+  if (!API_KEY) return null;
+  if (!ai) {
+    try {
+      ai = new GoogleGenAI({ apiKey: API_KEY });
+    } catch {
+      return null;
+    }
+  }
+  return ai;
+}
 
 interface LocationData {
   mnemonic: string;
@@ -156,12 +169,14 @@ export const getMnemonic = async (cityName: string): Promise<string> => {
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const client = getAI();
+    if (!client) throw new Error('No API key');
+    const response = await client.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Geef een kort ezelsbruggetje voor de spelling van de Nederlandse topografische plek "${cityName}". Voor een kind van 9 jaar. Voeg 1 relevante emoji toe. Max 2 zinnen, geen markdown.`,
       config: { temperature: 0.5 }
     });
-    
+
     const text = (response.text || "Oefen de letters van deze plek goed! ✍️").replace(/\*/g, '');
     setCache(cacheKey, text);
     return text;
@@ -173,11 +188,11 @@ export const getMnemonic = async (cityName: string): Promise<string> => {
 export const getFunFact = async (location: string): Promise<{ text: string, emoji: string }> => {
   const cacheKey = `fact_v2_${location}`;
   const cached = getCache(cacheKey);
-  
+
   if (FALLBACK_DATA[location]) {
-    return { 
-      text: FALLBACK_DATA[location].fact, 
-      emoji: FALLBACK_DATA[location].emoji 
+    return {
+      text: FALLBACK_DATA[location].fact,
+      emoji: FALLBACK_DATA[location].emoji
     };
   }
 
@@ -186,20 +201,22 @@ export const getFunFact = async (location: string): Promise<{ text: string, emoj
   }
 
   try {
-    const response = await ai.models.generateContent({
+    const client = getAI();
+    if (!client) throw new Error('No API key');
+    const response = await client.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Vertel een leuk feitje over ${location} voor een kind van 9. Gebruik 1 of 2 emoji's. Kort, geen markdown.`,
       config: { temperature: 0.6 }
     });
-    
+
     const text = (response.text || "Dit is een bijzondere plek in Nederland! ✨").replace(/\*/g, '');
     const result = { text, emoji: "📍" };
     setCache(cacheKey, JSON.stringify(result));
     return result;
   } catch (error) {
-    return { 
-      text: "Wist je dat deze plek heel erg belangrijk is voor onze geschiedenis? 📚", 
-      emoji: "📍" 
+    return {
+      text: "Wist je dat deze plek heel erg belangrijk is voor onze geschiedenis? 📚",
+      emoji: "📍"
     };
   }
 };
