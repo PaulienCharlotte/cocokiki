@@ -205,7 +205,7 @@ const App: React.FC = () => {
           animate={{ x: 0, opacity: 1 }}
           className="flex items-center gap-2"
         >
-          <img src="/images/topococo.svg" alt="Topo met Coco" className="w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl" />
+          <img src="/images/topococoicon_1.svg" alt="Topo met Coco" className="w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl" />
           <h1 className="text-sm md:text-4xl font-black text-[#5D4E60] tracking-tight leading-none">Topo met Coco</h1>
         </motion.div>
 
