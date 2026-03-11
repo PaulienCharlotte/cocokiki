@@ -97,8 +97,8 @@ const App: React.FC = () => {
         <button
           onClick={() => setShowLabels(!showLabels)}
           className={`w-full flex items-center justify-between p-3 rounded-xl transition-all font-black text-xs ${showLabels
-              ? 'bg-blue-50 text-blue-600 border-2 border-blue-100'
-              : 'bg-slate-50 text-slate-400 border-2 border-transparent'
+            ? 'bg-blue-50 text-blue-600 border-2 border-blue-100'
+            : 'bg-slate-50 text-slate-400 border-2 border-transparent'
             }`}
         >
           <div className="flex items-center gap-2">
@@ -127,8 +127,8 @@ const App: React.FC = () => {
               key={item.id}
               onClick={() => handleModeChange(item.id as GameMode)}
               className={`flex items-center gap-2 p-3 lg:p-2 rounded-xl transition-all transform active:translate-y-1 active:shadow-none ${mode === item.id
-                  ? `${item.color} text-[#5D4E60] ${item.shadow} -translate-y-1`
-                  : 'bg-pink-50/50 text-pink-700 hover:bg-pink-50'
+                ? `${item.color} text-[#5D4E60] ${item.shadow} -translate-y-1`
+                : 'bg-pink-50/50 text-pink-700 hover:bg-pink-50'
                 }`}
             >
               <item.icon className={`w-4 h-4 ${mode === item.id ? 'animate-bounce' : ''}`} />
@@ -172,8 +172,8 @@ const App: React.FC = () => {
             <button
               onClick={() => { setSelectedCluster('all'); setIsMenuOpen(false); }}
               className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all ${selectedCluster === 'all'
-                  ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
-                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
+                : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
                 }`}
             >
               Alles oefenen
@@ -183,8 +183,8 @@ const App: React.FC = () => {
                 key={c.id}
                 onClick={() => { setSelectedCluster(c.id); setIsMenuOpen(false); }}
                 className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-2 ${selectedCluster === c.id
-                    ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
-                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                  ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
+                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
                   }`}
               >
                 <span className="text-base">{c.icon}</span> {c.name}
@@ -205,10 +205,8 @@ const App: React.FC = () => {
           animate={{ x: 0, opacity: 1 }}
           className="flex items-center gap-2"
         >
-          <div className="p-1.5 md:p-4 bg-[#FFB7B2] rounded-lg md:rounded-3xl shadow-[0_3px_0_#FF8C94] md:shadow-[0_8px_0_#FF8C94]">
-            <MapIcon className="text-white w-4 h-4 md:w-10 md:h-10" />
-          </div>
-          <h1 className="text-sm md:text-4xl font-black text-[#5D4E60] tracking-tight leading-none">Topo Coco</h1>
+          <img src="/images/topococo.svg" alt="Topo met Coco" className="w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl" />
+          <h1 className="text-sm md:text-4xl font-black text-[#5D4E60] tracking-tight leading-none">Topo met Coco</h1>
         </motion.div>
 
         <div className="flex items-center gap-2">
