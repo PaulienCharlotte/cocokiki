@@ -205,9 +205,16 @@ const App: React.FC = () => {
           animate={{ x: 0, opacity: 1 }}
           className="flex items-center gap-2"
         >
-          <img src="/images/topococoicon_1.svg" alt="Topo met Coco" className="w-8 h-8 md:w-16 md:h-16 object-contain drop-shadow-sm" />
+          <div className="p-1.5 md:p-4 bg-[#FFB7B2] rounded-lg md:rounded-3xl shadow-[0_3px_0_#FF8C94] md:shadow-[0_8px_0_#FF8C94]">
+            <MapIcon className="text-white w-4 h-4 md:w-10 md:h-10" />
+          </div>
           <h1 className="text-sm md:text-4xl font-black text-[#5D4E60] tracking-tight leading-none">Topo met Coco</h1>
         </motion.div>
+
+        {/* Center Image */}
+        <div className="hidden sm:flex flex-1 justify-center px-4">
+          <img src="/images/headertopo.svg" alt="Header decoratie" className="h-12 md:h-20 lg:h-24 object-contain" />
+        </div>
 
         <div className="flex items-center gap-2">
           <button
