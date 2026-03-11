@@ -96,11 +96,10 @@ const App: React.FC = () => {
         </h2>
         <button
           onClick={() => setShowLabels(!showLabels)}
-          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all font-black text-xs ${
-            showLabels 
-            ? 'bg-blue-50 text-blue-600 border-2 border-blue-100' 
-            : 'bg-slate-50 text-slate-400 border-2 border-transparent'
-          }`}
+          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all font-black text-xs ${showLabels
+              ? 'bg-blue-50 text-blue-600 border-2 border-blue-100'
+              : 'bg-slate-50 text-slate-400 border-2 border-transparent'
+            }`}
         >
           <div className="flex items-center gap-2">
             {showLabels ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -127,11 +126,10 @@ const App: React.FC = () => {
             <button
               key={item.id}
               onClick={() => handleModeChange(item.id as GameMode)}
-              className={`flex items-center gap-2 p-3 lg:p-2 rounded-xl transition-all transform active:translate-y-1 active:shadow-none ${
-                mode === item.id 
-                ? `${item.color} text-[#5D4E60] ${item.shadow} -translate-y-1` 
-                : 'bg-pink-50/50 text-pink-700 hover:bg-pink-50'
-              }`}
+              className={`flex items-center gap-2 p-3 lg:p-2 rounded-xl transition-all transform active:translate-y-1 active:shadow-none ${mode === item.id
+                  ? `${item.color} text-[#5D4E60] ${item.shadow} -translate-y-1`
+                  : 'bg-pink-50/50 text-pink-700 hover:bg-pink-50'
+                }`}
             >
               <item.icon className={`w-4 h-4 ${mode === item.id ? 'animate-bounce' : ''}`} />
               <span className="font-black text-[10px] md:text-sm">{item.label}</span>
@@ -146,7 +144,7 @@ const App: React.FC = () => {
           Provincie
         </h2>
         <div className="relative">
-          <select 
+          <select
             value={selectedProvince}
             onChange={(e) => handleProvinceChange(e.target.value)}
             className="w-full p-3 bg-[#FFFDE7] rounded-xl font-black text-[#8B7E00] text-sm outline-none appearance-none cursor-pointer border-2 border-transparent focus:border-yellow-200"
@@ -161,7 +159,7 @@ const App: React.FC = () => {
       </section>
 
       {availableClusters.length > 0 && (
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-4 rounded-[2rem] shadow-lg border-4 border-indigo-50"
@@ -173,11 +171,10 @@ const App: React.FC = () => {
           <div className="flex flex-col gap-2">
             <button
               onClick={() => { setSelectedCluster('all'); setIsMenuOpen(false); }}
-              className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all ${
-                selectedCluster === 'all' 
-                ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5' 
-                : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-              }`}
+              className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all ${selectedCluster === 'all'
+                  ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
+                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                }`}
             >
               Alles oefenen
             </button>
@@ -185,11 +182,10 @@ const App: React.FC = () => {
               <button
                 key={c.id}
                 onClick={() => { setSelectedCluster(c.id); setIsMenuOpen(false); }}
-                className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-2 ${
-                  selectedCluster === c.id 
-                  ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5' 
-                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-                }`}
+                className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-2 ${selectedCluster === c.id
+                    ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
+                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                  }`}
               >
                 <span className="text-base">{c.icon}</span> {c.name}
               </button>
@@ -204,7 +200,7 @@ const App: React.FC = () => {
     <div className="h-[100dvh] flex flex-col p-2 md:p-8 max-w-[1600px] mx-auto selection:bg-pink-100 bg-[#FFF8FA] overflow-hidden">
       {/* Header */}
       <header className="flex-none flex flex-row justify-between items-center mb-2 md:mb-10 gap-2 px-2 py-1 md:py-0 z-[6000]">
-        <motion.div 
+        <motion.div
           initial={{ x: -10, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           className="flex items-center gap-2"
@@ -216,7 +212,7 @@ const App: React.FC = () => {
         </motion.div>
 
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => setIsMenuOpen(true)}
             className="lg:hidden p-2 bg-white rounded-xl shadow-[0_3px_0_#ffccd5] border border-pink-50 text-pink-400"
             aria-label="Menu"
@@ -238,14 +234,14 @@ const App: React.FC = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
               className="fixed inset-0 bg-pink-900/30 backdrop-blur-md z-[7000] lg:hidden"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -268,10 +264,10 @@ const App: React.FC = () => {
         </nav>
 
         {/* Main Content Area: Map & Overlays */}
-        <main className="relative lg:col-span-6 flex flex-col min-h-0 bg-[#caf0f8] rounded-[2rem] md:rounded-[3.5rem] shadow-2xl border-[4px] md:border-[12px] border-white overflow-hidden">
+        <main className={`relative flex flex-col min-h-0 bg-[#caf0f8] rounded-[2rem] md:rounded-[3.5rem] shadow-2xl border-[4px] md:border-[12px] border-white overflow-hidden ${mode === 'explore' ? 'lg:col-span-9' : 'lg:col-span-6'}`}>
           <div className="flex-1 min-h-0 relative">
-            <InteractiveMap 
-              selectedProvince={selectedProvince} 
+            <InteractiveMap
+              selectedProvince={selectedProvince}
               selectedCluster={selectedCluster}
               onLocationClick={handleLocationClick}
               highlightedLocation={mode === 'explore' ? activeLocation?.id : null}
@@ -284,16 +280,16 @@ const App: React.FC = () => {
 
           {/* CRITICAL: ONLY ONE GameEngine instance rendered at the top level of the map to prevent conflicts */}
           <div className={`absolute z-[4500] pointer-events-none transition-all duration-300 
-            ${isMobile 
-              ? 'top-2 left-2 right-2 flex justify-center' 
+            ${isMobile
+              ? 'top-2 left-2 right-2 flex justify-center'
               : 'hidden'
             }`}
           >
             <div className="pointer-events-auto w-full max-w-[400px]">
-              <GameEngine 
+              <GameEngine
                 key={`${mode}-${selectedProvince}-${selectedCluster}`}
-                mode={mode} 
-                provinceId={selectedProvince} 
+                mode={mode}
+                provinceId={selectedProvince}
                 clusterId={selectedCluster}
                 onScoreChange={handleScoreChange}
                 onLocationClick={handleTargetSet}
@@ -314,7 +310,7 @@ const App: React.FC = () => {
                 transition={{ duration: 0.25 }}
                 className="flex-none p-2 z-[4500]"
               >
-                <div 
+                <div
                   className="bg-white/95 backdrop-blur-md p-3 md:p-4 rounded-2xl md:rounded-[2rem] shadow-lg border-4"
                   style={{ borderColor: getTypeColor(activeLocation.type) }}
                 >
@@ -335,21 +331,23 @@ const App: React.FC = () => {
           </AnimatePresence>
         </main>
 
-        {/* Desktop Engine & Info */}
-        <aside className="hidden lg:flex lg:col-span-3 flex-col gap-4 overflow-y-auto">
-          {!isMobile && (
-            <GameEngine 
-              key={`${mode}-${selectedProvince}-${selectedCluster}`}
-              mode={mode} 
-              provinceId={selectedProvince} 
-              clusterId={selectedCluster}
-              onScoreChange={handleScoreChange}
-              onLocationClick={handleTargetSet}
-              onReveal={handleReveal}
-              userClickedLocationId={userClickedLocationId}
-            />
-          )}
-        </aside>
+        {/* Desktop Engine & Info — only visible in game modes */}
+        {mode !== 'explore' && (
+          <aside className="hidden lg:flex lg:col-span-3 flex-col gap-4 overflow-y-auto">
+            {!isMobile && (
+              <GameEngine
+                key={`${mode}-${selectedProvince}-${selectedCluster}`}
+                mode={mode}
+                provinceId={selectedProvince}
+                clusterId={selectedCluster}
+                onScoreChange={handleScoreChange}
+                onLocationClick={handleTargetSet}
+                onReveal={handleReveal}
+                userClickedLocationId={userClickedLocationId}
+              />
+            )}
+          </aside>
+        )}
       </div>
     </div>
   );
