@@ -32,7 +32,7 @@ export const CLUSTERS: Cluster[] = [
 
 export const LOCATIONS: Location[] = [
   // --- ZUID-HOLLAND COMPLEET ---
-  { id: 'zh-1', name: 'Den Haag', provinceId: 'zh', type: 'city', lat: 52.0705, lng: 4.3100, clusterId: 'kust' },
+  { id: 'zh-1', name: 'Den Haag', provinceId: 'zh', type: 'city', lat: 52.0705, lng: 4.3100, clusterId: 'kust', isCapital: true },
   { id: 'zh-15', name: 'Scheveningen', provinceId: 'zh', type: 'city', lat: 52.1100, lng: 4.2800, clusterId: 'kust' },
   { id: 'zh-11', name: 'Wassenaar', provinceId: 'zh', type: 'city', lat: 52.1450, lng: 4.4000, clusterId: 'kust' },
   { id: 'zh-13', name: 'Noordwijk (aan zee)', provinceId: 'zh', type: 'city', lat: 52.2400, lng: 4.4400, clusterId: 'kust' },
@@ -61,17 +61,17 @@ export const LOCATIONS: Location[] = [
   { id: 'zh-19', name: 'Hollands Diep (II)', provinceId: 'zh', type: 'water', lat: 51.7214, lng: 4.5457, clusterId: 'wateren' },
 
   // --- OVERIGE ---
-  { id: 'cap-1', name: 'Assen', provinceId: 'dr', type: 'city', lat: 52.9927, lng: 6.5642 },
-  { id: 'cap-2', name: 'Lelystad', provinceId: 'fl', type: 'city', lat: 52.5185, lng: 5.4714 },
-  { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999, clusterId: 'steden' },
-  { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987 },
-  { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665 },
-  { id: 'cap-6', name: 'Maastricht', provinceId: 'li', type: 'city', lat: 50.8514, lng: 5.6910 },
-  { id: 'cap-7', name: "’s-Hertogenbosch", provinceId: 'nb', type: 'city', lat: 51.6978, lng: 5.3037 },
-  { id: 'cap-8', name: 'Haarlem', provinceId: 'nh', type: 'city', lat: 52.3874, lng: 4.6462 },
-  { id: 'cap-9', name: 'Zwolle', provinceId: 'ov', type: 'city', lat: 52.5168, lng: 6.0830 },
-  { id: 'cap-10', name: 'Utrecht', provinceId: 'ut', type: 'city', lat: 52.0907, lng: 5.1214 },
-  { id: 'cap-11', name: 'Middelburg', provinceId: 'ze', type: 'city', lat: 51.4988, lng: 3.6110 },
+  { id: 'cap-1', name: 'Assen', provinceId: 'dr', type: 'city', lat: 52.9927, lng: 6.5642, isCapital: true },
+  { id: 'cap-2', name: 'Lelystad', provinceId: 'fl', type: 'city', lat: 52.5185, lng: 5.4714, isCapital: true },
+  { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999, clusterId: 'steden', isCapital: true },
+  { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987, isCapital: true },
+  { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665, isCapital: true },
+  { id: 'cap-6', name: 'Maastricht', provinceId: 'li', type: 'city', lat: 50.8514, lng: 5.6910, isCapital: true },
+  { id: 'cap-7', name: "’s-Hertogenbosch", provinceId: 'nb', type: 'city', lat: 51.6978, lng: 5.3037, isCapital: true },
+  { id: 'cap-8', name: 'Haarlem', provinceId: 'nh', type: 'city', lat: 52.3874, lng: 4.6462, isCapital: true },
+  { id: 'cap-9', name: 'Zwolle', provinceId: 'ov', type: 'city', lat: 52.5168, lng: 6.0830, isCapital: true },
+  { id: 'cap-10', name: 'Utrecht', provinceId: 'ut', type: 'city', lat: 52.0907, lng: 5.1214, isCapital: true },
+  { id: 'cap-11', name: 'Middelburg', provinceId: 'ze', type: 'city', lat: 51.4988, lng: 3.6110, isCapital: true },
   { id: 'city-nh-1', name: 'Amsterdam', provinceId: 'nh', type: 'city', lat: 52.3676, lng: 4.9041 },
 
   // --- FRIESLAND ---

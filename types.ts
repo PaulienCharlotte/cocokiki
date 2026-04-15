@@ -8,6 +8,7 @@ export interface Location {
   lng: number; 
   fact?: string;
   clusterId?: string;
+  isCapital?: boolean;
 }
 
 export interface Cluster {

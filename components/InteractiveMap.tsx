@@ -131,6 +131,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     markersRef.current = {};
 
     const filteredLocations = LOCATIONS.filter(loc => {
+      if (selectedCluster === 'hoofdsteden') {
+        const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
+        return provMatch && loc.isCapital;
+      }
       const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
       const clusterMatch = selectedCluster === 'all' || loc.clusterId === selectedCluster;
       return provMatch && clusterMatch;

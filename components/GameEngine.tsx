@@ -49,6 +49,12 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
   const filteredPool = useMemo(() => {
     return LOCATIONS.filter(l => {
+      // Speciale cluster 'hoofdsteden' filtert op isCapital eigenschap
+      if (clusterId === 'hoofdsteden') {
+        const provMatch = provinceId === 'all' || l.provinceId === provinceId;
+        return provMatch && l.isCapital;
+      }
+      
       const provMatch = provinceId === 'all' || l.provinceId === provinceId;
       const clusterMatch = clusterId === 'all' || l.clusterId === clusterId;
       return provMatch && clusterMatch;
