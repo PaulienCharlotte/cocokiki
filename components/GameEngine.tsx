@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Location, GameMode } from '../types';
-import { LOCATIONS } from '../constants';
+import { LOCATIONS, PROVINCES } from '../constants';
 import { getMnemonic, getFunFact } from '../services/geminiService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, Lightbulb, MapPin, Type as TypeIcon, Sparkles, Search, AlertCircle, Wand2, ArrowRight, Eye, ArrowLeft, RefreshCcw, LayoutList, BookOpen } from 'lucide-react';
@@ -48,13 +48,22 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const filteredPool = useMemo(() => {
+    if (clusterId === 'hoofdsteden') {
+      const caps = LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' || l.provinceId === provinceId));
+      const provs = PROVINCES
+        .filter(p => provinceId === 'all' || p.id === provinceId)
+        .map(p => ({
+          id: p.id,
+          name: p.name,
+          provinceId: p.id,
+          type: 'region' as const,
+          lat: p.center[0],
+          lng: p.center[1]
+        }));
+      return [...caps, ...provs];
+    }
+    
     return LOCATIONS.filter(l => {
-      // Speciale cluster 'hoofdsteden' filtert op isCapital eigenschap
-      if (clusterId === 'hoofdsteden') {
-        const provMatch = provinceId === 'all' || l.provinceId === provinceId;
-        return provMatch && l.isCapital;
-      }
-      
       const provMatch = provinceId === 'all' || l.provinceId === provinceId;
       const clusterMatch = clusterId === 'all' || l.clusterId === clusterId;
       return provMatch && clusterMatch;
@@ -333,9 +342,14 @@ const GameEngine: React.FC<GameEngineProps> = ({
                  {isSpellingTask 
                    ? "Spel de naam van de stip!" 
                    : masterStep === 'find' 
-                     ? `Waar ligt ${currentTarget?.name}?` 
+                     ? (currentTarget?.type === 'region' ? `Waar ligt de provincie ${currentTarget?.name}?` : `Waar ligt ${currentTarget?.name}?`)
                      : `Weetje over ${currentTarget?.name}`
                  }
+                 {currentTarget && currentTarget.type !== 'region' && (
+                   <div className="text-[10px] md:text-xs text-pink-500 font-bold mt-1 opacity-80">
+                     Provincie: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
+                   </div>
+                 )}
                </div>
             </div>
           </div>

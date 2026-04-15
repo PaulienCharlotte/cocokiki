@@ -149,6 +149,56 @@ const FALLBACK_DATA: Record<string, LocationData> = {
     mnemonic: "Gor-in-chem, wees stil en stem. 🏰",
     fact: "Gorinchem is de mooiste vestingsstad van Nederland, je kunt er wandelen over de oude stadswallen! 🏰"
   },
+  "Groningen": {
+    emoji: "⛪",
+    mnemonic: "Groningen is de stad waar we de Martinitoren begroeten. ⛪",
+    fact: "In Groningen staat de Martinitoren, die door de mensen daar 'D'Olle Grieze' (De Oude Grijze) wordt genoemd! ⛪"
+  },
+  "Assen": {
+    emoji: "🏍️",
+    mnemonic: "In Assen laten de motors hun kracht vlassen. 🏍️",
+    fact: "Assen is wereldberoemd om de TT! Dat is een grote motorrace waar de snelste coureurs ter wereld rijden. 🏁"
+  },
+  "Zwolle": {
+    emoji: "🧂",
+    mnemonic: "In Zwolle luiden de klokken met veel lolle. 🧂",
+    fact: "In Zwolle staat de 'Peperbus', een grote kerktoren die eruitziet als... jawel, een peperbus! 🧂"
+  },
+  "Arnhem": {
+    emoji: "🦁",
+    mnemonic: "Arnhem heeft de dieren in de kooien van de zon. 🦁",
+    fact: "Hier vind je Burgers' Zoo, een van de mooiste dierentuinen van Nederland met een echte 'Bush' en 'Desert'! 🌵"
+  },
+  "Lelystad": {
+    emoji: "🚢",
+    mnemonic: "Lelystad is gebouwd op de bodem van de zee. 🌊",
+    fact: "Lelystad ligt in Flevoland, een provincie die vroeger helemaal onder water stond! Nu staat er een replica van een echt VOC-schip. ⚓"
+  },
+  "Utrecht": {
+    emoji: "⛪",
+    mnemonic: "In Utrecht staat de Dom, daar kom je niet omheen! ⛪",
+    fact: "De Domtoren in Utrecht is de hoogste kerktoren van Nederland. Je moet meer dan 400 treden klimmen om boven te komen! 🧗"
+  },
+  "Haarlem": {
+    emoji: "🌷",
+    mnemonic: "Haarlem is de stad van bloemen en mooie hofjes. 🌷",
+    fact: "Haarlem wordt ook wel 'Bloemenstad' genoemd omdat het midden in de bollenstreek ligt. Je vindt er ook prachtige verborgen binnentuintjes. 🏡"
+  },
+  "Middelburg": {
+    emoji: "⛪",
+    mnemonic: "Middelburg is het hart van Zeeland aan de kust. 🌊",
+    fact: "Middelburg heeft een prachtige abdij en een heel hoge toren die de 'Lange Jan' wordt genoemd! ⛪"
+  },
+  "’s-Hertogenbosch": {
+    emoji: "😋",
+    mnemonic: "In Den Bosch eet je een bol die niemand kon. 🍩",
+    fact: "Deze stad is beroemd om de 'Bossche Bol', een enorme soes gevuld met slagroom en een dikke laag chocolade. Jammie! 😋"
+  },
+  "Maastricht": {
+    emoji: "⛰️",
+    mnemonic: "In Maastricht vieren we carnaval met veel gepraat. 🎭",
+    fact: "Dit is een van de oudste steden van Nederland. Onder de grond zijn kilometers lange gangen gegraven in de mergelberg! ⛰️"
+  },
   
   // --- FRIESLAND ---
   "Leeuwarden": {

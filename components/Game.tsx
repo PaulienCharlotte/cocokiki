@@ -332,15 +332,20 @@ const Game: React.FC<GameProps> = ({ onBackToHome }) => {
                   className="bg-white/95 backdrop-blur-md p-3 md:p-4 rounded-2xl md:rounded-[2rem] shadow-lg border-4"
                   style={{ borderColor: getTypeColor(activeLocation.type) }}
                 >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-xl md:text-2xl bg-white p-1 rounded-xl shadow-sm">{currentEmoji}</span>
-                    <h4 className="text-sm md:text-base font-black text-[#5D4E60]">{activeLocation.name}</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl md:text-2xl bg-white p-1 rounded-xl shadow-sm">{currentEmoji}</span>
+                      <h4 className="text-sm md:text-base font-black text-[#5D4E60]">{activeLocation.name}</h4>
+                    </div>
+                    <span className="text-[9px] md:text-[11px] font-black px-2 py-1 bg-pink-100 text-pink-500 rounded-lg">
+                      {PROVINCES.find(p => p.id === activeLocation.provinceId)?.name}
+                    </span>
                   </div>
-                  <div className="bg-[#FFF5F7] p-2 md:p-2.5 rounded-xl md:rounded-2xl border-2 border-pink-100">
+                  <div className="bg-[#FFF5F7] p-2 md:p-3 rounded-xl md:rounded-2xl border-2 border-pink-100 max-h-[100px] md:max-h-[150px] overflow-y-auto overscroll-contain custom-scrollbar">
                     {loadingFact ? (
                       <div className="flex justify-center py-2"><div className="w-5 h-5 border-3 border-pink-400 border-t-transparent rounded-full animate-spin"></div></div>
                     ) : (
-                      <p className="text-[#5D4E60] text-xs leading-snug font-medium italic">"{currentFact || "Ontdek deze mooie plek!"}"</p>
+                      <p className="text-[#5D4E60] text-[11px] md:text-sm leading-snug font-medium italic">"{currentFact || "Ontdek deze mooie plek!"}"</p>
                     )}
                   </div>
                 </div>

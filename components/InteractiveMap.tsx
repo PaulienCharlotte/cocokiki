@@ -115,22 +115,24 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         const provinceName = feature?.properties?.name;
         const provData = PROVINCES.find(p => p.name === provinceName);
         const isSelected = provData?.id === selectedProvince;
+        const isGameTarget = provData?.id === activeGameLocation;
+        
         return {
-          fillColor: isSelected ? '#ffc2d1' : '#f8fafc',
-          fillOpacity: isSelected ? 0.7 : 0.5,
-          color: isSelected ? '#ff4d94' : '#cbd5e1', 
-          weight: isSelected ? 3 : 1
+          fillColor: isSelected || isGameTarget ? '#ffc2d1' : '#f8fafc',
+          fillOpacity: isSelected || isGameTarget ? 0.7 : 0.5,
+          color: isSelected || isGameTarget ? '#ff4d94' : '#cbd5e1', 
+          weight: isSelected || isGameTarget ? 3 : 1
         };
       }
     }).addTo(mapRef.current).bringToBack();
-  }, [geoData, selectedProvince]);
+  }, [geoData, selectedProvince, activeGameLocation]);
 
   useEffect(() => {
     if (!mapRef.current) return;
     Object.values(markersRef.current).forEach((m: any) => m.remove());
     markersRef.current = {};
 
-    const filteredLocations = LOCATIONS.filter(loc => {
+    let filteredLocations = LOCATIONS.filter(loc => {
       if (selectedCluster === 'hoofdsteden') {
         const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
         return provMatch && loc.isCapital;
@@ -139,6 +141,21 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const clusterMatch = selectedCluster === 'all' || loc.clusterId === selectedCluster;
       return provMatch && clusterMatch;
     });
+
+    // Voeg provincie dots toe als we in hoofdsteden modus zijn
+    if (selectedCluster === 'hoofdsteden') {
+      const provinceDots = PROVINCES
+        .filter(p => selectedProvince === 'all' || p.id === selectedProvince)
+        .map(p => ({
+          id: p.id,
+          name: p.name,
+          provinceId: p.id,
+          type: 'region' as const,
+          lat: p.center[0],
+          lng: p.center[1]
+        }));
+      filteredLocations = [...filteredLocations, ...provinceDots];
+    }
 
     filteredLocations.forEach((loc, index) => {
       const isTarget = loc.id === activeGameLocation;
