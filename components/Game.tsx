@@ -163,7 +163,7 @@ const Game: React.FC = () => {
       <header className="flex-none bg-[#3B0764] shadow-lg z-[5000]">
 
         {/* Row 1: zoekbalk links + logo gecentreerd + controls rechts */}
-        <div className="relative flex items-center gap-2 px-4 h-14">
+        <div className="relative flex items-center gap-2 px-4 h-16">
 
           {/* Zoekbalk links */}
           <div ref={searchRef} className="relative z-10">
@@ -518,15 +518,15 @@ const Game: React.FC = () => {
 
       {/* Footer */}
       <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
-        <div className="flex gap-8 px-4 py-3">
+        <div className="flex justify-center gap-12 px-8 py-4">
 
-          {/* Provincies: eigen 2-koloms sub-grid */}
-          <div className="flex-1 min-w-0">
+          {/* Provincies: 2-koloms sub-grid, vaste breedte */}
+          <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-1">
               <button
                 onClick={() => handleProvinceChange('all')}
-                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium truncate"
+                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
               >
                 Heel Nederland
               </button>
@@ -534,7 +534,7 @@ const Game: React.FC = () => {
                 <button
                   key={p.id}
                   onClick={() => handleProvinceChange(p.id)}
-                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium truncate"
+                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
                 >
                   {p.name}
                 </button>
@@ -546,7 +546,7 @@ const Game: React.FC = () => {
           <div className="w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
 
           {/* Spellen */}
-          <div className="flex-shrink-0 w-40">
+          <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
             <div className="flex flex-col gap-1">
               {MODES.map(m => (
@@ -569,7 +569,7 @@ const Game: React.FC = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-[#4C1D95] px-4 py-1.5 flex items-center justify-between">
+        <div className="border-t border-[#4C1D95] px-8 py-1.5 flex items-center justify-between">
           <span className="text-[10px] text-[#6D28D9] font-medium">© 2026 Cocokiki Topo</span>
           <span className="text-[10px] text-[#6D28D9] font-bold">Groep 6 · GSV</span>
         </div>
