@@ -218,8 +218,8 @@ const Game: React.FC = () => {
           {/* Controls rechts */}
           <div className="ml-auto flex items-center gap-2">
 
-          {/* Labels toggle */}
-          {mode !== 'memory' && mode !== 'mnemonic' && mode !== 'provinces' && (
+          {/* Labels toggle — alleen zinvol in verkennen */}
+          {mode === 'explore' && (
             <button
               onClick={() => setShowLabels(s => !s)}
               title={showLabels ? 'Namen verbergen' : 'Namen tonen'}
