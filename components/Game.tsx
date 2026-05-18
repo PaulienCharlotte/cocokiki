@@ -163,19 +163,19 @@ const Game: React.FC = () => {
       <header className="flex-none bg-[#3B0764] shadow-lg z-[5000]">
 
         {/* Row 1: zoekbalk links + logo gecentreerd + controls rechts */}
-        <div className="relative flex items-center gap-2 px-4 h-16">
+        <div className="relative flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 h-14 sm:h-16">
 
           {/* Zoekbalk links */}
           <div ref={searchRef} className="relative z-10">
-            <div className="flex items-center gap-1.5 bg-[#4C1D95] rounded-full px-3 py-1.5 border border-[#6D28D9]">
+            <div className="flex items-center gap-1.5 bg-[#4C1D95] rounded-full px-2.5 sm:px-3 py-1.5 border border-[#6D28D9]">
               <Search className="w-3.5 h-3.5 text-[#C4B5FD] flex-shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
                 onFocus={() => setSearchOpen(true)}
-                placeholder="Zoek een plaats…"
-                className="bg-transparent text-white text-xs font-medium placeholder:text-[#A78BFA] outline-none w-28 sm:w-40"
+                placeholder="Zoek…"
+                className="bg-transparent text-white text-xs font-medium placeholder:text-[#A78BFA] outline-none w-20 sm:w-40"
               />
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(''); setSearchOpen(false); }}>
@@ -210,13 +210,13 @@ const Game: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          {/* Logo — gecentreerd */}
-          <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
+          {/* Logo — gecentreerd, alleen op md+ (op mobiel overlapt het met controls) */}
+          <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none hidden md:block">
             <img src="/images/logo-compas-geel.svg" alt="Cocokiki Topo" className="h-10 w-10 drop-shadow-md" style={{ display: 'block', width: 40, height: 40 }} />
           </div>
 
           {/* Controls rechts */}
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
 
           {/* Labels toggle — alleen zinvol bij verkennen */}
           {mode === 'explore' && (
@@ -510,12 +510,12 @@ const Game: React.FC = () => {
 
       {/* Footer */}
       <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
-        <div className="flex justify-center gap-12 px-8 py-4">
+        <div className="flex flex-col md:flex-row md:justify-center gap-5 md:gap-12 px-4 md:px-8 py-3 md:py-4">
 
-          {/* Provincies: 2-koloms sub-grid, vaste breedte */}
+          {/* Provincies */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
-            <div className="grid grid-cols-4 gap-x-6 gap-y-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-1">
               <button
                 onClick={() => handleProvinceChange('all')}
                 className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
@@ -534,13 +534,14 @@ const Game: React.FC = () => {
             </div>
           </div>
 
-          {/* Verticale scheidingslijn */}
-          <div className="w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
+          {/* Scheidingslijn: verticaal op desktop, horizontaal op mobiel */}
+          <div className="hidden md:block w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
+          <div className="md:hidden h-px bg-[#4C1D95]" />
 
           {/* Spellen */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+            <div className="grid grid-cols-2 gap-x-4 md:gap-x-6 gap-y-1">
               {MODES.map(m => (
                 <button
                   key={m.id}
@@ -558,20 +559,14 @@ const Game: React.FC = () => {
                 }}
                 className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
               >
-                Provincies &amp; Hoofdsteden
-              </button>
-              <button
-                onClick={() => handleModeChange('test')}
-                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-              >
-                Toetsen
+                Prov. &amp; Hoofdst.
               </button>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-[#4C1D95] px-8 py-2 flex items-center justify-between">
+        <div className="border-t border-[#4C1D95] px-4 md:px-8 py-2 flex items-center justify-between">
           <span className="text-[10px] text-[#6D28D9] font-medium">© 2026</span>
           <div className="flex items-center gap-1.5">
             <img src="/images/logo-compas-geel.svg" alt="" className="w-4 h-4 opacity-70" />

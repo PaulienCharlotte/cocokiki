@@ -291,18 +291,18 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
         </div>
       </div>
 
-      {/* Answer form — scrollable, capped at 50% of screen height */}
-      <div className="flex-none overflow-y-auto bg-white border-t-[3px] border-[#7C3AED]" style={{ maxHeight: '50%' }}>
-        <div className="p-4">
+      {/* Answer form — scrollable, capped at ~55% screen height on mobile, 50% desktop */}
+      <div className="flex-none overflow-y-auto bg-white border-t-[3px] border-[#7C3AED] max-h-[55%] md:max-h-[50%]">
+        <div className="p-3 md:p-4">
 
-          <div className="flex items-start justify-between mb-4">
-            <div>
+          <div className="flex items-start justify-between mb-3 md:mb-4 gap-2">
+            <div className="min-w-0">
               <h2 className="font-black text-[#3B0764] text-sm">Vul de namen in</h2>
               <p className="text-[10px] text-slate-500 mt-0.5">Schrijf bij elk getal / letter de juiste naam</p>
             </div>
             {result && (
-              <div className="text-right flex-shrink-0 ml-3">
-                <div className={`font-black text-3xl leading-none ${gradeColor}`}>{result.grade}</div>
+              <div className="text-right flex-shrink-0">
+                <div className={`font-black text-2xl md:text-3xl leading-none ${gradeColor}`}>{result.grade}</div>
                 <div className="text-[10px] text-slate-500 mt-0.5">{result.correct}/{result.total} goed</div>
               </div>
             )}

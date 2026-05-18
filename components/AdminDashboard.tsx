@@ -174,23 +174,23 @@ const AdminContent: React.FC<{ onExit: () => void }> = ({ onExit }) => {
     <div className="h-[100dvh] flex flex-col bg-[#F5F3FF] overflow-hidden">
 
       {/* Header */}
-      <header className="flex-none bg-[#3B0764] px-6 py-3 flex items-center gap-4 shadow-lg">
+      <header className="flex-none bg-[#3B0764] px-3 sm:px-6 py-3 flex items-center gap-2 sm:gap-4 shadow-lg">
         <button
           onClick={onExit}
-          className="flex items-center gap-1.5 text-[#DDD6FE] hover:text-white transition-colors text-sm font-bold"
+          className="flex items-center gap-1.5 text-[#DDD6FE] hover:text-white transition-colors text-sm font-bold flex-shrink-0"
         >
-          <ArrowLeft className="w-4 h-4" /> App
+          <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">App</span>
         </button>
-        <div className="flex-1 flex justify-center items-center gap-3">
-          <img src="/images/logo-compas.svg" alt="" className="h-9 w-9 object-contain" />
-          <span className="font-black text-[#FFFFFF] text-lg">Admin Dashboard</span>
+        <div className="flex-1 flex justify-center items-center gap-2 sm:gap-3 min-w-0">
+          <img src="/images/logo-compas.svg" alt="" className="h-8 w-8 sm:h-9 sm:w-9 object-contain flex-shrink-0" />
+          <span className="font-black text-white text-sm sm:text-lg truncate">Admin Dashboard</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden md:inline text-xs text-[#C4B5FD] font-medium">{user?.email}</span>
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <span className="hidden lg:inline text-xs text-[#C4B5FD] font-medium truncate max-w-[160px]">{user?.email}</span>
           <button
             onClick={signOut}
             title="Uitloggen"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#4C1D95] hover:bg-[#7C3AED] text-[#DDD6FE] hover:text-white rounded-lg transition-colors text-xs font-bold"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-[#4C1D95] hover:bg-[#7C3AED] text-[#DDD6FE] hover:text-white rounded-lg transition-colors text-xs font-bold"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Uitloggen</span>
