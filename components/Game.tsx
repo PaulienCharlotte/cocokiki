@@ -212,7 +212,7 @@ const Game: React.FC = () => {
 
           {/* Logo — gecentreerd */}
           <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
-            <img src="/images/logo-compas.svg" alt="Cocokiki Topo" className="h-10 w-10 drop-shadow-md" style={{ display: 'block', width: 40, height: 40 }} />
+            <img src="/images/logo-compas-geel.svg" alt="Cocokiki Topo" className="h-10 w-10 drop-shadow-md" style={{ display: 'block', width: 40, height: 40 }} />
           </div>
 
           {/* Controls rechts */}
