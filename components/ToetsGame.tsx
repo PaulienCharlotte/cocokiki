@@ -102,23 +102,21 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   const [geoData, setGeoData]         = useState<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(() => {});
-    } else {
-      document.exitFullscreen().catch(() => {});
-    }
-  };
+  const toggleFullscreen = () => setIsFullscreen(f => !f);
 
   useEffect(() => {
-    const handler = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-      // Let the browser finish resizing before telling Leaflet
-      setTimeout(() => mapRef.current?.invalidateSize(), 300);
+    document.body.style.overflow = isFullscreen ? 'hidden' : '';
+    setTimeout(() => mapRef.current?.invalidateSize(), 150);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) setIsFullscreen(false);
     };
-    document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
-  }, []);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [isFullscreen]);
 
   useEffect(() => {
     fetch('https://raw.githubusercontent.com/highcharts/map-collection-dist/master/countries/nl/nl-all.geo.json')
@@ -254,7 +252,10 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
     '📚 Nog meer oefenen!';
 
   return (
-    <div ref={containerRef} className="h-full flex flex-col bg-[#EDE9FE]">
+    <div
+      ref={containerRef}
+      className={`flex flex-col bg-[#EDE9FE] ${isFullscreen ? 'fixed inset-0 z-[9999]' : 'h-full'}`}
+    >
 
       {/* Map */}
       <div className="flex-1 min-h-0 relative">
