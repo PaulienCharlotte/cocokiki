@@ -569,9 +569,12 @@ const Game: React.FC = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-[#4C1D95] px-8 py-1.5 flex items-center justify-between">
-          <span className="text-[10px] text-[#6D28D9] font-medium">© 2026 Cocokiki Topo</span>
-          <span className="text-[10px] text-[#6D28D9] font-bold">Groep 6 · GSV</span>
+        <div className="border-t border-[#4C1D95] px-8 py-2 flex items-center justify-between">
+          <span className="text-[10px] text-[#6D28D9] font-medium">© 2026</span>
+          <div className="flex items-center gap-1.5">
+            <img src="/images/logo-compas-geel.svg" alt="" className="w-4 h-4 opacity-70" />
+            <span className="text-[10px] text-[#6D28D9] font-bold tracking-wide">Topo · GSV · Groep 6</span>
+          </div>
         </div>
       </footer>
 
