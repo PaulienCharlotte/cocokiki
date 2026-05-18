@@ -222,12 +222,12 @@ const Game: React.FC = () => {
             <button
               onClick={() => setShowLabels(s => !s)}
               title={showLabels ? 'Namen verbergen' : 'Namen tonen'}
-              className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
                 showLabels ? 'bg-[#7C3AED] text-white' : 'bg-[#4C1D95] text-[#9CA3AF]'
               }`}
             >
               {showLabels ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-              <span className="hidden lg:inline">Namen</span>
+              <span className="hidden sm:inline">Namen</span>
             </button>
           )}
 

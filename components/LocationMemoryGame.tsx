@@ -91,26 +91,30 @@ const CardBack: React.FC = () => (
 );
 
 // Card front face: name card
-const NameCard: React.FC<{ name: string; emoji: string; matched: boolean }> = ({ name, emoji, matched }) => (
-  <div className={`absolute inset-0 flex flex-col items-center justify-center rounded-xl border-2 gap-2 p-3
+const NameCard: React.FC<{ name: string; emoji: string; matched: boolean; compact: boolean }> = ({ name, emoji, matched, compact }) => (
+  <div className={`absolute inset-0 flex flex-col items-center justify-center rounded-xl border-2 gap-1 p-2
     ${matched ? 'bg-[#7C3AED]/20 border-[#7C3AED]' : 'bg-[#FFFFFF] border-[#DDD6FE]'}`}
   >
-    <span className="text-4xl leading-none">{emoji}</span>
+    <span className={`${compact ? 'text-2xl' : 'text-4xl'} leading-none`}>{emoji}</span>
     <span className="font-black text-center text-[#1F2937] leading-tight"
-      style={{ fontSize: name.length > 14 ? '18px' : name.length > 10 ? '22px' : '26px' }}>
+      style={{ fontSize: compact
+        ? (name.length > 14 ? '13px' : name.length > 10 ? '15px' : '17px')
+        : (name.length > 14 ? '18px' : name.length > 10 ? '22px' : '26px') }}>
       {name}
     </span>
   </div>
 );
 
 // Card front face: fact card
-const FactCard: React.FC<{ fact: string; matched: boolean }> = ({ fact, matched }) => (
-  <div className={`absolute inset-0 flex items-center justify-center rounded-xl border-2 p-4
+const FactCard: React.FC<{ fact: string; matched: boolean; compact: boolean }> = ({ fact, matched, compact }) => (
+  <div className={`absolute inset-0 flex items-center justify-center rounded-xl border-2 p-2
     ${matched ? 'bg-[#7C3AED]/20 border-[#7C3AED]' : 'bg-[#FFFFFF] border-[#DDD6FE]'}`}
   >
     <p
       className="font-bold text-[#1F2937] text-center leading-snug"
-      style={{ fontSize: fact.length > 100 ? '13px' : fact.length > 70 ? '15px' : '18px' }}
+      style={{ fontSize: compact
+        ? (fact.length > 100 ? '11px' : fact.length > 70 ? '12px' : '14px')
+        : (fact.length > 100 ? '13px' : fact.length > 70 ? '15px' : '18px') }}
     >
       {fact}
     </p>
@@ -123,7 +127,8 @@ const FlipCard: React.FC<{
   isMatched: boolean;
   onClick: () => void;
   disabled: boolean;
-}> = ({ card, isFlipped, isMatched, onClick, disabled }) => {
+  compact: boolean;
+}> = ({ card, isFlipped, isMatched, onClick, disabled, compact }) => {
   const visible = isFlipped || isMatched;
 
   return (
@@ -154,8 +159,8 @@ const FlipCard: React.FC<{
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
           {card.type === 'name'
-            ? <NameCard name={card.content} emoji={card.emoji} matched={isMatched} />
-            : <FactCard fact={card.content} matched={isMatched} />
+            ? <NameCard name={card.content} emoji={card.emoji} matched={isMatched} compact={compact} />
+            : <FactCard fact={card.content} matched={isMatched} compact={compact} />
           }
         </div>
       </motion.div>
@@ -173,6 +178,13 @@ const LocationMemoryGame: React.FC<LocationMemoryGameProps> = ({ provinceId, onS
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [moves, setMoves] = useState(0);
   const [checking, setChecking] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const difficulty = DIFFICULTIES[difficultyIdx];
 
@@ -326,8 +338,11 @@ const LocationMemoryGame: React.FC<LocationMemoryGameProps> = ({ provinceId, onS
 
   // Game board — always fits in view without scrolling
   const totalCards = difficulty.pairs * 2;
-  const cols = 4;
+  const cols = isMobile
+    ? (difficulty.pairs <= 4 ? 2 : difficulty.pairs <= 6 ? 3 : 4)
+    : 4;
   const rows = Math.ceil(totalCards / cols);
+  const compact = isMobile;
 
   return (
     <div className="flex flex-col h-full p-3 md:p-4 gap-2">
@@ -390,6 +405,7 @@ const LocationMemoryGame: React.FC<LocationMemoryGameProps> = ({ provinceId, onS
             isMatched={matched.has(card.pairId)}
             onClick={() => handleCardClick(card.id)}
             disabled={checking || matched.has(card.pairId)}
+            compact={compact}
           />
         ))}
       </div>
