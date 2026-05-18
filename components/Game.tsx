@@ -502,9 +502,75 @@ const Game: React.FC = () => {
       )}
 
       {/* Footer */}
-      <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95] px-4 py-1.5 flex items-center justify-between">
-        <span className="text-[10px] text-[#8B5CF6] font-medium">© 2026 Cocokiki Topo</span>
-        <span className="text-[10px] text-[#6D28D9] font-bold tracking-wide">Groep 6</span>
+      <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
+        <div className="grid grid-cols-3 gap-4 px-5 py-3">
+
+          {/* Kolom 1: Provincies */}
+          <div>
+            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Provincies</p>
+            <div className="flex flex-col gap-0.5">
+              {[
+                { id: 'all',          name: 'Heel Nederland' },
+                { id: 'groningen',    name: 'Groningen' },
+                { id: 'friesland',    name: 'Friesland' },
+                { id: 'gelderland',   name: 'Gelderland' },
+                { id: 'noord-holland',name: 'Noord-Holland' },
+              ].map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => handleProvinceChange(p.id)}
+                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium truncate"
+                >
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Kolom 2: Spellen */}
+          <div>
+            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Spellen</p>
+            <div className="flex flex-col gap-0.5">
+              {MODES.map(m => (
+                <button
+                  key={m.id}
+                  onClick={() => handleModeChange(m.id)}
+                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Kolom 3: Info */}
+          <div>
+            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Info</p>
+            <div className="flex flex-col gap-0.5">
+              {[
+                'Over Cocokiki',
+                'Algemene voorwaarden',
+                'Privacybeleid',
+                'Contact',
+              ].map(label => (
+                <a
+                  key={label}
+                  href="#"
+                  onClick={e => e.preventDefault()}
+                  className="text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-[#4C1D95] px-5 py-1.5 flex items-center justify-between">
+          <span className="text-[10px] text-[#6D28D9] font-medium">© 2026 Cocokiki Topo</span>
+          <span className="text-[10px] text-[#6D28D9] font-bold">Groep 6 · GSV</span>
+        </div>
       </footer>
 
       {/* Auth modal */}
