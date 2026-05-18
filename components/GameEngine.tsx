@@ -83,18 +83,20 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const timeLeftRef = useRef(TIMER_SECONDS);
 
   const filteredPool = useMemo(() => {
+    const toProvLoc = (p: typeof PROVINCES[0]) => ({
+      id: p.id, name: p.name, provinceId: p.id,
+      type: 'region' as const, lat: p.center[0], lng: p.center[1],
+    });
+
     if (clusterId === 'hoofdsteden') {
       const caps = LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' || l.provinceId === provinceId));
-      const provs = PROVINCES
-        .filter(p => provinceId === 'all' || p.id === provinceId)
-        .map(p => ({
-          id: p.id,
-          name: p.name,
-          provinceId: p.id,
-          type: 'region' as const,
-          lat: p.center[0],
-          lng: p.center[1]
-        }));
+      const provs = PROVINCES.filter(p => provinceId === 'all' || p.id === provinceId).map(toProvLoc);
+      return [...caps, ...provs];
+    }
+
+    if (clusterId === 'provincies-en-hoofdsteden') {
+      const caps = LOCATIONS.filter(l => l.isCapital === true);
+      const provs = PROVINCES.map(toProvLoc);
       return [...caps, ...provs];
     }
     

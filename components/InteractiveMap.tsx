@@ -162,29 +162,28 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     Object.values(markersRef.current).forEach((m: any) => m.remove());
     markersRef.current = {};
 
+    const provinceDots = (filter?: string) => PROVINCES
+      .filter(p => !filter || p.id === filter)
+      .map(p => ({ id: p.id, name: p.name, provinceId: p.id, type: 'region' as const, lat: p.center[0], lng: p.center[1] }));
+
     let filteredLocations = LOCATIONS.filter(loc => {
       if (selectedCluster === 'hoofdsteden') {
         const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
         return provMatch && loc.isCapital;
+      }
+      if (selectedCluster === 'provincies-en-hoofdsteden') {
+        return loc.isCapital === true;
       }
       const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
       const clusterMatch = selectedCluster === 'all' || loc.clusterId === selectedCluster;
       return provMatch && clusterMatch;
     });
 
-    // Voeg provincie dots toe als we in hoofdsteden modus zijn
     if (selectedCluster === 'hoofdsteden') {
-      const provinceDots = PROVINCES
-        .filter(p => selectedProvince === 'all' || p.id === selectedProvince)
-        .map(p => ({
-          id: p.id,
-          name: p.name,
-          provinceId: p.id,
-          type: 'region' as const,
-          lat: p.center[0],
-          lng: p.center[1]
-        }));
-      filteredLocations = [...filteredLocations, ...provinceDots];
+      filteredLocations = [...filteredLocations, ...provinceDots(selectedProvince === 'all' ? undefined : selectedProvince)];
+    }
+    if (selectedCluster === 'provincies-en-hoofdsteden') {
+      filteredLocations = [...filteredLocations, ...provinceDots()];
     }
 
     filteredLocations.forEach((loc, index) => {
