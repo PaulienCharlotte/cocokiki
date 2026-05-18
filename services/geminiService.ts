@@ -434,6 +434,230 @@ const FALLBACK_DATA: Record<string, LocationData> = {
     fact: "De Rijn begint hoog in de Zwitserse Alpen en stroomt door Duitsland naar Nederland. Het is een van de drukste vrachtroutes van Europa! 🚢"
   },
 
+  // --- NOORD-BRABANT ---
+  "Helmond": {
+    emoji: "⚙️",
+    mnemonic: "Hel-mond, machines draaien in de mond van de fabriek! ⚙️",
+    fact: "Helmond is een echte industriestad. Hier vind je het Kasteel van Helmond, één van de mooiste waterkasteeltjes van Nederland! 🏰"
+  },
+  "Oss": {
+    emoji: "🌭",
+    mnemonic: "Oss, de worst ruikt lekker bij de bos! 🌭",
+    fact: "Oss is beroemd om de Ossenworst! En wist je dat het grote chemieconcern AKZO Nobel hier zijn wortels heeft? 🧪"
+  },
+  "Roosendaal": {
+    emoji: "🚂",
+    mnemonic: "Roosen-daal, treinen rijden door het dal! 🚂",
+    fact: "Roosendaal is een belangrijk spoorwegknooppunt. Van hieruit rijden treinen naar België en heel Nederland. 🇧🇪"
+  },
+  "Bergen op Zoom": {
+    emoji: "🎭",
+    mnemonic: "Bergen op Zoom, het carnaval klinkt als een droom! 🎭",
+    fact: "Bergen op Zoom viert elk jaar het beroemde Krabbegat-carnaval! De stad heeft ook eeuwenoude vestingwerken. 🏰"
+  },
+  "Waalwijk": {
+    emoji: "👟",
+    mnemonic: "Waal-wijk, schoenen lopen hier wijk voor wijk! 👟",
+    fact: "Waalwijk was vroeger de schoenenhoofdstad van Nederland. Er is zelfs een Schoenenmuseum! 👞 Nog steeds een centrum voor de leerindustrie."
+  },
+  "Oosterhout": {
+    emoji: "⛪",
+    mnemonic: "Oos-ter-hout, de abdij staat in het woud! ⛪",
+    fact: "In Oosterhout staat de prachtige abdij van Sint-Paulusabdij. Hier wonen nog altijd monniken die bier brouwen. 🍺"
+  },
+  "Uden": {
+    emoji: "🕊️",
+    mnemonic: "U-den, de oorlog eindigde hier met veel vrede! 🕊️",
+    fact: "Vlak bij Uden ligt het grote oorlogskerkhof Groesbeek, waar meer dan 2000 geallieerde soldaten begraven liggen uit de Tweede Wereldoorlog. ✌️"
+  },
+  "Veghel": {
+    emoji: "🛡️",
+    mnemonic: "Ve-ghel, de slag was er gevaarlijk en snel! 🛡️",
+    fact: "Tijdens Operatie Market Garden in 1944 was Veghel een belangrijk punt. Parachutisten landden hier om de weg vrij te maken. 🪂"
+  },
+  "Boxmeer": {
+    emoji: "🍺",
+    mnemonic: "Box-meer, bier brouwen aan het meer! 🍺",
+    fact: "In Boxmeer staat de Bavaria-brouwerij, een van de bekendste bierbrouwerijen van Nederland! En het ligt mooi aan de rivier de Maas. 🌊"
+  },
+  "Boxtel": {
+    emoji: "🚉",
+    mnemonic: "Box-tel, het treinstation is nooit te ver! 🚉",
+    fact: "Boxtel heeft een heel belangrijk treinstation. De lijn van 's-Hertogenbosch naar Eindhoven gaat er dwars doorheen. 🚆"
+  },
+  "Valkenswaard": {
+    emoji: "🦅",
+    mnemonic: "Valken-swaard, valken vliegen boven het waard! 🦅",
+    fact: "De naam Valkenswaard komt van 'valk' — vroeger werd hier op koninklijk bevel met valken gejaagd! Nu is het bekend om de MotoGP-races op het circuit. 🏍️"
+  },
+  "Etten-Leur": {
+    emoji: "🌻",
+    mnemonic: "Et-ten-leur, bloemen en markt bij het uur! 🌻",
+    fact: "Etten-Leur heeft een gezellige historische markt. De beroemde schilder Vincent van Gogh woonde hier een tijdje en schilderde de mooie omgeving. 🎨"
+  },
+  "Kempen": {
+    emoji: "🌿",
+    mnemonic: "Kem-pen, heide en bossen bij de pennen! 🌿",
+    fact: "De Kempen is een prachtig heuvelachtig heide- en bosgebied in het zuiden van Brabant, net als in België. Er leven zeldzame planten en vlinders! 🦋"
+  },
+  "De Peel": {
+    emoji: "🦢",
+    mnemonic: "De Peel, nat en vol vogels bij het wiel! 🦢",
+    fact: "De Peel is een groot veengebied vol bijzondere vogels. Vroeger werd er turf gestoken om huizen mee te verwarmen. Nu is het een uniek natuurgebied! 🌿"
+  },
+  "Meierij": {
+    emoji: "🏛️",
+    mnemonic: "Mei-e-rij, het land rond de Bosch is blij! 🏛️",
+    fact: "De Meierij is het historische gebied rondom 's-Hertogenbosch. Hier lagen vroeger veel boerderijen en kloosters. 🌾"
+  },
+  "Baronie van Breda": {
+    emoji: "🏰",
+    mnemonic: "Ba-ro-nie van Bre-da, het kasteel staat klaar! 🏰",
+    fact: "De Baronie van Breda is een eeuwenoud gebied rondom Breda. Vroeger was dit land van de Nassau's, de voorouders van ons koningshuis! 👑"
+  },
+  "Maas": {
+    emoji: "🌊",
+    mnemonic: "Maas, de rivier stroomt als een glas! 🌊",
+    fact: "De Maas begint in Frankrijk, stroomt door België en heel Brabant naar de zee. Het is een van de langste rivieren van West-Europa! 🗺️"
+  },
+  "Dommel": {
+    emoji: "🌿",
+    mnemonic: "Dom-mel, het beekje stroomt door 't dal! 🌿",
+    fact: "De Dommel is een schilderachtig riviertje dat dwars door de stad Eindhoven stroomt. Langs de oevers kun je prachtig wandelen! 🚶"
+  },
+  "Aa": {
+    emoji: "💧",
+    mnemonic: "Aa, een kleine naam maar een grote stroom! 💧",
+    fact: "De Aa is een klein maar belangrijk stroompje in de Peel. Het water is helder en er leven zeldzame vissen en libellen! 🐟"
+  },
+  "Mark": {
+    emoji: "🦆",
+    mnemonic: "Mark, eenden zwemmen door de Park! 🦆",
+    fact: "De Mark is een sierlijke rivier die door Breda stroomt en het stadspark een bijzonder groen karakter geeft. 🌳"
+  },
+  "Donge": {
+    emoji: "🏞️",
+    mnemonic: "Don-ge, het water stroomt in de longe! 🏞️",
+    fact: "De Donge is een rustig riviertje in de Baronie van Breda. De naam is heel oud en stamt uit de tijd van de Kelten! 🏺"
+  },
+  "Zuid-Willemsvaart": {
+    emoji: "⛵",
+    mnemonic: "Zuid-Wil-lems-vaart, Willems boot vaart recht! ⛵",
+    fact: "Dit kanaal werd gegraven op bevel van Koning Willem I. Het verbindt 's-Hertogenbosch met de Belgische stad Maastricht! 🇧🇪"
+  },
+  "Wilhelminakanaal": {
+    emoji: "🚢",
+    mnemonic: "Wil-hel-mi-na-ka-naal, Wilhelmina's kanaal staat pal! 🚢",
+    fact: "Het Wilhelminakanaal is vernoemd naar Koningin Wilhelmina. Vroeger werden er enorme ladingen veen en turf overheen vervoerd. 🌾"
+  },
+
+  // --- NOORD-HOLLAND ---
+  "Den Helder": {
+    emoji: "⚓",
+    mnemonic: "Den Hel-der, het schip vaart in het helder water! ⚓",
+    fact: "Den Helder is de marinestad van Nederland! Hier ligt de grootste marinehaven. Van hier varen ook de boten naar het eiland Texel. ⛴️"
+  },
+  "Hilversum": {
+    emoji: "📺",
+    mnemonic: "Hil-ver-sum, televisie kijk je hier tot de som! 📺",
+    fact: "Hilversum is de mediastad van Nederland! Bijna alle grote tv-zenders en radiostations zijn hier gevestigd. 🎙️ En het heeft prachtige art-deco gebouwen."
+  },
+  "Purmerend": {
+    emoji: "🐄",
+    mnemonic: "Pur-me-rend, koeien lopen hier in 't weiland rend! 🐄",
+    fact: "Purmerend is een marktstad in het midden van de Beemster en Purmer polders. Vroeger kwamen boeren hier hun vee verkopen op de grote veemarkt! 🐮"
+  },
+  "Amstelveen": {
+    emoji: "🌸",
+    mnemonic: "Am-stel-veen, het veen langs de Amstel is groen! 🌸",
+    fact: "Amstelveen heeft een van de mooiste Japanse tuinen van Europa! Er woont ook een grote Japanse gemeenschap. 🇯🇵"
+  },
+  "Aalsmeer": {
+    emoji: "🌹",
+    mnemonic: "Aals-meer, bloemen ruiken hier zo ver en meer! 🌹",
+    fact: "In Aalsmeer staat de grootste bloemenveiling van de wereld! Elke dag worden hier miljoenen bloemen verkocht en naar alle hoeken van de wereld gestuurd. 🌺"
+  },
+  "IJmuiden": {
+    emoji: "🐟",
+    mnemonic: "IJ-mui-den, vissen komen uit het water rijden! 🐟",
+    fact: "IJmuiden heeft de grootste zeesluizen van de wereld! Die laten zeeschepen van de Noordzee naar Amsterdam varen. Er is ook een grote vissershaven. 🚢"
+  },
+  "Volendam": {
+    emoji: "🎣",
+    mnemonic: "Vo-len-dam, de visser draagt een klederdracht sam! 🎣",
+    fact: "Volendam is beroemd om de kleurrijke klederdracht met de witte kanten kap. Vroeger waren er hier heel veel vissers op het Zuiderzee! 🐟"
+  },
+  "Zandvoort": {
+    emoji: "🏎️",
+    mnemonic: "Zand-voort, de Formule 1 rijdt als een sport! 🏎️",
+    fact: "In Zandvoort staat het beroemde Circuit Zandvoort waar de Formule 1 Grand Prix van Nederland wordt verreden! En er is een prachtig strand. 🏖️"
+  },
+  "Bussum": {
+    emoji: "🌳",
+    mnemonic: "Bus-sum, in het bos wonen mensen met het gum! 🌳",
+    fact: "Bussum ligt in het Gooi, een bosrijke regio. Veel bekende Nederlanders wonen hier vanwege de mooie natuur en rustige sfeer. 🏡"
+  },
+  "Het Gooi": {
+    emoji: "🌲",
+    mnemonic: "Het Gooi, bossen en villa's in een mooi! 🌲",
+    fact: "Het Gooi is een zandige heuvelstreek tussen Amsterdam en Utrecht. Hier wonen veel bekende Nederlanders, en ook de mediastad Hilversum ligt hier! 📺"
+  },
+  "Beemster": {
+    emoji: "🏆",
+    mnemonic: "Beem-ster, de polder is een kampioen! 🏆",
+    fact: "De Beemster is een UNESCO Werelderfgoed! Het was in 1612 het eerste grote meer dat drooggelegd werd. De rechte wegen en sloten zijn nog altijd perfect bewaard. 🗺️"
+  },
+  "Wieringermeer": {
+    emoji: "🌾",
+    mnemonic: "Wie-ring-er-meer, het land is hier geweer! 🌾",
+    fact: "De Wieringermeer was vroeger de bodem van de Zuiderzee. In 1930 werd het drooggelegd. Het is nu vruchtbaar landbouwland! 🚜"
+  },
+  "Texel": {
+    emoji: "🐑",
+    mnemonic: "Tex-el, schapen grazen op het eiland snel! 🐑",
+    fact: "Texel is het grootste Waddeneiland van Nederland. Er leven meer schapen dan mensen! De Texelse kaas en het Texelse bier zijn heel beroemd. 🧀"
+  },
+  "Haarlemmermeer": {
+    emoji: "✈️",
+    mnemonic: "Haar-lem-mer-meer, vliegtuigen landen hier zo leeg! ✈️",
+    fact: "De Haarlemmermeer was vroeger een groot meer. Na drooglegging in 1852 werd het landbouwgrond — en later de locatie van luchthaven Schiphol! ✈️"
+  },
+  "Schiphol": {
+    emoji: "✈️",
+    mnemonic: "Schi-phol, vliegtuigen vliegen over het hol! ✈️",
+    fact: "Schiphol is de grootste luchthaven van Nederland en een van de drukste van Europa. Elke dag landen en vertrekken er honderden vliegtuigen! 🌍"
+  },
+  "IJmeer": {
+    emoji: "⛵",
+    mnemonic: "IJ-meer, zeilen op het IJ is zeker weet! ⛵",
+    fact: "Het IJmeer ligt tussen Amsterdam en Flevoland. Op winderige dagen varen hier veel kleine zeilbootjes. 🌬️"
+  },
+  "Noordhollands Kanaal": {
+    emoji: "🚢",
+    mnemonic: "Noord-hollands ka-naal, de boot vaart pal! 🚢",
+    fact: "Dit kanaal werd gegraven in opdracht van Koning Willem I om Amsterdam bereikbaar te houden voor grote schepen, vóór de Noordzeekanaal er was! ⚓"
+  },
+  "Noordzeekanaal": {
+    emoji: "🌊",
+    mnemonic: "Noord-zee-ka-naal, het schip vaart naar zee pal! 🌊",
+    fact: "Het Noordzeekanaal verbindt Amsterdam direct met de Noordzee via IJmuiden. Elke dag varen er enorme vrachtschepen overheen. 🚢"
+  },
+  "Loosdrechtse Plassen": {
+    emoji: "⛵",
+    mnemonic: "Loos-drecht-se plas-sen, zeilen in de massen! ⛵",
+    fact: "De Loosdrechtse Plassen zijn ontstaan doordat hier vroeger turf werd gegraven. Nu zijn het prachtige meren vol watersporters en zwemmers! 🏊"
+  },
+  "Amsterdam-Rijnkanaal": {
+    emoji: "⚓",
+    mnemonic: "Am-ster-dam-Rijn-ka-naal, de Rijn loopt er pal! ⚓",
+    fact: "Dit kanaal verbindt Amsterdam rechtstreeks met de Rijn in Duitsland. Elke dag varen hier honderden vrachtschepen met goederen. 🚢"
+  },
+  "Markermeer": {
+    emoji: "🦆",
+    mnemonic: "Mar-ker-meer, eenden zwemmen hier vrij meer! 🦆",
+    fact: "Het Markermeer werd ooit gepland als droog land, maar dat plan ging niet door. Nu is het een groot meer vol vogels en vissers. 🐦"
+  },
+
   // --- OVERIGE STEDEN ---
   "Amsterdam": {
     emoji: "🚲",
