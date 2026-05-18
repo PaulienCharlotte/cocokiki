@@ -548,7 +548,7 @@ const Game: React.FC = () => {
           {/* Spellen */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
-            <div className="flex flex-col gap-1">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
               {MODES.map(m => (
                 <button
                   key={m.id}
