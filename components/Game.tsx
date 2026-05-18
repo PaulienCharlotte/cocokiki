@@ -51,6 +51,7 @@ const Game: React.FC = () => {
   const [provinceOpen, setProvinceOpen]         = useState(false);
   const [showAuthModal, setShowAuthModal]       = useState(false);
   const [showProfile, setShowProfile]           = useState(false);
+  const [footerOpen, setFooterOpen]             = useState(false);
   const provinceRef    = useRef<HTMLDivElement>(null);
   const sessionScoreRef = useRef(0);
 
@@ -514,62 +515,85 @@ const Game: React.FC = () => {
 
       {/* Footer */}
       <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
-        {/* Navigatie kolommen — alleen op desktop (op mobiel duplicaat van header) */}
-        <div className="hidden md:flex md:justify-center gap-12 px-8 py-4">
 
-          {/* Provincies */}
-          <div>
-            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
-            <div className="grid grid-cols-4 gap-x-6 gap-y-1">
-              <button
-                onClick={() => handleProvinceChange('all')}
-                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-              >
-                Heel Nederland
-              </button>
-              {PROVINCES.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handleProvinceChange(p.id)}
-                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-                >
-                  {p.name}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Toggle — alleen zichtbaar op desktop */}
+        <button
+          onClick={() => setFooterOpen(o => !o)}
+          title={footerOpen ? 'Navigatie verbergen' : 'Navigatie tonen'}
+          className="hidden md:flex w-full items-center justify-center py-1 hover:bg-[#4C1D95] transition-colors"
+        >
+          <ChevronDown className={`w-3.5 h-3.5 text-[#6D28D9] transition-transform duration-200 ${footerOpen ? 'rotate-180' : ''}`} />
+        </button>
 
-          <div className="w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
+        {/* Navigatie kolommen — inklapbaar op desktop */}
+        <AnimatePresence>
+          {footerOpen && (
+            <motion.div
+              key="footer-nav"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="hidden md:flex md:justify-center gap-12 px-8 py-4">
 
-          {/* Spellen */}
-          <div>
-            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-              {MODES.map(m => (
-                <button
-                  key={m.id}
-                  onClick={() => handleModeChange(m.id)}
-                  className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-                >
-                  {m.label}
-                </button>
-              ))}
-              <button
-                onClick={() => {
-                  setSelectedProvince('all');
-                  setSelectedCluster('provincies-en-hoofdsteden');
-                  setActiveLocation(null);
-                }}
-                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-              >
-                Prov. &amp; Hoofdst.
-              </button>
-            </div>
-          </div>
-        </div>
+                {/* Provincies */}
+                <div>
+                  <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
+                  <div className="grid grid-cols-4 gap-x-6 gap-y-1">
+                    <button
+                      onClick={() => handleProvinceChange('all')}
+                      className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                    >
+                      Heel Nederland
+                    </button>
+                    {PROVINCES.map(p => (
+                      <button
+                        key={p.id}
+                        onClick={() => handleProvinceChange(p.id)}
+                        className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
+
+                {/* Spellen */}
+                <div>
+                  <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                    {MODES.map(m => (
+                      <button
+                        key={m.id}
+                        onClick={() => handleModeChange(m.id)}
+                        className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => {
+                        setSelectedProvince('all');
+                        setSelectedCluster('provincies-en-hoofdsteden');
+                        setActiveLocation(null);
+                      }}
+                      className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+                    >
+                      Prov. &amp; Hoofdst.
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Bottom bar — altijd zichtbaar */}
-        <div className="md:border-t md:border-[#4C1D95] px-4 md:px-8 py-2 flex items-center justify-between">
+        <div className={`px-4 md:px-8 py-2 flex items-center justify-between ${footerOpen ? 'md:border-t md:border-[#4C1D95]' : ''}`}>
           <span className="text-[10px] text-[#6D28D9] font-medium">© 2026</span>
           <div className="flex items-center gap-1.5">
             <img src="/images/logo-compas-geel.svg" alt="" className="w-4 h-4 opacity-70" />

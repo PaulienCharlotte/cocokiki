@@ -89,7 +89,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       detectRetina: true
     } as any).addTo(mapRef.current);
 
-    setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 200);
+    setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize();
+        mapRef.current.fitBounds([[50.75, 3.35], [53.55, 7.22]], { padding: [16, 16] });
+      }
+    }, 200);
 
     return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
   }, []);
@@ -114,7 +119,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     if (!mapRef.current) return;
 
     if (selectedProvince === 'all') {
-      mapRef.current.flyTo([52.3, 5.3], 8, { duration: 1.2 });
+      mapRef.current.flyToBounds([[50.75, 3.35], [53.55, 7.22]], { padding: [16, 16], duration: 1.2 });
       return;
     }
 
