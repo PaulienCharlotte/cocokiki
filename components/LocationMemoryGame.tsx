@@ -84,9 +84,8 @@ function starRating(moves: number, pairs: number): number {
 
 // Card back face
 const CardBack: React.FC = () => (
-  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#3B0764] to-[#5B21B6] rounded-xl">
-    <img src="/images/logo-compas.svg" alt="" className="w-10 h-10 object-contain opacity-80" />
-    <span className="text-[#DDD6FE] font-black text-[9px] mt-1 tracking-widest opacity-70">COCOKIKI</span>
+  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#3B0764] to-[#5B21B6] rounded-xl">
+    <img src="/images/logo-kikicoco.png" alt="" className="w-4/5 h-4/5 object-contain" />
   </div>
 );
 
