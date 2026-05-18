@@ -518,19 +518,19 @@ const Game: React.FC = () => {
 
       {/* Footer */}
       <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
-        <div className="grid grid-cols-3 gap-4 px-5 py-3">
+        <div className="grid grid-cols-2 gap-6 px-5 py-3">
 
-          {/* Kolom 1: Provincies */}
+          {/* Kolom 1: Alle provincies */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Provincies</p>
-            <div className="flex flex-col gap-0.5">
-              {[
-                { id: 'all',          name: 'Heel Nederland' },
-                { id: 'groningen',    name: 'Groningen' },
-                { id: 'friesland',    name: 'Friesland' },
-                { id: 'gelderland',   name: 'Gelderland' },
-                { id: 'noord-holland',name: 'Noord-Holland' },
-              ].map(p => (
+            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+              <button
+                onClick={() => handleProvinceChange('all')}
+                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium truncate"
+              >
+                Heel Nederland
+              </button>
+              {PROVINCES.map(p => (
                 <button
                   key={p.id}
                   onClick={() => handleProvinceChange(p.id)}
@@ -542,7 +542,7 @@ const Game: React.FC = () => {
             </div>
           </div>
 
-          {/* Kolom 2: Spellen */}
+          {/* Kolom 2: Alle spellen */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Spellen</p>
             <div className="flex flex-col gap-0.5">
@@ -555,28 +555,12 @@ const Game: React.FC = () => {
                   {m.label}
                 </button>
               ))}
-            </div>
-          </div>
-
-          {/* Kolom 3: Info */}
-          <div>
-            <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-1.5">Info</p>
-            <div className="flex flex-col gap-0.5">
-              {[
-                'Over Cocokiki',
-                'Algemene voorwaarden',
-                'Privacybeleid',
-                'Contact',
-              ].map(label => (
-                <a
-                  key={label}
-                  href="#"
-                  onClick={e => e.preventDefault()}
-                  className="text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
-                >
-                  {label}
-                </a>
-              ))}
+              <button
+                onClick={() => handleModeChange('provinces')}
+                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+              >
+                Provincies &amp; Hoofdsteden
+              </button>
             </div>
           </div>
         </div>
