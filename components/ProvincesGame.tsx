@@ -77,6 +77,13 @@ interface MapFeedback {
   correct: string;
 }
 
+// Highcharts hc-key suffix directly matches our province IDs (nl-nh → nh)
+const provFromFeature = (feature: any): Province | undefined => {
+  const hcKey = feature?.properties?.['hc-key'] as string | undefined;
+  const id = hcKey?.replace('nl-', '');
+  return PROVINCES.find(p => p.id === id);
+};
+
 const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack: () => void }> = ({
   onScoreChange,
   onBack,
@@ -84,6 +91,7 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef          = useRef<L.Map | null>(null);
   const geoLayerRef     = useRef<L.GeoJSON | null>(null);
+  const dotsLayerRef    = useRef<L.LayerGroup | null>(null);
   const processingRef   = useRef(false);
   const onScoreRef      = useRef(onScoreChange);
   useEffect(() => { onScoreRef.current = onScoreChange; }, [onScoreChange]);
@@ -109,16 +117,16 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
 
   useEffect(() => { pickNext(); }, [pickNext]);
 
-  // Init map once
+  // Init map once — zoom 8, tight NL bounds (same as InteractiveMap)
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
     mapRef.current = L.map(mapContainerRef.current, {
       center: [52.3, 5.3],
-      zoom: 7,
+      zoom: 8,
       zoomControl: false,
       attributionControl: false,
-      maxBounds: [[49.5, 2.0], [54.5, 8.5]],
-      minZoom: 6,
+      maxBounds: [[50.5, 3.0], [54.0, 7.5]],
+      minZoom: 7,
       tap: true,
       dragging: true,
       touchZoom: true,
@@ -127,79 +135,111 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
       subdomains: 'abcd', maxZoom: 19, detectRetina: true,
     } as any).addTo(mapRef.current);
     setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 200);
-    return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
+
+    // ResizeObserver zodat de kaart bij layoutwijzigingen correct vult
+    const ro = new ResizeObserver(() => { if (mapRef.current) mapRef.current.invalidateSize(); });
+    ro.observe(mapContainerRef.current);
+
+    return () => {
+      ro.disconnect();
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+    };
   }, []);
 
-  // Rebuild GeoJSON layer on target/feedback changes
+  // Verwerkt een klik op een provincie (polygon of stip)
+  const handleClick = useCallback((prov: Province) => {
+    if (processingRef.current || !target) return;
+    processingRef.current = true;
+    const isCorrect = prov.id === target.id;
+    setFeedback({ type: isCorrect ? 'correct' : 'wrong', clicked: prov.id, correct: target.id });
+    if (isCorrect) {
+      onScoreRef.current(10);
+      setQuizScore(s => s + 10);
+      setStreak(s => s + 1);
+    } else {
+      setStreak(0);
+    }
+    setTotal(t => t + 1);
+    setTimeout(pickNext, 1500);
+  }, [target, pickNext]);
+
+  // Rebuild lagen bij target/feedback wijziging
   useEffect(() => {
     if (!mapRef.current || !geoData || !target) return;
 
-    if (geoLayerRef.current) {
-      mapRef.current.removeLayer(geoLayerRef.current);
-      geoLayerRef.current = null;
-    }
+    // Verwijder oude lagen
+    if (geoLayerRef.current) { mapRef.current.removeLayer(geoLayerRef.current); geoLayerRef.current = null; }
+    if (dotsLayerRef.current) { mapRef.current.removeLayer(dotsLayerRef.current); dotsLayerRef.current = null; }
 
-    const currentTarget   = target;
     const currentFeedback = feedback;
 
+    // ── GeoJSON polygonen ──
     geoLayerRef.current = L.geoJSON(geoData, {
       style: (feature) => {
-        const pName = feature?.properties?.name;
-        const prov  = PROVINCES.find(p => p.name === pName);
-
+        const prov = provFromFeature(feature);
         let fillColor   = prov?.color ?? '#f1f5f9';
-        let fillOpacity = 0.35;
+        let fillOpacity = 0.3;
         let color       = '#7C3AED';
         let weight      = 1.5;
 
         if (currentFeedback && prov) {
           if (prov.id === currentFeedback.clicked) {
             fillColor   = currentFeedback.type === 'correct' ? '#22C55E' : '#EF4444';
-            fillOpacity = 0.8;
+            fillOpacity = 0.75;
             color       = currentFeedback.type === 'correct' ? '#16A34A' : '#DC2626';
             weight      = 3;
           } else if (currentFeedback.type === 'wrong' && prov.id === currentFeedback.correct) {
             fillColor   = '#86EFAC';
-            fillOpacity = 0.6;
+            fillOpacity = 0.55;
             color       = '#16A34A';
             weight      = 2.5;
           }
         }
-
         return { fillColor, fillOpacity, color, weight };
       },
       onEachFeature: (feature, layer) => {
-        const pName = feature?.properties?.name;
-        const prov  = PROVINCES.find(p => p.name === pName);
+        const prov = provFromFeature(feature);
         if (!prov) return;
-
-        layer.on('click', () => {
-          if (processingRef.current) return;
-          processingRef.current = true;
-
-          const isCorrect = prov.id === currentTarget.id;
-          setFeedback({ type: isCorrect ? 'correct' : 'wrong', clicked: prov.id, correct: currentTarget.id });
-
-          if (isCorrect) {
-            onScoreRef.current(10);
-            setQuizScore(s => s + 10);
-            setStreak(s => s + 1);
-          } else {
-            setStreak(0);
-          }
-          setTotal(t => t + 1);
-          setTimeout(pickNext, 1500);
-        });
-
-        layer.on('mouseover', () => {
-          if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.6 });
-        });
-        layer.on('mouseout', () => {
-          if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.35 });
-        });
+        layer.on('click', () => handleClick(prov));
+        layer.on('mouseover', () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.55 }); });
+        layer.on('mouseout',  () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.3 }); });
       },
     }).addTo(mapRef.current);
-  }, [geoData, target, feedback, pickNext]);
+
+    // ── 12 provincie-stippen ──
+    dotsLayerRef.current = L.layerGroup();
+    PROVINCES.forEach(prov => {
+      let dotColor = '#7C3AED';
+      let radius   = 8;
+      let border   = '#ffffff';
+
+      if (currentFeedback) {
+        if (prov.id === currentFeedback.clicked) {
+          dotColor = currentFeedback.type === 'correct' ? '#22C55E' : '#EF4444';
+          radius   = 11;
+        } else if (currentFeedback.type === 'wrong' && prov.id === currentFeedback.correct) {
+          dotColor = '#22C55E';
+          radius   = 11;
+        }
+      } else if (prov.id === target.id) {
+        dotColor = '#F59E0B';
+        radius   = 10;
+        border   = '#ffffff';
+      }
+
+      const dot = L.circleMarker([prov.center[0], prov.center[1]], {
+        radius,
+        fillColor: dotColor,
+        color: border,
+        weight: 2.5,
+        fillOpacity: 0.95,
+      });
+      dot.on('click', () => handleClick(prov));
+      dot.addTo(dotsLayerRef.current!);
+    });
+    dotsLayerRef.current.addTo(mapRef.current);
+
+  }, [geoData, target, feedback, handleClick]);
 
   const pct = total > 0 ? Math.round((quizScore / 10 / total) * 100) : 0;
 
