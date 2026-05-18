@@ -303,7 +303,7 @@ const Game: React.FC = () => {
 
         {/* Row 2: mode tabs (scroll-hint via fade gradient rechts op mobiel) */}
         <div className="relative">
-          <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-1.5 px-4 pt-2 pb-3 overflow-x-auto scrollbar-hide">
             {MODES.map(m => {
               const active = mode === m.id;
               return (

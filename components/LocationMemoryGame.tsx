@@ -92,13 +92,14 @@ const CardBack: React.FC = () => (
 
 // Card front face: name card
 const NameCard: React.FC<{ name: string; emoji: string; matched: boolean; compact: boolean }> = ({ name, emoji, matched, compact }) => (
-  <div className={`absolute inset-0 flex flex-col items-center justify-center rounded-xl border-2 gap-1 p-2
+  <div className={`absolute inset-0 flex flex-col items-center justify-center rounded-xl border-2 gap-0.5 overflow-hidden
+    ${compact ? 'p-1.5' : 'p-2'}
     ${matched ? 'bg-[#7C3AED]/20 border-[#7C3AED]' : 'bg-[#FFFFFF] border-[#DDD6FE]'}`}
   >
-    <span className={`${compact ? 'text-2xl' : 'text-4xl'} leading-none`}>{emoji}</span>
-    <span className="font-black text-center text-[#1F2937] leading-tight"
+    <span className={`${compact ? 'text-xl' : 'text-4xl'} leading-none flex-shrink-0`}>{emoji}</span>
+    <span className="font-black text-center text-[#1F2937] leading-tight overflow-hidden w-full"
       style={{ fontSize: compact
-        ? (name.length > 14 ? '13px' : name.length > 10 ? '15px' : '17px')
+        ? (name.length > 14 ? '11px' : name.length > 10 ? '13px' : '15px')
         : (name.length > 14 ? '18px' : name.length > 10 ? '22px' : '26px') }}>
       {name}
     </span>
@@ -107,13 +108,14 @@ const NameCard: React.FC<{ name: string; emoji: string; matched: boolean; compac
 
 // Card front face: fact card
 const FactCard: React.FC<{ fact: string; matched: boolean; compact: boolean }> = ({ fact, matched, compact }) => (
-  <div className={`absolute inset-0 flex items-center justify-center rounded-xl border-2 p-2
+  <div className={`absolute inset-0 flex items-start justify-center rounded-xl border-2 overflow-hidden
+    ${compact ? 'p-1.5' : 'p-2'}
     ${matched ? 'bg-[#7C3AED]/20 border-[#7C3AED]' : 'bg-[#FFFFFF] border-[#DDD6FE]'}`}
   >
     <p
-      className="font-bold text-[#1F2937] text-center leading-snug"
+      className="font-bold text-[#1F2937] text-center leading-snug overflow-hidden"
       style={{ fontSize: compact
-        ? (fact.length > 100 ? '11px' : fact.length > 70 ? '12px' : '14px')
+        ? (fact.length > 100 ? '9px' : fact.length > 70 ? '10px' : '12px')
         : (fact.length > 100 ? '13px' : fact.length > 70 ? '15px' : '18px') }}
     >
       {fact}
@@ -394,7 +396,7 @@ const LocationMemoryGame: React.FC<LocationMemoryGameProps> = ({ provinceId, onS
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
           gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
-          gap: '6px',
+          gap: compact ? '4px' : '8px',
         }}
       >
         {cards.map(card => (
