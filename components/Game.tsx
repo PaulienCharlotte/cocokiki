@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Map as MapIcon, Search, SpellCheck, Wand2, Brain, Lightbulb,
-  Trophy, ChevronDown, Eye, EyeOff, X, Timer, TimerOff, LogIn, User, Landmark,
+  Trophy, ChevronDown, Eye, EyeOff, X, LogIn, User, Landmark,
 } from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
 import GameEngine from './GameEngine';
@@ -45,7 +45,6 @@ const Game: React.FC = () => {
   const [currentFact, setCurrentFact]           = useState<string | null>(null);
   const [currentEmoji, setCurrentEmoji]         = useState('📍');
   const [showLabels, setShowLabels]             = useState(true);
-  const [timerEnabled, setTimerEnabled]         = useState(true);
   const [isRevealed, setIsRevealed]             = useState(false);
   const [isMobile, setIsMobile]                 = useState(window.innerWidth < 768);
   const [provinceOpen, setProvinceOpen]         = useState(false);
@@ -229,22 +228,6 @@ const Game: React.FC = () => {
             >
               {showLabels ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">Namen</span>
-            </button>
-          )}
-
-          {/* Timer toggle — alleen bij spel-modi */}
-          {(mode === 'find' || mode === 'spell' || mode === 'master') && (
-            <button
-              onClick={() => setTimerEnabled(t => !t)}
-              title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                timerEnabled
-                  ? 'bg-[#F59E0B] text-white border-0'
-                  : 'bg-[#4C1D95] text-[#9CA3AF] border border-[#4B5563]'
-              }`}
-            >
-              {timerEnabled ? <Timer className="w-3.5 h-3.5" /> : <TimerOff className="w-3.5 h-3.5" />}
-              <span className="hidden sm:inline">{timerEnabled ? 'Timer aan' : 'Timer uit'}</span>
             </button>
           )}
 
@@ -443,7 +426,6 @@ const Game: React.FC = () => {
                     onReveal={handleReveal}
                     userClickedLocationId={userClickedLocationId}
                     isMobileCompact={true}
-                    timerEnabled={timerEnabled}
                   />
                 </div>
               </div>
@@ -509,7 +491,6 @@ const Game: React.FC = () => {
                 onLocationClick={handleTargetSet}
                 onReveal={handleReveal}
                 userClickedLocationId={userClickedLocationId}
-                timerEnabled={timerEnabled}
               />
             </aside>
           )}

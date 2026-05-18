@@ -3,7 +3,7 @@ import { Location, GameMode } from '../types';
 import { LOCATIONS, PROVINCES } from '../constants';
 import { getMnemonic, getFunFact } from '../services/geminiService';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Lightbulb, MapPin, Type as TypeIcon, Sparkles, Search, AlertCircle, Wand2, ArrowRight, Eye, ArrowLeft, RefreshCcw, LayoutList, BookOpen, Timer } from 'lucide-react';
+import { CheckCircle2, XCircle, Lightbulb, MapPin, Type as TypeIcon, Sparkles, Search, AlertCircle, Wand2, ArrowRight, Eye, ArrowLeft, RefreshCcw, LayoutList, BookOpen, Timer, TimerOff } from 'lucide-react';
 
 const TIMER_SECONDS = 15;
 
@@ -44,7 +44,6 @@ interface GameEngineProps {
   onReveal?: (val: boolean) => void;
   userClickedLocationId: string | null;
   isMobileCompact?: boolean;
-  timerEnabled?: boolean;
 }
 
 type MasterStep = 'find' | 'spell' | 'fact';
@@ -59,8 +58,8 @@ const GameEngine: React.FC<GameEngineProps> = ({
   onReveal,
   userClickedLocationId,
   isMobileCompact = false,
-  timerEnabled = true,
 }) => {
+  const [timerEnabled, setTimerEnabled] = useState(true);
   const [round, setRound] = useState<RoundType>(1);
   const [queue, setQueue] = useState<Location[]>([]);
   const [errorPool, setErrorPool] = useState<Location[]>([]);
@@ -425,6 +424,13 @@ const GameEngine: React.FC<GameEngineProps> = ({
           {timerEnabled && masterStep !== 'fact' && (
             <CircularTimer timeLeft={timeLeft} total={TIMER_SECONDS} />
           )}
+          <button
+            onClick={() => setTimerEnabled(t => !t)}
+            title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
+            className={`p-1 rounded-lg transition-colors ${timerEnabled ? 'text-[#F59E0B]' : 'text-[#D1D5DB]'}`}
+          >
+            {timerEnabled ? <Timer className="w-3.5 h-3.5" /> : <TimerOff className="w-3.5 h-3.5" />}
+          </button>
           <div className="bg-[#FFFFFF] px-1 py-0.5 rounded-lg">
             <span className="text-[8px] md:text-[10px] font-black text-[#1F2937]">{completedInRound + 1}/{totalInRound}</span>
           </div>
