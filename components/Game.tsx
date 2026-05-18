@@ -3,12 +3,13 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Map as MapIcon, Search, SpellCheck, Wand2, Brain, Lightbulb,
-  Trophy, ChevronDown, Eye, EyeOff, X, Timer, TimerOff, LogIn, User,
+  Trophy, ChevronDown, Eye, EyeOff, X, Timer, TimerOff, LogIn, User, Landmark,
 } from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
 import GameEngine from './GameEngine';
 import LocationMemoryGame from './LocationMemoryGame';
 import MnemonicGame from './MnemonicGame';
+import ProvincesGame from './ProvincesGame';
 import AuthModal from './AuthModal';
 import ProfilePanel from './ProfilePanel';
 import { PROVINCES, LOCATIONS, CLUSTERS } from '../constants';
@@ -18,11 +19,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { saveScoreSession } from '../services/supabase';
 
 const MODES = [
-  { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon    },
-  { id: 'find'    as GameMode, label: 'Zoeken',       icon: Search     },
-  { id: 'spell'   as GameMode, label: 'Spellen',      icon: SpellCheck },
-  { id: 'master'  as GameMode, label: 'Oefenmeester', icon: Wand2      },
-  { id: 'memory'  as GameMode, label: 'Memory',       icon: Brain      },
+  { id: 'explore'   as GameMode, label: 'Verkennen',    icon: MapIcon    },
+  { id: 'find'      as GameMode, label: 'Zoeken',       icon: Search     },
+  { id: 'spell'     as GameMode, label: 'Spellen',      icon: SpellCheck },
+  { id: 'master'    as GameMode, label: 'Oefenmeester', icon: Wand2      },
+  { id: 'memory'    as GameMode, label: 'Memory',       icon: Brain      },
+  { id: 'provinces' as GameMode, label: 'Provincies',   icon: Landmark   },
 ];
 
 const getTypeColor = (type: string) => {
@@ -218,7 +220,7 @@ const Game: React.FC = () => {
           <div className="ml-auto flex items-center gap-2">
 
           {/* Labels toggle */}
-          {mode !== 'memory' && mode !== 'mnemonic' && (
+          {mode !== 'memory' && mode !== 'mnemonic' && mode !== 'provinces' && (
             <button
               onClick={() => setShowLabels(s => !s)}
               title={showLabels ? 'Namen verbergen' : 'Namen tonen'}
@@ -323,7 +325,7 @@ const Game: React.FC = () => {
 
         {/* Row 3: cluster pills (shown when province selected + not memory) */}
         <AnimatePresence>
-          {availableClusters.length > 0 && mode !== 'memory' && mode !== 'mnemonic' && (
+          {availableClusters.length > 0 && mode !== 'memory' && mode !== 'mnemonic' && mode !== 'provinces' && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -377,6 +379,10 @@ const Game: React.FC = () => {
             key={`mnemonic-${selectedProvince}`}
             provinceId={selectedProvince}
           />
+        </main>
+      ) : mode === 'provinces' ? (
+        <main className="flex-1 min-h-0 m-3 bg-[#F5F3FF] rounded-[2rem] shadow-xl border-[6px] border-white overflow-hidden">
+          <ProvincesGame onScoreChange={handleScoreChange} />
         </main>
       ) : (
         // Map modes
