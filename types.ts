@@ -27,7 +27,7 @@ export interface Province {
   zoom: number;
 }
 
-export type GameMode = 'explore' | 'find' | 'spell' | 'master' | 'memory' | 'mnemonic';
+export type GameMode = 'explore' | 'find' | 'spell' | 'master' | 'memory' | 'mnemonic' | 'test';
 
 export interface GameState {
   currentMode: GameMode;

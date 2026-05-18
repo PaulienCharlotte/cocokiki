@@ -3,12 +3,13 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Map as MapIcon, Search, SpellCheck, Wand2, Brain, Lightbulb,
-  Trophy, ChevronDown, Eye, EyeOff, X, LogIn, User, Landmark,
+  Trophy, ChevronDown, Eye, EyeOff, X, LogIn, User, Landmark, ClipboardList,
 } from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
 import GameEngine from './GameEngine';
 import LocationMemoryGame from './LocationMemoryGame';
 import MnemonicGame from './MnemonicGame';
+import ToetsGame from './ToetsGame';
 import AuthModal from './AuthModal';
 import ProfilePanel from './ProfilePanel';
 import { PROVINCES, LOCATIONS, CLUSTERS } from '../constants';
@@ -18,11 +19,12 @@ import { useAuth } from '../contexts/AuthContext';
 import { saveScoreSession } from '../services/supabase';
 
 const MODES = [
-  { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon    },
-  { id: 'find'    as GameMode, label: 'Zoeken',       icon: Search     },
-  { id: 'spell'   as GameMode, label: 'Spellen',      icon: SpellCheck },
-  { id: 'master'  as GameMode, label: 'Oefenmeester', icon: Wand2      },
-  { id: 'memory'  as GameMode, label: 'Memory',       icon: Brain      },
+  { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon       },
+  { id: 'find'    as GameMode, label: 'Zoeken',       icon: Search        },
+  { id: 'spell'   as GameMode, label: 'Spellen',      icon: SpellCheck    },
+  { id: 'master'  as GameMode, label: 'Oefenmeester', icon: Wand2         },
+  { id: 'memory'  as GameMode, label: 'Memory',       icon: Brain         },
+  { id: 'test'    as GameMode, label: 'Toetsen',      icon: ClipboardList },
 ];
 
 const getTypeColor = (type: string) => {
@@ -322,7 +324,7 @@ const Game: React.FC = () => {
 
         {/* Row 3: cluster pills (shown when province selected + not memory) */}
         <AnimatePresence>
-          {availableClusters.length > 0 && mode !== 'memory' && mode !== 'mnemonic' && (
+          {availableClusters.length > 0 && mode !== 'memory' && mode !== 'mnemonic' && mode !== 'test' && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -375,6 +377,14 @@ const Game: React.FC = () => {
           <MnemonicGame
             key={`mnemonic-${selectedProvince}`}
             provinceId={selectedProvince}
+          />
+        </main>
+      ) : mode === 'test' ? (
+        <main className="flex-1 min-h-0 m-3 bg-white rounded-[2rem] shadow-xl border-[6px] border-white overflow-hidden">
+          <ToetsGame
+            key={`test-${selectedProvince}-${selectedCluster}`}
+            provinceId={selectedProvince}
+            clusterId={selectedCluster}
           />
         </main>
       ) : (
@@ -549,6 +559,12 @@ const Game: React.FC = () => {
                 className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
               >
                 Provincies &amp; Hoofdsteden
+              </button>
+              <button
+                onClick={() => handleModeChange('test')}
+                className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
+              >
+                Toetsen
               </button>
             </div>
           </div>
