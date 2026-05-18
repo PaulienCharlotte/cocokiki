@@ -19,12 +19,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { saveScoreSession } from '../services/supabase';
 
 const MODES = [
-  { id: 'explore'   as GameMode, label: 'Verkennen',    icon: MapIcon    },
-  { id: 'find'      as GameMode, label: 'Zoeken',       icon: Search     },
-  { id: 'spell'     as GameMode, label: 'Spellen',      icon: SpellCheck },
-  { id: 'master'    as GameMode, label: 'Oefenmeester', icon: Wand2      },
-  { id: 'memory'    as GameMode, label: 'Memory',       icon: Brain      },
-  { id: 'provinces' as GameMode, label: 'Provincies',   icon: Landmark   },
+  { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon    },
+  { id: 'find'    as GameMode, label: 'Zoeken',       icon: Search     },
+  { id: 'spell'   as GameMode, label: 'Spellen',      icon: SpellCheck },
+  { id: 'master'  as GameMode, label: 'Oefenmeester', icon: Wand2      },
+  { id: 'memory'  as GameMode, label: 'Memory',       icon: Brain      },
 ];
 
 const getTypeColor = (type: string) => {
@@ -255,9 +254,9 @@ const Game: React.FC = () => {
               onClick={() => setProvinceOpen(o => !o)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#7C3AED] border-0 rounded-full text-sm font-black text-white hover:bg-[#EAB308] transition-colors"
             >
-              <span className="text-base">{currentProvince ? '📍' : '🇳🇱'}</span>
+              <span className="text-base">{mode === 'provinces' ? '🏛️' : currentProvince ? '📍' : '🇳🇱'}</span>
               <span className="max-w-[100px] truncate hidden sm:inline">
-                {currentProvince?.name ?? 'Heel NL'}
+                {mode === 'provinces' ? 'Provincies' : currentProvince?.name ?? 'Heel NL'}
               </span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${provinceOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -271,9 +270,19 @@ const Game: React.FC = () => {
                   transition={{ duration: 0.15 }}
                   className="absolute right-0 top-full mt-2 w-48 bg-[#3B0764] rounded-2xl shadow-xl border border-[#4C1D95] overflow-hidden z-50"
                 >
+                  {/* Provincies & Hoofdsteden game */}
+                  <button
+                    onClick={() => { handleModeChange('provinces'); setProvinceOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center gap-2 ${mode === 'provinces' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                  >
+                    <Landmark className="w-3.5 h-3.5 flex-shrink-0" />
+                    Provincies &amp; Hoofdsteden
+                  </button>
+                  <div className="border-t border-[#4C1D95] mx-3" />
+
                   <button
                     onClick={() => handleProvinceChange('all')}
-                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === 'all' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === 'all' && mode !== 'provinces' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
                   >
                     🇳🇱 Heel Nederland
                   </button>
