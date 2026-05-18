@@ -28,6 +28,23 @@ export const CLUSTERS: Cluster[] = [
   { id: 'meren', name: 'Friese Meren', icon: '⛵', provinceId: 'fr' },
   { id: 'wouden', name: 'Friese Wouden', icon: '🌳', provinceId: 'fr' },
   { id: 'steden', name: 'Noordwest / Terpenland', icon: '🏙️', provinceId: 'fr' },
+
+  // --- NOORD-HOLLAND ---
+  { id: 'nh_metropool', name: 'Metropool Amsterdam', icon: '🌆', provinceId: 'nh' },
+  { id: 'nh_kust', name: 'Kust & Haarlemmermeer', icon: '🏖️', provinceId: 'nh' },
+  { id: 'nh_waterland', name: 'Waterland & Zaanstreek', icon: '⛵', provinceId: 'nh' },
+  { id: 'nh_westfriesland', name: "West-Friesland & 't Gooi", icon: '🏘️', provinceId: 'nh' },
+
+  // --- GELDERLAND ---
+  { id: 'ge_veluwe', name: 'Veluwe', icon: '🌲', provinceId: 'ge' },
+  { id: 'ge_rivieren', name: 'Rivierengebied', icon: '🌊', provinceId: 'ge' },
+  { id: 'ge_achterhoek', name: 'Achterhoek', icon: '🌾', provinceId: 'ge' },
+
+  // --- NOORD-BRABANT ---
+  { id: 'nb_baronie', name: 'Baronie van Breda', icon: '🏰', provinceId: 'nb' },
+  { id: 'nb_meierij', name: 'Meierij', icon: '🏛️', provinceId: 'nb' },
+  { id: 'nb_kempen', name: 'Kempen', icon: '🌳', provinceId: 'nb' },
+  { id: 'nb_peel', name: 'De Peel', icon: '🌾', provinceId: 'nb' },
 ];
 
 export const LOCATIONS: Location[] = [
@@ -64,15 +81,15 @@ export const LOCATIONS: Location[] = [
   { id: 'cap-1', name: 'Assen', provinceId: 'dr', type: 'city', lat: 52.9927, lng: 6.5642, isCapital: true },
   { id: 'cap-2', name: 'Lelystad', provinceId: 'fl', type: 'city', lat: 52.5185, lng: 5.4714, isCapital: true },
   { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999, clusterId: 'steden', isCapital: true },
-  { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987, isCapital: true },
+  { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987, clusterId: 'ge_rivieren', isCapital: true },
   { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665, isCapital: true },
   { id: 'cap-6', name: 'Maastricht', provinceId: 'li', type: 'city', lat: 50.8514, lng: 5.6910, isCapital: true },
-  { id: 'cap-7', name: "’s-Hertogenbosch", provinceId: 'nb', type: 'city', lat: 51.6978, lng: 5.3037, isCapital: true },
-  { id: 'cap-8', name: 'Haarlem', provinceId: 'nh', type: 'city', lat: 52.3874, lng: 4.6462, isCapital: true },
+  { id: 'cap-7', name: "’s-Hertogenbosch", provinceId: 'nb', type: 'city', lat: 51.6978, lng: 5.3037, clusterId: 'nb_meierij', isCapital: true },
+  { id: 'cap-8', name: 'Haarlem', provinceId: 'nh', type: 'city', lat: 52.3874, lng: 4.6462, clusterId: 'nh_kust', isCapital: true },
   { id: 'cap-9', name: 'Zwolle', provinceId: 'ov', type: 'city', lat: 52.5168, lng: 6.0830, isCapital: true },
   { id: 'cap-10', name: 'Utrecht', provinceId: 'ut', type: 'city', lat: 52.0907, lng: 5.1214, isCapital: true },
   { id: 'cap-11', name: 'Middelburg', provinceId: 'ze', type: 'city', lat: 51.4988, lng: 3.6110, isCapital: true },
-  { id: 'city-nh-1', name: 'Amsterdam', provinceId: 'nh', type: 'city', lat: 52.3676, lng: 4.9041 },
+  { id: 'city-nh-1', name: 'Amsterdam', provinceId: 'nh', type: 'city', lat: 52.3676, lng: 4.9041, clusterId: 'nh_metropool' },
 
   // --- FRIESLAND ---
   // Plaatsen (Leeuwarden is al aanwezig als cap-3)
@@ -104,4 +121,97 @@ export const LOCATIONS: Location[] = [
   { id: 'fr-V', name: 'Fluessen', provinceId: 'fr', type: 'water', lat: 52.9330, lng: 5.5160, clusterId: 'meren' },
   { id: 'fr-VI', name: 'Slotermeer', provinceId: 'fr', type: 'water', lat: 52.9000, lng: 5.6160, clusterId: 'meren' },
   { id: 'fr-VII', name: 'Tjeukemeer', provinceId: 'fr', type: 'water', lat: 52.8830, lng: 5.8000, clusterId: 'meren' },
+
+  // --- NOORD-HOLLAND ---
+  // Plaatsen (Haarlem = cap-8, Amsterdam = city-nh-1)
+  { id: 'nh-1', name: 'Alkmaar', provinceId: 'nh', type: 'city', lat: 52.6324, lng: 4.7524, clusterId: 'nh_westfriesland' },
+  { id: 'nh-2', name: 'Zaandam', provinceId: 'nh', type: 'city', lat: 52.4386, lng: 4.8264, clusterId: 'nh_waterland' },
+  { id: 'nh-3', name: 'Den Helder', provinceId: 'nh', type: 'city', lat: 52.9560, lng: 4.7625, clusterId: 'nh_kust' },
+  { id: 'nh-4', name: 'Hoorn', provinceId: 'nh', type: 'city', lat: 52.6461, lng: 5.0591, clusterId: 'nh_westfriesland' },
+  { id: 'nh-5', name: 'Hilversum', provinceId: 'nh', type: 'city', lat: 52.2215, lng: 5.1779, clusterId: 'nh_westfriesland' },
+  { id: 'nh-6', name: 'Purmerend', provinceId: 'nh', type: 'city', lat: 52.5024, lng: 4.9570, clusterId: 'nh_waterland' },
+  { id: 'nh-7', name: 'Amstelveen', provinceId: 'nh', type: 'city', lat: 52.3095, lng: 4.8590, clusterId: 'nh_metropool' },
+  { id: 'nh-8', name: 'Aalsmeer', provinceId: 'nh', type: 'city', lat: 52.2591, lng: 4.7635, clusterId: 'nh_metropool' },
+  { id: 'nh-9', name: 'Enkhuizen', provinceId: 'nh', type: 'city', lat: 52.7065, lng: 5.2944, clusterId: 'nh_westfriesland' },
+  { id: 'nh-10', name: 'IJmuiden', provinceId: 'nh', type: 'city', lat: 52.4613, lng: 4.6113, clusterId: 'nh_kust' },
+  { id: 'nh-11', name: 'Volendam', provinceId: 'nh', type: 'city', lat: 52.4961, lng: 5.0705, clusterId: 'nh_waterland' },
+  { id: 'nh-12', name: 'Zandvoort', provinceId: 'nh', type: 'city', lat: 52.3708, lng: 4.5339, clusterId: 'nh_kust' },
+  { id: 'nh-13', name: 'Bussum', provinceId: 'nh', type: 'city', lat: 52.2769, lng: 5.1613, clusterId: 'nh_westfriesland' },
+
+  // Gebieden
+  { id: 'nh-A', name: 'Het Gooi', provinceId: 'nh', type: 'region', lat: 52.2500, lng: 5.1200, clusterId: 'nh_westfriesland' },
+  { id: 'nh-B', name: 'Beemster', provinceId: 'nh', type: 'region', lat: 52.5481, lng: 4.9208, clusterId: 'nh_waterland' },
+  { id: 'nh-C', name: 'Wieringermeer', provinceId: 'nh', type: 'region', lat: 52.8500, lng: 5.0167, clusterId: 'nh_kust' },
+  { id: 'nh-D', name: 'Texel', provinceId: 'nh', type: 'region', lat: 53.0586, lng: 4.7958, clusterId: 'nh_kust' },
+  { id: 'nh-E', name: 'Haarlemmermeer', provinceId: 'nh', type: 'region', lat: 52.3050, lng: 4.6833, clusterId: 'nh_kust' },
+  { id: 'nh-F', name: 'Schiphol', provinceId: 'nh', type: 'region', lat: 52.3105, lng: 4.7683, clusterId: 'nh_metropool' },
+
+  // Wateren
+  { id: 'nh-I', name: 'IJmeer', provinceId: 'nh', type: 'water', lat: 52.3667, lng: 5.0500, clusterId: 'nh_metropool' },
+  { id: 'nh-II', name: 'Noordhollands Kanaal', provinceId: 'nh', type: 'water', lat: 52.7500, lng: 4.8167, clusterId: 'nh_kust' },
+  { id: 'nh-III', name: 'Noordzeekanaal', provinceId: 'nh', type: 'water', lat: 52.4400, lng: 4.7167, clusterId: 'nh_kust' },
+  { id: 'nh-IV', name: 'Loosdrechtse Plassen', provinceId: 'nh', type: 'water', lat: 52.2083, lng: 5.0667, clusterId: 'nh_westfriesland' },
+  { id: 'nh-V', name: 'Amsterdam-Rijnkanaal', provinceId: 'nh', type: 'water', lat: 52.2500, lng: 5.0333, clusterId: 'nh_metropool' },
+  { id: 'nh-VI', name: 'Markermeer', provinceId: 'nh', type: 'water', lat: 52.5500, lng: 5.1000, clusterId: 'nh_waterland' },
+
+  // --- GELDERLAND ---
+  // Plaatsen (Arnhem = cap-4)
+  { id: 'ge-1', name: 'Nijmegen', provinceId: 'ge', type: 'city', lat: 51.8426, lng: 5.8528, clusterId: 'ge_rivieren' },
+  { id: 'ge-2', name: 'Apeldoorn', provinceId: 'ge', type: 'city', lat: 52.2112, lng: 5.9699, clusterId: 'ge_veluwe' },
+  { id: 'ge-3', name: 'Harderwijk', provinceId: 'ge', type: 'city', lat: 52.3424, lng: 5.6229, clusterId: 'ge_veluwe' },
+  { id: 'ge-4', name: 'Ede', provinceId: 'ge', type: 'city', lat: 52.0415, lng: 5.6656, clusterId: 'ge_veluwe' },
+  { id: 'ge-5', name: 'Doetinchem', provinceId: 'ge', type: 'city', lat: 51.9656, lng: 6.2973, clusterId: 'ge_achterhoek' },
+  { id: 'ge-6', name: 'Zutphen', provinceId: 'ge', type: 'city', lat: 52.1386, lng: 6.1989, clusterId: 'ge_achterhoek' },
+  { id: 'ge-7', name: 'Winterswijk', provinceId: 'ge', type: 'city', lat: 51.9760, lng: 6.7193, clusterId: 'ge_achterhoek' },
+  { id: 'ge-8', name: 'Wageningen', provinceId: 'ge', type: 'city', lat: 51.9693, lng: 5.6653, clusterId: 'ge_rivieren' },
+  { id: 'ge-9', name: 'Tiel', provinceId: 'ge', type: 'city', lat: 51.8847, lng: 5.4287, clusterId: 'ge_rivieren' },
+  { id: 'ge-10', name: 'Barneveld', provinceId: 'ge', type: 'city', lat: 52.1196, lng: 5.5886, clusterId: 'ge_veluwe' },
+  { id: 'ge-11', name: 'Elst', provinceId: 'ge', type: 'city', lat: 51.9188, lng: 5.8492, clusterId: 'ge_rivieren' },
+  { id: 'ge-12', name: 'Zevenaar', provinceId: 'ge', type: 'city', lat: 51.9274, lng: 6.0761, clusterId: 'ge_rivieren' },
+  { id: 'ge-13', name: 'Nijkerk', provinceId: 'ge', type: 'city', lat: 52.2179, lng: 5.4878, clusterId: 'ge_veluwe' },
+  { id: 'ge-14', name: 'Nunspeet', provinceId: 'ge', type: 'city', lat: 52.3783, lng: 5.7774, clusterId: 'ge_veluwe' },
+  { id: 'ge-15', name: 'Groenlo', provinceId: 'ge', type: 'city', lat: 51.9988, lng: 6.6164, clusterId: 'ge_achterhoek' },
+
+  // Gebieden
+  { id: 'ge-A', name: 'Veluwe', provinceId: 'ge', type: 'region', lat: 52.1500, lng: 5.8500, clusterId: 'ge_veluwe' },
+  { id: 'ge-B', name: 'Betuwe', provinceId: 'ge', type: 'region', lat: 51.8800, lng: 5.5500, clusterId: 'ge_rivieren' },
+  { id: 'ge-C', name: 'Achterhoek', provinceId: 'ge', type: 'region', lat: 51.9800, lng: 6.4500, clusterId: 'ge_achterhoek' },
+
+  // Wateren / rivieren
+  { id: 'ge-I', name: 'Waal', provinceId: 'ge', type: 'water', lat: 51.8700, lng: 5.4500, clusterId: 'ge_rivieren' },
+  { id: 'ge-II', name: 'IJssel', provinceId: 'ge', type: 'water', lat: 52.1200, lng: 6.1000, clusterId: 'ge_achterhoek' },
+  { id: 'ge-III', name: 'Rijn', provinceId: 'ge', type: 'water', lat: 51.9600, lng: 5.9500, clusterId: 'ge_rivieren' },
+
+  // --- NOORD-BRABANT ---
+  // Plaatsen ('s-Hertogenbosch = cap-7)
+  { id: 'nb-1', name: 'Eindhoven', provinceId: 'nb', type: 'city', lat: 51.4416, lng: 5.4697, clusterId: 'nb_kempen' },
+  { id: 'nb-2', name: 'Tilburg', provinceId: 'nb', type: 'city', lat: 51.5555, lng: 5.0913, clusterId: 'nb_kempen' },
+  { id: 'nb-3', name: 'Breda', provinceId: 'nb', type: 'city', lat: 51.5719, lng: 4.7683, clusterId: 'nb_baronie' },
+  { id: 'nb-4', name: 'Helmond', provinceId: 'nb', type: 'city', lat: 51.4793, lng: 5.6624, clusterId: 'nb_peel' },
+  { id: 'nb-5', name: 'Oss', provinceId: 'nb', type: 'city', lat: 51.7654, lng: 5.5180, clusterId: 'nb_meierij' },
+  { id: 'nb-6', name: 'Roosendaal', provinceId: 'nb', type: 'city', lat: 51.5306, lng: 4.4654, clusterId: 'nb_baronie' },
+  { id: 'nb-7', name: 'Bergen op Zoom', provinceId: 'nb', type: 'city', lat: 51.4948, lng: 4.2872, clusterId: 'nb_baronie' },
+  { id: 'nb-8', name: 'Waalwijk', provinceId: 'nb', type: 'city', lat: 51.6841, lng: 5.0739, clusterId: 'nb_baronie' },
+  { id: 'nb-9', name: 'Oosterhout', provinceId: 'nb', type: 'city', lat: 51.6450, lng: 4.8579, clusterId: 'nb_baronie' },
+  { id: 'nb-10', name: 'Uden', provinceId: 'nb', type: 'city', lat: 51.6611, lng: 5.6196, clusterId: 'nb_peel' },
+  { id: 'nb-11', name: 'Veghel', provinceId: 'nb', type: 'city', lat: 51.6173, lng: 5.5419, clusterId: 'nb_meierij' },
+  { id: 'nb-12', name: 'Boxmeer', provinceId: 'nb', type: 'city', lat: 51.6479, lng: 5.9456, clusterId: 'nb_peel' },
+  { id: 'nb-13', name: 'Boxtel', provinceId: 'nb', type: 'city', lat: 51.5919, lng: 5.3253, clusterId: 'nb_meierij' },
+  { id: 'nb-14', name: 'Valkenswaard', provinceId: 'nb', type: 'city', lat: 51.3502, lng: 5.4602, clusterId: 'nb_kempen' },
+  { id: 'nb-15', name: 'Etten-Leur', provinceId: 'nb', type: 'city', lat: 51.5708, lng: 4.6388, clusterId: 'nb_baronie' },
+
+  // Gebieden
+  { id: 'nb-A', name: 'Kempen', provinceId: 'nb', type: 'region', lat: 51.4000, lng: 5.3000, clusterId: 'nb_kempen' },
+  { id: 'nb-B', name: 'De Peel', provinceId: 'nb', type: 'region', lat: 51.5300, lng: 5.8500, clusterId: 'nb_peel' },
+  { id: 'nb-C', name: 'Meierij', provinceId: 'nb', type: 'region', lat: 51.6500, lng: 5.4000, clusterId: 'nb_meierij' },
+  { id: 'nb-D', name: 'Baronie van Breda', provinceId: 'nb', type: 'region', lat: 51.5500, lng: 4.8000, clusterId: 'nb_baronie' },
+
+  // Wateren / rivieren
+  { id: 'nb-I', name: 'Maas', provinceId: 'nb', type: 'water', lat: 51.7500, lng: 5.4500, clusterId: 'nb_meierij' },
+  { id: 'nb-II', name: 'Dommel', provinceId: 'nb', type: 'water', lat: 51.5000, lng: 5.4500, clusterId: 'nb_kempen' },
+  { id: 'nb-III', name: 'Aa', provinceId: 'nb', type: 'water', lat: 51.6000, lng: 5.6500, clusterId: 'nb_peel' },
+  { id: 'nb-IV', name: 'Mark', provinceId: 'nb', type: 'water', lat: 51.5500, lng: 4.7000, clusterId: 'nb_baronie' },
+  { id: 'nb-V', name: 'Donge', provinceId: 'nb', type: 'water', lat: 51.6500, lng: 4.8500, clusterId: 'nb_baronie' },
+  { id: 'nb-VI', name: 'Zuid-Willemsvaart', provinceId: 'nb', type: 'water', lat: 51.5500, lng: 5.6500, clusterId: 'nb_peel' },
+  { id: 'nb-VII', name: 'Wilhelminakanaal', provinceId: 'nb', type: 'water', lat: 51.5500, lng: 5.2000, clusterId: 'nb_kempen' },
 ];

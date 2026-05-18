@@ -18,10 +18,10 @@ interface InteractiveMapProps {
 
 const getTypeColor = (type: string) => {
   switch (type) {
-    case 'city': return '#ff4d94';
-    case 'water': return '#00b4d8';
-    case 'region': return '#4ade80';
-    default: return '#fb7185';
+    case 'city': return '#EAB308';
+    case 'water': return '#38bdf8';
+    case 'region': return '#7C3AED';
+    default: return '#EAB308';
   }
 };
 
@@ -71,7 +71,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       center: [52.1, 5.2],
       zoom: 8,
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
       maxBounds: [[50.5, 3.0], [54.0, 7.5]],
       minZoom: 7,
       tap: true,
@@ -79,7 +79,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       touchZoom: true
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png').addTo(mapRef.current);
+    mapRef.current.attributionControl.setPrefix('');
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19,
+      detectRetina: true
+    } as any).addTo(mapRef.current);
 
     setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 200);
 
@@ -94,16 +101,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   useEffect(() => {
     if (!mapRef.current) return;
-    let targetCenter: [number, number] = [52.1, 5.2];
-    let targetZoom = 8;
-    if (selectedProvince !== 'all') {
-      const prov = PROVINCES.find(p => p.id === selectedProvince);
-      if (prov) { targetCenter = prov.center; targetZoom = prov.zoom; }
+
+    if (selectedProvince === 'all') {
+      mapRef.current.flyTo([52.3, 5.3], 8, { duration: 1.2 });
+      return;
     }
-    const last = lastViewRef.current;
-    if (!last || last.center[0] !== targetCenter[0] || last.zoom !== targetZoom) {
-      mapRef.current.flyTo(targetCenter, targetZoom, { duration: 1.2 });
-      lastViewRef.current = { center: targetCenter, zoom: targetZoom };
+
+    // Fit to the actual locations in this province so eastern/edge provinces are centered properly
+    const provLocations = LOCATIONS.filter(loc => loc.provinceId === selectedProvince);
+    if (provLocations.length >= 2) {
+      const lats = provLocations.map(l => l.lat);
+      const lngs = provLocations.map(l => l.lng);
+      const bounds = L.latLngBounds(
+        [Math.min(...lats), Math.min(...lngs)],
+        [Math.max(...lats), Math.max(...lngs)]
+      );
+      mapRef.current.flyToBounds(bounds, { padding: [80, 80], duration: 1.2, maxZoom: 11 });
+    } else {
+      // Fallback to province center if too few locations
+      const prov = PROVINCES.find(p => p.id === selectedProvince);
+      if (prov) mapRef.current.flyTo(prov.center as L.LatLngTuple, prov.zoom, { duration: 1.2 });
     }
   }, [selectedProvince]);
 
@@ -116,12 +133,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         const provData = PROVINCES.find(p => p.name === provinceName);
         const isSelected = provData?.id === selectedProvince;
         const isGameTarget = provData?.id === activeGameLocation;
-        
+        const fillColor = provData?.color ?? '#f8fafc';
+
         return {
-          fillColor: isSelected || isGameTarget ? '#ffc2d1' : '#f8fafc',
-          fillOpacity: isSelected || isGameTarget ? 0.7 : 0.5,
-          color: isSelected || isGameTarget ? '#ff4d94' : '#cbd5e1', 
-          weight: isSelected || isGameTarget ? 3 : 1
+          fillColor: isSelected || isGameTarget ? '#f59e0b' : fillColor,
+          fillOpacity: isSelected || isGameTarget ? 0.45 : 0.25,
+          color: isSelected || isGameTarget ? '#d97706' : '#4a6fa5',
+          weight: isSelected || isGameTarget ? 3.5 : 2,
+          dashArray: '',
+          opacity: 1
         };
       }
     }).addTo(mapRef.current).bringToBack();
@@ -177,11 +197,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const pos = getSmartLabelPosition(index);
       const shouldRenderLabel = showLabels && gameMode === 'explore';
 
+      const capitalStar = (loc as any).isCapital
+        ? `<span style="position:absolute;top:-5px;right:-5px;font-size:9px;line-height:1;pointer-events:none;">★</span>`
+        : '';
       const icon = L.divIcon({
         className: 'custom-label-icon',
         html: `
           <div class="relative flex items-center justify-center">
-            <div class="marker-dot ${isHighlighted ? 'highlighted' : ''}" style="background-color: ${displayColor} !important;"></div>
+            <div class="marker-dot ${isHighlighted ? 'highlighted' : ''}" style="background-color: ${displayColor} !important; position:relative;">
+              ${capitalStar}
+            </div>
             ${shouldRenderLabel || (gameMode === 'explore' && isHighlighted) ? `<div class="marker-label" style="left: ${pos.x}; top: ${pos.y}; transform: ${pos.transform}; z-index: ${isHighlighted ? '20000' : '500'}; color: ${baseColor};">${loc.name}</div>` : ''}
           </div>
         `,

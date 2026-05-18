@@ -1,51 +1,77 @@
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Map as MapIcon, Search, SpellCheck, Wand2, Brain, Lightbulb,
+  Trophy, ChevronDown, Eye, EyeOff, X, Timer, TimerOff, LogIn, User,
+} from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
 import GameEngine from './GameEngine';
+import LocationMemoryGame from './LocationMemoryGame';
+import MnemonicGame from './MnemonicGame';
+import AuthModal from './AuthModal';
+import ProfilePanel from './ProfilePanel';
 import { PROVINCES, LOCATIONS, CLUSTERS } from '../constants';
 import { Location, GameMode } from '../types';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, BookOpen, Search, SpellCheck, Map as MapIcon, HelpCircle, Wand2, Layers, Menu, X, Eye, EyeOff, Settings2, Home as HomeIcon } from 'lucide-react';
 import { getFunFact } from '../services/geminiService';
+import { useAuth } from '../contexts/AuthContext';
+import { saveScoreSession } from '../services/supabase';
+
+const MODES = [
+  { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon    },
+  { id: 'find'    as GameMode, label: 'Zoeken',       icon: Search     },
+  { id: 'spell'   as GameMode, label: 'Spellen',      icon: SpellCheck },
+  { id: 'master'  as GameMode, label: 'Oefenmeester', icon: Wand2      },
+  { id: 'memory'  as GameMode, label: 'Memory',       icon: Brain      },
+];
 
 const getTypeColor = (type: string) => {
-  switch (type) {
-    case 'city': return '#FFB7B2';
-    case 'water': return '#A2D2FF';
-    case 'region': return '#B9FBC0';
-    default: return '#FFDAC1';
-  }
+  if (type === 'water')  return '#38bdf8';
+  if (type === 'region') return '#7C3AED';
+  return '#EAB308';
 };
 
-interface GameProps {
-  onBackToHome: () => void;
-}
+const Game: React.FC = () => {
+  const { user, profile } = useAuth();
 
-const Game: React.FC<GameProps> = ({ onBackToHome }) => {
-  const [mode, setMode] = useState<GameMode>('explore');
-  const [selectedProvince, setSelectedProvince] = useState<string | 'all'>('all');
-  const [selectedCluster, setSelectedCluster] = useState<string | 'all'>('all');
-  const [score, setScore] = useState(0);
-  const [activeLocation, setActiveLocation] = useState<Location | null>(null);
+  const [mode, setMode]                         = useState<GameMode>('explore');
+  const [selectedProvince, setSelectedProvince] = useState<string>('all');
+  const [selectedCluster, setSelectedCluster]   = useState<string>('all');
+  const [score, setScore]                       = useState(0);
+  const [activeLocation, setActiveLocation]     = useState<Location | null>(null);
   const [userClickedLocationId, setUserClickedLocationId] = useState<string | null>(null);
-  const [loadingFact, setLoadingFact] = useState(false);
-  const [currentFact, setCurrentFact] = useState<string | null>(null);
-  const [currentEmoji, setCurrentEmoji] = useState<string>("📍");
-  const [showLabels, setShowLabels] = useState(true);
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [loadingFact, setLoadingFact]           = useState(false);
+  const [currentFact, setCurrentFact]           = useState<string | null>(null);
+  const [currentEmoji, setCurrentEmoji]         = useState('📍');
+  const [showLabels, setShowLabels]             = useState(true);
+  const [timerEnabled, setTimerEnabled]         = useState(true);
+  const [isRevealed, setIsRevealed]             = useState(false);
+  const [isMobile, setIsMobile]                 = useState(window.innerWidth < 768);
+  const [provinceOpen, setProvinceOpen]         = useState(false);
+  const [showAuthModal, setShowAuthModal]       = useState(false);
+  const [showProfile, setShowProfile]           = useState(false);
+  const provinceRef    = useRef<HTMLDivElement>(null);
+  const sessionScoreRef = useRef(0);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Close province dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (provinceRef.current && !provinceRef.current.contains(e.target as Node)) {
+        setProvinceOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const availableClusters = useMemo(() => {
-    if (selectedProvince === 'all') {
-      return [{ id: 'hoofdsteden', name: 'Alle Hoofdsteden', icon: '🏙️', provinceId: 'all' }];
-    }
+    if (selectedProvince === 'all') return [];
     return CLUSTERS.filter(c => c.provinceId === selectedProvince);
   }, [selectedProvince]);
 
@@ -54,9 +80,9 @@ const Game: React.FC<GameProps> = ({ onBackToHome }) => {
       setActiveLocation(loc);
       setLoadingFact(true);
       setCurrentFact(null);
-      const factData = await getFunFact(loc.name);
-      setCurrentFact(factData.text);
-      setCurrentEmoji(factData.emoji);
+      const f = await getFunFact(loc.name);
+      setCurrentFact(f.text);
+      setCurrentEmoji(f.emoji);
       setLoadingFact(false);
     } else {
       setUserClickedLocationId(loc.id);
@@ -64,300 +90,401 @@ const Game: React.FC<GameProps> = ({ onBackToHome }) => {
     }
   }, [mode]);
 
-  const handleScoreChange = useCallback((points: number) => {
-    setScore(prev => prev + points);
+  const handleScoreChange = useCallback((pts: number) => {
+    setScore(s => s + pts);
+    sessionScoreRef.current += pts;
   }, []);
+  const handleTargetSet = useCallback((loc: Location) => { setActiveLocation(loc); setIsRevealed(false); }, []);
+  const handleReveal    = useCallback((v: boolean) => setIsRevealed(v), []);
 
-  const handleTargetSet = useCallback((loc: Location) => {
-    setActiveLocation(loc);
-    setIsRevealed(false);
-  }, []);
+  const flushSession = useCallback(async (m: GameMode, provinceId: string) => {
+    if (user && sessionScoreRef.current > 0) {
+      await saveScoreSession(user.id, m, provinceId, sessionScoreRef.current);
+      sessionScoreRef.current = 0;
+    }
+  }, [user]);
 
-  const handleReveal = useCallback((val: boolean) => {
-    setIsRevealed(val);
-  }, []);
-
-  const handleModeChange = useCallback((newMode: GameMode) => {
-    setMode(newMode);
+  const handleModeChange = useCallback(async (m: GameMode) => {
+    await flushSession(mode, selectedProvince);
+    setMode(m);
     setActiveLocation(null);
     setUserClickedLocationId(null);
     setIsRevealed(false);
     setCurrentFact(null);
-    setIsMenuOpen(false);
-  }, []);
+  }, [flushSession, mode, selectedProvince]);
 
-  const handleProvinceChange = useCallback((provId: string) => {
-    setSelectedProvince(provId);
+  const handleProvinceChange = useCallback(async (id: string) => {
+    await flushSession(mode, selectedProvince);
+    setSelectedProvince(id);
     setSelectedCluster('all');
     setActiveLocation(null);
     setIsRevealed(false);
-    setIsMenuOpen(false);
+    setProvinceOpen(false);
+  }, [flushSession, mode, selectedProvince]);
+
+  const [searchQuery, setSearchQuery]     = useState('');
+  const [searchOpen, setSearchOpen]       = useState(false);
+  const searchRef                         = useRef<HTMLDivElement>(null);
+
+  const searchResults = useMemo(() => {
+    if (searchQuery.trim().length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return LOCATIONS.filter(l => l.name.toLowerCase().includes(q)).slice(0, 6);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const NavigationContent = () => (
-    <div className="flex flex-col gap-5">
-      <section className="bg-white p-4 rounded-[2rem] shadow-lg border-4 border-slate-50">
-        <h2 className="text-sm font-black text-[#5D4E60] mb-3 flex items-center gap-2">
-          <Settings2 className="w-4 h-4 text-slate-400" />
-          Weergave
-        </h2>
-        <button
-          onClick={() => setShowLabels(!showLabels)}
-          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all font-black text-xs ${showLabels
-            ? 'bg-blue-50 text-blue-600 border-2 border-blue-100'
-            : 'bg-slate-50 text-slate-400 border-2 border-transparent'
-            }`}
-        >
-          <div className="flex items-center gap-2">
-            {showLabels ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            <span>Namen op kaart</span>
-          </div>
-          <div className={`w-8 h-4 rounded-full relative transition-colors ${showLabels ? 'bg-blue-400' : 'bg-slate-300'}`}>
-            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${showLabels ? 'right-0.5' : 'left-0.5'}`} />
-          </div>
-        </button>
-      </section>
+  const handleSearchSelect = useCallback((loc: Location) => {
+    setSearchQuery('');
+    setSearchOpen(false);
+    setSelectedProvince(loc.provinceId);
+    setSelectedCluster('all');
+    setActiveLocation(loc);
+    setUserClickedLocationId(loc.id);
+    setTimeout(() => setUserClickedLocationId(null), 50);
+  }, []);
 
-      <section className="bg-white p-4 rounded-[2rem] shadow-lg border-4 border-pink-50">
-        <h2 className="text-sm font-black text-[#5D4E60] mb-3 flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-pink-400" />
-          Modus
-        </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
-          {[
-            { id: 'explore', label: 'Op Reis', icon: MapIcon, color: 'bg-[#A2D2FF]', shadow: 'shadow-[0_4px_0_#80B8E8]' },
-            { id: 'master', label: 'Oefenmeester', icon: Wand2, color: 'bg-[#FFDAC1]', shadow: 'shadow-[0_4px_0_#E8C0A8]' },
-            { id: 'find', label: 'Zoeken', icon: Search, color: 'bg-[#B9FBC0]', shadow: 'shadow-[0_4px_0_#97E09F]' },
-            { id: 'spell', label: 'Spellen', icon: SpellCheck, color: 'bg-[#CFBAF0]', shadow: 'shadow-[0_4px_0_#B098D1]' }
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => handleModeChange(item.id as GameMode)}
-              className={`flex items-center gap-2 p-3 lg:p-2 rounded-xl transition-all transform active:translate-y-1 active:shadow-none ${mode === item.id
-                ? `${item.color} text-[#5D4E60] ${item.shadow} -translate-y-1`
-                : 'bg-pink-50/50 text-pink-700 hover:bg-pink-50'
-                }`}
-            >
-              <item.icon className={`w-4 h-4 ${mode === item.id ? 'animate-bounce' : ''}`} />
-              <span className="font-black text-[10px] md:text-sm">{item.label}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-white p-4 rounded-[2rem] shadow-lg border-4 border-[#FFF8CC]">
-        <h2 className="text-sm font-black text-[#5D4E60] mb-2 flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-[#E5D42B]" />
-          Provincie
-        </h2>
-        <div className="relative">
-          <select
-            value={selectedProvince}
-            onChange={(e) => handleProvinceChange(e.target.value)}
-            className="w-full p-3 bg-[#FFFDE7] rounded-xl font-black text-[#8B7E00] text-sm outline-none appearance-none cursor-pointer border-2 border-transparent focus:border-yellow-200"
-          >
-            <option value="all">Heel NL 🇳🇱</option>
-            {PROVINCES.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-yellow-600">▼</div>
-        </div>
-      </section>
-
-      {availableClusters.length > 0 && (
-        <motion.section
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-4 rounded-[2rem] shadow-lg border-4 border-indigo-50"
-        >
-          <h2 className="text-sm font-black text-[#5D4E60] mb-3 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-indigo-400" />
-            Groepjes
-          </h2>
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => { setSelectedCluster('all'); setIsMenuOpen(false); }}
-              className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all ${selectedCluster === 'all'
-                ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
-                : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-                }`}
-            >
-              Alles oefenen
-            </button>
-            {availableClusters.map(c => (
-              <button
-                key={c.id}
-                onClick={() => { setSelectedCluster(c.id); setIsMenuOpen(false); }}
-                className={`text-left px-4 py-2.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-2 ${selectedCluster === c.id
-                  ? 'bg-indigo-400 text-white shadow-[0_4px_0_#5A67D8] -translate-y-0.5'
-                  : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
-                  }`}
-              >
-                <span className="text-base">{c.icon}</span> {c.name}
-              </button>
-            ))}
-          </div>
-        </motion.section>
-      )}
-    </div>
-  );
+  const currentProvince = PROVINCES.find(p => p.id === selectedProvince);
+  const activeMode = MODES.find(m => m.id === mode)!;
 
   return (
-    <div className="h-[100dvh] flex flex-col p-2 md:p-8 max-w-[1600px] mx-auto selection:bg-pink-100 bg-[#FFF8FA] overflow-hidden">
-      {/* Header */}
-      <header className="flex-none flex flex-row justify-between items-center mb-2 md:mb-10 gap-2 px-2 py-1 md:py-0 z-[6000]">
-        <motion.div
-          initial={{ x: -10, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          className="flex items-center gap-2"
-        >
-          <button 
-            onClick={onBackToHome}
-            className="p-1.5 md:p-4 bg-[#FFB7B2] rounded-lg md:rounded-3xl shadow-[0_3px_0_#FF8C94] md:shadow-[0_8px_0_#FF8C94] hover:scale-105 active:scale-95 transition-transform"
-          >
-            <HomeIcon className="text-white w-4 h-4 md:w-10 md:h-10" />
-          </button>
-          <div className="flex flex-col">
-            <h1 className="text-sm md:text-4xl font-black text-[#5D4E60] tracking-tight leading-none">Topo met Coco</h1>
-            <span className="text-[10px] md:text-sm font-bold text-pink-400">Terug naar start</span>
-          </div>
-        </motion.div>
+    <div className="h-[100dvh] flex flex-col bg-[#F5F3FF] overflow-hidden">
 
-        {/* Center Image */}
-        <div className="flex flex-1 justify-center px-1 md:px-4">
-          <img src="/images/headertopo.svg" alt="Header decoratie" className="h-8 sm:h-12 md:h-20 lg:h-24 object-contain" />
-        </div>
+      {/* ── TOP NAVIGATION BAR ── */}
+      <header className="flex-none bg-[#3B0764] shadow-lg z-[5000]">
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="lg:hidden p-2 bg-white rounded-xl shadow-[0_3px_0_#ffccd5] border border-pink-50 text-pink-400"
-            aria-label="Menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+        {/* Row 1: zoekbalk links + logo gecentreerd + controls rechts */}
+        <div className="relative flex items-center gap-2 px-4 h-14">
 
-          <div className="relative bg-white px-2 md:px-8 py-1 md:py-3 rounded-xl md:rounded-2xl shadow-md flex items-center gap-1.5 md:gap-2 border border-pink-50">
-            <Trophy className="text-[#FFB7B2] w-4 h-4 md:w-8 md:h-8" />
-            <div className="flex flex-col">
-              <span className="text-sm md:text-2xl font-black text-[#5D4E60] leading-none">{score}</span>
-              <span className="hidden md:inline text-[8px] text-pink-400 font-black uppercase tracking-widest">Score</span>
+          {/* Zoekbalk links */}
+          <div ref={searchRef} className="relative z-10">
+            <div className="flex items-center gap-1.5 bg-[#4C1D95] rounded-full px-3 py-1.5 border border-[#6D28D9]">
+              <Search className="w-3.5 h-3.5 text-[#C4B5FD] flex-shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                onFocus={() => setSearchOpen(true)}
+                placeholder="Zoek een plaats…"
+                className="bg-transparent text-white text-xs font-medium placeholder:text-[#A78BFA] outline-none w-28 sm:w-40"
+              />
+              {searchQuery && (
+                <button onClick={() => { setSearchQuery(''); setSearchOpen(false); }}>
+                  <X className="w-3 h-3 text-[#A78BFA]" />
+                </button>
+              )}
             </div>
+
+            {/* Dropdown resultaten */}
+            <AnimatePresence>
+              {searchOpen && searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="absolute top-full mt-1.5 left-0 w-56 bg-white rounded-xl shadow-xl border border-[#DDD6FE] overflow-hidden"
+                >
+                  {searchResults.map(loc => (
+                    <button
+                      key={loc.id}
+                      onClick={() => handleSearchSelect(loc)}
+                      className="w-full text-left px-3 py-2.5 hover:bg-[#FEF9C3] transition-colors flex items-center justify-between gap-2 border-b border-[#F5F3FF] last:border-0"
+                    >
+                      <span className="text-sm font-bold text-[#1F2937]">{loc.name}</span>
+                      <span className="text-[10px] text-[#8B5CF6] font-medium flex-shrink-0">
+                        {PROVINCES.find(p => p.id === loc.provinceId)?.name}
+                      </span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
+          {/* Logo — gecentreerd */}
+          <div className="absolute left-1/2 -translate-x-1/2 pointer-events-none select-none">
+            <img src="/images/logo-compas.svg" alt="Cocokiki Topo" className="h-10 w-10 drop-shadow-md" style={{ display: 'block', width: 40, height: 40 }} />
+          </div>
+
+          {/* Controls rechts */}
+          <div className="ml-auto flex items-center gap-2">
+
+          {/* Labels toggle */}
+          {mode !== 'memory' && mode !== 'mnemonic' && (
+            <button
+              onClick={() => setShowLabels(s => !s)}
+              title={showLabels ? 'Namen verbergen' : 'Namen tonen'}
+              className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                showLabels ? 'bg-[#7C3AED] text-white' : 'bg-[#4C1D95] text-[#9CA3AF]'
+              }`}
+            >
+              {showLabels ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+              <span className="hidden lg:inline">Namen</span>
+            </button>
+          )}
+
+          {/* Timer toggle — alleen bij spel-modi */}
+          {(mode === 'find' || mode === 'spell' || mode === 'master') && (
+            <button
+              onClick={() => setTimerEnabled(t => !t)}
+              title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                timerEnabled
+                  ? 'bg-[#F59E0B] text-white border-0'
+                  : 'bg-[#4C1D95] text-[#9CA3AF] border border-[#4B5563]'
+              }`}
+            >
+              {timerEnabled ? <Timer className="w-3.5 h-3.5" /> : <TimerOff className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{timerEnabled ? 'Timer aan' : 'Timer uit'}</span>
+            </button>
+          )}
+
+          {/* Province dropdown */}
+          <div ref={provinceRef} className="relative">
+            <button
+              onClick={() => setProvinceOpen(o => !o)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#7C3AED] border-0 rounded-full text-sm font-black text-white hover:bg-[#EAB308] transition-colors"
+            >
+              <span className="text-base">{currentProvince ? '📍' : '🇳🇱'}</span>
+              <span className="max-w-[100px] truncate hidden sm:inline">
+                {currentProvince?.name ?? 'Heel NL'}
+              </span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${provinceOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            <AnimatePresence>
+              {provinceOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-2 w-48 bg-[#3B0764] rounded-2xl shadow-xl border border-[#4C1D95] overflow-hidden z-50"
+                >
+                  <button
+                    onClick={() => handleProvinceChange('all')}
+                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === 'all' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                  >
+                    🇳🇱 Heel Nederland
+                  </button>
+                  {PROVINCES.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => handleProvinceChange(p.id)}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === p.id ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                    >
+                      {p.name}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Score */}
+          <div className="flex items-center gap-1.5 bg-[#F59E0B] px-3 py-1.5 rounded-full shadow-sm">
+            <Trophy className="w-4 h-4 text-white" />
+            <span className="font-black text-white text-sm leading-none">{score}</span>
+          </div>
+
+          {/* Profile / Login — verborgen tot database-koppeling */}
+          {/* {user ? (...) : (...)} */}
+          </div>{/* end ml-auto controls */}
         </div>
+
+        {/* Row 2: mode tabs */}
+        <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto scrollbar-hide">
+          {MODES.map(m => {
+            const active = mode === m.id;
+            return (
+              <button
+                key={m.id}
+                onClick={() => handleModeChange(m.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs whitespace-nowrap transition-all flex-shrink-0
+                  ${active
+                    ? 'bg-[#7C3AED] text-white shadow-[0_3px_0_#5B21B6] -translate-y-0.5'
+                    : 'bg-[#4C1D95] text-[#DDD6FE] hover:bg-[#EAB308] hover:text-white'
+                  }`}
+              >
+                <m.icon className="w-3.5 h-3.5" />
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Row 3: cluster pills (shown when province selected + not memory) */}
+        <AnimatePresence>
+          {availableClusters.length > 0 && mode !== 'memory' && mode !== 'mnemonic' && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto scrollbar-hide">
+                <button
+                  onClick={() => setSelectedCluster('all')}
+                  className={`px-3 py-1 rounded-full text-[11px] font-black whitespace-nowrap transition-all flex-shrink-0 ${
+                    selectedCluster === 'all'
+                      ? 'bg-[#F59E0B] text-white shadow-[0_2px_0_#D97706]'
+                      : 'bg-[#4C1D95] text-[#DDD6FE] hover:bg-[#EAB308] hover:text-white'
+                  }`}
+                >
+                  Alles
+                </button>
+                {availableClusters.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCluster(c.id)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-black whitespace-nowrap transition-all flex-shrink-0 ${
+                      selectedCluster === c.id
+                        ? 'bg-[#F59E0B] text-white shadow-[0_2px_0_#D97706]'
+                        : 'bg-[#4C1D95] text-[#DDD6FE] hover:bg-[#EAB308] hover:text-white'
+                    }`}
+                  >
+                    <span>{c.icon}</span>
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* Mobiel Menu */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-pink-900/30 backdrop-blur-md z-[7000] lg:hidden"
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              className="fixed top-0 right-0 h-full w-[280px] bg-[#FFF8FA] shadow-2xl z-[8000] lg:hidden p-5 overflow-y-auto"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-black text-[#5D4E60]">Instellingen</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-pink-100 text-pink-500 rounded-xl"><X className="w-5 h-5" /></button>
-              </div>
-              <NavigationContent />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-        {/* Desktop Sidebar */}
-        <nav className="hidden lg:block lg:col-span-3 space-y-4 overflow-y-auto pr-2">
-          <NavigationContent />
-        </nav>
-
-        {/* Main Content Area: Map & Overlays */}
-        <main className={`relative flex flex-col min-h-0 bg-[#caf0f8] rounded-[2rem] md:rounded-[3.5rem] shadow-2xl border-[4px] md:border-[12px] border-white overflow-hidden ${mode === 'explore' ? 'lg:col-span-9' : 'lg:col-span-6'}`}>
-          <div className="flex-1 min-h-0 relative">
+      {/* ── MAIN CONTENT ── */}
+      {mode === 'memory' ? (
+        <main className="flex-1 min-h-0 m-3 bg-[#F5F3FF] rounded-[2rem] shadow-xl border-[6px] border-white overflow-hidden">
+          <LocationMemoryGame
+            key={`memory-${selectedProvince}`}
+            provinceId={selectedProvince}
+            onScoreChange={handleScoreChange}
+          />
+        </main>
+      ) : mode === 'mnemonic' ? (
+        <main className="flex-1 min-h-0 m-3 bg-[#FFFBEB] rounded-[2rem] shadow-xl border-[6px] border-white overflow-hidden">
+          <MnemonicGame
+            key={`mnemonic-${selectedProvince}`}
+            provinceId={selectedProvince}
+          />
+        </main>
+      ) : (
+        // Map modes
+        <div className="flex-1 min-h-0 flex gap-3 p-3">
+          {/* Map */}
+          <main className="flex-1 min-h-0 relative bg-[#EDE9FE] rounded-[2rem] shadow-xl border-[6px] border-white overflow-hidden">
             <InteractiveMap
               selectedProvince={selectedProvince}
               selectedCluster={selectedCluster}
               onLocationClick={handleLocationClick}
-              highlightedLocation={mode === 'explore' ? activeLocation?.id : null}
-              activeGameLocation={mode !== 'explore' ? activeLocation?.id : null}
+              highlightedLocation={mode === 'explore' ? activeLocation?.id ?? null : null}
+              activeGameLocation={mode !== 'explore' ? activeLocation?.id ?? null : null}
               showLabels={showLabels}
               gameMode={mode}
               isRevealed={isRevealed}
             />
-          </div>
 
-          {/* CRITICAL: ONLY ONE GameEngine instance rendered at the top level of the map to prevent conflicts */}
-          <div className={`absolute z-[4500] pointer-events-none transition-all duration-300 
-            ${isMobile
-              ? 'top-2 left-2 right-2 flex justify-center'
-              : 'hidden'
-            }`}
-          >
-            <div className="pointer-events-auto w-full max-w-[400px]">
-              <GameEngine
-                key={`${mode}-${selectedProvince}-${selectedCluster}`}
-                mode={mode}
-                provinceId={selectedProvince}
-                clusterId={selectedCluster}
-                onScoreChange={handleScoreChange}
-                onLocationClick={handleTargetSet}
-                onReveal={handleReveal}
-                userClickedLocationId={userClickedLocationId}
-                isMobileCompact={isMobile}
-              />
-            </div>
-          </div>
-
-          {/* Fact Card (Bottom of map container, in-flow) */}
-          <AnimatePresence>
-            {activeLocation && mode === 'explore' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.25 }}
-                className="flex-none p-2 z-[4500]"
-              >
-                <div
-                  className="bg-white/95 backdrop-blur-md p-3 md:p-4 rounded-2xl md:rounded-[2rem] shadow-lg border-4"
-                  style={{ borderColor: getTypeColor(activeLocation.type) }}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl md:text-2xl bg-white p-1 rounded-xl shadow-sm">{currentEmoji}</span>
-                      <h4 className="text-sm md:text-base font-black text-[#5D4E60]">{activeLocation.name}</h4>
-                    </div>
-                    <span className="text-[9px] md:text-[11px] font-black px-2 py-1 bg-pink-100 text-pink-500 rounded-lg">
-                      {PROVINCES.find(p => p.id === activeLocation.provinceId)?.name}
+            {/* Legenda */}
+            <div className="absolute bottom-3 left-3 z-[4000] bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl px-3 py-2 shadow-md">
+              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Legenda</p>
+              <div className="flex flex-col gap-1">
+                {[
+                  { color: '#EAB308', label: 'Plaats / Stad',  star: false },
+                  { color: '#EAB308', label: 'Hoofdstad',       star: true  },
+                  { color: '#38bdf8', label: 'Water',           star: false },
+                  { color: '#7C3AED', label: 'Gebied',          star: false },
+                ].map(({ color, label, star }) => (
+                  <div key={label} className="flex items-center gap-1.5">
+                    <span className="relative w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }}>
+                      {star && <span className="absolute -top-1 -right-1 text-[7px] leading-none text-amber-500">★</span>}
                     </span>
+                    <span className="text-[10px] font-semibold text-slate-600">{label}</span>
                   </div>
-                  <div className="bg-[#FFF5F7] p-2 md:p-3 rounded-xl md:rounded-2xl border-2 border-pink-100 max-h-[100px] md:max-h-[150px] overflow-y-auto overscroll-contain custom-scrollbar">
-                    {loadingFact ? (
-                      <div className="flex justify-center py-2"><div className="w-5 h-5 border-3 border-pink-400 border-t-transparent rounded-full animate-spin"></div></div>
-                    ) : (
-                      <p className="text-[#5D4E60] text-[11px] md:text-sm leading-snug font-medium italic">"{currentFact || "Ontdek deze mooie plek!"}"</p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+                ))}
+              </div>
+            </div>
 
-        {/* Desktop Engine & Info — only visible in game modes */}
-        {mode !== 'explore' && (
-          <aside className="hidden lg:flex lg:col-span-3 flex-col gap-4 overflow-y-auto">
-            {!isMobile && (
+            {/* GameEngine overlay on mobile */}
+            {isMobile && mode !== 'explore' && (
+              <div className="absolute top-2 left-2 right-2 z-[4500] flex justify-center pointer-events-none">
+                <div className="pointer-events-auto w-full max-w-sm">
+                  <GameEngine
+                    key={`${mode}-${selectedProvince}-${selectedCluster}`}
+                    mode={mode}
+                    provinceId={selectedProvince}
+                    clusterId={selectedCluster}
+                    onScoreChange={handleScoreChange}
+                    onLocationClick={handleTargetSet}
+                    onReveal={handleReveal}
+                    userClickedLocationId={userClickedLocationId}
+                    isMobileCompact={true}
+                    timerEnabled={timerEnabled}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Fact card (explore mode) */}
+            <AnimatePresence>
+              {activeLocation && mode === 'explore' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 16 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute bottom-3 left-3 right-3 z-[4500]"
+                >
+                  <div
+                    className="bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-lg border-4"
+                    style={{ borderColor: getTypeColor(activeLocation.type) }}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{currentEmoji}</span>
+                        <div>
+                          <div className="font-black text-sm text-slate-800">{activeLocation.name}</div>
+                          <div className="text-[10px] text-[#7C3AED] font-bold">
+                            {PROVINCES.find(p => p.id === activeLocation.provinceId)?.name}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setActiveLocation(null)}
+                        className="p-1 text-slate-400 hover:text-slate-600 flex-shrink-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="bg-[#FFFFFF] px-3 py-2 rounded-xl border border-[#DDD6FE]">
+                      {loadingFact ? (
+                        <div className="flex justify-center py-1">
+                          <div className="w-4 h-4 border-2 border-[#7C3AED] border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      ) : (
+                        <p className="text-slate-800 text-xs leading-snug font-medium italic">
+                          "{currentFact ?? 'Ontdek deze mooie plek!'}"
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
+
+          {/* GameEngine side panel (desktop, non-explore) */}
+          {!isMobile && mode !== 'explore' && (
+            <aside className="w-72 flex-shrink-0">
               <GameEngine
                 key={`${mode}-${selectedProvince}-${selectedCluster}`}
                 mode={mode}
@@ -367,11 +494,24 @@ const Game: React.FC<GameProps> = ({ onBackToHome }) => {
                 onLocationClick={handleTargetSet}
                 onReveal={handleReveal}
                 userClickedLocationId={userClickedLocationId}
+                timerEnabled={timerEnabled}
               />
-            )}
-          </aside>
-        )}
-      </div>
+            </aside>
+          )}
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95] px-4 py-1.5 flex items-center justify-between">
+        <span className="text-[10px] text-[#8B5CF6] font-medium">© 2026 Cocokiki Topo</span>
+        <span className="text-[10px] text-[#6D28D9] font-bold tracking-wide">Groep 6</span>
+      </footer>
+
+      {/* Auth modal */}
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+      {/* Profile panel */}
+      {showProfile && <ProfilePanel onClose={() => setShowProfile(false)} />}
     </div>
   );
 };

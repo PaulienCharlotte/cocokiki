@@ -3,7 +3,37 @@ import { Location, GameMode } from '../types';
 import { LOCATIONS, PROVINCES } from '../constants';
 import { getMnemonic, getFunFact } from '../services/geminiService';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, Lightbulb, MapPin, Type as TypeIcon, Sparkles, Search, AlertCircle, Wand2, ArrowRight, Eye, ArrowLeft, RefreshCcw, LayoutList, BookOpen } from 'lucide-react';
+import { CheckCircle2, XCircle, Lightbulb, MapPin, Type as TypeIcon, Sparkles, Search, AlertCircle, Wand2, ArrowRight, Eye, ArrowLeft, RefreshCcw, LayoutList, BookOpen, Timer } from 'lucide-react';
+
+const TIMER_SECONDS = 15;
+
+const CircularTimer: React.FC<{ timeLeft: number; total: number }> = ({ timeLeft, total }) => {
+  const radius = 18;
+  const circumference = 2 * Math.PI * radius;
+  const progress = timeLeft / total;
+  const strokeDashoffset = circumference * (1 - progress);
+
+  const color = timeLeft > total * 0.6 ? '#4ade80' : timeLeft > total * 0.3 ? '#facc15' : '#f87171';
+
+  return (
+    <div className="relative flex items-center justify-center w-12 h-12 flex-none">
+      <svg className="absolute inset-0 -rotate-90" width="48" height="48">
+        <circle cx="24" cy="24" r={radius} fill="none" stroke="#fce7f3" strokeWidth="4" />
+        <circle
+          cx="24" cy="24" r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          style={{ transition: 'stroke-dashoffset 0.9s linear, stroke 0.3s' }}
+        />
+      </svg>
+      <span className="text-[11px] font-black" style={{ color }}>{timeLeft}</span>
+    </div>
+  );
+};
 
 interface GameEngineProps {
   mode: GameMode;
@@ -14,20 +44,22 @@ interface GameEngineProps {
   onReveal?: (val: boolean) => void;
   userClickedLocationId: string | null;
   isMobileCompact?: boolean;
+  timerEnabled?: boolean;
 }
 
 type MasterStep = 'find' | 'spell' | 'fact';
 type RoundType = 1 | 2 | 3;
 
-const GameEngine: React.FC<GameEngineProps> = ({ 
-  mode, 
-  provinceId, 
+const GameEngine: React.FC<GameEngineProps> = ({
+  mode,
+  provinceId,
   clusterId = 'all',
-  onScoreChange, 
+  onScoreChange,
   onLocationClick,
   onReveal,
   userClickedLocationId,
-  isMobileCompact = false
+  isMobileCompact = false,
+  timerEnabled = true,
 }) => {
   const [round, setRound] = useState<RoundType>(1);
   const [queue, setQueue] = useState<Location[]>([]);
@@ -46,6 +78,10 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const [attempts, setAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const [timerActive, setTimerActive] = useState(false);
+  const timeLeftRef = useRef(TIMER_SECONDS);
 
   const filteredPool = useMemo(() => {
     if (clusterId === 'hoofdsteden') {
@@ -69,6 +105,52 @@ const GameEngine: React.FC<GameEngineProps> = ({
       return provMatch && clusterMatch;
     });
   }, [provinceId, clusterId]);
+
+  const resetTimer = useCallback(() => {
+    setTimeLeft(TIMER_SECONDS);
+    timeLeftRef.current = TIMER_SECONDS;
+    if (timerEnabled) setTimerActive(true);
+  }, [timerEnabled]);
+
+  const stopTimer = useCallback(() => {
+    setTimerActive(false);
+  }, []);
+
+  useEffect(() => {
+    if (!timerActive || mode === 'explore' || masterStep === 'fact') return;
+    if (timeLeft <= 0) return;
+    const id = setTimeout(() => {
+      const next = timeLeftRef.current - 1;
+      timeLeftRef.current = next;
+      setTimeLeft(next);
+      if (next <= 0) {
+        setTimerActive(false);
+        setFeedback({ type: 'error', text: '⏰ Tijd op! Volgende...' });
+        const activeTarget = currentTargetRef.current;
+        if (activeTarget && round === 1 && !errorPool.find(e => e.id === activeTarget.id)) {
+          setErrorPool(prev => [...prev, activeTarget]);
+        }
+        setTimeout(() => {
+          setQueue(q => {
+            setErrorPool(ep => {
+              pickNextFromQueue(q, ep, round);
+              return ep;
+            });
+            return q;
+          });
+        }, 1200);
+      }
+    }, 1000);
+    return () => clearTimeout(id);
+  }, [timerActive, timeLeft, mode, masterStep, round]);
+
+  const getBonusPoints = (secondsLeft: number): number => {
+    if (!timerEnabled) return 0;
+    if (secondsLeft >= 12) return 10;
+    if (secondsLeft >= 8) return 5;
+    if (secondsLeft >= 4) return 2;
+    return 0;
+  };
 
   const shuffle = <T,>(array: T[]): T[] => {
     const newArr = [...array];
@@ -101,7 +183,8 @@ const GameEngine: React.FC<GameEngineProps> = ({
     setAttempts(0);
     setShowHint(false);
     setMasterStep(mode === 'spell' ? 'spell' : 'find');
-  }, [filteredPool, mode, onLocationClick, onReveal]);
+    resetTimer();
+  }, [filteredPool, mode, onLocationClick, onReveal, resetTimer]);
 
   useEffect(() => {
     if (mode !== 'explore') {
@@ -129,7 +212,9 @@ const GameEngine: React.FC<GameEngineProps> = ({
       setAttempts(0);
       setShowHint(false);
       setMasterStep(mode === 'spell' ? 'spell' : 'find');
+      resetTimer();
     } else {
+      stopTimer();
       if (currentRound === 1) {
         if (currentErrors.length > 0) {
           const shuffledErrors = shuffle(currentErrors);
@@ -143,6 +228,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
           setCurrentTarget(next);
           onLocationClick(next);
           setFeedback({ type: 'warning', text: 'Ronde 2: Foutjes herhalen! 💪' });
+          resetTimer();
         } else {
           startRound3();
         }
@@ -157,6 +243,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         currentTargetRef.current = next;
         setCurrentTarget(next);
         onLocationClick(next);
+        resetTimer();
       }
       setUserInput('');
       setAiTip(null);
@@ -165,7 +252,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
       setShowHint(false);
       setMasterStep(mode === 'spell' ? 'spell' : 'find');
     }
-  }, [completedInRound, filteredPool, mode, onLocationClick, onReveal]);
+  }, [completedInRound, filteredPool, mode, onLocationClick, onReveal, resetTimer, stopTimer]);
 
   const startRound3 = () => {
     const shuffled = shuffle(filteredPool);
@@ -189,8 +276,12 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
     if (mode === 'find') {
       if (isCorrectClick) {
-        setFeedback({ type: 'success', text: 'Gevonden! 🎯' });
-        onScoreChange(10);
+        stopTimer();
+        const bonus = getBonusPoints(timeLeftRef.current);
+        const total = 10 + bonus;
+        const bonusText = bonus > 0 ? ` +${bonus} snelheidsbonus!` : '';
+        setFeedback({ type: 'success', text: `Gevonden! 🎯${bonusText}` });
+        onScoreChange(total);
         setTimeout(() => pickNextFromQueue(queue, errorPool, round), 1500);
       } else {
         setFeedback({ type: 'error', text: `Nee, dat is ${clickedLoc?.name || 'een andere plek'}.` });
@@ -202,12 +293,15 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
     if (mode === 'master' && masterStep === 'find') {
       if (isCorrectClick) {
-        setFeedback({ type: 'success', text: 'Top! Nu spellen... ✍️' });
-        onScoreChange(5);
+        stopTimer();
+        const bonus = getBonusPoints(timeLeftRef.current);
+        onScoreChange(5 + bonus);
+        setFeedback({ type: 'success', text: bonus > 0 ? `Top! +${bonus} bonus! ✍️` : 'Top! Nu spellen... ✍️' });
         if (onReveal) onReveal(true);
         setTimeout(() => {
           setMasterStep('spell');
           setFeedback(null);
+          resetTimer();
           if (window.innerWidth > 768) inputRef.current?.focus();
         }, 800);
       } else {
@@ -241,12 +335,17 @@ const GameEngine: React.FC<GameEngineProps> = ({
     const normalizedTarget = normalizeText(activeTarget.name);
 
     if (normalizedInput === normalizedTarget) {
-      onScoreChange(10);
+      stopTimer();
+      const bonus = getBonusPoints(timeLeftRef.current);
+      const total = 10 + bonus;
+      const bonusText = bonus > 0 ? ` +${bonus} bonus!` : '';
       if (mode === 'master') {
-        setFeedback({ type: 'success', text: `Perfect! ✨` });
+        onScoreChange(total);
+        setFeedback({ type: 'success', text: `Perfect!${bonusText} ✨` });
         await proceedToFact();
       } else {
-        setFeedback({ type: 'success', text: `Helemaal goed! ✨` });
+        onScoreChange(total);
+        setFeedback({ type: 'success', text: `Helemaal goed!${bonusText} ✨` });
         setTimeout(() => pickNextFromQueue(queue, errorPool, round), 1500);
       }
     } else {
@@ -268,6 +367,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const skipToFact = async () => {
     const activeTarget = currentTargetRef.current;
     if (!activeTarget) return;
+    stopTimer();
     if (round === 1 && !errorPool.find(e => e.id === activeTarget.id)) {
       setErrorPool(prev => [...prev, activeTarget]);
     }
@@ -293,7 +393,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
         </div>
         <div>
           <h3 className={`${isMobileCompact ? 'text-xs' : 'text-xl mb-1'} font-black text-sky-900`}>Op Reis</h3>
-          <p className="text-[#5D4E60] font-medium text-[10px] md:text-sm">Ontdek Nederland!</p>
+          <p className="text-[#1F2937] font-medium text-[10px] md:text-sm">Ontdek Nederland!</p>
         </div>
       </div>
     );
@@ -302,27 +402,32 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const isSpellingTask = mode === 'spell' || (mode === 'master' && masterStep === 'spell');
 
   return (
-    <div className={`bg-white/95 backdrop-blur-md rounded-[1.5rem] md:rounded-[2rem] shadow-xl border-4 border-pink-50 flex flex-col overflow-hidden transition-all duration-300 ${isMobileCompact ? 'p-2 md:p-3' : 'p-6 h-full'}`}>
+    <div className={`bg-white/95 backdrop-blur-md rounded-[1.5rem] md:rounded-[2rem] shadow-xl border border-[#DDD6FE] flex flex-col overflow-hidden transition-all duration-300 ${isMobileCompact ? 'p-2 md:p-3' : 'p-6 h-full'}`}>
       
       {/* Voortgangsbalk */}
-      <div className="flex items-center justify-between mb-1.5 md:mb-2 px-1">
-        <div className="flex flex-col">
-          <span className="text-[7px] md:text-[8px] font-black text-pink-400 uppercase tracking-widest">
+      <div className="flex items-center justify-between mb-1.5 md:mb-2 px-1 gap-2">
+        <div className="flex flex-col flex-1 min-w-0">
+          <span className="text-[7px] md:text-[8px] font-black text-[#7C3AED] uppercase tracking-widest">
             {round === 1 ? 'Ronde 1: Alles leren' : round === 2 ? 'Ronde 2: Foutjes' : 'Ronde 3: Mixen'}
           </span>
           <div className="flex gap-0.5 mt-0.5">
             {Array.from({ length: Math.min(totalInRound, 15) }).map((_, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={`h-0.5 md:h-1 rounded-full transition-all ${
-                  i < completedInRound ? 'bg-green-400 w-2' : i === completedInRound ? 'bg-pink-400 w-3' : 'bg-pink-100 w-1'
+                  i < completedInRound ? 'bg-[#7C3AED] w-2' : i === completedInRound ? 'bg-[#F59E0B] w-3' : 'bg-[#DDD6FE] w-1'
                 }`}
               />
             ))}
           </div>
         </div>
-        <div className="bg-pink-50 px-1 py-0.5 rounded-lg">
-          <span className="text-[8px] md:text-[10px] font-black text-[#5D4E60]">{completedInRound + 1}/{totalInRound}</span>
+        <div className="flex items-center gap-1.5">
+          {timerEnabled && masterStep !== 'fact' && (
+            <CircularTimer timeLeft={timeLeft} total={TIMER_SECONDS} />
+          )}
+          <div className="bg-[#FFFFFF] px-1 py-0.5 rounded-lg">
+            <span className="text-[8px] md:text-[10px] font-black text-[#1F2937]">{completedInRound + 1}/{totalInRound}</span>
+          </div>
         </div>
       </div>
 
@@ -334,19 +439,19 @@ const GameEngine: React.FC<GameEngineProps> = ({
         >
           {/* Opdracht Header */}
           <div className={`${isMobileCompact ? 'mb-1.5' : 'mb-4'}`}>
-            <div className={`bg-[#FFF8FA]/50 p-2 md:p-3 rounded-xl border-2 border-pink-100 text-center flex flex-col justify-center`}>
-               <p className="text-[7px] md:text-[8px] font-black text-[#FF8C94] uppercase mb-0.5">
+            <div className={`bg-[#FFFFFF] p-2 md:p-3 rounded-xl border border-[#DDD6FE] text-center flex flex-col justify-center`}>
+               <p className="text-[7px] md:text-[8px] font-black text-[#7C3AED] uppercase mb-0.5">
                  {mode === 'spell' ? 'Spelling' : masterStep === 'find' ? 'Aanwijzen' : masterStep === 'spell' ? 'Spellen' : 'Weetje'}
                </p>
-               <div className={`${isMobileCompact ? 'text-[13px] md:text-base' : 'text-lg'} font-black text-[#5D4E60] leading-tight`}>
+               <div className={`${isMobileCompact ? 'text-[13px] md:text-base' : 'text-lg'} font-black text-[#1F2937] leading-tight`}>
                  {isSpellingTask 
                    ? "Spel de naam van de stip!" 
                    : masterStep === 'find' 
-                     ? (currentTarget?.type === 'region' ? `Waar ligt de provincie ${currentTarget?.name}?` : `Waar ligt ${currentTarget?.name}?`)
+                     ? (currentTarget?.type === 'region' ? `Waar ligt het gebied ${currentTarget?.name}?` : `Waar ligt ${currentTarget?.name}?`)
                      : `Weetje over ${currentTarget?.name}`
                  }
                  {currentTarget && currentTarget.type !== 'region' && (
-                   <div className="text-[10px] md:text-xs text-pink-500 font-bold mt-1 opacity-80">
+                   <div className="text-[10px] md:text-xs text-green-600 font-bold mt-1 opacity-80">
                      Provincie: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
                    </div>
                  )}
@@ -364,14 +469,14 @@ const GameEngine: React.FC<GameEngineProps> = ({
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder="Typen..."
-                    className={`flex-1 p-2 md:p-3 bg-white border-2 border-purple-50 rounded-xl font-black text-[#5D4E60] outline-none focus:border-purple-300 text-[16px] md:text-lg`}
+                    className={`flex-1 p-2 md:p-3 bg-[#FFFFFF] border-2 border-[#DDD6FE] rounded-xl font-black text-[#1F2937] outline-none focus:border-[#7C3AED] text-[16px] md:text-lg`}
                     autoComplete="off"
                     autoCorrect="off"
                     spellCheck="false"
                     inputMode="text"
                     enterKeyHint="done"
                   />
-                  <button type="submit" className="bg-purple-400 text-white font-black rounded-xl px-3 md:px-5 py-2 md:py-3 shadow-[0_3px_0_#9368B7] active:translate-y-0.5 active:shadow-none text-[10px] md:text-xs flex-none">CHECK</button>
+                  <button type="submit" className="bg-[#3B0764] text-white font-black rounded-xl px-3 md:px-5 py-2 md:py-3 shadow-[0_3px_0_#3B0764] active:translate-y-0.5 active:shadow-none text-[10px] md:text-xs flex-none">CHECK</button>
                 </form>
                 
                 {/* TIP SECTIE: Wordt getoond bij attempts > 0 */}
@@ -383,9 +488,9 @@ const GameEngine: React.FC<GameEngineProps> = ({
                       className="flex flex-col gap-2"
                     >
                       {/* Vowel-less Hint */}
-                      <div className="bg-amber-50 p-3 rounded-2xl border-2 border-amber-100 shadow-sm flex items-center gap-3">
-                        <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center flex-none">
-                          <Lightbulb className="w-5 h-5 text-amber-700" />
+                      <div className="bg-[#FFFFFF] p-3 rounded-2xl border-2 border-[#DDD6FE] shadow-sm flex items-center gap-3">
+                        <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center flex-none">
+                          <Lightbulb className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest">Klinker-hulp</span>
@@ -397,20 +502,20 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
                       {/* Ezelsbruggetje Tip */}
                       {aiTip && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-purple-50 p-3 rounded-2xl border-2 border-purple-100 flex items-start gap-3">
-                          <div className="w-8 h-8 bg-purple-200 rounded-full flex items-center justify-center flex-none mt-1">
-                            <Sparkles className="w-4 h-4 text-purple-700" />
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-[#FFFFFF] p-3 rounded-2xl border-2 border-[#DDD6FE] flex items-start gap-3">
+                          <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center flex-none mt-1">
+                            <Sparkles className="w-4 h-4 text-white" />
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-[8px] font-black text-purple-400 uppercase tracking-widest">Ezelsbruggetje</span>
-                            <p className="text-[10px] md:text-xs font-bold text-purple-900 leading-snug italic">"{aiTip}"</p>
+                            <span className="text-[8px] font-black text-[#7C3AED] uppercase tracking-widest">Ezelsbruggetje</span>
+                            <p className="text-[10px] md:text-xs font-bold text-[#1F2937] leading-snug italic">"{aiTip}"</p>
                           </div>
                         </motion.div>
                       )}
 
                       <button 
                         onClick={skipToFact} 
-                        className="text-[9px] md:text-[10px] font-black text-amber-600 underline uppercase tracking-tighter hover:text-amber-700 mx-auto"
+                        className="text-[9px] md:text-[10px] font-black text-amber-600 underline uppercase tracking-tighter hover:text-white mx-auto"
                       >
                         Ik geef het op, toon antwoord
                       </button>
@@ -431,10 +536,10 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
             {masterStep === 'fact' && (
               <div className="space-y-1.5 md:space-y-4">
-                <div className="bg-orange-50 p-4 rounded-2xl border-2 border-orange-100 min-h-[80px] flex items-center">
+                <div className="bg-[#FFFFFF] p-4 rounded-2xl border-2 border-[#DDD6FE] min-h-[80px] flex items-center">
                   <p className="text-orange-900 text-xs md:text-sm font-bold italic leading-relaxed text-center w-full">"{activeFact?.text}"</p>
                 </div>
-                <button onClick={() => pickNextFromQueue(queue, errorPool, round)} className="w-full bg-orange-400 text-white font-black py-3 md:py-4 rounded-2xl shadow-[0_4px_0_#D18C61] flex items-center justify-center gap-2 text-xs md:text-sm">VOLGENDE PLEK <ArrowRight className="w-5 h-5" /></button>
+                <button onClick={() => pickNextFromQueue(queue, errorPool, round)} className="w-full bg-[#7C3AED] text-white font-black py-3 md:py-4 rounded-2xl shadow-[0_4px_0_#5B21B6] flex items-center justify-center gap-2 text-xs md:text-sm">VOLGENDE PLEK <ArrowRight className="w-5 h-5" /></button>
               </div>
             )}
           </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Topo met Coco</title>
+    <title>Cocokiki Topo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -13,22 +13,28 @@
     <style>
         body {
             font-family: 'Fredoka', sans-serif;
-            background-color: #fff5f8;
-            overflow: hidden;
-            /* Voorkom bounce op mobiel */
-            position: fixed;
-            /* Voorkom scrollen van de body */
+            background-color: #F5F3FF;
+            overflow-x: hidden;
             width: 100%;
-            height: 100%;
+            min-height: 100%;
+        }
+
+        html {
+            min-height: 100%;
+            background-color: #F5F3FF;
+        }
+
+        #root {
+            min-height: 100dvh;
         }
 
         .gradient-bg {
-            background: linear-gradient(135deg, #ffeef2 0%, #fff5f8 100%);
+            background: #f7f4ee;
         }
 
         /* Custom Leaflet Styling */
         .leaflet-container {
-            background: #caf0f8 !important;
+            background: #1f2f2f !important;
             border-radius: 2rem;
             cursor: crosshair !important;
         }
@@ -43,7 +49,7 @@
             height: 20px;
             border: 3px solid #ffffff;
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -54,7 +60,7 @@
             margin-top: -6px;
             border-width: 4px;
             border-color: #ffffff;
-            box-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+            box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.35), 0 0 24px rgba(250, 204, 21, 0.9);
             z-index: 9999 !important;
         }
 
@@ -65,11 +71,12 @@
             font-weight: 700;
             font-size: 11px;
             white-space: nowrap;
-            background-color: rgba(255, 255, 255, 0.95);
-            border: 2px solid currentColor;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            background-color: rgba(18, 24, 27, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
             pointer-events: none;
             z-index: 1000;
+            color: #ffffff !important;
         }
 
         /* Voorkom selectie van tekst op de kaart */
