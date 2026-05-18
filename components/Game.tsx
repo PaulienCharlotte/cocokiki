@@ -523,7 +523,7 @@ const Game: React.FC = () => {
           {/* Provincies: 2-koloms sub-grid, vaste breedte */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+            <div className="grid grid-cols-4 gap-x-6 gap-y-1">
               <button
                 onClick={() => handleProvinceChange('all')}
                 className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
