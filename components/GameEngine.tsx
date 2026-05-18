@@ -424,13 +424,16 @@ const GameEngine: React.FC<GameEngineProps> = ({
           {timerEnabled && masterStep !== 'fact' && (
             <CircularTimer timeLeft={timeLeft} total={TIMER_SECONDS} />
           )}
-          <button
-            onClick={() => setTimerEnabled(t => !t)}
-            title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
-            className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${timerEnabled ? 'bg-[#F59E0B]' : 'bg-[#D1D5DB]'}`}
-          >
-            <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform duration-200 ${timerEnabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
-          </button>
+          <div className="flex items-center gap-1">
+            <Timer className={`w-3 h-3 flex-shrink-0 ${timerEnabled ? 'text-[#F59E0B]' : 'text-[#D1D5DB]'}`} />
+            <button
+              onClick={() => setTimerEnabled(t => !t)}
+              title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
+              className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${timerEnabled ? 'bg-[#F59E0B]' : 'bg-[#D1D5DB]'}`}
+            >
+              <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform duration-200 ${timerEnabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+            </button>
+          </div>
           <div className="bg-[#FFFFFF] px-1 py-0.5 rounded-lg">
             <span className="text-[8px] md:text-[10px] font-black text-[#1F2937]">{completedInRound + 1}/{totalInRound}</span>
           </div>
