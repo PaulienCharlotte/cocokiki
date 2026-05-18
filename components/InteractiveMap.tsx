@@ -99,6 +99,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Respond to container size changes (e.g. sidebar appearing/disappearing)
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    const ro = new ResizeObserver(() => {
+      if (mapRef.current) mapRef.current.invalidateSize();
+    });
+    ro.observe(mapContainerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!mapRef.current) return;
 
