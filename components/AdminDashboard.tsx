@@ -3,57 +3,75 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload, Trash2, X, ArrowLeft, Loader2, Image, CheckCircle, AlertCircle,
-  FileImage, Copy, Check, Lock,
+  FileImage, Copy, Check, Lock, Mail, LogOut, ShieldAlert,
 } from 'lucide-react';
 import {
   uploadLocationPhoto, fetchAllPhotos, deleteLocationPhoto,
   uploadSiteAsset, fetchAllSiteAssets, deleteSiteAsset,
+  checkIsAdmin,
 } from '../services/supabase';
 import type { LocationPhoto, SiteAsset, AssetCategory } from '../services/supabase';
 import { PROVINCES, LOCATIONS } from '../constants';
-
-const ADMIN_PIN = 'cocokiki';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AdminDashboardProps {
   onExit: () => void;
 }
 
-// ─── PIN screen ────────────────────────────────────────────────────────────────
+// ─── Login screen ──────────────────────────────────────────────────────────────
 
-const PinScreen: React.FC<{ onUnlock: () => void; onExit: () => void }> = ({ onUnlock, onExit }) => {
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState(false);
+const LoginScreen: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+  const { signIn } = useAuth();
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [error,    setError]    = useState<string | null>(null);
+  const [loading,  setLoading]  = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === ADMIN_PIN) {
-      onUnlock();
-    } else {
-      setError(true);
-      setPin('');
-      setTimeout(() => setError(false), 1800);
+    setError(null);
+    setLoading(true);
+    const err = await signIn(email, password);
+    setLoading(false);
+    if (err) {
+      if (err.includes('Invalid login credentials')) setError('E-mail of wachtwoord klopt niet.');
+      else setError(err);
     }
   };
 
   return (
-    <div className="h-[100dvh] flex flex-col items-center justify-center bg-[#F5F3FF] gap-5">
+    <div className="h-[100dvh] flex flex-col items-center justify-center bg-[#F5F3FF] gap-5 px-4">
       <img src="/images/logo-compas.svg" alt="" className="w-16 h-16 object-contain" />
       <div className="text-center">
         <h1 className="font-black text-2xl text-[#3B0764]">Admin Dashboard</h1>
-        <p className="text-sm text-[#4B5563] mt-1">Vul de pincode in om verder te gaan</p>
+        <p className="text-sm text-[#4B5563] mt-1">Log in met je admin-account om verder te gaan</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-xs">
         <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="E-mailadres"
+            autoComplete="email"
+            autoFocus
+            required
+            className="w-full pl-9 pr-4 py-3 bg-white border-2 border-[#DDD6FE] focus:border-[#7C3AED] rounded-xl font-bold text-[#1F2937] text-sm outline-none transition-colors"
+          />
+        </div>
+
+        <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
           <input
             type="password"
-            value={pin}
-            onChange={e => setPin(e.target.value)}
-            placeholder="Pincode"
-            autoFocus
-            className={`w-full pl-9 pr-4 py-3 bg-[#FFFFFF] border-2 rounded-xl font-bold text-[#1F2937] text-sm outline-none transition-colors
-              ${error ? 'border-red-400 animate-bounce' : 'border-[#DDD6FE] focus:border-[#7C3AED]'}`}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="Wachtwoord"
+            autoComplete="current-password"
+            required
+            className="w-full pl-9 pr-4 py-3 bg-white border-2 border-[#DDD6FE] focus:border-[#7C3AED] rounded-xl font-bold text-[#1F2937] text-sm outline-none transition-colors"
           />
         </div>
 
@@ -65,17 +83,17 @@ const PinScreen: React.FC<{ onUnlock: () => void; onExit: () => void }> = ({ onU
               exit={{ opacity: 0 }}
               className="text-red-600 text-xs font-bold text-center"
             >
-              Verkeerde pincode — probeer opnieuw
+              {error}
             </motion.p>
           )}
         </AnimatePresence>
 
         <button
           type="submit"
-          disabled={!pin}
-          className="py-3 bg-[#7C3AED] text-white font-black rounded-xl shadow-[0_4px_0_#5B21B6] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
+          disabled={loading || !email || !password}
+          className="flex items-center justify-center gap-2 py-3 bg-[#7C3AED] text-white font-black rounded-xl shadow-[0_4px_0_#5B21B6] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
         >
-          Openen
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Inloggen'}
         </button>
       </form>
 
@@ -86,16 +104,60 @@ const PinScreen: React.FC<{ onUnlock: () => void; onExit: () => void }> = ({ onU
   );
 };
 
+// ─── Niet-geautoriseerd scherm ─────────────────────────────────────────────────
+
+const NotAuthorizedScreen: React.FC<{ onExit: () => void }> = ({ onExit }) => {
+  const { signOut, user } = useAuth();
+  return (
+    <div className="h-[100dvh] flex flex-col items-center justify-center bg-[#F5F3FF] gap-5 px-4">
+      <ShieldAlert className="w-16 h-16 text-red-500" />
+      <div className="text-center max-w-sm">
+        <h1 className="font-black text-2xl text-[#3B0764]">Geen toegang</h1>
+        <p className="text-sm text-[#4B5563] mt-2">
+          Je bent ingelogd als <strong>{user?.email}</strong>, maar dit account heeft geen
+          admin-rechten. Vraag de beheerder om je toe te voegen aan de <code className="text-xs bg-white px-1 py-0.5 rounded">admins</code> tabel in Supabase.
+        </p>
+      </div>
+      <div className="flex flex-col gap-2 w-full max-w-xs">
+        <button
+          onClick={signOut}
+          className="flex items-center justify-center gap-2 py-3 bg-[#7C3AED] text-white font-black rounded-xl shadow-[0_4px_0_#5B21B6] active:translate-y-1 active:shadow-none transition-all"
+        >
+          <LogOut className="w-4 h-4" /> Uitloggen
+        </button>
+        <button onClick={onExit} className="py-2 text-sm text-[#4B5563] underline">
+          Terug naar app
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // ─── Top-level dashboard ───────────────────────────────────────────────────────
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onExit }) => {
-  const [unlocked, setUnlocked] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+  const [isAdmin,   setIsAdmin]   = useState<boolean | null>(null);
+  const [checking,  setChecking]  = useState(false);
 
-  if (!unlocked) {
-    return <PinScreen onUnlock={() => setUnlocked(true)} onExit={onExit} />;
+  useEffect(() => {
+    if (!user) { setIsAdmin(null); return; }
+    setChecking(true);
+    checkIsAdmin().then(ok => { setIsAdmin(ok); setChecking(false); });
+  }, [user]);
+
+  if (authLoading || (user && checking)) {
+    return (
+      <div className="h-[100dvh] flex items-center justify-center bg-[#F5F3FF]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#7C3AED]" />
+      </div>
+    );
   }
 
-  return <AdminContent onExit={onExit} />;
+  if (!user)         return <LoginScreen onExit={onExit} />;
+  if (isAdmin === false) return <NotAuthorizedScreen onExit={onExit} />;
+  if (isAdmin === true)  return <AdminContent onExit={onExit} />;
+  return null;
 };
 
 // ─── Tab types ─────────────────────────────────────────────────────────────────
@@ -106,6 +168,7 @@ type AdminTab = 'photos' | 'assets';
 
 const AdminContent: React.FC<{ onExit: () => void }> = ({ onExit }) => {
   const [tab, setTab] = useState<AdminTab>('photos');
+  const { user, signOut } = useAuth();
 
   return (
     <div className="h-[100dvh] flex flex-col bg-[#F5F3FF] overflow-hidden">
@@ -122,7 +185,17 @@ const AdminContent: React.FC<{ onExit: () => void }> = ({ onExit }) => {
           <img src="/images/logo-compas.svg" alt="" className="h-9 w-9 object-contain" />
           <span className="font-black text-[#FFFFFF] text-lg">Admin Dashboard</span>
         </div>
-        <div className="w-16" />
+        <div className="flex items-center gap-3">
+          <span className="hidden md:inline text-xs text-[#C4B5FD] font-medium">{user?.email}</span>
+          <button
+            onClick={signOut}
+            title="Uitloggen"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#4C1D95] hover:bg-[#7C3AED] text-[#DDD6FE] hover:text-white rounded-lg transition-colors text-xs font-bold"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Uitloggen</span>
+          </button>
+        </div>
       </header>
 
       {/* Tabs */}

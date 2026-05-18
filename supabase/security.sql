@@ -48,6 +48,9 @@ as $$
   select exists (select 1 from public.admins where user_id = auth.uid());
 $$;
 
+-- Sta toe dat ingelogde users hun eigen admin-status kunnen checken
+grant execute on function public.is_admin() to authenticated, anon;
+
 
 -- ──────────────────────────────────────────────────────────────────────────────
 -- 2) profiles — user mag eigen profiel lezen en updaten

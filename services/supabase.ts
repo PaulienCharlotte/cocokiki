@@ -41,6 +41,15 @@ export interface LocationProgress {
   last_practiced_at: string;
 }
 
+// ─── Admin check ───────────────────────────────────────────────────────────────
+
+export async function checkIsAdmin(): Promise<boolean> {
+  if (!supabaseConfigured) return false;
+  const { data, error } = await supabase.rpc('is_admin');
+  if (error) return false;
+  return data === true;
+}
+
 // ─── Helper functions ──────────────────────────────────────────────────────────
 
 export async function saveScoreSession(
