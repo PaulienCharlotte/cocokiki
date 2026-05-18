@@ -401,7 +401,7 @@ const Game: React.FC = () => {
                   { color: '#EAB308', label: 'Plaats / Stad',  star: false },
                   { color: '#EAB308', label: 'Hoofdstad',       star: true  },
                   { color: '#38bdf8', label: 'Water',           star: false },
-                  { color: '#7C3AED', label: 'Gebied',          star: false },
+                  { color: '#7C3AED', label: 'Gebied / Provincie', star: false },
                 ].map(({ color, label, star }) => (
                   <div key={label} className="flex items-center gap-1.5">
                     <span className="relative w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }}>

@@ -3,7 +3,7 @@ export interface Location {
   id: string;
   name: string;
   provinceId: string;
-  type: 'city' | 'water' | 'region' | 'mountain';
+  type: 'city' | 'water' | 'region' | 'mountain' | 'province';
   lat: number; 
   lng: number; 
   fact?: string;

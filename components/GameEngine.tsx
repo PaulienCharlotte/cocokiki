@@ -85,7 +85,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const filteredPool = useMemo(() => {
     const toProvLoc = (p: typeof PROVINCES[0]) => ({
       id: p.id, name: p.name, provinceId: p.id,
-      type: 'region' as const, lat: p.center[0], lng: p.center[1],
+      type: 'province' as const, lat: p.center[0], lng: p.center[1],
     });
 
     if (clusterId === 'hoofdsteden') {
@@ -458,10 +458,14 @@ const GameEngine: React.FC<GameEngineProps> = ({
                  {isSpellingTask 
                    ? "Spel de naam van de stip!" 
                    : masterStep === 'find' 
-                     ? (currentTarget?.type === 'region' ? `Waar ligt het gebied ${currentTarget?.name}?` : `Waar ligt ${currentTarget?.name}?`)
+                     ? (currentTarget?.type === 'province'
+                        ? `Waar ligt de provincie ${currentTarget?.name}?`
+                        : currentTarget?.type === 'region'
+                          ? `Waar ligt het gebied ${currentTarget?.name}?`
+                          : `Waar ligt ${currentTarget?.name}?`)
                      : `Weetje over ${currentTarget?.name}`
                  }
-                 {currentTarget && currentTarget.type !== 'region' && (
+                 {currentTarget && currentTarget.type !== 'region' && currentTarget.type !== 'province' && (
                    <div className="text-[10px] md:text-xs text-green-600 font-bold mt-1 opacity-80">
                      Provincie: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
                    </div>

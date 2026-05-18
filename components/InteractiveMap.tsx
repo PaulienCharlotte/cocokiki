@@ -21,6 +21,7 @@ const getTypeColor = (type: string) => {
     case 'city': return '#EAB308';
     case 'water': return '#38bdf8';
     case 'region': return '#7C3AED';
+    case 'province': return '#7C3AED';
     default: return '#EAB308';
   }
 };
@@ -164,7 +165,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     const provinceDots = (filter?: string) => PROVINCES
       .filter(p => !filter || p.id === filter)
-      .map(p => ({ id: p.id, name: p.name, provinceId: p.id, type: 'region' as const, lat: p.center[0], lng: p.center[1] }));
+      .map(p => ({ id: p.id, name: p.name, provinceId: p.id, type: 'province' as const, lat: p.center[0], lng: p.center[1] }));
 
     let filteredLocations = LOCATIONS.filter(loc => {
       if (selectedCluster === 'hoofdsteden') {
