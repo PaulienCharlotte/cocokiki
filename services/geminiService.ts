@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY || process.env.GEMINI_API_KEY || '';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 let ai: GoogleGenAI | null = null;
 function getAI(): GoogleGenAI | null {
@@ -325,6 +325,180 @@ const FALLBACK_DATA: Record<string, LocationData> = {
     emoji: "💧",
     mnemonic: "Tjeuke-meer daar is zoveel te doen, de natuur zo groen! 🌲",
     fact: "Dit oppervlaktewater is zelfs het állergrootste natuurlijke binnenmeer in Friesland! En stiekem is het nergens heel diep! 🤿"
+  },
+
+  // --- GELDERLAND ---
+  "Nijmegen": {
+    emoji: "🏛️",
+    mnemonic: "Nij-me-gen, de oudste stad die je ooit zult zien! 🏛️",
+    fact: "Nijmegen is de oudste stad van Nederland! De Romeinen bouwden er al meer dan 2000 jaar geleden een grote legerplaats. 🦅"
+  },
+  "Apeldoorn": {
+    emoji: "👑",
+    mnemonic: "Appel-doorn, in het bos groeit de troon! 👑",
+    fact: "In Apeldoorn staat Paleis Het Loo, het zomerpaleis van de Nederlandse koninklijke familie. En vlakbij vind je Apenheul, een dierentuin vol apen! 🐒"
+  },
+  "Harderwijk": {
+    emoji: "🐬",
+    mnemonic: "Harder-wijk, een dolfijn zwom de haven wijk! 🐬",
+    fact: "In Harderwijk vind je het Dolfinarium, de grootste dolfijnenshow van Nederland. Hier kun je dolfijnen en zeehonden van heel dichtbij zien! 🌊"
+  },
+  "Ede": {
+    emoji: "🌲",
+    mnemonic: "E-de, diep in de Veluwe bos! 🌲",
+    fact: "Ede ligt midden op de Veluwe, het grootste aaneengesloten natuurgebied van Nederland. Er lopen echt herten en wilde zwijnen rond! 🦌"
+  },
+  "Doetinchem": {
+    emoji: "🧀",
+    mnemonic: "Doe-tin-chem, kaas op de markt met een gem! 🧀",
+    fact: "Doetinchem is het hart van de Achterhoek. Vroeger was hier een grote kaasmarkt. De naam betekent zoiets als 'huizen aan het water'. 💧"
+  },
+  "Zutphen": {
+    emoji: "⚓",
+    mnemonic: "Zut-phen, de Hanzestad aan de IJssel heen! ⚓",
+    fact: "Zutphen is een echte Hanzestad met een prachtig middeleeuws centrum. De Walburgiskerk heeft zelfs een kettingbibliotheek: boeken vastgeketend aan de kast! 📚"
+  },
+  "Winterswijk": {
+    emoji: "🌿",
+    mnemonic: "Win-ters-wijk, in de winter ook een uniek zicht! 🌿",
+    fact: "Winterswijk ligt vlak bij de Duitse grens en heeft een heel bijzonder landschap met oude holle wegen en kalksteengroeven. 🪨"
+  },
+  "Wageningen": {
+    emoji: "🌾",
+    mnemonic: "Wage-ning-en, waar eten en planten worden bestuurd! 🌾",
+    fact: "In Wageningen werd op 5 mei 1945 de capitulatie van de Duitsers getekend: de bevrijding van Nederland! 🕊️ En de universiteit daar is wereldberoemd voor voedselonderzoek."
+  },
+  "Tiel": {
+    emoji: "🍎",
+    mnemonic: "Tiel in de fruitstreek, boomgaarden zoveel! 🍎",
+    fact: "Tiel ligt midden in de Betuwe, de fruitschuur van Nederland. In het voorjaar staan duizenden fruitbomen in bloei — een echt sprookjesgezicht! 🌸"
+  },
+  "Barneveld": {
+    emoji: "🥚",
+    mnemonic: "Barn-e-veld, miljoenen eieren in het veld! 🥚",
+    fact: "Barneveld is de eierstad van Nederland! Nergens in ons land worden meer eieren geproduceerd. Er staat zelfs een standbeeld van een kip! 🐓"
+  },
+  "Elst": {
+    emoji: "🏺",
+    mnemonic: "Elst, diep in de grond de Romeinen gerust! 🏺",
+    fact: "Onder de straten van Elst liggen resten van een grote Romeinse tempel! Die is meer dan 2000 jaar oud en werd teruggevonden tijdens de Tweede Wereldoorlog. ⚔️"
+  },
+  "Zevenaar": {
+    emoji: "🌉",
+    mnemonic: "Ze-ven-aar, zeven bruggen bij de grens zo naar! 🌉",
+    fact: "Zevenaar ligt vlak bij de grens met Duitsland. Vroeger was hier een beroemde paardenmarkt en nu rijdt hier de Betuweroute voor de goederentreinen. 🚂"
+  },
+  "Nijkerk": {
+    emoji: "🍪",
+    mnemonic: "Nij-kerk, de pijpkoek smaakt er echt! 🍪",
+    fact: "Nijkerk is beroemd om de 'Nijkerkse pijp', een speculaaskoekje in de vorm van een pijp. Een echte streeklekkernij! 😋"
+  },
+  "Nunspeet": {
+    emoji: "🦌",
+    mnemonic: "Nun-speet, herten springen door het bos compleet! 🦌",
+    fact: "Nunspeet ligt midden op de Veluwe. Hier leven echt vrij rondlopende edelherten, reeën en wilde zwijnen in het bos! 🌲"
+  },
+  "Groenlo": {
+    emoji: "⚔️",
+    mnemonic: "Groen-lo, de slag bij Groenlo was groot zo! ⚔️",
+    fact: "In Groenlo werd in 1627 een beroemde veldslag uitgevochten (de Slag bij Grolle). Nu wordt dit elk jaar nagespeeld met honderden mensen in historische kostuums! 🏰"
+  },
+  "Veluwe": {
+    emoji: "🌲",
+    mnemonic: "Ve-lu-we, het grootste bos waar dieren lopen vrije! 🌲",
+    fact: "De Veluwe is het grootste aaneengesloten natuurgebied van Nederland. Er leven edelherten, reeën, wilde zwijnen én zelfs wolven! 🐺"
+  },
+  "Betuwe": {
+    emoji: "🍐",
+    mnemonic: "Be-tu-we, fruitbomen zover je kijkt in de rij! 🍐",
+    fact: "De Betuwe heet ook wel de 'Fruitschuur van Nederland'. In de lente staan duizenden appel- en perenboombloesems in bloei. 🌸"
+  },
+  "Achterhoek": {
+    emoji: "🐄",
+    mnemonic: "Ach-ter-hoek, ver achter de heuvels zoek! 🐄",
+    fact: "De Achterhoek is een rustige streek met veel boerderijen, oude vakwerkhuizen en een eigen dialect. Mensen zeggen er 'n'ao huus' in plaats van 'naar huis'! 🗣️"
+  },
+  "Waal": {
+    emoji: "🚢",
+    mnemonic: "De Waal, de brede rivier voor boten groot en smal! 🚢",
+    fact: "De Waal is de grootste en drukste rivier van Nederland. Meer dan de helft van alle Rijnwater stroomt via de Waal naar zee. 🌊"
+  },
+  "IJssel": {
+    emoji: "🏞️",
+    mnemonic: "IJ-ssel, de rivier die lekker kronkelt naar boven! 🏞️",
+    fact: "De IJssel is de mooiste hanzeriviertak van de Rijn. Langs de oevers liggen prachtige oude Hanzesteden zoals Zutphen en Deventer! ⚓"
+  },
+  "Rijn": {
+    emoji: "🌍",
+    mnemonic: "Rijn, de allergrootste rivier van het vasteland fijn! 🌍",
+    fact: "De Rijn begint hoog in de Zwitserse Alpen en stroomt door Duitsland naar Nederland. Het is een van de drukste vrachtroutes van Europa! 🚢"
+  },
+
+  // --- OVERIGE STEDEN ---
+  "Amsterdam": {
+    emoji: "🚲",
+    mnemonic: "Am-ster-dam, de dam in de rivier Amstel staat vast! 🚲",
+    fact: "Amsterdam heeft meer fietsen dan inwoners en meer dan 100 kilometer aan grachten. De grachtengordel staat op de Werelderfgoedlijst! 🏛️"
+  },
+  "Eindhoven": {
+    emoji: "💡",
+    mnemonic: "Eind-hoven, in het zuiden shijnt het licht van de lof! 💡",
+    fact: "Eindhoven is de designstad van Nederland! Hier begon Philips met gloeilampen maken. Nu woont hier de meest creatieve industrie. 🎨"
+  },
+  "Tilburg": {
+    emoji: "🎭",
+    mnemonic: "Til-burg, de carnavalsstad met veel sturm! 🎭",
+    fact: "Tilburg viert elk jaar het allergrootste carnaval van Noord-Brabant. De stad heet dan even 'Kruikenstad' en iedereen draagt een kostuum! 🎪"
+  },
+  "Breda": {
+    emoji: "🏰",
+    mnemonic: "Bre-da, de breedte van het fort daar! 🏰",
+    fact: "In Breda staat het imposante Kasteel van Breda. Hier sloot Spanje in 1625 een beroemde beleg — geschilderd door de schilder Velázquez! 🎨"
+  },
+  "Deventer": {
+    emoji: "📜",
+    mnemonic: "De-ven-ter, de koek is heer en meester! 📜",
+    fact: "Deventer is beroemd om de Deventer koek, een kruidige ontbijtkoek! En elke kerst is er de beroemde Dickens Festijn met meer dan 950 figuren in victoriaanse kleding. 🎄"
+  },
+  "Enschede": {
+    emoji: "🧵",
+    mnemonic: "En-sche-de, textiel uit de fabriek hier! 🧵",
+    fact: "Enschede was vroeger de textielstad van Nederland, vol met spinnerijen en weverijen. Nu is het een moderne studentenstad aan de grens met Duitsland! 🇩🇪"
+  },
+  "Almelo": {
+    emoji: "🏭",
+    mnemonic: "Al-me-lo, fabrieken naast het kanaal zo! 🏭",
+    fact: "Almelo was ooit een heel belangrijke textielstad. Het Overijssels Kanaal loopt er dwars doorheen. 🚢"
+  },
+  "Venlo": {
+    emoji: "🌹",
+    mnemonic: "Ven-lo, bloemen en groente groeien hier zo! 🌹",
+    fact: "Venlo is de tuinbouwstad van Limburg! Hier worden enorme hoeveelheden bloemen en groenten geteeld in kassen. 🥦"
+  },
+  "Roermond": {
+    emoji: "🛍️",
+    mnemonic: "Roer-mond, designer-outlet aan de Roer-mond! 🛍️",
+    fact: "Roermond heeft het grootste designer outlet-centrum van de Benelux: miljoenen mensen komen er elk jaar shoppen! 🛒"
+  },
+  "Alkmaar": {
+    emoji: "🧀",
+    mnemonic: "Al-kmaar, kaas op de markt dat is waar! 🧀",
+    fact: "Alkmaar heeft de beroemdste kaasmarkt van Nederland! Elke vrijdag in de zomer dragen kaasdragers in witte pakken enorme ronde kazen over het marktplein. 🧀"
+  },
+  "Hoorn": {
+    emoji: "⚓",
+    mnemonic: "Hoorn, de haven waar de VOC-schepen zijn geboren! ⚓",
+    fact: "Hoorn was in de Gouden Eeuw een van de rijkste steden van Nederland. Van hier vertrokken VOC-schepen naar verre landen. Kaap Hoorn in Zuid-Amerika is ernaar vernoemd! 🌍"
+  },
+  "Enkhuizen": {
+    emoji: "🐟",
+    mnemonic: "En-khui-zen, haringen in de kuizen! 🐟",
+    fact: "Enkhuizen was vroeger de belangrijkste haringstad van Nederland. Nu staat er het Zuiderzeemuseum, met oude vissersbootjes en huizen. 🏠"
+  },
+  "Zaandam": {
+    emoji: "⚙️",
+    mnemonic: "Zaan-dam, molens en cacao in het programma! ⚙️",
+    fact: "In de Zaanstreek stonden ooit honderden windmolens. Hier leerde de Russische tsaar Peter de Grote hoe je schepen bouwt! 🚢"
   }
 };
 
@@ -349,7 +523,7 @@ export const getMnemonic = async (cityName: string): Promise<string> => {
     const client = getAI();
     if (!client) throw new Error('No API key');
     const response = await client.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: `Geef een kort ezelsbruggetje voor de spelling van de Nederlandse topografische plek "${cityName}". Voor een kind van 9 jaar. Voeg 1 relevante emoji toe. Max 2 zinnen, geen markdown.`,
       config: { temperature: 0.5 }
     });
@@ -381,7 +555,7 @@ export const getFunFact = async (location: string): Promise<{ text: string, emoj
     const client = getAI();
     if (!client) throw new Error('No API key');
     const response = await client.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: `Vertel een leuk feitje over ${location} voor een kind van 9. Gebruik 1 of 2 emoji's. Kort, geen markdown.`,
       config: { temperature: 0.6 }
     });
