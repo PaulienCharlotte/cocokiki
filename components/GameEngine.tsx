@@ -559,12 +559,19 @@ const GameEngine: React.FC<GameEngineProps> = ({
             )}
           </div>
 
-          {/* Algemene Feedback */}
+          {/* Algemene Feedback — compacter op mobiel */}
           {feedback && (
-            <div className="mt-auto pt-2">
-              <motion.div initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`p-2 rounded-xl flex items-center gap-2 border-2 ${feedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : feedback.type === 'warning' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
-                {feedback.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                <span className="font-black text-[10px] md:text-xs">{feedback.text}</span>
+            <div className={`${isMobileCompact ? 'mt-1.5' : 'mt-auto pt-2'}`}>
+              <motion.div
+                initial={{ y: 5, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className={`${isMobileCompact ? 'px-2 py-1' : 'p-2'} rounded-lg md:rounded-xl flex items-center gap-1.5 border ${isMobileCompact ? '' : 'border-2'} ${feedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : feedback.type === 'warning' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-red-50 border-red-200 text-red-700'}`}
+              >
+                {feedback.type === 'success'
+                  ? <CheckCircle2 className={`${isMobileCompact ? 'w-3 h-3' : 'w-4 h-4'} flex-shrink-0`} />
+                  : <AlertCircle  className={`${isMobileCompact ? 'w-3 h-3' : 'w-4 h-4'} flex-shrink-0`} />
+                }
+                <span className={`font-black ${isMobileCompact ? 'text-[10px]' : 'text-[10px] md:text-xs'}`}>{feedback.text}</span>
               </motion.div>
             </div>
           )}

@@ -301,25 +301,29 @@ const Game: React.FC = () => {
           </div>{/* end ml-auto controls */}
         </div>
 
-        {/* Row 2: mode tabs */}
-        <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto scrollbar-hide">
-          {MODES.map(m => {
-            const active = mode === m.id;
-            return (
-              <button
-                key={m.id}
-                onClick={() => handleModeChange(m.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs whitespace-nowrap transition-all flex-shrink-0
-                  ${active
-                    ? 'bg-[#7C3AED] text-white shadow-[0_3px_0_#5B21B6] -translate-y-0.5'
-                    : 'bg-[#4C1D95] text-[#DDD6FE] hover:bg-[#EAB308] hover:text-white'
-                  }`}
-              >
-                <m.icon className="w-3.5 h-3.5" />
-                {m.label}
-              </button>
-            );
-          })}
+        {/* Row 2: mode tabs (scroll-hint via fade gradient rechts op mobiel) */}
+        <div className="relative">
+          <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto scrollbar-hide">
+            {MODES.map(m => {
+              const active = mode === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => handleModeChange(m.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs whitespace-nowrap transition-all flex-shrink-0
+                    ${active
+                      ? 'bg-[#7C3AED] text-white shadow-[0_3px_0_#5B21B6] -translate-y-0.5'
+                      : 'bg-[#4C1D95] text-[#DDD6FE] hover:bg-[#EAB308] hover:text-white'
+                    }`}
+                >
+                  <m.icon className="w-3.5 h-3.5" />
+                  {m.label}
+                </button>
+              );
+            })}
+          </div>
+          {/* Fade gradient: zachte hint dat je naar rechts kunt scrollen op mobiel */}
+          <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-10 sm:hidden bg-gradient-to-l from-[#3B0764] to-transparent" />
         </div>
 
         {/* Row 3: cluster pills (shown when province selected + not memory) */}
@@ -510,12 +514,13 @@ const Game: React.FC = () => {
 
       {/* Footer */}
       <footer className="flex-none bg-[#3B0764] border-t border-[#4C1D95]">
-        <div className="flex flex-col md:flex-row md:justify-center gap-5 md:gap-12 px-4 md:px-8 py-3 md:py-4">
+        {/* Navigatie kolommen — alleen op desktop (op mobiel duplicaat van header) */}
+        <div className="hidden md:flex md:justify-center gap-12 px-8 py-4">
 
           {/* Provincies */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Provincies</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-1">
+            <div className="grid grid-cols-4 gap-x-6 gap-y-1">
               <button
                 onClick={() => handleProvinceChange('all')}
                 className="text-left text-[10px] text-[#C4B5FD] hover:text-[#EAB308] transition-colors font-medium"
@@ -534,14 +539,12 @@ const Game: React.FC = () => {
             </div>
           </div>
 
-          {/* Scheidingslijn: verticaal op desktop, horizontaal op mobiel */}
-          <div className="hidden md:block w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
-          <div className="md:hidden h-px bg-[#4C1D95]" />
+          <div className="w-px bg-[#4C1D95] self-stretch flex-shrink-0" />
 
           {/* Spellen */}
           <div>
             <p className="text-[9px] font-black text-[#EAB308] uppercase tracking-widest mb-2">Spellen</p>
-            <div className="grid grid-cols-2 gap-x-4 md:gap-x-6 gap-y-1">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1">
               {MODES.map(m => (
                 <button
                   key={m.id}
@@ -565,8 +568,8 @@ const Game: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-[#4C1D95] px-4 md:px-8 py-2 flex items-center justify-between">
+        {/* Bottom bar — altijd zichtbaar */}
+        <div className="md:border-t md:border-[#4C1D95] px-4 md:px-8 py-2 flex items-center justify-between">
           <span className="text-[10px] text-[#6D28D9] font-medium">© 2026</span>
           <div className="flex items-center gap-1.5">
             <img src="/images/logo-compas-geel.svg" alt="" className="w-4 h-4 opacity-70" />
