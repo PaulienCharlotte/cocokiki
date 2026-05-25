@@ -119,7 +119,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   }, [isFullscreen]);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/highcharts/map-collection-dist/master/countries/nl/nl-all.geo.json')
+    fetch('/data/geojson/nl-all.geo.json')
       .then(r => r.json()).then(setGeoData);
   }, []);
 
@@ -162,7 +162,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
       zoomControl: false, attributionControl: false,
       maxBounds: [[50.0, 2.5], [54.5, 8.0]], minZoom: 7,
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd', maxZoom: 19,
     } as any).addTo(mapRef.current);
     setTimeout(() => { mapRef.current?.invalidateSize(); }, 200);
@@ -174,11 +174,21 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
     if (!mapRef.current || !geoData) return;
     mapRef.current.eachLayer(l => { if (l instanceof L.GeoJSON) mapRef.current?.removeLayer(l); });
     L.geoJSON(geoData, {
-      style: () => ({
-        fillColor: '#DDD6FE', fillOpacity: 0.2,
-        color: '#7C3AED', weight: 1.5, opacity: 0.7,
-      }),
-    }).addTo(mapRef.current).bringToBack();
+      style: (feature) => {
+        const provinceName = feature?.properties?.name ?? feature?.properties?.statnaam;
+        const hcKey = feature?.properties?.['hc-key'] as string | undefined;
+        const provinceId = hcKey?.replace('nl-', '');
+        const normalizedName = provinceName === 'Fryslân' ? 'Friesland' : provinceName;
+        const provData = PROVINCES.find(p => p.id === provinceId || p.name === normalizedName);
+        return {
+          fillColor: provData?.color ?? '#DDD6FE',
+          fillOpacity: 0.72,
+          color: '#475569',
+          weight: 1.5,
+          opacity: 0.85,
+        };
+      },
+    }).addTo(mapRef.current);
   }, [geoData]);
 
   // Markers (no names shown — it's a test)

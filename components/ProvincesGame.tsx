@@ -83,7 +83,9 @@ interface MapFeedback {
 const provFromFeature = (feature: any): Province | undefined => {
   const hcKey = feature?.properties?.['hc-key'] as string | undefined;
   const id = hcKey?.replace('nl-', '');
-  return PROVINCES.find(p => p.id === id);
+  const name = feature?.properties?.name ?? feature?.properties?.statnaam;
+  const normalizedName = name === 'Fryslân' ? 'Friesland' : name;
+  return PROVINCES.find(p => p.id === id || p.name === normalizedName);
 };
 
 const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack: () => void }> = ({
@@ -106,7 +108,7 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
   const [total, setTotal]         = useState(0);
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/highcharts/map-collection-dist/master/countries/nl/nl-all.geo.json')
+    fetch('/data/geojson/nl-all.geo.json')
       .then(r => r.json()).then(setGeoData);
   }, []);
 
@@ -133,7 +135,7 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
       dragging: true,
       touchZoom: true,
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd', maxZoom: 19, detectRetina: true,
     } as any).addTo(mapRef.current);
     setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 200);
@@ -180,8 +182,8 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
       style: (feature) => {
         const prov = provFromFeature(feature);
         let fillColor   = prov?.color ?? '#f1f5f9';
-        let fillOpacity = 0.3;
-        let color       = '#7C3AED';
+        let fillOpacity = 0.72;
+        let color       = '#475569';
         let weight      = 1.5;
 
         if (currentFeedback && prov) {
@@ -203,8 +205,8 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
         const prov = provFromFeature(feature);
         if (!prov) return;
         layer.on('click', () => handleClick(prov));
-        layer.on('mouseover', () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.55 }); });
-        layer.on('mouseout',  () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.3 }); });
+        layer.on('mouseover', () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.84 }); });
+        layer.on('mouseout',  () => { if (!processingRef.current) (layer as L.Path).setStyle({ fillOpacity: 0.72 }); });
       },
     }).addTo(mapRef.current);
 

@@ -60,7 +60,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const handleZoomOut = () => { if (mapRef.current) mapRef.current.zoomOut(); };
 
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/highcharts/map-collection-dist/master/countries/nl/nl-all.geo.json')
+    fetch('/data/geojson/nl-all.geo.json')
       .then(res => res.json())
       .then(data => setGeoData(data));
   }, []);
@@ -82,7 +82,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     mapRef.current.attributionControl.setPrefix('');
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -144,23 +144,27 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     if (!mapRef.current || !geoData) return;
     mapRef.current.eachLayer((layer) => { if (layer instanceof L.GeoJSON) mapRef.current?.removeLayer(layer); });
     L.geoJSON(geoData, {
+      interactive: false,
       style: (feature) => {
-        const provinceName = feature?.properties?.name;
-        const provData = PROVINCES.find(p => p.name === provinceName);
+        const provinceName = feature?.properties?.name ?? feature?.properties?.statnaam;
+        const hcKey = feature?.properties?.['hc-key'] as string | undefined;
+        const provinceId = hcKey?.replace('nl-', '');
+        const normalizedName = provinceName === 'Fryslân' ? 'Friesland' : provinceName;
+        const provData = PROVINCES.find(p => p.id === provinceId || p.name === normalizedName);
         const isSelected = provData?.id === selectedProvince;
         const isGameTarget = provData?.id === activeGameLocation;
         const fillColor = provData?.color ?? '#f8fafc';
 
         return {
           fillColor: isSelected || isGameTarget ? '#f59e0b' : fillColor,
-          fillOpacity: isSelected || isGameTarget ? 0.45 : 0.25,
-          color: isSelected || isGameTarget ? '#d97706' : '#4a6fa5',
-          weight: isSelected || isGameTarget ? 3.5 : 2,
+          fillOpacity: isSelected || isGameTarget ? 0.84 : 0.72,
+          color: isSelected || isGameTarget ? '#92400e' : '#475569',
+          weight: isSelected || isGameTarget ? 3.5 : 1.8,
           dashArray: '',
           opacity: 1
         };
       }
-    }).addTo(mapRef.current).bringToBack();
+    }).addTo(mapRef.current);
   }, [geoData, selectedProvince, activeGameLocation]);
 
   useEffect(() => {

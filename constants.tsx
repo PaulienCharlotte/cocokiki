@@ -2,18 +2,18 @@
 import { Province, Location, Cluster } from './types';
 
 export const PROVINCES: Province[] = [
-  { id: 'zh', name: 'Zuid-Holland', color: '#B9FBC0', capital: 'Den Haag', center: [52.02, 4.45], zoom: 9 },
-  { id: 'nh', name: 'Noord-Holland', color: '#FFCFD2', capital: 'Haarlem', center: [52.6, 4.8], zoom: 9 },
-  { id: 'ut', name: 'Utrecht', color: '#CFBAF0', capital: 'Utrecht', center: [52.1, 5.2], zoom: 11 },
-  { id: 'nb', name: 'Noord-Brabant', color: '#FFD1DC', capital: "'s-Hertogenbosch", center: [51.6, 5.1], zoom: 9 },
-  { id: 'ge', name: 'Gelderland', color: '#E2F0CB', capital: 'Arnhem', center: [52.1, 5.9], zoom: 9 },
-  { id: 'ov', name: 'Overijssel', color: '#FFFFB5', capital: 'Zwolle', center: [52.4, 6.4], zoom: 9 },
-  { id: 'fl', name: 'Flevoland', color: '#FFB7B2', capital: 'Lelystad', center: [52.5, 5.5], zoom: 10 },
-  { id: 'fr', name: 'Friesland', color: '#A2D2FF', capital: 'Leeuwarden', center: [53.1, 5.8], zoom: 9 },
-  { id: 'gr', name: 'Groningen', color: '#B9FBC0', capital: 'Groningen', center: [53.2, 6.7], zoom: 10 },
-  { id: 'dr', name: 'Drenthe', color: '#FFCCAC', capital: 'Assen', center: [52.9, 6.6], zoom: 10 },
-  { id: 'ze', name: 'Zeeland', color: '#A2D2FF', capital: 'Middelburg', center: [51.5, 3.8], zoom: 10 },
-  { id: 'li', name: 'Limburg', color: '#FFDAC1', capital: 'Maastricht', center: [51.2, 6.0], zoom: 9 },
+  { id: 'zh', name: 'Zuid-Holland', color: '#F4B183', capital: 'Den Haag', center: [52.02, 4.45], zoom: 9 },
+  { id: 'nh', name: 'Noord-Holland', color: '#F6D64A', capital: 'Haarlem', center: [52.6, 4.8], zoom: 9 },
+  { id: 'ut', name: 'Utrecht', color: '#7FC8F8', capital: 'Utrecht', center: [52.1, 5.2], zoom: 11 },
+  { id: 'nb', name: 'Noord-Brabant', color: '#F7E65A', capital: "'s-Hertogenbosch", center: [51.6, 5.1], zoom: 9 },
+  { id: 'ge', name: 'Gelderland', color: '#A8D46F', capital: 'Arnhem', center: [52.1, 5.9], zoom: 9 },
+  { id: 'ov', name: 'Overijssel', color: '#D99A45', capital: 'Zwolle', center: [52.4, 6.4], zoom: 9 },
+  { id: 'fl', name: 'Flevoland', color: '#6BAED6', capital: 'Lelystad', center: [52.5, 5.5], zoom: 10 },
+  { id: 'fr', name: 'Friesland', color: '#E8795C', capital: 'Leeuwarden', center: [53.1, 5.8], zoom: 9 },
+  { id: 'gr', name: 'Groningen', color: '#8CBF50', capital: 'Groningen', center: [53.2, 6.7], zoom: 10 },
+  { id: 'dr', name: 'Drenthe', color: '#DDA23A', capital: 'Assen', center: [52.9, 6.6], zoom: 10 },
+  { id: 'ze', name: 'Zeeland', color: '#C690C9', capital: 'Middelburg', center: [51.5, 3.8], zoom: 10 },
+  { id: 'li', name: 'Limburg', color: '#B884C6', capital: 'Maastricht', center: [51.2, 6.0], zoom: 9 },
   { id: 'water-nl', name: 'Wateren Nederland', color: '#BAE6FD', capital: '', center: [52.05, 5.25], zoom: 8, isStudyArea: true },
 ];
 
