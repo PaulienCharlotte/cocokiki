@@ -5,6 +5,10 @@ import { PROVINCES, LOCATIONS } from '../constants';
 import { Location, GameMode } from '../types';
 import { Plus, Minus } from 'lucide-react';
 
+const WHITE_TILE_URL = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const SCHOOL_TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png';
+const MAP_STYLE_STORAGE_KEY = 'topo_map_school_colors';
+
 interface InteractiveMapProps {
   selectedProvince: string | 'all';
   selectedCluster?: string | 'all';
@@ -52,9 +56,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const provinceLayerRef = useRef<L.GeoJSON | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const lastViewRef = useRef<{center: [number, number], zoom: number} | null>(null);
   const [geoData, setGeoData] = useState<any>(null);
+  const [showSchoolColors, setShowSchoolColors] = useState(() => {
+    return localStorage.getItem(MAP_STYLE_STORAGE_KEY) !== 'false';
+  });
 
   const handleZoomIn = () => { if (mapRef.current) mapRef.current.zoomIn(); };
   const handleZoomOut = () => { if (mapRef.current) mapRef.current.zoomOut(); };
@@ -82,7 +91,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     mapRef.current.attributionControl.setPrefix('');
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+    tileLayerRef.current = L.tileLayer(showSchoolColors ? SCHOOL_TILE_URL : WHITE_TILE_URL, {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -98,6 +107,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(MAP_STYLE_STORAGE_KEY, String(showSchoolColors));
+    tileLayerRef.current?.setUrl(showSchoolColors ? SCHOOL_TILE_URL : WHITE_TILE_URL);
+  }, [showSchoolColors]);
 
   useEffect(() => {
     const handleResize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
@@ -142,8 +156,13 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   useEffect(() => {
     if (!mapRef.current || !geoData) return;
-    mapRef.current.eachLayer((layer) => { if (layer instanceof L.GeoJSON) mapRef.current?.removeLayer(layer); });
-    L.geoJSON(geoData, {
+    if (provinceLayerRef.current) {
+      mapRef.current.removeLayer(provinceLayerRef.current);
+      provinceLayerRef.current = null;
+    }
+    if (!showSchoolColors) return;
+
+    provinceLayerRef.current = L.geoJSON(geoData, {
       interactive: false,
       style: (feature) => {
         const provinceName = feature?.properties?.name ?? feature?.properties?.statnaam;
@@ -165,7 +184,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         };
       }
     }).addTo(mapRef.current);
-  }, [geoData, selectedProvince, activeGameLocation]);
+  }, [geoData, selectedProvince, activeGameLocation, showSchoolColors]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -245,6 +264,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   return (
     <div className="w-full h-full relative">
       <div ref={mapContainerRef} className="w-full h-full z-10" />
+      <button
+        type="button"
+        role="switch"
+        aria-checked={showSchoolColors}
+        onClick={() => setShowSchoolColors(v => !v)}
+        title={showSchoolColors ? 'Witte kaart tonen' : 'Gekleurde schoolkaart tonen'}
+        className="absolute top-4 right-4 z-[4000] flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 shadow-lg border border-slate-200 text-[11px] font-black text-slate-700 hover:bg-white transition-colors"
+      >
+        <span className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${showSchoolColors ? 'bg-[#7C3AED]' : 'bg-slate-300'}`}>
+          <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${showSchoolColors ? 'translate-x-4' : 'translate-x-0.5'}`} />
+        </span>
+        <span>{showSchoolColors ? 'Kleurkaart' : 'Witte kaart'}</span>
+      </button>
       <div className="absolute bottom-4 right-4 md:bottom-10 md:right-10 flex flex-col gap-2 z-[4000]">
         <button onClick={handleZoomIn} className="w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl shadow-lg border-2 border-pink-50 flex items-center justify-center text-pink-400 active:translate-y-1 transition-all"><Plus className="w-6 h-6 md:w-10 md:h-10" /></button>
         <button onClick={handleZoomOut} className="w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl shadow-lg border-2 border-pink-50 flex items-center justify-center text-pink-400 active:translate-y-1 transition-all"><Minus className="w-6 h-6 md:w-10 md:h-10" /></button>
