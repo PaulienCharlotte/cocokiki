@@ -433,6 +433,21 @@ const FALLBACK_DATA: Record<string, LocationData> = {
     mnemonic: "Rijn, de allergrootste rivier van het vasteland fijn! 🌍",
     fact: "De Rijn begint hoog in de Zwitserse Alpen en stroomt door Duitsland naar Nederland. Het is een van de drukste vrachtroutes van Europa! 🚢"
   },
+  "Nieuwe Waterweg": {
+    emoji: "🚢",
+    mnemonic: "Nieuwe Waterweg, schepen varen naar zee weg! 🚢",
+    fact: "De Nieuwe Waterweg is de directe toegang van de Rotterdamse haven naar de Noordzee. Hier varen enorme zeeschepen van en naar de haven. 🌊"
+  },
+  "Lek": {
+    emoji: "🌉",
+    mnemonic: "Lek, de rivier stroomt langs de dijk heel gek! 🌉",
+    fact: "De Lek is een belangrijke rivier in Midden-Nederland. Langs de Lek liggen dijken, pontjes en oude stadjes zoals Vianen en Schoonhoven. 🛶"
+  },
+  "Nederrijn": {
+    emoji: "🏞️",
+    mnemonic: "Neder-rijn, bij Arnhem stroomt hij fijn! 🏞️",
+    fact: "De Nederrijn stroomt langs Arnhem en Wageningen. Bij Driel ligt een stuw die helpt om het water goed te verdelen. 💧"
+  },
 
   // --- NOORD-BRABANT ---
   "Helmond": {

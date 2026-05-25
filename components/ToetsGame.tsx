@@ -126,17 +126,17 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   const locations = useMemo((): Location[] => {
     if (clusterId === 'provincies-en-hoofdsteden') {
       const caps = LOCATIONS.filter(l => l.isCapital);
-      const provs = PROVINCES.map(p => ({
+      const provs = PROVINCES.filter(p => !p.isStudyArea).map(p => ({
         id: p.id, name: p.name, provinceId: p.id,
         type: 'province' as const, lat: p.center[0], lng: p.center[1],
       }));
       return [...caps, ...provs];
     }
     if (clusterId === 'hoofdsteden') {
-      return LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' || l.provinceId === provinceId));
+      return LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' ? l.provinceId !== 'water-nl' : l.provinceId === provinceId));
     }
     return LOCATIONS.filter(loc => {
-      const provMatch    = provinceId === 'all' || loc.provinceId === provinceId;
+      const provMatch    = provinceId === 'all' ? loc.provinceId !== 'water-nl' : loc.provinceId === provinceId;
       const clusterMatch = clusterId  === 'all' || loc.clusterId  === clusterId;
       return provMatch && clusterMatch;
     });

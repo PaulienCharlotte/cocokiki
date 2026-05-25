@@ -14,6 +14,7 @@ export const PROVINCES: Province[] = [
   { id: 'dr', name: 'Drenthe', color: '#FFCCAC', capital: 'Assen', center: [52.9, 6.6], zoom: 10 },
   { id: 'ze', name: 'Zeeland', color: '#A2D2FF', capital: 'Middelburg', center: [51.5, 3.8], zoom: 10 },
   { id: 'li', name: 'Limburg', color: '#FFDAC1', capital: 'Maastricht', center: [51.2, 6.0], zoom: 9 },
+  { id: 'water-nl', name: 'Wateren Nederland', color: '#BAE6FD', capital: '', center: [52.05, 5.25], zoom: 8, isStudyArea: true },
 ];
 
 export const CLUSTERS: Cluster[] = [
@@ -45,6 +46,9 @@ export const CLUSTERS: Cluster[] = [
   { id: 'nb_meierij', name: 'Meierij', icon: '🏛️', provinceId: 'nb' },
   { id: 'nb_kempen', name: 'Kempen', icon: '🌳', provinceId: 'nb' },
   { id: 'nb_peel', name: 'De Peel', icon: '🌾', provinceId: 'nb' },
+
+  // --- WATEREN NEDERLAND ---
+  { id: 'water_nl_rivieren_kanalen', name: 'Rivieren & Kanalen', icon: '🌊', provinceId: 'water-nl' },
 ];
 
 export const LOCATIONS: Location[] = [
@@ -214,4 +218,15 @@ export const LOCATIONS: Location[] = [
   { id: 'nb-V', name: 'Donge', provinceId: 'nb', type: 'water', lat: 51.6500, lng: 4.8500, clusterId: 'nb_baronie' },
   { id: 'nb-VI', name: 'Zuid-Willemsvaart', provinceId: 'nb', type: 'water', lat: 51.5500, lng: 5.6500, clusterId: 'nb_peel' },
   { id: 'nb-VII', name: 'Wilhelminakanaal', provinceId: 'nb', type: 'water', lat: 51.5500, lng: 5.2000, clusterId: 'nb_kempen' },
+
+  // --- WATEREN NEDERLAND ---
+  { id: 'water-nl-1', name: 'Noordzeekanaal', provinceId: 'water-nl', type: 'water', lat: 52.4590, lng: 4.6420, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-2', name: 'Amsterdam-Rijnkanaal', provinceId: 'water-nl', type: 'water', lat: 52.0900, lng: 5.0550, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-3', name: 'Nieuwe Waterweg', provinceId: 'water-nl', type: 'water', lat: 51.9330, lng: 4.2110, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-4', name: 'Lek', provinceId: 'water-nl', type: 'water', lat: 51.9690, lng: 5.0270, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-5', name: 'Nederrijn', provinceId: 'water-nl', type: 'water', lat: 51.9590, lng: 5.5900, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-6', name: 'Waal', provinceId: 'water-nl', type: 'water', lat: 51.8580, lng: 5.5100, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-7', name: 'IJssel', provinceId: 'water-nl', type: 'water', lat: 52.1650, lng: 6.2050, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-8', name: 'Rijn', provinceId: 'water-nl', type: 'water', lat: 51.8500, lng: 6.1000, clusterId: 'water_nl_rivieren_kanalen' },
+  { id: 'water-nl-9', name: 'Maas', provinceId: 'water-nl', type: 'water', lat: 51.3700, lng: 6.1650, clusterId: 'water_nl_rivieren_kanalen' },
 ];

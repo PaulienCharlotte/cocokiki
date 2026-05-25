@@ -199,6 +199,44 @@ export const LOCATION_FACTS: Record<string, LocationFact> = {
     fact: "Het Sneekermeer is één van de belangrijkste watergebieden voor sportvissers en zeilers! 🎣"
   },
 
+  // --- WATEREN NEDERLAND ---
+  "Noordzeekanaal": {
+    emoji: "🚢",
+    fact: "Het Noordzeekanaal verbindt Amsterdam met de Noordzee bij IJmuiden. Grote zeeschepen varen hierdoor naar de haven van Amsterdam. ⚓"
+  },
+  "Amsterdam-Rijnkanaal": {
+    emoji: "⚓",
+    fact: "Het Amsterdam-Rijnkanaal is een belangrijke vaarroute tussen Amsterdam, Utrecht en de grote rivieren. 🚢"
+  },
+  "Nieuwe Waterweg": {
+    emoji: "🚢",
+    fact: "De Nieuwe Waterweg is de toegang van de Rotterdamse haven naar de Noordzee. Hier varen enorme zeeschepen. 🌊"
+  },
+  "Lek": {
+    emoji: "🌉",
+    fact: "De Lek is een grote rivier in het midden van Nederland. Langs de Lek liggen dijken, pontjes en oude stadjes. 🛶"
+  },
+  "Nederrijn": {
+    emoji: "🏞️",
+    fact: "De Nederrijn stroomt langs Arnhem en Wageningen. Bij Driel ligt een stuw die helpt om het water te regelen. 💧"
+  },
+  "Waal": {
+    emoji: "🚢",
+    fact: "De Waal is de breedste en drukste rivier van Nederland. Er varen heel veel vrachtschepen overheen. 🌊"
+  },
+  "IJssel": {
+    emoji: "🏞️",
+    fact: "De IJssel stroomt langs oude Hanzesteden zoals Zutphen, Deventer en Zwolle. ⚓"
+  },
+  "Rijn": {
+    emoji: "🌍",
+    fact: "De Rijn begint in de Alpen en komt via Duitsland Nederland binnen. Daarna splitst hij zich in meerdere rivieren. 🗺️"
+  },
+  "Maas": {
+    emoji: "🌊",
+    fact: "De Maas stroomt vanuit Frankrijk door België en Nederland. In Nederland is het een belangrijke rivier in het zuiden. 🛶"
+  },
+
   // --- NOORD-HOLLAND ---
   "Alkmaar": {
     emoji: "🧀",

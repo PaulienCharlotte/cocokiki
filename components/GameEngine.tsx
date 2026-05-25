@@ -90,18 +90,18 @@ const GameEngine: React.FC<GameEngineProps> = ({
 
     if (clusterId === 'hoofdsteden') {
       const caps = LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' || l.provinceId === provinceId));
-      const provs = PROVINCES.filter(p => provinceId === 'all' || p.id === provinceId).map(toProvLoc);
+      const provs = PROVINCES.filter(p => !p.isStudyArea && (provinceId === 'all' || p.id === provinceId)).map(toProvLoc);
       return [...caps, ...provs];
     }
 
     if (clusterId === 'provincies-en-hoofdsteden') {
       const caps = LOCATIONS.filter(l => l.isCapital === true);
-      const provs = PROVINCES.map(toProvLoc);
+      const provs = PROVINCES.filter(p => !p.isStudyArea).map(toProvLoc);
       return [...caps, ...provs];
     }
     
     return LOCATIONS.filter(l => {
-      const provMatch = provinceId === 'all' || l.provinceId === provinceId;
+      const provMatch = provinceId === 'all' ? l.provinceId !== 'water-nl' : l.provinceId === provinceId;
       const clusterMatch = clusterId === 'all' || l.clusterId === clusterId;
       return provMatch && clusterMatch;
     });

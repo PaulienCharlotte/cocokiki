@@ -37,7 +37,7 @@ function shuffle<T>(arr: T[]): T[] {
 function buildCards(provinceId: string, pairCount: number): MemoryCard[] {
   // Collect candidates: locations that belong to province (or all) and have a fact
   const candidateNames = LOCATIONS
-    .filter(loc => provinceId === 'all' || loc.provinceId === provinceId)
+    .filter(loc => provinceId === 'all' ? loc.provinceId !== 'water-nl' : loc.provinceId === provinceId)
     .map(loc => loc.name)
     .filter(name => !!LOCATION_FACTS[name]);
 

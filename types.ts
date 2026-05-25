@@ -25,6 +25,7 @@ export interface Province {
   capital: string;
   center: [number, number]; // [lat, lng]
   zoom: number;
+  isStudyArea?: boolean;
 }
 
 export type GameMode = 'explore' | 'find' | 'spell' | 'master' | 'memory' | 'mnemonic' | 'test';

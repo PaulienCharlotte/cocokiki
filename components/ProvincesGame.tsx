@@ -8,6 +8,8 @@ import { Province } from '../types';
 
 type SubMode = 'menu' | 'provinces' | 'capitals';
 
+const REAL_PROVINCES = PROVINCES.filter(p => !p.isStudyArea);
+
 interface ProvincesGameProps {
   onScoreChange: (pts: number) => void;
 }
@@ -24,7 +26,7 @@ const shuffle = <T,>(arr: T[]): T[] => {
 };
 
 const getCapitalOptions = (correct: Province): string[] => {
-  const others = PROVINCES.filter(p => p.id !== correct.id);
+  const others = REAL_PROVINCES.filter(p => p.id !== correct.id);
   const wrong = shuffle(others).slice(0, 3).map(p => p.capital);
   return shuffle([correct.capital, ...wrong]);
 };
@@ -109,8 +111,8 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
   }, []);
 
   const pickNext = useCallback(() => {
-    const idx = Math.floor(Math.random() * PROVINCES.length);
-    setTarget(PROVINCES[idx]);
+    const idx = Math.floor(Math.random() * REAL_PROVINCES.length);
+    setTarget(REAL_PROVINCES[idx]);
     setFeedback(null);
     processingRef.current = false;
   }, []);
@@ -208,7 +210,7 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
 
     // ── 12 provincie-stippen ──
     dotsLayerRef.current = L.layerGroup();
-    PROVINCES.forEach(prov => {
+    REAL_PROVINCES.forEach(prov => {
       let dotColor = '#7C3AED';
       let radius   = 8;
       let border   = '#ffffff';
@@ -308,7 +310,7 @@ const CapitalsQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack: () 
   onBack,
 }) => {
   const [curProv, setCurProv] = useState<Province>(() => {
-    const p = PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
+    const p = REAL_PROVINCES[Math.floor(Math.random() * REAL_PROVINCES.length)];
     return p;
   });
   const [options, setOptions]   = useState<string[]>(() => getCapitalOptions(curProv));
@@ -318,7 +320,7 @@ const CapitalsQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack: () 
   const [total, setTotal]         = useState(0);
 
   const nextQuestion = useCallback(() => {
-    const next = PROVINCES[Math.floor(Math.random() * PROVINCES.length)];
+    const next = REAL_PROVINCES[Math.floor(Math.random() * REAL_PROVINCES.length)];
     setCurProv(next);
   }, []);
 

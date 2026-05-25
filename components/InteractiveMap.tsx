@@ -169,18 +169,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     markersRef.current = {};
 
     const provinceDots = (filter?: string) => PROVINCES
-      .filter(p => !filter || p.id === filter)
+      .filter(p => !p.isStudyArea && (!filter || p.id === filter))
       .map(p => ({ id: p.id, name: p.name, provinceId: p.id, type: 'province' as const, lat: p.center[0], lng: p.center[1] }));
 
     let filteredLocations = LOCATIONS.filter(loc => {
       if (selectedCluster === 'hoofdsteden') {
-        const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
+        const provMatch = selectedProvince === 'all' ? loc.provinceId !== 'water-nl' : loc.provinceId === selectedProvince;
         return provMatch && loc.isCapital;
       }
       if (selectedCluster === 'provincies-en-hoofdsteden') {
         return loc.isCapital === true;
       }
-      const provMatch = selectedProvince === 'all' || loc.provinceId === selectedProvince;
+      const provMatch = selectedProvince === 'all' ? loc.provinceId !== 'water-nl' : loc.provinceId === selectedProvince;
       const clusterMatch = selectedCluster === 'all' || loc.clusterId === selectedCluster;
       return provMatch && clusterMatch;
     });
