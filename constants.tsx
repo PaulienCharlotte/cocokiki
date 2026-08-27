@@ -1,5 +1,7 @@
 
 import { Province, Location, Cluster } from './types';
+import { EUROPE_AREA, EUROPE_CLUSTERS, EUROPE_LOCATIONS } from './data/europe';
+import { POLE_LOCATIONS, WORLD_AREAS, WORLD_CLUSTERS, WORLD_LOCATIONS } from './data/world';
 
 export const PROVINCES: Province[] = [
   { id: 'zh', name: 'Zuid-Holland', color: '#F4B183', capital: 'Den Haag', center: [52.02, 4.45], zoom: 9 },
@@ -15,6 +17,8 @@ export const PROVINCES: Province[] = [
   { id: 'ze', name: 'Zeeland', color: '#C690C9', capital: 'Middelburg', center: [51.5, 3.8], zoom: 10 },
   { id: 'li', name: 'Limburg', color: '#B884C6', capital: 'Maastricht', center: [51.2, 6.0], zoom: 9 },
   { id: 'water-nl', name: 'Wateren Nederland', color: '#BAE6FD', capital: '', center: [52.05, 5.25], zoom: 8, isStudyArea: true },
+  EUROPE_AREA,
+  ...WORLD_AREAS,
 ];
 
 export const CLUSTERS: Cluster[] = [
@@ -49,6 +53,8 @@ export const CLUSTERS: Cluster[] = [
 
   // --- WATEREN NEDERLAND ---
   { id: 'water_nl_rivieren_kanalen', name: 'Rivieren & Kanalen', icon: '🌊', provinceId: 'water-nl' },
+  ...EUROPE_CLUSTERS,
+  ...WORLD_CLUSTERS,
 ];
 
 export const LOCATIONS: Location[] = [
@@ -229,4 +235,7 @@ export const LOCATIONS: Location[] = [
   { id: 'water-nl-7', name: 'IJssel', provinceId: 'water-nl', type: 'water', lat: 52.1650, lng: 6.2050, clusterId: 'water_nl_rivieren_kanalen' },
   { id: 'water-nl-8', name: 'Rijn', provinceId: 'water-nl', type: 'water', lat: 51.8500, lng: 6.1000, clusterId: 'water_nl_rivieren_kanalen' },
   { id: 'water-nl-9', name: 'Maas', provinceId: 'water-nl', type: 'water', lat: 51.3700, lng: 6.1650, clusterId: 'water_nl_rivieren_kanalen' },
+  ...EUROPE_LOCATIONS,
+  ...WORLD_LOCATIONS,
+  ...POLE_LOCATIONS,
 ];

@@ -135,8 +135,10 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
       dragging: true,
       touchZoom: true,
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd', maxZoom: 19, detectRetina: true,
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri',
+      maxZoom: 18,
+      detectRetina: true,
     } as any).addTo(mapRef.current);
     setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 200);
 

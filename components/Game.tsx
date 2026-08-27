@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Map as MapIcon, Search, SpellCheck, Wand2, Brain, Lightbulb,
+  Map as MapIcon, Search, SpellCheck, Wand2, Brain,
   Trophy, ChevronDown, Eye, EyeOff, X, LogIn, User, Landmark, ClipboardList,
 } from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
@@ -29,6 +29,7 @@ const MODES = [
 
 const getTypeColor = (type: string) => {
   if (type === 'water')  return '#38bdf8';
+  if (type === 'country') return '#22C55E';
   if (type === 'region') return '#7C3AED';
   return '#EAB308';
 };
@@ -156,6 +157,23 @@ const Game: React.FC = () => {
 
   const currentProvince = PROVINCES.find(p => p.id === selectedProvince);
   const activeMode = MODES.find(m => m.id === mode)!;
+  const realProvinces = PROVINCES.filter(p => !p.isStudyArea);
+  const waterArea = PROVINCES.find(p => p.id === 'water-nl');
+  const worldAreas = PROVINCES.filter(p =>
+    ['world', 'europe', 'africa', 'asia', 'north-america', 'south-america', 'oceania', 'arctic', 'antarctica'].includes(p.id)
+  );
+  const areaIcon = selectedCluster === 'provincies-en-hoofdsteden'
+    ? '🏛️'
+    : ['world', 'europe', 'africa', 'asia', 'north-america', 'south-america', 'oceania', 'arctic', 'antarctica'].includes(selectedProvince)
+      ? '🌍'
+      : selectedProvince === 'water-nl'
+        ? '🌊'
+        : currentProvince
+          ? '📍'
+          : '🇳🇱';
+  const areaLabel = selectedCluster === 'provincies-en-hoofdsteden'
+    ? 'Prov. & Hoofdst.'
+    : currentProvince?.name ?? 'Heel NL';
 
   return (
     <div className="h-[100dvh] flex flex-col bg-[#F5F3FF] overflow-hidden">
@@ -239,23 +257,47 @@ const Game: React.FC = () => {
               onClick={() => setProvinceOpen(o => !o)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#7C3AED] border-0 rounded-full text-sm font-black text-white hover:bg-[#EAB308] transition-colors"
             >
-              <span className="text-base">{selectedCluster === 'provincies-en-hoofdsteden' ? '🏛️' : currentProvince ? '📍' : '🇳🇱'}</span>
-              <span className="max-w-[100px] truncate hidden sm:inline">
-                {selectedCluster === 'provincies-en-hoofdsteden' ? 'Prov. & Hoofdst.' : currentProvince?.name ?? 'Heel NL'}
+              <span className="text-base">{areaIcon}</span>
+              <span className="max-w-[130px] truncate hidden sm:inline">
+                {areaLabel}
               </span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${provinceOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <AnimatePresence>
-              {provinceOpen && (
-                <motion.div
+	            <AnimatePresence>
+	              {provinceOpen && (
+	                <motion.div
                   initial={{ opacity: 0, y: -8, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.96 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-[#3B0764] rounded-2xl shadow-xl border border-[#4C1D95] overflow-hidden z-50"
+                  className="absolute right-0 top-full mt-2 w-64 max-h-[70vh] overflow-y-auto bg-[#3B0764] rounded-2xl shadow-xl border border-[#4C1D95] z-50"
                 >
-                  {/* Provincies & Hoofdsteden als leercluster */}
+                  <div className="px-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-[#A78BFA]">
+                    Wereld
+                  </div>
+                  {worldAreas.map(area => (
+                    <button
+                      key={area.id}
+                      onClick={() => handleProvinceChange(area.id)}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center gap-2 ${selectedProvince === area.id ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                    >
+                      <span className="text-base">{area.id === 'world' ? '🌐' : '🌍'}</span>
+                      {area.name}
+                    </button>
+                  ))}
+
+                  <div className="border-t border-[#4C1D95] mx-3 my-2" />
+                  <div className="px-4 pb-1 text-[10px] font-black uppercase tracking-widest text-[#A78BFA]">
+                    Nederland
+                  </div>
+
+                  <button
+                    onClick={() => handleProvinceChange('all')}
+                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === 'all' && selectedCluster !== 'provincies-en-hoofdsteden' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                  >
+                    🇳🇱 Heel Nederland
+                  </button>
                   <button
                     onClick={() => {
                       setSelectedProvince('all');
@@ -269,15 +311,21 @@ const Game: React.FC = () => {
                     <Landmark className="w-3.5 h-3.5 flex-shrink-0" />
                     Provincies &amp; Hoofdsteden
                   </button>
-                  <div className="border-t border-[#4C1D95] mx-3" />
+                  {waterArea && (
+                    <button
+                      onClick={() => handleProvinceChange(waterArea.id)}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors flex items-center gap-2 ${selectedProvince === waterArea.id ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
+                    >
+                      <span className="text-base">🌊</span>
+                      {waterArea.name}
+                    </button>
+                  )}
 
-                  <button
-                    onClick={() => handleProvinceChange('all')}
-                    className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors ${selectedProvince === 'all' && selectedCluster !== 'provincies-en-hoofdsteden' ? 'bg-[#7C3AED] text-white' : 'hover:bg-[#EAB308] hover:text-white text-[#DDD6FE]'}`}
-                  >
-                    🇳🇱 Heel Nederland
-                  </button>
-                  {PROVINCES.map(p => (
+                  <div className="border-t border-[#4C1D95] mx-3 my-2" />
+                  <div className="px-4 pb-1 text-[10px] font-black uppercase tracking-widest text-[#A78BFA]">
+                    Provincies
+                  </div>
+                  {realProvinces.map(p => (
                     <button
                       key={p.id}
                       onClick={() => handleProvinceChange(p.id)}
@@ -286,9 +334,9 @@ const Game: React.FC = () => {
                       {p.name}
                     </button>
                   ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+	                </motion.div>
+	              )}
+	            </AnimatePresence>
           </div>
 
           {/* Score */}
@@ -417,6 +465,7 @@ const Game: React.FC = () => {
                   { color: '#EAB308', label: 'Hoofdstad',       star: true  },
                   { color: '#38bdf8', label: 'Water',           star: false },
                   { color: '#7C3AED', label: 'Gebied / Provincie', star: false },
+                  { color: '#22C55E', label: 'Land',            star: false },
                 ].map(({ color, label, star }) => (
                   <div key={label} className="flex items-center gap-1.5">
                     <span className="relative w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }}>

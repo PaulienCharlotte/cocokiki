@@ -23,6 +23,17 @@ const toRoman = (n: number): string => {
 };
 
 const normalize = (s: string) => s.trim().toLowerCase().replace(/['']/g, "'").replace(/\s+/g, ' ');
+const NL_BOUNDS: L.LatLngBoundsExpression = [[50.75, 3.35], [53.55, 7.22]];
+const EUROPE_BOUNDS: L.LatLngBoundsExpression = [[34.5, -24.5], [71.5, 45.5]];
+
+const getCountryLocationForFeature = (feature: any) => {
+  const props = feature?.properties ?? {};
+  const iso = props['ISO3166-1-Alpha-3'];
+  const name = props.name;
+  return LOCATIONS.find(loc =>
+    loc.provinceId === 'europe' && (loc.isoAlpha3 === iso || loc.geoName === name)
+  );
+};
 
 // ── Section — defined OUTSIDE ToetsGame so React never unmounts inputs ───────
 
@@ -100,7 +111,9 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   const [submitted, setSubmitted]     = useState(false);
   const [answers, setAnswers]         = useState<Record<string, string>>({});
   const [geoData, setGeoData]         = useState<any>(null);
+  const [europeGeoData, setEuropeGeoData] = useState<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const isEuropeSelected = provinceId === 'europe';
 
   const toggleFullscreen = () => setIsFullscreen(f => !f);
 
@@ -121,9 +134,12 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   useEffect(() => {
     fetch('/data/geojson/nl-all.geo.json')
       .then(r => r.json()).then(setGeoData);
+    fetch('/data/geojson/europe-countries.geo.json')
+      .then(r => r.json()).then(setEuropeGeoData);
   }, []);
 
   const locations = useMemo((): Location[] => {
+    const studyAreaIds = new Set(PROVINCES.filter(p => p.isStudyArea).map(p => p.id));
     if (clusterId === 'provincies-en-hoofdsteden') {
       const caps = LOCATIONS.filter(l => l.isCapital);
       const provs = PROVINCES.filter(p => !p.isStudyArea).map(p => ({
@@ -133,26 +149,28 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
       return [...caps, ...provs];
     }
     if (clusterId === 'hoofdsteden') {
-      return LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' ? l.provinceId !== 'water-nl' : l.provinceId === provinceId));
+      return LOCATIONS.filter(l => l.isCapital && (provinceId === 'all' ? !studyAreaIds.has(l.provinceId) : l.provinceId === provinceId));
     }
     return LOCATIONS.filter(loc => {
-      const provMatch    = provinceId === 'all' ? loc.provinceId !== 'water-nl' : loc.provinceId === provinceId;
+      const provMatch    = provinceId === 'all' ? !studyAreaIds.has(loc.provinceId) : loc.provinceId === provinceId;
       const clusterMatch = clusterId  === 'all' || loc.clusterId  === clusterId;
       return provMatch && clusterMatch;
     });
   }, [provinceId, clusterId]);
 
   const cities  = useMemo(() => locations.filter(l => l.type === 'city' || l.type === 'province'), [locations]);
+  const countries = useMemo(() => locations.filter(l => l.type === 'country'), [locations]);
   const waters  = useMemo(() => locations.filter(l => l.type === 'water'),  [locations]);
   const regions = useMemo(() => locations.filter(l => l.type === 'region'), [locations]);
 
   const labelMap = useMemo(() => {
     const m: Record<string, string> = {};
     cities.forEach((l, i)  => { m[l.id] = String(i + 1); });
+    countries.forEach((l, i) => { m[l.id] = String(i + 1); });
     waters.forEach((l, i)  => { m[l.id] = String.fromCharCode(65 + i); });
     regions.forEach((l, i) => { m[l.id] = toRoman(i + 1); });
     return m;
-  }, [cities, waters, regions]);
+  }, [cities, countries, waters, regions]);
 
   // Map init
   useEffect(() => {
@@ -160,10 +178,11 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
     mapRef.current = L.map(mapContainerRef.current, {
       center: [52.1, 5.2], zoom: 8,
       zoomControl: false, attributionControl: false,
-      maxBounds: [[50.0, 2.5], [54.5, 8.0]], minZoom: 7,
+      maxBounds: EUROPE_BOUNDS, minZoom: 4,
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd', maxZoom: 19,
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri',
+      maxZoom: 18,
     } as any).addTo(mapRef.current);
     setTimeout(() => { mapRef.current?.invalidateSize(); }, 200);
     return () => { mapRef.current?.remove(); mapRef.current = null; };
@@ -171,10 +190,22 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
 
   // GeoJSON province outlines
   useEffect(() => {
-    if (!mapRef.current || !geoData) return;
+    if (!mapRef.current) return;
+    const activeGeoData = isEuropeSelected ? europeGeoData : geoData;
+    if (!activeGeoData) return;
     mapRef.current.eachLayer(l => { if (l instanceof L.GeoJSON) mapRef.current?.removeLayer(l); });
-    L.geoJSON(geoData, {
+    L.geoJSON(activeGeoData, {
       style: (feature) => {
+        if (isEuropeSelected) {
+          return {
+            fillColor: getCountryLocationForFeature(feature) ? '#86EFAC' : '#DDD6FE',
+            fillOpacity: 0.62,
+            color: '#475569',
+            weight: 1.2,
+            opacity: 0.85,
+          };
+        }
+
         const provinceName = feature?.properties?.name ?? feature?.properties?.statnaam;
         const hcKey = feature?.properties?.['hc-key'] as string | undefined;
         const provinceId = hcKey?.replace('nl-', '');
@@ -189,7 +220,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
         };
       },
     }).addTo(mapRef.current);
-  }, [geoData]);
+  }, [geoData, europeGeoData, isEuropeSelected]);
 
   // Markers (no names shown — it's a test)
   useEffect(() => {
@@ -199,6 +230,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
     const groupColor = (loc: Location) => {
       if (loc.type === 'water')  return '#38bdf8';
       if (loc.type === 'region') return '#7C3AED';
+      if (loc.type === 'country') return '#22C55E';
       return '#EAB308';
     };
 
@@ -322,6 +354,12 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
           <div className="flex flex-col gap-5">
             <Section
               title="Plaatsen" color="#D97706" items={cities}
+              getLabel={i => String(i + 1)}
+              answers={answers} submitted={submitted}
+              correctMap={result?.details ?? null} onChange={handleChange}
+            />
+            <Section
+              title="Landen" color="#16A34A" items={countries}
               getLabel={i => String(i + 1)}
               answers={answers} submitted={submitted}
               correctMap={result?.details ?? null} onChange={handleChange}

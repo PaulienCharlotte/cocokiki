@@ -3,12 +3,14 @@ export interface Location {
   id: string;
   name: string;
   provinceId: string;
-  type: 'city' | 'water' | 'region' | 'mountain' | 'province';
+  type: 'city' | 'water' | 'region' | 'mountain' | 'province' | 'country';
   lat: number; 
   lng: number; 
   fact?: string;
   clusterId?: string;
   isCapital?: boolean;
+  isoAlpha3?: string;
+  geoName?: string;
 }
 
 export interface Cluster {

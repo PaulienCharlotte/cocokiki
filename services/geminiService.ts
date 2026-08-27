@@ -1,5 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
+import { LOCATION_FACTS } from "../data/locationFacts";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
@@ -783,6 +784,13 @@ export const getFunFact = async (location: string): Promise<{ text: string, emoj
     return {
       text: FALLBACK_DATA[location].fact,
       emoji: FALLBACK_DATA[location].emoji
+    };
+  }
+
+  if (LOCATION_FACTS[location]) {
+    return {
+      text: LOCATION_FACTS[location].fact,
+      emoji: LOCATION_FACTS[location].emoji
     };
   }
 

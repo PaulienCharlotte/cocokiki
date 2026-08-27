@@ -308,4 +308,194 @@ export const LOCATION_FACTS: Record<string, LocationFact> = {
     emoji: "🪨",
     fact: "In Drenthe staan de Hunebedden, grote grafstenen die 5000 jaar geleden zijn gebouwd door de eerste bewoners! 🗿"
   },
+
+  // --- EUROPA LANDEN ---
+  "Albanië": {
+    emoji: "🏔️",
+    fact: "Albanië heeft hoge bergen én stranden aan de Adriatische Zee. Het land werd lang heel gesloten bestuurd, maar is nu volop in ontwikkeling. 🌊"
+  },
+  "Andorra": {
+    emoji: "⛷️",
+    fact: "Andorra ligt hoog in de Pyreneeën tussen Frankrijk en Spanje. Het is een van de kleinste landen van Europa en populair bij wintersporters. 🏔️"
+  },
+  "Oostenrijk": {
+    emoji: "🎼",
+    fact: "Oostenrijk ligt in de Alpen en is bekend om bergen, skiën en klassieke muziek. Mozart werd geboren in Salzburg. 🎻"
+  },
+  "Wit-Rusland": {
+    emoji: "🌲",
+    fact: "Wit-Rusland heeft veel bossen en moerassen. Een groot deel van het oerbos Białowieża ligt in dit gebied. 🌳"
+  },
+  "België": {
+    emoji: "🧇",
+    fact: "België heeft drie officiële talen: Nederlands, Frans en Duits. Brussel is ook een belangrijke stad voor de Europese Unie. 🏛️"
+  },
+  "Bosnië en Herzegovina": {
+    emoji: "🌉",
+    fact: "In Bosnië en Herzegovina ligt de stad Mostar met een beroemde oude brug. Die brug is een symbool van verbinding. 🌉"
+  },
+  "Bulgarije": {
+    emoji: "🌹",
+    fact: "Bulgarije staat bekend om rozenolie. In de Rozenvallei worden rozen gekweekt voor parfum. 🌹"
+  },
+  "Kroatië": {
+    emoji: "🏖️",
+    fact: "Kroatië heeft een lange kust met heel veel eilanden. De stad Dubrovnik heeft beroemde oude stadsmuren. 🏰"
+  },
+  "Cyprus": {
+    emoji: "🏝️",
+    fact: "Cyprus is een eiland in de Middellandse Zee. Het ligt dicht bij Europa, Azië en Afrika. 🗺️"
+  },
+  "Tsjechië": {
+    emoji: "🏰",
+    fact: "Tsjechië heeft ontzettend veel kastelen. De hoofdstad Praag wordt ook wel de Gouden Stad genoemd. ✨"
+  },
+  "Denemarken": {
+    emoji: "🧱",
+    fact: "Denemarken bestaat uit een schiereiland en veel eilanden. LEGO komt uit Denemarken. 🧱"
+  },
+  "Estland": {
+    emoji: "💻",
+    fact: "Estland is heel digitaal. Veel dingen, zoals stemmen en papierwerk, kunnen mensen daar online regelen. 💻"
+  },
+  "Finland": {
+    emoji: "🧊",
+    fact: "Finland heeft duizenden meren en uitgestrekte bossen. In het noorden kun je soms het noorderlicht zien. 🌌"
+  },
+  "Frankrijk": {
+    emoji: "🗼",
+    fact: "Frankrijk is het grootste land van de Europese Unie. In Parijs staat de Eiffeltoren, een van de bekendste bouwwerken ter wereld. 🗼"
+  },
+  "Duitsland": {
+    emoji: "🏭",
+    fact: "Duitsland ligt midden in Europa en heeft veel buurlanden. De rivier de Rijn stroomt door het westen van het land. 🚆"
+  },
+  "Griekenland": {
+    emoji: "🏛️",
+    fact: "Griekenland bestaat uit een vasteland en heel veel eilanden. De oude Grieken bedachten veel over democratie, theater en sport. 🏛️"
+  },
+  "Hongarije": {
+    emoji: "🌶️",
+    fact: "Hongarije ligt in Midden-Europa. De hoofdstad Boedapest ligt aan de rivier de Donau en paprika is er heel bekend. 🌶️"
+  },
+  "IJsland": {
+    emoji: "🌋",
+    fact: "IJsland heeft vulkanen, geisers en gletsjers. Het eiland ligt precies op een breuklijn tussen twee aardplaten. 🌋"
+  },
+  "Ierland": {
+    emoji: "☘️",
+    fact: "Ierland wordt vaak het groene eiland genoemd. Het regent er veel, waardoor het landschap prachtig groen is. ☘️"
+  },
+  "Italië": {
+    emoji: "🍕",
+    fact: "Italië heeft de vorm van een laars. Het land is bekend om Rome, pizza, pasta en oude Romeinse gebouwen. 🍕"
+  },
+  "Kosovo": {
+    emoji: "⭐",
+    fact: "Kosovo is een jong land in de Balkan. De hoofdstad is Pristina en het land heeft een jonge bevolking. ⭐"
+  },
+  "Letland": {
+    emoji: "🌲",
+    fact: "Letland ligt aan de Oostzee. Het land heeft veel bossen, stranden en de hoofdstad Riga heeft een oude binnenstad. 🌲"
+  },
+  "Liechtenstein": {
+    emoji: "🏰",
+    fact: "Liechtenstein is piepklein en ligt tussen Zwitserland en Oostenrijk. Het heeft bergen en een prins als staatshoofd. 🏰"
+  },
+  "Litouwen": {
+    emoji: "🟡",
+    fact: "Litouwen is de zuidelijkste Baltische staat. De hoofdstad Vilnius heeft een grote oude binnenstad. 🏘️"
+  },
+  "Luxemburg": {
+    emoji: "🏦",
+    fact: "Luxemburg is klein, maar rijk en belangrijk in Europa. Er wordt Luxemburgs, Frans en Duits gesproken. 🏦"
+  },
+  "Malta": {
+    emoji: "⛵",
+    fact: "Malta is een klein eilandland in de Middellandse Zee. Er staan tempels die ouder zijn dan de piramides van Egypte. ⛵"
+  },
+  "Moldavië": {
+    emoji: "🍇",
+    fact: "Moldavië ligt tussen Roemenië en Oekraïne. Het land is bekend om wijnkelders en wijngaarden. 🍇"
+  },
+  "Monaco": {
+    emoji: "🏎️",
+    fact: "Monaco is een piepklein land aan de Middellandse Zee. Er wordt een beroemde Formule 1-race door de straten gereden. 🏎️"
+  },
+  "Montenegro": {
+    emoji: "⛰️",
+    fact: "Montenegro betekent zwarte berg. Het land heeft hoge bergen, diepe kloven en een kust aan de Adriatische Zee. ⛰️"
+  },
+  "Nederland": {
+    emoji: "🌷",
+    fact: "Nederland ligt voor een groot deel laag. Daarom zijn dijken, polders en waterbeheer hier superbelangrijk. 🌊"
+  },
+  "Noord-Macedonië": {
+    emoji: "☀️",
+    fact: "Noord-Macedonië ligt in de Balkan. Het Meer van Ohrid is heel oud en staat op de Werelderfgoedlijst. ☀️"
+  },
+  "Noorwegen": {
+    emoji: "🏔️",
+    fact: "Noorwegen heeft diepe fjorden, hoge bergen en een lange kust. In het noorden gaat de zon in de zomer bijna niet onder. 🌅"
+  },
+  "Polen": {
+    emoji: "🧂",
+    fact: "Polen ligt in Midden-Europa. Bij Krakau liggen beroemde oude zoutmijnen met zalen diep onder de grond. 🧂"
+  },
+  "Portugal": {
+    emoji: "🌊",
+    fact: "Portugal ligt aan de Atlantische Oceaan. Portugese zeevaarders maakten vroeger lange ontdekkingsreizen. ⛵"
+  },
+  "Roemenië": {
+    emoji: "🏰",
+    fact: "Roemenië heeft de Karpaten en het gebied Transsylvanië. Daar staat het kasteel dat vaak met Dracula wordt verbonden. 🦇"
+  },
+  "Rusland": {
+    emoji: "🌍",
+    fact: "Rusland is het grootste land ter wereld. Alleen het westelijke deel ligt in Europa; de rest ligt in Azië. 🗺️"
+  },
+  "San Marino": {
+    emoji: "🛡️",
+    fact: "San Marino is een van de kleinste en oudste republieken ter wereld. Het ligt helemaal binnen Italië. 🛡️"
+  },
+  "Servië": {
+    emoji: "🎺",
+    fact: "Servië ligt in de Balkan. De Donau stroomt door de hoofdstad Belgrado. 🎺"
+  },
+  "Slowakije": {
+    emoji: "🏔️",
+    fact: "Slowakije heeft veel bergen en kastelen. De Hoge Tatra is een bekend berggebied. 🏔️"
+  },
+  "Slovenië": {
+    emoji: "🏞️",
+    fact: "Slovenië heeft bergen, grotten en een klein stukje kust. Het Meer van Bled is beroemd om het eilandje met kerk. 🏞️"
+  },
+  "Spanje": {
+    emoji: "💃",
+    fact: "Spanje ligt op het Iberisch Schiereiland. Het land heeft bergen, stranden en de beroemde stad Barcelona. 💃"
+  },
+  "Zweden": {
+    emoji: "🌲",
+    fact: "Zweden heeft veel bossen en meren. Het land is bekend om elanden, design en lange zomerdagen in het noorden. 🌲"
+  },
+  "Zwitserland": {
+    emoji: "⛰️",
+    fact: "Zwitserland ligt in de Alpen. Het land is bekend om bergen, treinen, chocolade en horloges. 🚆"
+  },
+  "Turkije": {
+    emoji: "🌉",
+    fact: "Turkije ligt in Europa én Azië. De stad Istanbul ligt aan beide kanten van de Bosporus. 🌉"
+  },
+  "Oekraïne": {
+    emoji: "🌻",
+    fact: "Oekraïne is een groot land in Oost-Europa. Door de vruchtbare grond wordt het ook wel de graanschuur van Europa genoemd. 🌻"
+  },
+  "Verenigd Koninkrijk": {
+    emoji: "👑",
+    fact: "Het Verenigd Koninkrijk bestaat uit Engeland, Schotland, Wales en Noord-Ierland. Londen is de hoofdstad. 👑"
+  },
+  "Vaticaanstad": {
+    emoji: "⛪",
+    fact: "Vaticaanstad is het kleinste land ter wereld. Het ligt midden in Rome en de paus woont er. ⛪"
+  },
 };

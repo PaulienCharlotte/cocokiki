@@ -83,6 +83,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const timeLeftRef = useRef(TIMER_SECONDS);
 
   const filteredPool = useMemo(() => {
+    const studyAreaIds = new Set(PROVINCES.filter(p => p.isStudyArea).map(p => p.id));
     const toProvLoc = (p: typeof PROVINCES[0]) => ({
       id: p.id, name: p.name, provinceId: p.id,
       type: 'province' as const, lat: p.center[0], lng: p.center[1],
@@ -99,9 +100,15 @@ const GameEngine: React.FC<GameEngineProps> = ({
       const provs = PROVINCES.filter(p => !p.isStudyArea).map(toProvLoc);
       return [...caps, ...provs];
     }
+
+    if (clusterId.endsWith('-countries-capitals')) {
+      return LOCATIONS.filter(l =>
+        l.provinceId === provinceId && (l.type === 'country' || l.isCapital === true)
+      );
+    }
     
     return LOCATIONS.filter(l => {
-      const provMatch = provinceId === 'all' ? l.provinceId !== 'water-nl' : l.provinceId === provinceId;
+      const provMatch = provinceId === 'all' ? !studyAreaIds.has(l.provinceId) : l.provinceId === provinceId;
       const clusterMatch = clusterId === 'all' || l.clusterId === clusterId;
       return provMatch && clusterMatch;
     });
@@ -116,6 +123,20 @@ const GameEngine: React.FC<GameEngineProps> = ({
   const stopTimer = useCallback(() => {
     setTimerActive(false);
   }, []);
+
+  const handleTimerToggle = useCallback(() => {
+    setTimerEnabled(enabled => {
+      const nextEnabled = !enabled;
+      if (!nextEnabled) {
+        setTimerActive(false);
+      } else if (mode !== 'explore' && masterStep !== 'fact') {
+        setTimeLeft(TIMER_SECONDS);
+        timeLeftRef.current = TIMER_SECONDS;
+        setTimerActive(true);
+      }
+      return nextEnabled;
+    });
+  }, [mode, masterStep]);
 
   useEffect(() => {
     if (!timerActive || mode === 'explore' || masterStep === 'fact') return;
@@ -314,7 +335,11 @@ const GameEngine: React.FC<GameEngineProps> = ({
     }
   }, [userClickedLocationId]);
 
-  const normalizeText = (text: string) => text.trim().replace(/['’‘`]/g, "'");
+  const normalizeText = (text: string) =>
+    text
+      .trim()
+      .replace(/['’‘`]/g, "'")
+      .toLocaleLowerCase('nl-NL');
 
   const proceedToFact = async () => {
     const activeTarget = currentTargetRef.current;
@@ -382,6 +407,17 @@ const GameEngine: React.FC<GameEngineProps> = ({
     }
   };
 
+  const requestMnemonicTip = useCallback(async () => {
+    const activeTarget = currentTargetRef.current;
+    if (!activeTarget) return;
+    setShowHint(true);
+    if (aiTip) return;
+    setLoadingContext(true);
+    const tip = await getMnemonic(activeTarget.name);
+    setAiTip(tip);
+    setLoadingContext(false);
+  }, [aiTip]);
+
   const getVowelHint = (name: string) => {
     return name.replace(/[aeiouyAEIOUY]/g, '_');
   };
@@ -429,7 +465,7 @@ const GameEngine: React.FC<GameEngineProps> = ({
           <div className="flex items-center gap-1">
             <Timer className={`w-3 h-3 flex-shrink-0 ${timerEnabled ? 'text-[#F59E0B]' : 'text-[#D1D5DB]'}`} />
             <button
-              onClick={() => setTimerEnabled(t => !t)}
+              onClick={handleTimerToggle}
               title={timerEnabled ? 'Timer uitschakelen' : 'Timer inschakelen'}
               className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${timerEnabled ? 'bg-[#F59E0B]' : 'bg-[#D1D5DB]'}`}
             >
@@ -460,12 +496,26 @@ const GameEngine: React.FC<GameEngineProps> = ({
                    : masterStep === 'find' 
                      ? (currentTarget?.type === 'province'
                         ? `Waar ligt de provincie ${currentTarget?.name}?`
+                        : currentTarget?.type === 'country'
+                          ? `Waar ligt het land ${currentTarget?.name}?`
+                        : currentTarget?.provinceId === 'europe' && currentTarget?.isCapital
+                          ? `Waar ligt de hoofdstad ${currentTarget?.name}?`
                         : currentTarget?.type === 'region'
                           ? `Waar ligt het gebied ${currentTarget?.name}?`
                           : `Waar ligt ${currentTarget?.name}?`)
                      : `Weetje over ${currentTarget?.name}`
                  }
-                 {currentTarget && currentTarget.type !== 'region' && currentTarget.type !== 'province' && (
+                 {currentTarget && currentTarget.type === 'country' && (
+                   <div className="text-[10px] md:text-xs text-green-600 font-bold mt-1 opacity-80">
+                     Gebied: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
+                   </div>
+                 )}
+                 {currentTarget && currentTarget.isCapital && currentTarget.type === 'city' && PROVINCES.find(p => p.id === currentTarget.provinceId)?.isStudyArea && (
+                   <div className="text-[10px] md:text-xs text-green-600 font-bold mt-1 opacity-80">
+                     Hoofdstad: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
+                   </div>
+                 )}
+                 {currentTarget && !(currentTarget.isCapital && PROVINCES.find(p => p.id === currentTarget.provinceId)?.isStudyArea) && currentTarget.type !== 'region' && currentTarget.type !== 'province' && currentTarget.type !== 'country' && (
                    <div className="text-[10px] md:text-xs text-green-600 font-bold mt-1 opacity-80">
                      Provincie: {PROVINCES.find(p => p.id === currentTarget.provinceId)?.name}
                    </div>
@@ -477,22 +527,43 @@ const GameEngine: React.FC<GameEngineProps> = ({
           <div className="flex-1 min-h-0 flex flex-col">
             {isSpellingTask && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-1.5 md:space-y-3">
-                <form onSubmit={handleSpellSubmit} className="flex gap-1.5">
+                <form onSubmit={handleSpellSubmit} className="flex w-full min-w-0 gap-1.5">
                   <input
                     ref={inputRef}
                     type="text"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder="Typen..."
-                    className={`flex-1 p-2 md:p-3 bg-[#FFFFFF] border-2 border-[#DDD6FE] rounded-xl font-black text-[#1F2937] outline-none focus:border-[#7C3AED] text-[16px] md:text-lg`}
+                    className={`min-w-0 flex-1 p-2 md:p-3 bg-[#FFFFFF] border-2 border-[#DDD6FE] rounded-xl font-black text-[#1F2937] outline-none focus:border-[#7C3AED] text-[16px] md:text-lg`}
                     autoComplete="off"
                     autoCorrect="off"
                     spellCheck="false"
                     inputMode="text"
                     enterKeyHint="done"
                   />
-                  <button type="submit" className="bg-[#3B0764] text-white font-black rounded-xl px-3 md:px-5 py-2 md:py-3 shadow-[0_3px_0_#3B0764] active:translate-y-0.5 active:shadow-none text-[10px] md:text-xs flex-none">CHECK</button>
+                  <button type="submit" className="w-12 md:w-14 flex-shrink-0 bg-[#3B0764] text-white font-black rounded-xl px-0 py-2 md:py-3 shadow-[0_3px_0_#3B0764] active:translate-y-0.5 active:shadow-none text-[10px] md:text-xs">OK</button>
                 </form>
+
+                {!showHint && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowHint(true)}
+                      className="flex items-center justify-center gap-1.5 rounded-xl border-2 border-[#DDD6FE] bg-white px-2 py-2 text-[9px] md:text-[10px] font-black uppercase text-amber-600 shadow-sm hover:border-amber-300 hover:bg-amber-50 transition-colors"
+                    >
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      Klinker-hulp
+                    </button>
+                    <button
+                      type="button"
+                      onClick={requestMnemonicTip}
+                      className="flex items-center justify-center gap-1.5 rounded-xl border-2 border-[#DDD6FE] bg-white px-2 py-2 text-[9px] md:text-[10px] font-black uppercase text-[#7C3AED] shadow-sm hover:border-[#A78BFA] hover:bg-[#F5F3FF] transition-colors"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Ezelsbruggetje
+                    </button>
+                  </div>
+                )}
                 
                 {/* TIP SECTIE: Wordt getoond bij attempts > 0 */}
                 <AnimatePresence>
@@ -528,6 +599,24 @@ const GameEngine: React.FC<GameEngineProps> = ({
                         </motion.div>
                       )}
 
+                      {!aiTip && (
+                        <button
+                          type="button"
+                          onClick={requestMnemonicTip}
+                          className="bg-[#FFFFFF] p-3 rounded-2xl border-2 border-[#DDD6FE] flex items-center gap-3 text-left hover:border-[#A78BFA] hover:bg-[#F5F3FF] transition-colors"
+                        >
+                          <div className="w-8 h-8 bg-[#F59E0B] rounded-full flex items-center justify-center flex-none">
+                            <Sparkles className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-[#7C3AED] uppercase tracking-widest">Ezelsbruggetje</span>
+                            <span className="text-[10px] md:text-xs font-bold text-[#1F2937] leading-snug">
+                              {loadingContext ? 'Ik maak er eentje...' : 'Toon een geheugensteuntje'}
+                            </span>
+                          </div>
+                        </button>
+                      )}
+
                       <button 
                         onClick={skipToFact} 
                         className="text-[9px] md:text-[10px] font-black text-amber-600 underline uppercase tracking-tighter hover:text-white mx-auto"
@@ -537,22 +626,13 @@ const GameEngine: React.FC<GameEngineProps> = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-                {!showHint && (
-                   <button 
-                    onClick={() => { setShowHint(true); if(!aiTip) getMnemonic(currentTarget?.name || '').then(setAiTip); }}
-                    className="flex items-center gap-2 mx-auto text-[10px] font-black text-slate-400 hover:text-slate-600 transition-colors"
-                   >
-                     <Lightbulb className="w-4 h-4" /> Tip nodig?
-                   </button>
-                )}
               </motion.div>
             )}
 
             {masterStep === 'fact' && (
               <div className="space-y-1.5 md:space-y-4">
-                <div className="bg-[#FFFFFF] p-4 rounded-2xl border-2 border-[#DDD6FE] min-h-[80px] flex items-center">
-                  <p className="text-orange-900 text-xs md:text-sm font-bold italic leading-relaxed text-center w-full">"{activeFact?.text}"</p>
+                <div className="bg-green-50 p-4 rounded-2xl border-2 border-green-200 min-h-[80px] flex items-center">
+                  <p className="text-green-800 text-xs md:text-sm font-bold italic leading-relaxed text-center w-full">"{activeFact?.text}"</p>
                 </div>
                 <button onClick={() => pickNextFromQueue(queue, errorPool, round)} className="w-full bg-[#7C3AED] text-white font-black py-3 md:py-4 rounded-2xl shadow-[0_4px_0_#5B21B6] flex items-center justify-center gap-2 text-xs md:text-sm">VOLGENDE PLEK <ArrowRight className="w-5 h-5" /></button>
               </div>
