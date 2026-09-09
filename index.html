@@ -3,95 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cocokiki Topo</title>
     <link rel="icon" type="image/svg+xml" href="/images/logo-compas-geel.svg">
     <link rel="shortcut icon" href="/images/logo-compas-geel.svg">
     <link rel="apple-touch-icon" href="/images/logo-compas-geel.svg">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <style>
-        body {
-            font-family: 'Fredoka', sans-serif;
-            background-color: #F5F3FF;
-            overflow-x: hidden;
-            width: 100%;
-            min-height: 100%;
-        }
-
-        html {
-            min-height: 100%;
-            background-color: #F5F3FF;
-        }
-
-        #root {
-            min-height: 100dvh;
-        }
-
-        .gradient-bg {
-            background: #f7f4ee;
-        }
-
-        /* Custom Leaflet Styling */
-        .leaflet-container {
-            background: #e8e4d9 !important;
-            border-radius: 2rem;
-            cursor: crosshair !important;
-        }
-
-        .custom-label-icon {
-            background: transparent;
-            border: none;
-        }
-
-        .marker-dot {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.35);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .marker-dot.highlighted {
-            width: 32px;
-            height: 32px;
-            margin-left: -6px;
-            margin-top: -6px;
-            border-width: 4px;
-            border-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.35), 0 0 24px rgba(250, 204, 21, 0.9);
-            z-index: 9999 !important;
-        }
-
-        .marker-label {
-            position: absolute;
-            padding: 2px 8px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 11px;
-            white-space: nowrap;
-            background-color: rgba(18, 24, 27, 0.82);
-            border: 1px solid rgba(255, 255, 255, 0.75);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
-            pointer-events: none;
-            z-index: 1000;
-            color: #ffffff !important;
-        }
-
-        /* Voorkom selectie van tekst op de kaart */
-        .leaflet-container {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-    </style>
 
 </head>
 
-<body class="gradient-bg">
+<body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

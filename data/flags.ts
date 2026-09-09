@@ -1,0 +1,8 @@
+export const COUNTRY_FLAGS: Record<string, string> = {
+  Algerije: '🇩🇿', Egypte: '🇪🇬', Ethiopië: '🇪🇹', Ghana: '🇬🇭', Kenia: '🇰🇪', Marokko: '🇲🇦', Nigeria: '🇳🇬', Senegal: '🇸🇳', 'Zuid-Afrika': '🇿🇦', Tanzania: '🇹🇿',
+  China: '🇨🇳', India: '🇮🇳', Indonesië: '🇮🇩', Iran: '🇮🇷', Irak: '🇮🇶', Israël: '🇮🇱', Japan: '🇯🇵', Kazachstan: '🇰🇿', 'Zuid-Korea': '🇰🇷', Pakistan: '🇵🇰', Filipijnen: '🇵🇭', Rusland: '🇷🇺', 'Saoedi-Arabië': '🇸🇦', Thailand: '🇹🇭', Vietnam: '🇻🇳',
+  Canada: '🇨🇦', 'Verenigde Staten': '🇺🇸', Mexico: '🇲🇽', Guatemala: '🇬🇹', Cuba: '🇨🇺', Haïti: '🇭🇹', 'Dominicaanse Republiek': '🇩🇴', Jamaica: '🇯🇲',
+  Argentinië: '🇦🇷', Bolivia: '🇧🇴', Brazilië: '🇧🇷', Chili: '🇨🇱', Colombia: '🇨🇴', Ecuador: '🇪🇨', Peru: '🇵🇪', Uruguay: '🇺🇾', Venezuela: '🇻🇪',
+  Australië: '🇦🇺', Fiji: '🇫🇯', 'Nieuw-Zeeland': '🇳🇿', 'Papoea-Nieuw-Guinea': '🇵🇬', Salomonseilanden: '🇸🇧',
+  Albanië: '🇦🇱', Andorra: '🇦🇩', Oostenrijk: '🇦🇹', 'Wit-Rusland': '🇧🇾', België: '🇧🇪', 'Bosnië en Herzegovina': '🇧🇦', Bulgarije: '🇧🇬', Kroatië: '🇭🇷', Cyprus: '🇨🇾', Tsjechië: '🇨🇿', Denemarken: '🇩🇰', Estland: '🇪🇪', Finland: '🇫🇮', Frankrijk: '🇫🇷', Duitsland: '🇩🇪', Griekenland: '🇬🇷', Hongarije: '🇭🇺', IJsland: '🇮🇸', Ierland: '🇮🇪', Italië: '🇮🇹', Kosovo: '🇽🇰', Letland: '🇱🇻', Liechtenstein: '🇱🇮', Litouwen: '🇱🇹', Luxemburg: '🇱🇺', Malta: '🇲🇹', Moldavië: '🇲🇩', Monaco: '🇲🇨', Montenegro: '🇲🇪', Nederland: '🇳🇱', 'Noord-Macedonië': '🇲🇰', Noorwegen: '🇳🇴', Polen: '🇵🇱', Portugal: '🇵🇹', Roemenië: '🇷🇴', 'San Marino': '🇸🇲', Servië: '🇷🇸', Slowakije: '🇸🇰', Slovenië: '🇸🇮', Spanje: '🇪🇸', Zweden: '🇸🇪', Zwitserland: '🇨🇭', Turkije: '🇹🇷', Oekraïne: '🇺🇦', 'Verenigd Koninkrijk': '🇬🇧', Vaticaanstad: '🇻🇦',
+};

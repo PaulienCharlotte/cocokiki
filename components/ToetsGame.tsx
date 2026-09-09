@@ -4,8 +4,10 @@ import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
 import { Location } from '../types';
 import { CheckCircle, XCircle, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
+import { UNLABELED_TILE_URL } from './InteractiveMap';
 
 interface Props {
+  studyPool?: Location[];
   provinceId: string;
   clusterId: string;
 }
@@ -104,7 +106,7 @@ const Section: React.FC<SectionProps> = ({
 
 // ── ToetsGame ────────────────────────────────────────────────────────────────
 
-const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
+const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool }) => {
   const containerRef    = useRef<HTMLDivElement>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef          = useRef<L.Map | null>(null);
@@ -139,9 +141,10 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   }, []);
 
   const locations = useMemo((): Location[] => {
+    if (studyPool) return studyPool;
     const studyAreaIds = new Set(PROVINCES.filter(p => p.isStudyArea).map(p => p.id));
     if (clusterId === 'provincies-en-hoofdsteden') {
-      const caps = LOCATIONS.filter(l => l.isCapital);
+      const caps = LOCATIONS.filter(l => l.isCapital && !studyAreaIds.has(l.provinceId));
       const provs = PROVINCES.filter(p => !p.isStudyArea).map(p => ({
         id: p.id, name: p.name, provinceId: p.id,
         type: 'province' as const, lat: p.center[0], lng: p.center[1],
@@ -156,7 +159,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
       const clusterMatch = clusterId  === 'all' || loc.clusterId  === clusterId;
       return provMatch && clusterMatch;
     });
-  }, [provinceId, clusterId]);
+  }, [provinceId, clusterId, studyPool]);
 
   const cities  = useMemo(() => locations.filter(l => l.type === 'city' || l.type === 'province'), [locations]);
   const countries = useMemo(() => locations.filter(l => l.type === 'country'), [locations]);
@@ -166,7 +169,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
   const labelMap = useMemo(() => {
     const m: Record<string, string> = {};
     cities.forEach((l, i)  => { m[l.id] = String(i + 1); });
-    countries.forEach((l, i) => { m[l.id] = String(i + 1); });
+    countries.forEach((l, i) => { m[l.id] = String(cities.length + i + 1); });
     waters.forEach((l, i)  => { m[l.id] = String.fromCharCode(65 + i); });
     regions.forEach((l, i) => { m[l.id] = toRoman(i + 1); });
     return m;
@@ -177,12 +180,14 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
     if (!mapContainerRef.current || mapRef.current) return;
     mapRef.current = L.map(mapContainerRef.current, {
       center: [52.1, 5.2], zoom: 8,
-      zoomControl: false, attributionControl: false,
-      maxBounds: EUROPE_BOUNDS, minZoom: 4,
+      zoomControl: true, attributionControl: true,
+      maxBounds: [[-85, -180], [85, 180]], minZoom: 2,
     });
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    mapRef.current.attributionControl.setPrefix('');
+    L.tileLayer(UNLABELED_TILE_URL, {
       attribution: 'Tiles &copy; Esri',
       maxZoom: 18,
+      maxNativeZoom: 9,
     } as any).addTo(mapRef.current);
     setTimeout(() => { mapRef.current?.invalidateSize(); }, 200);
     return () => { mapRef.current?.remove(); mapRef.current = null; };
@@ -360,7 +365,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId }) => {
             />
             <Section
               title="Landen" color="#16A34A" items={countries}
-              getLabel={i => String(i + 1)}
+              getLabel={i => String(cities.length + i + 1)}
               answers={answers} submitted={submitted}
               correctMap={result?.details ?? null} onChange={handleChange}
             />

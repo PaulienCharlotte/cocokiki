@@ -34,6 +34,11 @@ export const CLUSTERS: Cluster[] = [
   { id: 'wouden', name: 'Friese Wouden', icon: '🌳', provinceId: 'fr' },
   { id: 'steden', name: 'Noordwest / Terpenland', icon: '🏙️', provinceId: 'fr' },
 
+  // --- GRONINGEN ---
+  { id: 'gr_plaatsen', name: 'Plaatsen', icon: '📍', provinceId: 'gr' },
+  { id: 'gr_gebieden', name: 'Gebieden', icon: '🗺️', provinceId: 'gr' },
+  { id: 'gr_wateren', name: 'Wateren', icon: '🌊', provinceId: 'gr' },
+
   // --- NOORD-HOLLAND ---
   { id: 'nh_metropool', name: 'Metropool Amsterdam', icon: '🌆', provinceId: 'nh' },
   { id: 'nh_kust', name: 'Kust & Haarlemmermeer', icon: '🏖️', provinceId: 'nh' },
@@ -92,7 +97,7 @@ export const LOCATIONS: Location[] = [
   { id: 'cap-2', name: 'Lelystad', provinceId: 'fl', type: 'city', lat: 52.5185, lng: 5.4714, isCapital: true },
   { id: 'cap-3', name: 'Leeuwarden', provinceId: 'fr', type: 'city', lat: 53.2012, lng: 5.7999, clusterId: 'steden', isCapital: true },
   { id: 'cap-4', name: 'Arnhem', provinceId: 'ge', type: 'city', lat: 51.9851, lng: 5.8987, clusterId: 'ge_rivieren', isCapital: true },
-  { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665, isCapital: true },
+  { id: 'cap-5', name: 'Groningen', provinceId: 'gr', type: 'city', lat: 53.2194, lng: 6.5665, clusterId: 'gr_plaatsen', isCapital: true },
   { id: 'cap-6', name: 'Maastricht', provinceId: 'li', type: 'city', lat: 50.8514, lng: 5.6910, isCapital: true },
   { id: 'cap-7', name: "’s-Hertogenbosch", provinceId: 'nb', type: 'city', lat: 51.6978, lng: 5.3037, clusterId: 'nb_meierij', isCapital: true },
   { id: 'cap-8', name: 'Haarlem', provinceId: 'nh', type: 'city', lat: 52.3874, lng: 4.6462, clusterId: 'nh_kust', isCapital: true },
@@ -100,6 +105,32 @@ export const LOCATIONS: Location[] = [
   { id: 'cap-10', name: 'Utrecht', provinceId: 'ut', type: 'city', lat: 52.0907, lng: 5.1214, isCapital: true },
   { id: 'cap-11', name: 'Middelburg', provinceId: 'ze', type: 'city', lat: 51.4988, lng: 3.6110, isCapital: true },
   { id: 'city-nh-1', name: 'Amsterdam', provinceId: 'nh', type: 'city', lat: 52.3676, lng: 4.9041, clusterId: 'nh_metropool' },
+
+  // --- GRONINGEN COMPLEET ---
+  // Plaatsen (Groningen is hierboven opgenomen als provinciehoofdstad)
+  { id: 'gr-2', name: 'Winschoten', provinceId: 'gr', type: 'city', lat: 53.1406, lng: 7.0350, clusterId: 'gr_plaatsen' },
+  { id: 'gr-3', name: 'Delfzijl', provinceId: 'gr', type: 'city', lat: 53.3307, lng: 6.9186, clusterId: 'gr_plaatsen' },
+  { id: 'gr-4', name: 'Appingedam', provinceId: 'gr', type: 'city', lat: 53.3171, lng: 6.8495, clusterId: 'gr_plaatsen' },
+  { id: 'gr-5', name: 'Ter Apel', provinceId: 'gr', type: 'city', lat: 52.8829, lng: 7.0785, clusterId: 'gr_plaatsen' },
+  { id: 'gr-6', name: 'Hoogezand-Sappemeer', provinceId: 'gr', type: 'city', lat: 53.1539, lng: 6.7816, clusterId: 'gr_plaatsen' },
+  { id: 'gr-7', name: 'Veendam', provinceId: 'gr', type: 'city', lat: 53.0977, lng: 6.9027, clusterId: 'gr_plaatsen' },
+  { id: 'gr-8', name: 'Stadskanaal', provinceId: 'gr', type: 'city', lat: 53.0053, lng: 6.9401, clusterId: 'gr_plaatsen' },
+  { id: 'gr-9', name: 'Haren', provinceId: 'gr', type: 'city', lat: 53.1704, lng: 6.6010, clusterId: 'gr_plaatsen' },
+  { id: 'gr-10', name: 'Lauwersoog', provinceId: 'gr', type: 'city', lat: 53.3893, lng: 6.2359, clusterId: 'gr_plaatsen' },
+  { id: 'gr-11', name: 'Zuidhorn', provinceId: 'gr', type: 'city', lat: 53.2436, lng: 6.4055, clusterId: 'gr_plaatsen' },
+  { id: 'gr-12', name: 'Zoutkamp', provinceId: 'gr', type: 'city', lat: 53.3436, lng: 6.2962, clusterId: 'gr_plaatsen' },
+
+  // Gebieden
+  { id: 'gr-A', name: 'Hondsrug', provinceId: 'gr', type: 'region', lat: 53.0750, lng: 6.7900, clusterId: 'gr_gebieden' },
+  { id: 'gr-B', name: 'Lauwersmeergebied', provinceId: 'gr', type: 'region', lat: 53.3740, lng: 6.2140, clusterId: 'gr_gebieden' },
+
+  // Wateren
+  { id: 'gr-I', name: 'Waddenzee', provinceId: 'gr', type: 'water', lat: 53.4900, lng: 6.5200, clusterId: 'gr_wateren' },
+  { id: 'gr-II', name: 'Eems', provinceId: 'gr', type: 'water', lat: 53.4550, lng: 6.9850, clusterId: 'gr_wateren' },
+  { id: 'gr-III', name: 'Dollard', provinceId: 'gr', type: 'water', lat: 53.2450, lng: 7.1450, clusterId: 'gr_wateren' },
+  { id: 'gr-IV', name: 'Eemskanaal', provinceId: 'gr', type: 'water', lat: 53.2650, lng: 6.7450, clusterId: 'gr_wateren' },
+  { id: 'gr-V', name: 'Zuidlaardermeer', provinceId: 'gr', type: 'water', lat: 53.1390, lng: 6.6900, clusterId: 'gr_wateren' },
+  { id: 'gr-VI', name: 'Paterswoldsemeer', provinceId: 'gr', type: 'water', lat: 53.1640, lng: 6.5620, clusterId: 'gr_wateren' },
 
   // --- FRIESLAND ---
   // Plaatsen (Leeuwarden is al aanwezig als cap-3)

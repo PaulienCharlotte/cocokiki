@@ -3,11 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
 import { Location, GameMode } from '../types';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, LocateFixed } from 'lucide-react';
 
-const WHITE_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+export const UNLABELED_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}';
 const SCHOOL_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
-const MAP_STYLE_STORAGE_KEY = 'topo_map_school_colors';
 const NL_BOUNDS: L.LatLngBoundsExpression = [[50.75, 3.35], [53.55, 7.22]];
 const EUROPE_BOUNDS: L.LatLngBoundsExpression = [[34.5, -24.5], [71.5, 45.5]];
 const WORLD_BOUNDS: L.LatLngBoundsExpression = [[-85, -180], [85, 180]];
@@ -22,6 +21,8 @@ const EUROPE_CLUSTER_COLORS: Record<string, string> = {
 };
 
 interface InteractiveMapProps {
+  locations?: Location[];
+  revealAnswer?: boolean;
   selectedProvince: string | 'all';
   selectedCluster?: string | 'all';
   onLocationClick?: (loc: Location) => void;
@@ -59,20 +60,6 @@ const getCountryLocationForFeature = (feature: any) => {
   );
 };
 
-const getSmartLabelPosition = (index: number) => {
-  const positions = [
-    { x: '50%', y: '-170%', transform: 'translate(-50%, 0)' },   
-    { x: '140%', y: '-100%', transform: 'translate(0, 0)' },    
-    { x: '140%', y: '0%', transform: 'translate(0, -50%)' },    
-    { x: '140%', y: '40%', transform: 'translate(0, 0)' },      
-    { x: '50%', y: '170%', transform: 'translate(-50%, 0)' },   
-    { x: '-40%', y: '40%', transform: 'translate(-100%, 0)' },  
-    { x: '-40%', y: '0%', transform: 'translate(-100%, -50%)' },
-    { x: '-40%', y: '-100%', transform: 'translate(-100%, 0)' }, 
-  ];
-  return positions[index % positions.length];
-};
-
 const getDisplayLabel = (loc: Location, visibleLocations: Location[]) => {
   const hasSameNameCountryAndCapital = visibleLocations.some(other =>
     other.id !== loc.id &&
@@ -86,6 +73,8 @@ const getDisplayLabel = (loc: Location, visibleLocations: Location[]) => {
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({
   selectedProvince,
+  locations,
+  revealAnswer = false,
   selectedCluster = 'all',
   onLocationClick,
   highlightedLocation,
@@ -100,24 +89,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const contextLayerRef = useRef<L.GeoJSON | null>(null);
   const provinceLayerRef = useRef<L.GeoJSON | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
-  const lastViewRef = useRef<{center: [number, number], zoom: number} | null>(null);
   const [geoData, setGeoData] = useState<any>(null);
   const [europeGeoData, setEuropeGeoData] = useState<any>(null);
-  const [showSchoolColors, setShowSchoolColors] = useState(() => {
-    return localStorage.getItem(MAP_STYLE_STORAGE_KEY) !== 'false';
-  });
+  const showSchoolColors = true;
+  const labelFree = gameMode !== 'explore' || !showLabels;
+  const [viewRevision, setViewRevision] = useState(0);
+  const [tileError, setTileError] = useState(false);
   const isEuropeSelected = selectedProvince === 'europe';
 
   const handleZoomIn = () => { if (mapRef.current) mapRef.current.zoomIn(); };
   const handleZoomOut = () => { if (mapRef.current) mapRef.current.zoomOut(); };
 
   useEffect(() => {
+    let cancelled = false;
     fetch('/data/geojson/nl-all.geo.json')
       .then(res => res.json())
-      .then(data => setGeoData(data));
+      .then(data => { if (!cancelled) setGeoData(data); }).catch(() => {});
     fetch('/data/geojson/europe-countries.geo.json')
       .then(res => res.json())
-      .then(data => setEuropeGeoData(data));
+      .then(data => { if (!cancelled) setEuropeGeoData(data); }).catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -137,26 +128,25 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     mapRef.current.attributionControl.setPrefix('');
 
-    tileLayerRef.current = L.tileLayer(showSchoolColors ? SCHOOL_TILE_URL : WHITE_TILE_URL, {
+    tileLayerRef.current = L.tileLayer(labelFree ? UNLABELED_TILE_URL : SCHOOL_TILE_URL, {
       attribution: 'Tiles &copy; Esri',
       maxZoom: 18,
-      detectRetina: true
+      maxNativeZoom: labelFree ? 9 : 18,
     } as any).addTo(mapRef.current);
 
-    setTimeout(() => {
-      if (mapRef.current) {
-        mapRef.current.invalidateSize();
-        mapRef.current.fitBounds(NL_BOUNDS, { padding: [16, 16] });
-      }
-    }, 200);
+    tileLayerRef.current.on('tileerror', () => setTileError(true));
+    tileLayerRef.current.on('tileload', () => setTileError(false));
+    const onMove = () => setViewRevision(n => n + 1);
+    mapRef.current.on('moveend zoomend', onMove);
 
     return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(MAP_STYLE_STORAGE_KEY, String(showSchoolColors));
-    tileLayerRef.current?.setUrl(showSchoolColors ? SCHOOL_TILE_URL : WHITE_TILE_URL);
-  }, [showSchoolColors]);
+    if (!tileLayerRef.current) return;
+    tileLayerRef.current.options.maxNativeZoom = labelFree ? 9 : 18;
+    tileLayerRef.current.setUrl(labelFree ? UNLABELED_TILE_URL : SCHOOL_TILE_URL);
+  }, [labelFree]);
 
   useEffect(() => {
     const handleResize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
@@ -193,7 +183,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
 
     // Fit to the actual locations in this province so eastern/edge provinces are centered properly
-    const provLocations = LOCATIONS.filter(loc => loc.provinceId === selectedProvince);
+    const provLocations = locations ?? LOCATIONS.filter(loc => loc.provinceId === selectedProvince);
     if (provLocations.length >= 2) {
       const lats = provLocations.map(l => l.lat);
       const lngs = provLocations.map(l => l.lng);
@@ -201,13 +191,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)]
       );
-      mapRef.current.flyToBounds(bounds, { padding: [80, 80], duration: 1.2, maxZoom: 11 });
+      mapRef.current.flyToBounds(bounds, { padding: [35, 35], duration: 0.5, maxZoom: 11 });
     } else {
       // Fallback to province center if too few locations
       const prov = PROVINCES.find(p => p.id === selectedProvince);
       if (prov) mapRef.current.flyTo(prov.center as L.LatLngTuple, prov.zoom, { duration: 1.2 });
     }
-  }, [selectedProvince]);
+  }, [selectedProvince, locations]);
+
+  useEffect(() => {
+    if (!highlightedLocation || gameMode !== 'explore') return;
+    const loc = locations?.find(l => l.id === highlightedLocation);
+    if (loc && !mapRef.current?.getBounds().contains([loc.lat, loc.lng])) mapRef.current?.panTo([loc.lat, loc.lng]);
+  }, [highlightedLocation, locations, gameMode]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -243,7 +239,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         if (isEuropeSelected) {
           const country = getCountryLocationForFeature(feature);
           const isSelected = country?.id === highlightedLocation;
-          const isGameTarget = country?.id === activeGameLocation;
+          const isGameTarget = country?.id === activeGameLocation && (gameMode === 'spell' || isRevealed);
           const fillColor = showSchoolColors && country ? getLocationColor(country) : '#F8FAFC';
 
           return {
@@ -262,7 +258,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         const normalizedName = provinceName === 'Fryslân' ? 'Friesland' : provinceName;
         const provData = PROVINCES.find(p => p.id === provinceId || p.name === normalizedName);
         const isSelected = provData?.id === selectedProvince;
-        const isGameTarget = provData?.id === activeGameLocation;
+        const isGameTarget = provData?.id === activeGameLocation && (gameMode === 'spell' || isRevealed);
         const fillColor = showSchoolColors ? provData?.color ?? '#f8fafc' : '#F8FAFC';
 
         return {
@@ -277,11 +273,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       onEachFeature: isEuropeSelected ? (feature, layer) => {
         const country = getCountryLocationForFeature(feature);
         if (!country) return;
-        layer.on('click', () => onLocationClick?.(country));
+        const available = locations?.find(l => l.type === 'country' && l.name === country.name);
+        if (available) layer.on('click', () => onLocationClick?.(available));
       } : undefined
     }).addTo(mapRef.current);
     provinceLayerRef.current.bringToFront();
-  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, onLocationClick]);
+  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, onLocationClick, gameMode, isRevealed, locations]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -299,7 +296,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         return provMatch && loc.isCapital;
       }
       if (selectedCluster === 'provincies-en-hoofdsteden') {
-        return loc.isCapital === true;
+        return loc.isCapital === true && !studyAreaIds.has(loc.provinceId);
       }
       if (selectedCluster.endsWith('-countries-capitals')) {
         return loc.provinceId === selectedProvince && (loc.type === 'country' || loc.isCapital === true);
@@ -316,7 +313,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       filteredLocations = [...filteredLocations, ...provinceDots()];
     }
 
-    filteredLocations.forEach((loc, index) => {
+    if (locations) filteredLocations = locations;
+    const labelBounds: { x: number; y: number; width: number; height: number }[] = [];
+    const mapSize = mapRef.current.getSize();
+    const ordered = [...filteredLocations].sort((a, b) => Number(b.id === highlightedLocation || b.id === activeGameLocation) - Number(a.id === highlightedLocation || a.id === activeGameLocation));
+    ordered.forEach((loc, index) => {
       const isTarget = loc.id === activeGameLocation;
       const baseColor = getLocationColor(loc);
       const labelText = getDisplayLabel(loc, filteredLocations);
@@ -329,13 +330,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       } else if (gameMode === 'spell') {
         isHighlighted = isTarget;
         if (isHighlighted) displayColor = '#d946ef'; 
-      } else if (gameMode === 'master' && isRevealed && isTarget) {
+      } else if (isRevealed && isTarget) {
         isHighlighted = true;
         displayColor = '#d946ef'; 
       }
 
-      const pos = getSmartLabelPosition(index);
-      const shouldRenderLabel = showLabels && gameMode === 'explore';
+      const point = mapRef.current!.latLngToContainerPoint([loc.lat, loc.lng]);
+      const width = labelText.length * 7 + 20;
+      const rect = { x: point.x - width / 2, y: point.y - 38, width, height: 24 };
+      const inside = rect.x >= 0 && rect.x + width <= mapSize.x && rect.y >= 0 && rect.y + rect.height <= mapSize.y;
+      const overlaps = labelBounds.some(r => rect.x < r.x + r.width + 8 && rect.x + width + 8 > r.x && rect.y < r.y + r.height + 8 && rect.y + rect.height + 8 > r.y);
+      const shouldRenderLabel = (gameMode === 'explore' && ((showLabels && inside && !overlaps) || loc.id === highlightedLocation)) || (isTarget && revealAnswer);
+      if (shouldRenderLabel) labelBounds.push(rect);
 
       const capitalStar = (loc as any).isCapital
         ? `<span style="position:absolute;top:-5px;right:-5px;font-size:9px;line-height:1;pointer-events:none;">★</span>`
@@ -347,7 +353,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <div class="marker-dot ${isHighlighted ? 'highlighted' : ''}" style="background-color: ${displayColor} !important; position:relative;">
               ${capitalStar}
             </div>
-            ${shouldRenderLabel || (gameMode === 'explore' && isHighlighted) ? `<div class="marker-label" style="left: ${pos.x}; top: ${pos.y}; transform: ${pos.transform}; z-index: ${isHighlighted ? '20000' : '500'}; color: ${baseColor};">${labelText}</div>` : ''}
+            ${shouldRenderLabel ? `<div class="marker-label" style="left:50%;bottom:24px;transform:translateX(-50%);">${labelText}</div>` : ''}
           </div>
         `,
         iconSize: [26, 26],
@@ -356,32 +362,26 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
       const marker = L.marker([loc.lat, loc.lng], { 
         icon, 
+        title: shouldRenderLabel ? labelText : `Plek ${index + 1}`,
+        alt: shouldRenderLabel ? labelText : `Plek ${index + 1}`,
         zIndexOffset: isHighlighted ? 10000 : 500 
       }).addTo(mapRef.current!).on('click', () => onLocationClick?.(loc));
       
       markersRef.current[loc.id] = marker;
     });
-  }, [selectedProvince, selectedCluster, highlightedLocation, activeGameLocation, showLabels, gameMode, isRevealed, onLocationClick]);
+  }, [selectedProvince, selectedCluster, highlightedLocation, activeGameLocation, showLabels, gameMode, isRevealed, onLocationClick, locations, viewRevision, revealAnswer]);
 
   return (
     <div className="w-full h-full relative">
       <div ref={mapContainerRef} className="w-full h-full z-10" />
-      <button
-        type="button"
-        role="switch"
-        aria-checked={showSchoolColors}
-        onClick={() => setShowSchoolColors(v => !v)}
-        title={showSchoolColors ? 'Witte kaart tonen' : 'Gekleurde schoolkaart tonen'}
-        className="absolute top-4 right-4 z-[4000] flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 shadow-lg border border-slate-200 text-[11px] font-black text-slate-700 hover:bg-white transition-colors"
-      >
-        <span className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${showSchoolColors ? 'bg-[#7C3AED]' : 'bg-slate-300'}`}>
-          <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${showSchoolColors ? 'translate-x-4' : 'translate-x-0.5'}`} />
-        </span>
-        <span>{showSchoolColors ? 'Kleurkaart' : 'Witte kaart'}</span>
-      </button>
-      <div className="absolute bottom-4 right-4 md:bottom-10 md:right-10 flex flex-col gap-2 z-[4000]">
-        <button onClick={handleZoomIn} className="w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl shadow-lg border-2 border-pink-50 flex items-center justify-center text-pink-400 active:translate-y-1 transition-all"><Plus className="w-6 h-6 md:w-10 md:h-10" /></button>
-        <button onClick={handleZoomOut} className="w-10 h-10 md:w-16 md:h-16 bg-white rounded-xl shadow-lg border-2 border-pink-50 flex items-center justify-center text-pink-400 active:translate-y-1 transition-all"><Minus className="w-6 h-6 md:w-10 md:h-10" /></button>
+      {tileError && <div className="map-error" role="status">De achtergrondkaart laadt niet. Controleer je verbinding.</div>}
+      <div className="map-zoom-controls">
+        <button onClick={handleZoomIn} aria-label="Inzoomen" title="Inzoomen"><Plus size={22} /></button>
+        <button onClick={handleZoomOut} aria-label="Uitzoomen" title="Uitzoomen"><Minus size={22} /></button>
+        <button onClick={() => {
+          const points = (locations ?? []).map(l => [l.lat, l.lng] as [number, number]);
+          mapRef.current?.fitBounds(points.length ? L.latLngBounds(points).pad(0.15) : NL_BOUNDS, { maxZoom: 10, padding: [25, 25] });
+        }} aria-label="Hele gebied tonen" title="Hele gebied tonen"><LocateFixed size={22} /></button>
       </div>
     </div>
   );

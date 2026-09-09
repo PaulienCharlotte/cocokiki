@@ -30,6 +30,79 @@ export const LOCATION_FACTS: Record<string, LocationFact> = {
     emoji: "⛪",
     fact: "In Groningen staat de Martinitoren, die door iedereen 'D'Olle Grieze' (De Oude Grijze) wordt genoemd! ⛪"
   },
+  // --- PROVINCIE GRONINGEN ---
+  "Winschoten": {
+    emoji: "🌹",
+    fact: "Winschoten ligt in het Oldambt en wordt ook wel de Rozenstad genoemd. In de stad staan drie oude molens. 🌹"
+  },
+  "Delfzijl": {
+    emoji: "⚓",
+    fact: "Delfzijl is een havenplaats aan de Eems. Vanuit de haven varen schepen richting de Waddenzee en de Noordzee. ⚓"
+  },
+  "Appingedam": {
+    emoji: "🏠",
+    fact: "Appingedam is bekend om de hangende keukens: keukens die aan de achterkant boven het water uitsteken. 🏠"
+  },
+  "Ter Apel": {
+    emoji: "🏛️",
+    fact: "In Ter Apel staat een middeleeuws klooster. Het dorp ligt helemaal in het zuidoosten van Groningen. 🏛️"
+  },
+  "Hoogezand-Sappemeer": {
+    emoji: "🚢",
+    fact: "Hoogezand en Sappemeer groeiden langs het Winschoterdiep. Scheepvaart en scheepsbouw waren hier belangrijk. 🚢"
+  },
+  "Veendam": {
+    emoji: "🧱",
+    fact: "Veendam ontstond als veenkolonie. Vroeger werd hier veel turf uit de grond gehaald en via kanalen vervoerd. 🧱"
+  },
+  "Stadskanaal": {
+    emoji: "🛶",
+    fact: "Stadskanaal is genoemd naar het lange kanaal dat werd gegraven om turf te vervoeren. 🛶"
+  },
+  "Haren": {
+    emoji: "🌳",
+    fact: "Haren ligt net ten zuiden van de stad Groningen, dicht bij het Paterswoldsemeer en de Hondsrug. 🌳"
+  },
+  "Lauwersoog": {
+    emoji: "⛴️",
+    fact: "Vanuit Lauwersoog vertrekt de veerboot naar Schiermonnikoog. Het dorp ligt tussen de Waddenzee en het Lauwersmeer. ⛴️"
+  },
+  "Zuidhorn": {
+    emoji: "🚉",
+    fact: "Zuidhorn ligt ten westen van de stad Groningen. De spoorlijn naar Leeuwarden loopt door het dorp. 🚉"
+  },
+  "Zoutkamp": {
+    emoji: "🐟",
+    fact: "Zoutkamp is een oud vissersdorp aan het Reitdiep, vlak bij het Lauwersmeer. 🐟"
+  },
+  "Hondsrug": {
+    emoji: "⛰️",
+    fact: "De Hondsrug is een lange, iets hogere zandrug die in de ijstijd is gevormd en van Groningen naar Drenthe loopt. ⛰️"
+  },
+  "Lauwersmeergebied": {
+    emoji: "🦅",
+    fact: "Het Lauwersmeer was vroeger een deel van de zee. Sinds de afsluiting in 1969 is het een zoetwatermeer met veel vogels. 🦅"
+  },
+  "Eems": {
+    emoji: "🌊",
+    fact: "De Eems stroomt langs Delfzijl naar de Waddenzee. Het brede laatste deel van de rivier heet een zeearm. 🌊"
+  },
+  "Dollard": {
+    emoji: "🦭",
+    fact: "De Dollard is een ondiepe baai waar de Eems uitkomt in de Waddenzee. Bij laag water vallen grote stukken wad droog. 🦭"
+  },
+  "Eemskanaal": {
+    emoji: "🚢",
+    fact: "Het Eemskanaal verbindt de stad Groningen met Delfzijl en is een belangrijke vaarroute voor schepen. 🚢"
+  },
+  "Zuidlaardermeer": {
+    emoji: "🦆",
+    fact: "Het Zuidlaardermeer ligt op de grens van Groningen en Drenthe. Het is een natuurlijk, ondiep meer. 🦆"
+  },
+  "Paterswoldsemeer": {
+    emoji: "⛵",
+    fact: "Het Paterswoldsemeer ligt ten zuidwesten van de stad Groningen en is populair bij zeilers en zwemmers. ⛵"
+  },
   "Leeuwarden": {
     emoji: "🦁",
     fact: "Leeuwarden is de hoofdstad van Friesland en staat bekend om de scheve toren: de Oldehove! ⛪"
