@@ -3,20 +3,16 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Map as MapIcon, Search, SpellCheck, Wand2, Brain,
-  Trophy, ChevronDown, Eye, EyeOff, X, LogIn, User, Landmark, ClipboardList,
+  Trophy, ChevronDown, Eye, EyeOff, X, Landmark, ClipboardList,
 } from 'lucide-react';
 import InteractiveMap from './InteractiveMap';
 import GameEngine from './GameEngine';
 import LocationMemoryGame from './LocationMemoryGame';
 import MnemonicGame from './MnemonicGame';
 import ToetsGame from './ToetsGame';
-import AuthModal from './AuthModal';
-import ProfilePanel from './ProfilePanel';
 import { PROVINCES, LOCATIONS, CLUSTERS } from '../constants';
 import { Location, GameMode } from '../types';
 import { getFunFact } from '../services/geminiService';
-import { useAuth } from '../contexts/AuthContext';
-import { saveScoreSession } from '../services/supabase';
 
 const MODES = [
   { id: 'explore' as GameMode, label: 'Verkennen',    icon: MapIcon       },
@@ -34,13 +30,32 @@ const getTypeColor = (type: string) => {
   return '#EAB308';
 };
 
-const Game: React.FC = () => {
-  const { user, profile } = useAuth();
+const REWARD_STORAGE_KEY = 'topo-coco-local-reismunten';
+const PASSPORT_STAMPS = [
+  { threshold: 50, label: 'Eerste route', icon: '🧭' },
+  { threshold: 150, label: 'Kaartlezer', icon: '🗺️' },
+  { threshold: 300, label: 'Provinciepro', icon: '📍' },
+  { threshold: 500, label: 'Europa-verkenner', icon: '🏛️' },
+  { threshold: 800, label: 'Wereldreiziger', icon: '🌍' },
+];
 
+const getPassportLevel = (score: number) => {
+  if (score >= 800) return 'Wereldreiziger';
+  if (score >= 500) return 'Europa-verkenner';
+  if (score >= 300) return 'Provinciepro';
+  if (score >= 150) return 'Kaartlezer';
+  if (score >= 50) return 'Eerste route';
+  return 'Startende reiziger';
+};
+
+const Game: React.FC = () => {
   const [mode, setMode]                         = useState<GameMode>('explore');
   const [selectedProvince, setSelectedProvince] = useState<string>('all');
   const [selectedCluster, setSelectedCluster]   = useState<string>('all');
-  const [score, setScore]                       = useState(0);
+  const [score, setScore]                       = useState(() => {
+    const saved = Number(localStorage.getItem(REWARD_STORAGE_KEY));
+    return Number.isFinite(saved) && saved > 0 ? saved : 0;
+  });
   const [activeLocation, setActiveLocation]     = useState<Location | null>(null);
   const [userClickedLocationId, setUserClickedLocationId] = useState<string | null>(null);
   const [loadingFact, setLoadingFact]           = useState(false);
@@ -50,11 +65,9 @@ const Game: React.FC = () => {
   const [isRevealed, setIsRevealed]             = useState(false);
   const [isMobile, setIsMobile]                 = useState(window.innerWidth < 768);
   const [provinceOpen, setProvinceOpen]         = useState(false);
-  const [showAuthModal, setShowAuthModal]       = useState(false);
-  const [showProfile, setShowProfile]           = useState(false);
+  const [showPassport, setShowPassport]         = useState(false);
   const [footerOpen, setFooterOpen]             = useState(false);
   const provinceRef    = useRef<HTMLDivElement>(null);
-  const sessionScoreRef = useRef(0);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -72,6 +85,10 @@ const Game: React.FC = () => {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(REWARD_STORAGE_KEY, String(score));
+  }, [score]);
 
   const availableClusters = useMemo(() => {
     if (selectedProvince === 'all') return [];
@@ -94,36 +111,26 @@ const Game: React.FC = () => {
   }, [mode]);
 
   const handleScoreChange = useCallback((pts: number) => {
-    setScore(s => s + pts);
-    sessionScoreRef.current += pts;
+    setScore(s => Math.max(0, s + pts));
   }, []);
   const handleTargetSet = useCallback((loc: Location) => { setActiveLocation(loc); setIsRevealed(false); }, []);
   const handleReveal    = useCallback((v: boolean) => setIsRevealed(v), []);
 
-  const flushSession = useCallback(async (m: GameMode, provinceId: string) => {
-    if (user && sessionScoreRef.current > 0) {
-      await saveScoreSession(user.id, m, provinceId, sessionScoreRef.current);
-      sessionScoreRef.current = 0;
-    }
-  }, [user]);
-
-  const handleModeChange = useCallback(async (m: GameMode) => {
-    await flushSession(mode, selectedProvince);
+  const handleModeChange = useCallback((m: GameMode) => {
     setMode(m);
     setActiveLocation(null);
     setUserClickedLocationId(null);
     setIsRevealed(false);
     setCurrentFact(null);
-  }, [flushSession, mode, selectedProvince]);
+  }, []);
 
-  const handleProvinceChange = useCallback(async (id: string) => {
-    await flushSession(mode, selectedProvince);
+  const handleProvinceChange = useCallback((id: string) => {
     setSelectedProvince(id);
     setSelectedCluster('all');
     setActiveLocation(null);
     setIsRevealed(false);
     setProvinceOpen(false);
-  }, [flushSession, mode, selectedProvince]);
+  }, []);
 
   const [searchQuery, setSearchQuery]     = useState('');
   const [searchOpen, setSearchOpen]       = useState(false);
@@ -174,6 +181,12 @@ const Game: React.FC = () => {
   const areaLabel = selectedCluster === 'provincies-en-hoofdsteden'
     ? 'Prov. & Hoofdst.'
     : currentProvince?.name ?? 'Heel NL';
+  const earnedStamps = PASSPORT_STAMPS.filter(stamp => score >= stamp.threshold);
+  const nextStamp = PASSPORT_STAMPS.find(stamp => score < stamp.threshold);
+  const previousThreshold = earnedStamps.at(-1)?.threshold ?? 0;
+  const nextProgress = nextStamp
+    ? Math.min(100, Math.round(((score - previousThreshold) / (nextStamp.threshold - previousThreshold)) * 100))
+    : 100;
 
   return (
     <div className="h-[100dvh] flex flex-col bg-[#F5F3FF] overflow-hidden">
@@ -339,14 +352,16 @@ const Game: React.FC = () => {
 	            </AnimatePresence>
           </div>
 
-          {/* Score */}
-          <div className="flex items-center gap-1.5 bg-[#F59E0B] px-3 py-1.5 rounded-full shadow-sm">
+          {/* Lokale reismunten / paspoort */}
+          <button
+            type="button"
+            onClick={() => setShowPassport(v => !v)}
+            title="Reispaspoort"
+            className="flex items-center gap-1.5 bg-[#F59E0B] px-3 py-1.5 rounded-full shadow-sm hover:bg-[#D97706] transition-colors"
+          >
             <Trophy className="w-4 h-4 text-white" />
             <span className="font-black text-white text-sm leading-none">{score}</span>
-          </div>
-
-          {/* Profile / Login — verborgen tot database-koppeling */}
-          {/* {user ? (...) : (...)} */}
+          </button>
           </div>{/* end ml-auto controls */}
         </div>
 
@@ -651,11 +666,81 @@ const Game: React.FC = () => {
         </div>
       </footer>
 
-      {/* Auth modal */}
-      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+      <AnimatePresence>
+        {showPassport && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[7000] bg-black/30 backdrop-blur-sm flex items-start justify-end p-3 sm:p-5"
+            onClick={() => setShowPassport(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, x: 24, scale: 0.98 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 24, scale: 0.98 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-sm bg-white rounded-2xl shadow-2xl border-2 border-[#FDE68A] overflow-hidden"
+            >
+              <div className="bg-[#3B0764] px-5 py-4 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#FDE68A]">Reispaspoort</p>
+                  <h2 className="text-xl font-black text-white">{getPassportLevel(score)}</h2>
+                </div>
+                <button onClick={() => setShowPassport(false)} className="text-[#C4B5FD] hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-      {/* Profile panel */}
-      {showProfile && <ProfilePanel onClose={() => setShowProfile(false)} />}
+              <div className="p-5 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-[#FFFBEB] border border-[#FDE68A] p-3">
+                    <div className="text-2xl font-black text-[#D97706]">{score}</div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#92400E]">reismunten</div>
+                  </div>
+                  <div className="rounded-xl bg-[#F5F3FF] border border-[#DDD6FE] p-3">
+                    <div className="text-2xl font-black text-[#6D28D9]">{earnedStamps.length}</div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-[#6D28D9]">stempels</div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between text-xs font-black text-slate-600 mb-1.5">
+                    <span>Volgende stempel</span>
+                    <span>{nextStamp ? `${score}/${nextStamp.threshold}` : 'vol'}</span>
+                  </div>
+                  <div className="h-2.5 rounded-full bg-[#EDE9FE] overflow-hidden">
+                    <div className="h-full bg-[#7C3AED]" style={{ width: `${nextProgress}%` }} />
+                  </div>
+                  {nextStamp && (
+                    <p className="mt-2 text-xs font-bold text-slate-500">
+                      Nog {nextStamp.threshold - score} reismunten tot {nextStamp.label}.
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {PASSPORT_STAMPS.map(stamp => {
+                    const unlocked = score >= stamp.threshold;
+                    return (
+                      <div
+                        key={stamp.label}
+                        className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 ${unlocked ? 'bg-[#ECFDF5] border-[#A7F3D0]' : 'bg-slate-50 border-slate-200 opacity-70'}`}
+                      >
+                        <span className="text-2xl">{stamp.icon}</span>
+                        <div className="min-w-0">
+                          <div className={`text-sm font-black ${unlocked ? 'text-emerald-700' : 'text-slate-500'}`}>{stamp.label}</div>
+                          <div className="text-[10px] font-bold text-slate-400">{stamp.threshold} reismunten</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

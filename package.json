@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@google/genai": "^1.40.0",
-    "@supabase/supabase-js": "^2.105.4",
     "framer-motion": "^12.34.0",
     "leaflet": "1.9.4",
     "lucide-react": "^0.563.0",

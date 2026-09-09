@@ -1,22 +1,9 @@
 
-import React, { useState } from 'react';
-import { AuthProvider } from './contexts/AuthContext';
+import React from 'react';
 import Game from './components/Game';
-import AdminDashboard from './components/AdminDashboard';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'game' | 'admin'>(() =>
-    window.location.hash === '#admin' ? 'admin' : 'game'
-  );
-
-  return (
-    <AuthProvider>
-      {view === 'admin'
-        ? <AdminDashboard onExit={() => { window.location.hash = ''; setView('game'); }} />
-        : <Game />
-      }
-    </AuthProvider>
-  );
+  return <Game />;
 };
 
 export default App;
