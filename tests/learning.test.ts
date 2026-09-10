@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PROVINCES } from '../constants';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { areaLocations, availableModes, availableTopics, locationProgressKey, memoryPairs, studyLocations, validateSelection } from '../data/learning';
+import { areaLocations, availableModes, availableTopics, learningGroups, locationProgressKey, memoryPairs, studyLocations, validateSelection } from '../data/learning';
 import { nextBatch, recordAnswer } from '../services/localProgress';
 
 test('Nederland contains exactly twelve provinces and twelve provincial capitals', () => {
@@ -76,6 +76,43 @@ test('Groningen matches the complete school worksheet', () => {
   assert.equal(allMemory.length, 20);
   assert.ok(allMemory.every(pair => pair.kind === 'fact'));
   assert.ok(availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
+});
+
+test('learning groups are balanced and cover every location in every area and topic', () => {
+  for (const areaId of ['all', ...PROVINCES.filter(p => p.id !== 'water-nl').map(p => p.id)]) {
+    for (const topicId of availableTopics(areaId)) {
+      const selection = { areaId, topicId, clusterId: 'all' as const };
+      const allLocations = studyLocations(selection);
+      const groups = learningGroups(selection);
+      if (allLocations.length <= 6) {
+        assert.equal(groups.length, 0, `${areaId}/${topicId} hoeft niet te worden gesplitst`);
+        continue;
+      }
+      const groupedLocations = groups.flatMap(group => studyLocations({ ...selection, clusterId: group.id }));
+      const sizes = groups.map(group => group.count);
+      assert.ok(Math.min(...sizes) >= 3, `${areaId}/${topicId} heeft geen klein restgroepje`);
+      assert.ok(Math.max(...sizes) <= 5, `${areaId}/${topicId} blijft behapbaar`);
+      assert.ok(Math.max(...sizes) - Math.min(...sizes) <= 1, `${areaId}/${topicId} is gelijk verdeeld`);
+      assert.deepEqual(
+        groupedLocations.map(location => location.id).sort(),
+        allLocations.map(location => location.id).sort(),
+        `${areaId}/${topicId} bevat iedere locatie precies eenmaal`,
+      );
+    }
+  }
+});
+
+test('Groningen all mixes nearby cities, regions and waters into four sets of five', () => {
+  const selection = { areaId: 'gr', topicId: 'all' as const, clusterId: 'all' };
+  const groups = learningGroups(selection);
+  const locationsByGroup = groups.map(group => studyLocations({ ...selection, clusterId: group.id }));
+  assert.deepEqual(groups.map(group => group.count), [5, 5, 5, 5]);
+  assert.ok(locationsByGroup.every(group => new Set(group.map(location => location.type)).size >= 2));
+
+  const groupContaining = (name: string) => locationsByGroup.find(group => group.some(location => location.name === name))!;
+  assert.ok(groupContaining('Lauwersmeergebied').some(location => ['Lauwersoog', 'Zoutkamp'].includes(location.name)));
+  assert.ok(groupContaining('Zuidlaardermeer').some(location => ['Haren', 'Hoogezand-Sappemeer', 'Hondsrug'].includes(location.name)));
+  assert.notEqual(groupContaining('Lauwersmeergebied'), groupContaining('Hondsrug'));
 });
 
 test('repeated short rounds cover every flag before repeating any', () => {

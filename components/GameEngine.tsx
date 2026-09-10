@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, Lightbulb, Timer } from 'lucide-react';
+import { ArrowRight, Check, Lightbulb, LoaderCircle, Timer } from 'lucide-react';
 import { Location } from '../types';
 import { locationProgressKey } from '../data/learning';
 import { LOCATION_FACTS } from '../data/locationFacts';
@@ -84,6 +84,11 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
     setResolved(false); setHint(false); setReveal(false); setFeedback(''); setDetour(null); setFactDismissed(false); setSeconds(15);
     locked.current = false; hadError.current = false;
   };
+  useEffect(() => {
+    if (mode !== 'find' || !resolved) return;
+    const timeout = window.setTimeout(next, 1400);
+    return () => window.clearTimeout(timeout);
+  }, [index, mode, resolved]);
   if (!target) return <RoundResult total={locations.length} correct={correct} onContinue={onContinue} onExit={onExit} onRetry={wrongIds.length ? () => onRetry(wrongIds) : undefined} />;
   const fact = LOCATION_FACTS[target.name]?.fact;
   const detourFact = detour ? LOCATION_FACTS[detour.name]?.fact : undefined;
@@ -106,7 +111,10 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
       </form>}
       {hint && !resolved && <p className="hint-text">{step === 'spell' ? 'De naam begint met ' + target.name.slice(0, 2) + '. (' + target.name.length + ' tekens)' : 'Coco wijst de plek aan op de kaart.'}</p>}
       <div className={'answer-feedback' + (resolved ? ' answered' : '')} role="status">{feedback}</div>
-      {resolved ? <button className="primary-button next-question" onClick={next}>{index + 1 === locations.length ? 'Bekijk de route' : 'Volgende plek'}<ArrowRight size={18} /></button> : <div className="question-tools">
+      {resolved ? mode === 'find'
+        ? <p className="auto-next"><LoaderCircle size={17} />{index + 1 === locations.length ? 'Route afronden...' : 'Volgende plek...'}</p>
+        : <button className="primary-button next-question" onClick={next}>{index + 1 === locations.length ? 'Bekijk de route' : 'Volgende plek'}<ArrowRight size={18} /></button>
+        : <div className="question-tools">
         <button className="secondary-button" onClick={() => { setHint(true); hadError.current = true; if (step === 'find') setReveal(true); }} disabled={hint}><Lightbulb size={17} />Hint</button>
         <button className="text-button" onClick={() => finish(false, 'Dit is ' + target.name + '.')}>Toon antwoord</button>
       </div>}

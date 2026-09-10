@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Brain, Compass, Flag, Map, MousePointer2, Play, Search, Settings2, Type, Wand2, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, Check, Compass, Flag, ListFilter, Map, MousePointer2, Play, Settings2, Type, Wand2 } from 'lucide-react';
 import { Location } from '../types';
-import { areaName, availableModes, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, PlayMode, Selection, studyLocations, TOPIC_LABELS, validateSelection } from '../data/learning';
+import { areaName, availableModes, availableTopics, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
 import { nextBatch, PREFERENCES_KEY, PROGRESS_KEY, readLocal, readProgress, recordAnswer, SCORE_KEY, writeLocal } from '../services/localProgress';
@@ -39,9 +39,9 @@ export default function Game() {
   });
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
-  const [search, setSearch] = useState('');
   const [activeLocation, setActiveLocation] = useState<Location | null>(null);
   const exploreRef = useRef<HTMLElement>(null);
+  const topicFilterRef = useRef<HTMLDetailsElement>(null);
 
   const locations = useMemo(() => studyLocations(selection), [selection]);
   const pairs = useMemo(() => memoryPairs(selection), [selection]);
@@ -54,9 +54,10 @@ export default function Game() {
     : locations.filter(location => progress[locationProgressKey(location)]).length;
   const poolSize = selection.topicId === 'flags' || selection.topicId === 'facts' ? pairs.length : locations.length;
   const mapRoundSize = locations.length <= 12 ? locations.length : 10;
-  const searchResults = search.trim().length >= 2
-    ? locations.filter(location => location.name.toLocaleLowerCase('nl').includes(search.trim().toLocaleLowerCase('nl'))).slice(0, 6)
-    : [];
+  const topics = useMemo(() => {
+    const available = availableTopics(selection.areaId);
+    return ['all', ...available.filter(topic => topic !== 'all')] as TopicId[];
+  }, [selection.areaId]);
 
   const quickModes: PlayMode[] = modes.includes('quiz')
     ? ['quiz']
@@ -82,13 +83,16 @@ export default function Game() {
   const changeSelection = (next: Selection) => {
     setSelection(validateSelection(next));
     setActiveLocation(null);
-    setSearch('');
+  };
+
+  const changeTopic = (topicId: TopicId) => {
+    changeSelection({ ...selection, topicId, clusterId: 'all' });
+    topicFilterRef.current?.removeAttribute('open');
   };
 
   const navigate = (next: View) => {
     setView(next);
     setSession(null);
-    setSearch('');
     window.scrollTo({ top: 0 });
   };
 
@@ -164,7 +168,7 @@ export default function Game() {
           <main className="discover-page">
             <section className="play-path" aria-label="Spel kiezen">
               <div className="coco-route">
-                <img src="/images/topococoicon_1.svg" width="52" height="52" alt="" />
+                <img src="/images/logo-compas-geel.svg" width="52" height="52" alt="" />
                 <div><p className="eyebrow">Coco's route</p><h2>Kies je route</h2></div>
               </div>
               <div className="quick-modes">
@@ -186,12 +190,14 @@ export default function Game() {
 
             <div className="discover-heading"><div><p className="eyebrow">{TOPIC_LABELS[selection.topicId]}</p><h1>{areaName(selection.areaId)}</h1></div></div>
             <div className="map-toolbar">
-              <div className="map-search"><Search size={17} /><input aria-label="Zoek binnen dit onderwerp" placeholder="Zoek een plek" value={search} onChange={event => setSearch(event.target.value)} onKeyDown={event => { if (event.key === 'Escape') setSearch(''); }} />
-                {search && <button className="icon-button" aria-label="Zoekopdracht wissen" onClick={() => setSearch('')}><X size={16} /></button>}
-                {search.trim().length >= 2 && <div className="search-results">{searchResults.length
-                  ? searchResults.map(location => <button key={location.id} onClick={() => { setActiveLocation(location); setSearch(''); }}><span>{location.name}</span><small>{locationContext(location)}</small></button>)
-                  : <p>Geen plek gevonden in dit onderwerp.</p>}</div>}
-                           </div>
+              {topics.length > 1 && <details className="topic-filter" ref={topicFilterRef}>
+                <summary aria-label={`Onderwerp: ${TOPIC_LABELS[selection.topicId]}`}><ListFilter size={17} /><span>{selection.topicId === 'all' ? 'Filter' : TOPIC_LABELS[selection.topicId]}</span></summary>
+                <div className="topic-filter-menu" role="group" aria-label="Kies een onderwerp">
+                  {topics.map(topic => <button type="button" key={topic} aria-pressed={selection.topicId === topic} onClick={() => changeTopic(topic)}>
+                    <span>{TOPIC_LABELS[topic]}</span>{selection.topicId === topic && <Check size={17} />}
+                  </button>)}
+                </div>
+              </details>}
               <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
             </div>
 

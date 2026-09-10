@@ -17,7 +17,7 @@ export default function MapFactCard({ eyebrow, name, text, context, tone = 'defa
     className={`map-fact-card ${tone}${inline ? ' inline' : ''}${className ? ` ${className}` : ''}`}
     aria-live="polite"
   >
-    <img src="/images/topococoicon_1.svg" width="44" height="44" alt="" />
+    <img src="/images/logo-compas-geel.svg" width="44" height="44" alt="" />
     <div className="fact-card-copy">
       <span className="fact-card-eyebrow">{eyebrow}</span>
       <h3>{name}</h3>
