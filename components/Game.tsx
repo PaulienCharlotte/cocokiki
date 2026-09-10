@@ -145,7 +145,7 @@ export default function Game() {
         <img src="/images/logo-compas-geel.svg" width="40" height="40" alt="" />
         <span>Topo met Coco</span>
       </a>
-      {!session && <button className="header-map-button" onClick={() => navigate('discover')} aria-current={view === 'discover' ? 'page' : undefined}><Map size={18} />Kaart</button>}
+      {!session && view === 'passport' && <button className="header-map-button" onClick={() => navigate('discover')}><ArrowLeft size={18} />Terug naar kaart</button>}
       <button className="points-button" onClick={() => navigate('passport')} aria-label={'Paspoort, ' + score + ' reispunten'}><Compass size={18} /><span>{score}</span></button>
     </div></header>
 
@@ -188,8 +188,8 @@ export default function Game() {
               </details>}
             </section>
 
-            <div className="discover-heading"><div><p className="eyebrow">{TOPIC_LABELS[selection.topicId]}</p><h1>{areaName(selection.areaId)}</h1></div></div>
             <div className="map-toolbar">
+              <h1>{areaName(selection.areaId)}</h1>
               {topics.length > 1 && <details className="topic-filter" ref={topicFilterRef}>
                 <summary aria-label={`Onderwerp: ${TOPIC_LABELS[selection.topicId]}`}><ListFilter size={17} /><span>{selection.topicId === 'all' ? 'Filter' : TOPIC_LABELS[selection.topicId]}</span></summary>
                 <div className="topic-filter-menu" role="group" aria-label="Kies een onderwerp">

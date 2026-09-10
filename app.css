@@ -43,6 +43,8 @@ summary { color: var(--muted); font-size: 13px; padding: 9px 0; }
 .cluster-strip small { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #eee8f1; color: #5d4b65; font-size: 11px; font-weight: 800; }
 .cluster-strip button[aria-current="true"] small { background: #fff; color: #5c3d78; }
 .content-width { width: min(100% - 48px, 860px); margin: 0 auto; }
+.selection-details > summary { display: none; }
+.selection-details:not([open]) > .selection-content { display: block; }
 .discover-page { width: min(100% - 48px, 1376px); margin: 0 auto; padding-top: 0; }
 .play-path { display: flex; align-items: center; gap: 14px; padding: 17px 0; margin-bottom: 22px; border-bottom: 1px solid var(--line); position: relative; z-index: 1800; }
 .coco-route { display: flex; align-items: center; gap: 11px; min-width: 210px; }
@@ -82,7 +84,8 @@ summary { color: var(--muted); font-size: 13px; padding: 9px 0; }
 .text-button:hover, .back-button:hover { background: #e9eeeb; }
 .icon-button { width: 44px; height: 44px; flex-shrink: 0; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; border-radius: 6px; }
 .icon-button:hover { background: #edf3ef; }
-.map-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 12px; }
+.map-toolbar { display: flex; align-items: center; gap: 16px; padding-bottom: 12px; }
+.map-toolbar h1 { margin-right: auto; }
 .topic-filter { position: relative; z-index: 1900; }
 .topic-filter > summary { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; list-style: none; border: 1px solid #cfc4d5; border-radius: 6px; background: #fff; color: #4e365d; font-size: 13px; font-weight: 700; }
 .topic-filter > summary::-webkit-details-marker { display: none; }
@@ -245,11 +248,20 @@ progress::-moz-progress-bar { background: #508669; }
   h1 { font-size: 24px; } h2 { font-size: 19px; }
   .topo-app { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
   .topo-app.in-session { padding-bottom: 20px; }
-  .header-inner { min-height: 52px; padding: 7px 12px; gap: 6px; }
-  .brand { font-size: 16px; gap: 7px; } .brand img { width: 30px; height: 30px; }
+  .header-inner { min-height: 46px; padding: 5px 12px; gap: 6px; }
+  .brand { font-size: 15px; gap: 7px; } .brand img { width: 28px; height: 28px; }
   .points-button { margin-left: auto; min-height: 36px; padding: 6px 9px; font-size: 13px; }
   .header-map-button { margin-left: auto; min-height: 36px; padding: 6px 8px; }
-  .selection-band { padding: 8px 12px; }
+  .selection-band { padding: 0 12px; }
+  .selection-details > summary { min-height: 40px; display: flex; align-items: center; gap: 8px; list-style: none; color: #4e365d; }
+  .selection-details > summary::-webkit-details-marker { display: none; }
+  .selection-details > summary > span { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
+  .selection-details > summary strong { font-size: 13px; white-space: nowrap; }
+  .selection-details > summary small { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .selection-chevron { margin-left: auto; transition: transform .15s ease; }
+  .selection-details[open] .selection-chevron { transform: rotate(180deg); }
+  .selection-details:not([open]) > .selection-content { display: none; }
+  .selection-content { padding: 4px 0 9px; border-top: 1px solid var(--line); }
   .selection-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
   .field { gap: 3px; }
   .field > span { font-size: 11px; }
@@ -260,27 +272,21 @@ progress::-moz-progress-bar { background: #508669; }
   .cluster-strip small { min-width: 20px; height: 20px; font-size: 10px; }
   .content-width, .discover-page { width: calc(100% - 24px); }
   .discover-page { padding-top: 0; }
-  .play-path { align-items: center; gap: 7px; padding: 8px 0; margin-bottom: 9px; overflow-x: auto; scrollbar-width: none; }
+  .play-path { align-items: center; gap: 6px; padding: 5px 0; margin-bottom: 5px; overflow-x: auto; scrollbar-width: none; }
   .play-path::-webkit-scrollbar { display: none; }
-  .coco-route { flex: 0 0 auto; min-width: 0; gap: 7px; }
-  .coco-route > img { width: 32px; height: 32px; }
-  .coco-route .eyebrow { display: none; }
-  .coco-route h2 { font-size: 14px; white-space: nowrap; }
+  .coco-route { display: none; }
   .quick-modes { width: auto; margin-left: 0; display: flex; flex: 0 0 auto; gap: 7px; flex-wrap: nowrap; justify-content: flex-start; }
   .quick-modes .mode-explore { grid-column: auto; }
-  .journey-mode { min-height: 38px; padding: 7px 9px; gap: 6px; white-space: nowrap; text-align: left; font-size: 13px; }
+  .journey-mode { min-height: 40px; padding: 7px 9px; gap: 6px; white-space: nowrap; text-align: left; font-size: 13px; }
   .journey-mode svg { width: 18px; height: 18px; }
   .mode-play-icon { display: none; }
   .more-play { width: auto; flex: 0 0 auto; }
-  .more-play > summary { min-height: 38px; padding: 7px 9px; justify-content: center; border: 1px solid #d2c8d7; white-space: nowrap; }
+  .more-play > summary { min-height: 40px; padding: 7px 9px; justify-content: center; border: 1px solid #d2c8d7; white-space: nowrap; }
   .more-play-panel { position: absolute; top: calc(100% + 7px); right: 0; width: min(320px, calc(100vw - 24px)); margin-bottom: 0; box-shadow: 0 12px 28px #30203f24; }
   .extra-mode-buttons { grid-template-columns: 1fr; }
   .compact-setting { align-items: flex-start; flex-direction: column; }
-  .discover-heading { flex-wrap: wrap; margin-bottom: 8px; gap: 8px; }
-  .discover-heading h1 { font-size: 20px; }
-  .discover-heading .eyebrow { margin-bottom: 2px; }
-  .discover-heading .primary-button { padding: 10px 12px; font-size: 13px; }
-  .map-toolbar { gap: 8px; flex-wrap: wrap; }
+  .map-toolbar { min-height: 44px; gap: 7px; padding-bottom: 5px; flex-wrap: nowrap; }
+  .map-toolbar h1 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 18px; }
   .topic-filter > summary { min-height: 38px; padding: 7px 9px; font-size: 12px; }
   .topic-filter-menu { width: min(230px, calc(100vw - 24px)); }
   .switch-label { font-size: 12px; gap: 6px; }
