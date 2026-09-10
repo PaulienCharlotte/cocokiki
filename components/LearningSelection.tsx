@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ChevronDown, Globe2, MapPin, SlidersHorizontal } from 'lucide-react';
 import { PROVINCES } from '../constants';
 import { CONTINENT_IDS, DUTCH_PROVINCES, isDutchArea, learningGroups, Selection, studyLocations } from '../data/learning';
 
-export default function LearningSelection({ selection, onChange }: { selection: Selection; onChange: (value: Selection) => void }) {
+export default function LearningSelection({ selection, onChange, mobileActions }: { selection: Selection; onChange: (value: Selection) => void; mobileActions?: React.ReactNode }) {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   const { areaId, clusterId } = selection;
   const dutch = isDutchArea(areaId);
   const groups = learningGroups(selection);
@@ -12,7 +13,7 @@ export default function LearningSelection({ selection, onChange }: { selection: 
   const clusterLabel = clusterId === 'all' ? 'Alles' : groups.find(group => group.id === clusterId)?.name ?? 'Alles';
   const chooseArea = (nextAreaId: string) => onChange({ areaId: nextAreaId, topicId: 'all', clusterId: 'all' });
   return <section className="selection-band" aria-label="Gebied en onderwerp">
-    <details className="selection-details">
+    <details className="selection-details" ref={detailsRef}>
       <summary>
         <SlidersHorizontal size={17} />
         <span><strong>Kaart instellen</strong><small>{areaLabel} · {clusterLabel}</small></span>
@@ -45,6 +46,9 @@ export default function LearningSelection({ selection, onChange }: { selection: 
             </button>;
           })}
         </div>}
+        {mobileActions && <div className="selection-mobile-actions" onClick={event => {
+          if ((event.target as HTMLElement).closest('button')) detailsRef.current?.removeAttribute('open');
+        }}>{mobileActions}</div>}
       </div>
     </details>
   </section>;

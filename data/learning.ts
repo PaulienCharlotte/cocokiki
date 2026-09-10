@@ -200,6 +200,13 @@ export function learningGroups(selection: Selection): LearningGroup[] {
   }));
 }
 
+export function nextLearningGroup(selection: Selection): Selection {
+  const groups = learningGroups(selection);
+  const currentIndex = groups.findIndex(group => group.id === selection.clusterId);
+  if (currentIndex < 0 || groups.length < 2) return selection;
+  return { ...selection, clusterId: groups[(currentIndex + 1) % groups.length].id };
+}
+
 export function studyLocations({ areaId, topicId, clusterId }: Selection): Location[] {
   return groupSourceLocations(areaId, topicId, clusterId);
 }

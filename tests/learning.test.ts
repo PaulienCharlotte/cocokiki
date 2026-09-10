@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PROVINCES } from '../constants';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { areaLocations, availableModes, availableTopics, learningGroups, locationProgressKey, memoryPairs, studyLocations, validateSelection } from '../data/learning';
+import { areaLocations, availableModes, availableTopics, learningGroups, locationProgressKey, memoryPairs, nextLearningGroup, studyLocations, validateSelection } from '../data/learning';
 import { nextBatch, recordAnswer } from '../services/localProgress';
 
 test('Nederland contains exactly twelve provinces and twelve provincial capitals', () => {
@@ -113,6 +113,13 @@ test('Groningen all mixes nearby cities, regions and waters into four sets of fi
   assert.ok(groupContaining('Lauwersmeergebied').some(location => ['Lauwersoog', 'Zoutkamp'].includes(location.name)));
   assert.ok(groupContaining('Zuidlaardermeer').some(location => ['Haren', 'Hoogezand-Sappemeer', 'Hondsrug'].includes(location.name)));
   assert.notEqual(groupContaining('Lauwersmeergebied'), groupContaining('Hondsrug'));
+});
+
+test('a new route advances to the next learning group and wraps after the last group', () => {
+  const base = { areaId: 'gr', topicId: 'all' as const, clusterId: 'learn-0' };
+  assert.equal(nextLearningGroup(base).clusterId, 'learn-1');
+  assert.equal(nextLearningGroup({ ...base, clusterId: 'learn-3' }).clusterId, 'learn-0');
+  assert.equal(nextLearningGroup({ ...base, clusterId: 'all' }).clusterId, 'all');
 });
 
 test('repeated short rounds cover every flag before repeating any', () => {

@@ -15,12 +15,13 @@ interface Props {
   timerEnabled: boolean;
   onAnswer: (id: string, correct: boolean, points: number) => void;
   onContinue: () => void;
+  onRepeat: () => void;
   onRetry: (ids: string[]) => void;
   onExit: () => void;
 }
 const normalize = (value: string) => value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’‘]/g, "'").toLocaleLowerCase('nl').replace(/\s+/g, ' ');
 
-export default function GameEngine({ mode, areaId, locations, mapLocations, timerEnabled, onAnswer, onContinue, onRetry, onExit }: Props) {
+export default function GameEngine({ mode, areaId, locations, mapLocations, timerEnabled, onAnswer, onContinue, onRepeat, onRetry, onExit }: Props) {
   const [index, setIndex] = useState(0);
   const [step, setStep] = useState<'find' | 'spell'>(mode === 'spell' ? 'spell' : 'find');
   const [answer, setAnswer] = useState('');
@@ -89,10 +90,10 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
     const timeout = window.setTimeout(next, 1400);
     return () => window.clearTimeout(timeout);
   }, [index, mode, resolved]);
-  if (!target) return <RoundResult total={locations.length} correct={correct} onContinue={onContinue} onExit={onExit} onRetry={wrongIds.length ? () => onRetry(wrongIds) : undefined} />;
+  if (!target) return <RoundResult total={locations.length} correct={correct} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={wrongIds.length ? () => onRetry(wrongIds) : undefined} />;
   const fact = LOCATION_FACTS[target.name]?.fact;
   const detourFact = detour ? LOCATION_FACTS[detour.name]?.fact : undefined;
-  const visibleFact = !factDismissed
+  const visibleFact = mode !== 'find' && !factDismissed
     ? resolved && fact
       ? { name: target.name, text: fact, kind: 'success' as const }
       : detour && detourFact

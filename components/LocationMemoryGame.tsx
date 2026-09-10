@@ -10,12 +10,13 @@ interface Props {
   choicePool: MemoryPair[];
   onAnswer: (id: string, correct: boolean, points: number) => void;
   onContinue: () => void;
+  onRepeat: () => void;
   onRetry: (ids: string[]) => void;
   onExit: () => void;
 }
 interface Card { id: string; pair: MemoryPair; side: 'left' | 'right' }
 
-function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRetry, onExit }: Props) {
+function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, onExit }: Props) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [wrong, setWrong] = useState<string[]>([]);
@@ -25,7 +26,7 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRetry, onExit }: 
   const target = pairs[index];
   const choices = useMemo(() => target ? shuffle([target, ...shuffle(choicePool.filter(p => p.id !== target.id)).slice(0, 3)]) : [], [target, choicePool]);
   useEffect(() => { heading.current?.focus(); }, [index]);
-  if (!target) return <RoundResult total={pairs.length} correct={correct} onContinue={onContinue} onExit={onExit} onRetry={wrong.length ? () => onRetry(wrong) : undefined} />;
+  if (!target) return <RoundResult total={pairs.length} correct={correct} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={wrong.length ? () => onRetry(wrong) : undefined} />;
   const answer = (choice: MemoryPair) => {
     if (locked.current) return;
     locked.current = true;
@@ -45,7 +46,7 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRetry, onExit }: 
   </section>;
 }
 
-function MemoryBoard({ pairs, onAnswer, onContinue, onRetry, onExit }: Props) {
+function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }: Props) {
   const [cards] = useState<Card[]>(() => shuffle(pairs.flatMap(pair => [
     { id: pair.id + ':left', pair, side: 'left' as const }, { id: pair.id + ':right', pair, side: 'right' as const },
   ])));
@@ -78,7 +79,7 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRetry, onExit }: Props) {
     return () => window.clearTimeout(timeout);
   }, [flipped, cards, onAnswer]);
 
-  if (matched.length === pairs.length) return <RoundResult memory total={pairs.length} correct={pairs.length - missed.length} onContinue={onContinue} onExit={onExit} onRetry={missed.length ? () => onRetry(missed) : undefined} />;
+  if (matched.length === pairs.length) return <RoundResult memory total={pairs.length} correct={pairs.length - missed.length} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={missed.length ? () => onRetry(missed) : undefined} />;
   return <section className="memory-game content-width">
     <div className="memory-heading"><h1>Vind de setjes</h1><span>{matched.length} / {pairs.length} gevonden<span className="muted"> · {moves} beurten</span></span></div>
     <progress value={matched.length} max={pairs.length} aria-label="Gevonden setjes" />

@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Brain, Check, Compass, Flag, ListFilter, Map, MousePointer2, Play, Settings2, Type, Wand2 } from 'lucide-react';
 import { Location } from '../types';
-import { areaName, availableModes, availableTopics, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
+import { areaName, availableModes, availableTopics, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
 import { nextBatch, PREFERENCES_KEY, PROGRESS_KEY, readLocal, readProgress, recordAnswer, SCORE_KEY, writeLocal } from '../services/localProgress';
@@ -53,7 +53,6 @@ export default function Game() {
     ? pairs.filter(pair => progress[pair.id]).length
     : locations.filter(location => progress[locationProgressKey(location)]).length;
   const poolSize = selection.topicId === 'flags' || selection.topicId === 'facts' ? pairs.length : locations.length;
-  const mapRoundSize = locations.length <= 12 ? locations.length : 10;
   const topics = useMemo(() => {
     const available = availableTopics(selection.areaId);
     return ['all', ...available.filter(topic => topic !== 'all')] as TopicId[];
@@ -96,18 +95,31 @@ export default function Game() {
     window.scrollTo({ top: 0 });
   };
 
-  const start = (requestedMode: PlayMode, retryIds?: string[]) => {
+  const start = (requestedMode: PlayMode, retryIds?: string[], sourceSelection = selection) => {
+    const sourceLocations = studyLocations(sourceSelection);
+    const sourcePairs = memoryPairs(sourceSelection);
+    const roundSize = sourceLocations.length <= 12 ? sourceLocations.length : 10;
     const sessionLocations = retryIds
-      ? locations.filter(location => retryIds.includes(location.id))
+      ? sourceLocations.filter(location => retryIds.includes(location.id))
       : requestedMode === 'test'
-        ? locations
-        : nextBatch(locations, mapRoundSize, progress, locationProgressKey);
+        ? sourceLocations
+        : nextBatch(sourceLocations, roundSize, progress, locationProgressKey);
     const sessionPairs = retryIds
-      ? pairs.filter(pair => retryIds.includes(pair.id))
-      : nextBatch<MemoryPair>(pairs, requestedMode === 'memory' ? activePairCount : 10, progress, pair => pair.id);
+      ? sourcePairs.filter(pair => retryIds.includes(pair.id))
+      : nextBatch<MemoryPair>(sourcePairs, requestedMode === 'memory' ? activePairCount : 10, progress, pair => pair.id);
 
     setSession({ id: Date.now(), mode: requestedMode, locations: sessionLocations, pairs: sessionPairs });
     window.scrollTo({ top: 0 });
+  };
+
+  const continueRoute = (mode: PlayMode) => {
+    const nextSelection = nextLearningGroup(selection);
+    if (nextSelection === selection) {
+      start(mode);
+      return;
+    }
+    setSelection(nextSelection);
+    start(mode, undefined, nextSelection);
   };
 
   const modeButton = (mode: PlayMode, compact = false) => {
@@ -139,6 +151,28 @@ export default function Game() {
     onClose={() => setActiveLocation(null)}
   />;
 
+  const playPath = (className = '') => <section className={`play-path ${className}`} aria-label="Spel kiezen">
+    <div className="coco-route">
+      <img src="/images/logo-compas-geel.svg" width="52" height="52" alt="" />
+      <div><p className="eyebrow">Coco's route</p><h2>Kies je route</h2></div>
+    </div>
+    <div className="quick-modes">
+      <button className="journey-mode mode-explore" onClick={exploreFreely}><Map size={22} /><span>Vrij verkennen</span></button>
+      {quickModes.map(mode => modeButton(mode))}
+    </div>
+    {(extraModes.length > 0 || pairOptions.length > 1 || hasTimerModes) && <details className="more-play">
+      <summary><Settings2 size={17} />{modes.includes('memory') ? 'Memory en meer' : 'Meer spellen'}</summary>
+      <div className="more-play-panel">
+        {extraModes.length > 0 && <div className="extra-mode-buttons">{extraModes.map(mode => modeButton(mode, true))}</div>}
+        {modes.includes('memory') && pairOptions.length > 1 && <fieldset className="compact-setting">
+          <legend>Memorysetjes</legend>
+          <div className="segmented">{pairOptions.map(count => <label key={count}><input type="radio" name={`pair-count-${className || 'desktop'}`} checked={activePairCount === count} onChange={() => setPairCount(count)} /><span>{count}</span></label>)}</div>
+        </fieldset>}
+        {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer</span></label>}
+      </div>
+    </details>}
+  </section>;
+
   return <div className={'topo-app view-' + view + (session ? ' in-session' : '')}>
     <header className="app-header"><div className="header-inner">
       <a className="brand" href="#" onClick={event => { event.preventDefault(); navigate('discover'); }}>
@@ -157,36 +191,16 @@ export default function Game() {
           <strong>{MODE_LABELS[session.mode]}</strong>
         </div>
         {session.mode === 'memory' || session.mode === 'quiz'
-          ? <LocationMemoryGame key={session.id} mode={session.mode} pairs={session.pairs} choicePool={pairs} onAnswer={onAnswer} onContinue={() => start(session.mode)} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />
+          ? <LocationMemoryGame key={session.id} mode={session.mode} pairs={session.pairs} choicePool={pairs} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.pairs.map(pair => pair.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />
           : session.mode === 'test'
             ? <div className="test-workspace"><ToetsGame provinceId={selection.areaId} clusterId="all" studyPool={session.locations} /></div>
-            : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={locations} timerEnabled={timer} onAnswer={onAnswer} onContinue={() => start(session.mode)} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />}
+            : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={locations} timerEnabled={timer} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />}
       </main> : view === 'passport'
         ? <Passport score={score} progress={progress} onPlay={() => navigate('discover')} storageAvailable={storageAvailable} />
         : <>
-          <LearningSelection selection={selection} onChange={changeSelection} />
+          <LearningSelection selection={selection} onChange={changeSelection} mobileActions={playPath('mobile-play-path')} />
           <main className="discover-page">
-            <section className="play-path" aria-label="Spel kiezen">
-              <div className="coco-route">
-                <img src="/images/logo-compas-geel.svg" width="52" height="52" alt="" />
-                <div><p className="eyebrow">Coco's route</p><h2>Kies je route</h2></div>
-              </div>
-              <div className="quick-modes">
-                <button className="journey-mode mode-explore" onClick={exploreFreely}><Map size={22} /><span>Vrij verkennen</span></button>
-                {quickModes.map(mode => modeButton(mode))}
-              </div>
-              {(extraModes.length > 0 || pairOptions.length > 1 || hasTimerModes) && <details className="more-play">
-                <summary><Settings2 size={17} />{modes.includes('memory') ? 'Memory en meer' : 'Meer spellen'}</summary>
-                <div className="more-play-panel">
-                  {extraModes.length > 0 && <div className="extra-mode-buttons">{extraModes.map(mode => modeButton(mode, true))}</div>}
-                  {modes.includes('memory') && pairOptions.length > 1 && <fieldset className="compact-setting">
-                    <legend>Memorysetjes</legend>
-                    <div className="segmented">{pairOptions.map(count => <label key={count}><input type="radio" name="pair-count" checked={activePairCount === count} onChange={() => setPairCount(count)} /><span>{count}</span></label>)}</div>
-                  </fieldset>}
-                  {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer</span></label>}
-                </div>
-              </details>}
-            </section>
+            {playPath('desktop-play-path')}
 
             <div className="map-toolbar">
               <h1>{areaName(selection.areaId)}</h1>
