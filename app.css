@@ -245,6 +245,21 @@ progress::-moz-progress-bar { background: #508669; }
 .loading-screen { min-height: 400px; display: grid; place-items: center; color: var(--muted); }
 .test-workspace { height: max(700px, calc(100dvh - 150px)); }
 @media (min-width: 1500px) { .explore-map { height: max(500px, calc(100dvh - 380px)); } }
+@media (max-width: 1024px) {
+  .selection-band { padding: 0 24px; }
+  .selection-details > summary { min-height: 44px; display: flex; align-items: center; gap: 9px; list-style: none; color: #4e365d; }
+  .selection-details > summary::-webkit-details-marker { display: none; }
+  .selection-details > summary > span { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
+  .selection-details > summary strong { font-size: 13px; white-space: nowrap; }
+  .selection-details > summary small { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .selection-chevron { margin-left: auto; transition: transform .15s ease; }
+  .selection-details[open] .selection-chevron { transform: rotate(180deg); }
+  .selection-details:not([open]) > .selection-content { display: none; }
+  .selection-content { padding: 8px 0 12px; border-top: 1px solid var(--line); }
+  .selection-mobile-actions { display: block; margin-top: 10px; border-top: 1px solid var(--line); }
+  .desktop-play-path { display: none; }
+  .selection-mobile-actions .play-path { margin: 0; border-bottom: 0; }
+}
 @media (max-width: 767px) {
   h1 { font-size: 24px; } h2 { font-size: 19px; }
   .topo-app { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
