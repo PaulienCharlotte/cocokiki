@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ChevronDown, Globe2, MapPin, SlidersHorizontal } from 'lucide-react';
 import { PROVINCES } from '../constants';
 import { CONTINENT_IDS, DUTCH_PROVINCES, isDutchArea, learningGroups, Selection, studyLocations } from '../data/learning';
 
 export default function LearningSelection({ selection, onChange, mobileActions }: { selection: Selection; onChange: (value: Selection) => void; mobileActions?: React.ReactNode }) {
-  const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 1025px)').matches);
   const { areaId, clusterId } = selection;
   const dutch = isDutchArea(areaId);
   const groups = learningGroups(selection);
@@ -12,16 +11,8 @@ export default function LearningSelection({ selection, onChange, mobileActions }
   const areaLabel = areaId === 'all' ? 'Nederland' : PROVINCES.find(area => area.id === areaId)?.name ?? areaId;
   const clusterLabel = clusterId === 'all' ? 'Alles' : groups.find(group => group.id === clusterId)?.name ?? 'Alles';
   const chooseArea = (nextAreaId: string) => onChange({ areaId: nextAreaId, topicId: 'all', clusterId: 'all' });
-  useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 1025px)');
-    const syncMenu = () => setMenuOpen(desktop.matches);
-    desktop.addEventListener('change', syncMenu);
-    return () => desktop.removeEventListener('change', syncMenu);
-  }, []);
   return <section className="selection-band" aria-label="Gebied en onderwerp">
-    <details className="selection-details" open={menuOpen} onToggle={event => {
-      if (window.matchMedia('(max-width: 1024px)').matches) setMenuOpen(event.currentTarget.open);
-    }}>
+    <details className="selection-details">
       <summary>
         <SlidersHorizontal size={17} />
         <span><strong>Kaart instellen</strong><small>{areaLabel} · {clusterLabel}</small></span>
@@ -55,7 +46,7 @@ export default function LearningSelection({ selection, onChange, mobileActions }
           })}
         </div>}
         {mobileActions && <div className="selection-mobile-actions" onClick={event => {
-          if ((event.target as HTMLElement).closest('button')) setMenuOpen(false);
+          if ((event.target as HTMLElement).closest('button')) event.currentTarget.closest('details')?.removeAttribute('open');
         }}>{mobileActions}</div>}
       </div>
     </details>

@@ -151,7 +151,7 @@ export default function Game() {
     onClose={() => setActiveLocation(null)}
   />;
 
-  const playPath = (className = '') => <section className={`play-path ${className}`} aria-label="Spel kiezen">
+  const playPath = () => <section className="play-path" aria-label="Spel kiezen">
     <div className="coco-route">
       <img src="/images/logo-compas-geel.svg" width="52" height="52" alt="" />
       <div><p className="eyebrow">Coco's route</p><h2>Kies je route</h2></div>
@@ -166,7 +166,7 @@ export default function Game() {
         {extraModes.length > 0 && <div className="extra-mode-buttons">{extraModes.map(mode => modeButton(mode, true))}</div>}
         {modes.includes('memory') && pairOptions.length > 1 && <fieldset className="compact-setting">
           <legend>Memorysetjes</legend>
-          <div className="segmented">{pairOptions.map(count => <label key={count}><input type="radio" name={`pair-count-${className || 'desktop'}`} checked={activePairCount === count} onChange={() => setPairCount(count)} /><span>{count}</span></label>)}</div>
+          <div className="segmented">{pairOptions.map(count => <label key={count}><input type="radio" name="pair-count" checked={activePairCount === count} onChange={() => setPairCount(count)} /><span>{count}</span></label>)}</div>
         </fieldset>}
         {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer</span></label>}
       </div>
@@ -198,10 +198,8 @@ export default function Game() {
       </main> : view === 'passport'
         ? <Passport score={score} progress={progress} onPlay={() => navigate('discover')} storageAvailable={storageAvailable} />
         : <>
-          <LearningSelection selection={selection} onChange={changeSelection} mobileActions={playPath('mobile-play-path')} />
+          <LearningSelection selection={selection} onChange={changeSelection} mobileActions={playPath()} />
           <main className="discover-page">
-            {playPath('desktop-play-path')}
-
             <div className="map-toolbar">
               <h1>{areaName(selection.areaId)}</h1>
               {topics.length > 1 && <details className="topic-filter" ref={topicFilterRef}>
