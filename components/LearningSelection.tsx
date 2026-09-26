@@ -35,7 +35,7 @@ export default function LearningSelection({ selection, onChange, mobileActions }
           </label>}
         </div>
         {groups.length > 1 && <div className="cluster-strip" aria-label="Kies een behapbaar groepje">
-          <span>Leerset</span>
+          <span>Groepjes</span>
           <button type="button" aria-current={clusterId === 'all' ? 'true' : undefined} onClick={() => onChange({ ...selection, clusterId: 'all' })}>
             Alles <small>{totalCount}</small>
           </button>
@@ -46,6 +46,13 @@ export default function LearningSelection({ selection, onChange, mobileActions }
             </button>;
           })}
         </div>}
+        {groups.length > 1 && <label className="mobile-cluster-select">
+          <span>Groepjes</span>
+          <select aria-label="Groepjes" value={clusterId} onChange={event => onChange({ ...selection, clusterId: event.target.value })}>
+            <option value="all">Alles ({totalCount})</option>
+            {groups.map(group => <option key={group.id} value={group.id}>{group.name} ({group.count})</option>)}
+          </select>
+        </label>}
         {mobileActions && <div className="selection-mobile-actions" onClick={event => {
           if ((event.target as HTMLElement).closest('button')) event.currentTarget.closest('details')?.removeAttribute('open');
         }}>{mobileActions}</div>}

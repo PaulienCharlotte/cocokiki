@@ -43,6 +43,7 @@ summary { color: var(--muted); font-size: 13px; padding: 9px 0; }
 .cluster-strip button[aria-current="true"] { background: #5c3d78; border-color: #5c3d78; color: #fff; }
 .cluster-strip small { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #eee8f1; color: #5d4b65; font-size: 11px; font-weight: 800; }
 .cluster-strip button[aria-current="true"] small { background: #fff; color: #5c3d78; }
+.mobile-cluster-select { display: none; }
 .content-width { width: min(100% - 48px, 860px); margin: 0 auto; }
 .selection-details > summary { min-height: 44px; display: flex; align-items: center; gap: 9px; list-style: none; color: #4e365d; }
 .selection-details > summary::-webkit-details-marker { display: none; }
@@ -303,6 +304,9 @@ progress::-moz-progress-bar { background: #508669; }
   .field > span { font-size: 11px; }
   .field select { min-height: 36px; padding-top: 6px; padding-bottom: 6px; font-size: 15px; }
   .cluster-strip { margin-top: 8px; gap: 6px; }
+  .cluster-strip { display: none; }
+  .mobile-cluster-select { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #67556f; font-size: 11px; font-weight: 750; }
+  .mobile-cluster-select select { min-width: 0; flex: 1; min-height: 36px; padding: 6px 32px 6px 10px; border: 1px solid #cfc4d5; border-radius: 6px; background: #fff; color: #4e365d; font-size: 13px; font-weight: 700; }
   .cluster-strip > span { font-size: 11px; }
   .cluster-strip button { min-height: 32px; padding: 5px 8px; font-size: 12px; }
   .cluster-strip small { min-width: 20px; height: 20px; font-size: 10px; }
