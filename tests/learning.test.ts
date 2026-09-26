@@ -78,6 +78,19 @@ test('Groningen matches the complete school worksheet', () => {
   assert.ok(availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
 });
 
+test('Benelux matches the complete school worksheet and every item has a fact', () => {
+  const selection = { areaId: 'benelux', topicId: 'all' as const, clusterId: 'all' };
+  const locations = studyLocations(selection);
+  assert.equal(locations.length, 26);
+  assert.deepEqual(
+    locations.reduce<Record<string, number>>((counts, location) => ({ ...counts, [location.type]: (counts[location.type] ?? 0) + 1 }), {}),
+    { city: 16, region: 3, water: 4, country: 3 },
+  );
+  assert.ok(locations.every(location => LOCATION_FACTS[location.name]?.fact), 'ieder Benelux-punt heeft een weetje');
+  assert.ok(locations.find(location => location.name === 'Rijn')!.lng > 6.5, 'de Rijn staat zichtbaar in Duitsland');
+  assert.deepEqual(availableTopics('benelux'), ['cities', 'waters', 'regions', 'countries', 'facts', 'all']);
+});
+
 test('learning groups are balanced and cover every location in every area and topic', () => {
   for (const areaId of ['all', ...PROVINCES.filter(p => p.id !== 'water-nl').map(p => p.id)]) {
     for (const topicId of availableTopics(areaId)) {

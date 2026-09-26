@@ -18,6 +18,7 @@ export const MODE_LABELS: Record<PlayMode, string> = {
   find: 'Alleen aanwijzen', spell: 'Alleen spellen', memory: 'Memory', quiz: 'Vlaggenquiz', master: 'Aanwijzen + spellen', test: 'Kaarttoets',
 };
 export const isDutchArea = (id: string) => id === 'all' || DUTCH_PROVINCES.some(p => p.id === id);
+export const isBeneluxArea = (id: string) => id === 'benelux';
 export const areaName = (id: string) => id === 'all' ? 'Nederland' : PROVINCES.find(p => p.id === id)?.name ?? 'Nederland';
 const uniqueLocations = (items: Location[]) => [...new Map(items.map(l => [`${l.type}:${l.name}`, l])).values()];
 const MAX_GROUP_SIZE = 6;
@@ -41,7 +42,7 @@ function topicLocations(areaId: string, topicId: TopicId): Location[] {
       case 'regions': return l.type === 'region';
       case 'flags': return l.type === 'country' && !!COUNTRY_FLAGS[l.name];
       case 'countries': return l.type === 'country';
-      case 'facts': return isDutchArea(areaId) && !!LOCATION_FACTS[l.name];
+      case 'facts': return (isDutchArea(areaId) || isBeneluxArea(areaId)) && !!LOCATION_FACTS[l.name];
       default: return true;
     }
   });
@@ -212,7 +213,9 @@ export function studyLocations({ areaId, topicId, clusterId }: Selection): Locat
 }
 
 export function availableTopics(areaId: string): TopicId[] {
-  const choices: TopicId[] = isDutchArea(areaId)
+  const choices: TopicId[] = isBeneluxArea(areaId)
+    ? ['cities', 'waters', 'regions', 'countries', 'facts', 'all']
+    : isDutchArea(areaId)
     ? ['provinces', 'capitals', 'cities', 'waters', 'regions', 'facts', 'all']
     : ['countries', 'capitals', 'flags', 'regions', 'all'];
   return choices.filter(id => (id !== 'provinces' || areaId === 'all') && studyLocations({ areaId, topicId: id, clusterId: 'all' }).length > 0);
@@ -244,7 +247,7 @@ export function memoryPairs(selection: Selection): MemoryPair[] {
   if (topicId === 'provinces' || (topicId === 'capitals' && isDutchArea(areaId))) {
     return DUTCH_PROVINCES.filter(p => areaId === 'all' || p.id === areaId).map(p => ({ id: `province-capital:${p.id}`, left: p.name, right: p.capital, kind: 'capital' }));
   }
-  if (topicId === 'countries' || topicId === 'capitals' || (topicId === 'all' && !isDutchArea(areaId))) return capitalPairs();
+  if (topicId === 'countries' || topicId === 'capitals' || (topicId === 'all' && !isDutchArea(areaId) && !isBeneluxArea(areaId))) return capitalPairs();
   if (topicId === 'cities' || topicId === 'waters' || topicId === 'regions' || topicId === 'all') return factPairs();
   return [];
 }

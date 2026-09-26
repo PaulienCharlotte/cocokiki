@@ -26,6 +26,13 @@ const ICONS: Record<PlayMode, React.ComponentType<{ size?: number }>> = {
   test: BookOpen,
 };
 
+const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: string; className: string }> = [
+  { topic: 'cities', label: 'Plaats', ariaLabel: 'Toon alle plaatsen', className: 'legend-city' },
+  { topic: 'regions', label: 'Gebied', ariaLabel: 'Toon alle gebieden', className: 'legend-region' },
+  { topic: 'waters', label: 'Water', ariaLabel: 'Toon alle wateren', className: 'legend-water' },
+  { topic: 'countries', label: 'Land', ariaLabel: 'Toon alle landen', className: 'legend-country' },
+];
+
 export default function Game() {
   const [selection, setSelection] = useState<Selection>(() => validateSelection(readLocal(PREFERENCES_KEY, null)));
   const [view, setView] = useState<View>('discover');
@@ -38,7 +45,7 @@ export default function Game() {
     return typeof saved === 'number' && Number.isFinite(saved) && saved > 0 ? saved : 0;
   });
   const [storageAvailable, setStorageAvailable] = useState(true);
-  const [showLabels, setShowLabels] = useState(true);
+  const [showLabels, setShowLabels] = useState(() => selection.areaId !== 'benelux');
   const [activeLocation, setActiveLocation] = useState<Location | null>(null);
   const exploreRef = useRef<HTMLElement>(null);
   const topicFilterRef = useRef<HTMLDetailsElement>(null);
@@ -57,6 +64,7 @@ export default function Game() {
     const available = availableTopics(selection.areaId);
     return ['all', ...available.filter(topic => topic !== 'all')] as TopicId[];
   }, [selection.areaId]);
+  const mapCategoryFilters = MAP_CATEGORY_FILTERS.filter(filter => topics.includes(filter.topic));
 
   const quickModes: PlayMode[] = modes.includes('quiz')
     ? ['quiz']
@@ -80,7 +88,9 @@ export default function Game() {
   }, []);
 
   const changeSelection = (next: Selection) => {
-    setSelection(validateSelection(next));
+    const validated = validateSelection(next);
+    if (validated.areaId !== selection.areaId && validated.areaId === 'benelux') setShowLabels(false);
+    setSelection(validated);
     setActiveLocation(null);
   };
 
@@ -212,6 +222,18 @@ export default function Game() {
               </details>}
               <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
             </div>
+            {mapCategoryFilters.length > 0 && <div className="map-legend" role="group" aria-label="Toon op de kaart">
+              <button type="button" className="legend-all" aria-pressed={selection.topicId === 'all'} onClick={() => changeTopic('all')}>Alles</button>
+              {mapCategoryFilters.map(filter => <button
+                type="button"
+                key={filter.topic}
+                aria-label={filter.ariaLabel}
+                aria-pressed={selection.topicId === filter.topic}
+                onClick={() => changeTopic(filter.topic)}
+              >
+                <i className={filter.className} />{filter.label}
+              </button>)}
+            </div>}
 
             <section className="map-zone" ref={exploreRef} aria-label="Vrij verkennen">
               {selection.topicId === 'flags' ? <>

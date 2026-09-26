@@ -2,6 +2,7 @@
 import { Province, Location, Cluster } from './types';
 import { EUROPE_AREA, EUROPE_CLUSTERS, EUROPE_LOCATIONS } from './data/europe';
 import { POLE_LOCATIONS, WORLD_AREAS, WORLD_CLUSTERS, WORLD_LOCATIONS } from './data/world';
+import { BENELUX_AREA, BENELUX_LOCATIONS } from './data/benelux';
 
 export const PROVINCES: Province[] = [
   { id: 'zh', name: 'Zuid-Holland', color: '#F4B183', capital: 'Den Haag', center: [52.02, 4.45], zoom: 9 },
@@ -17,6 +18,7 @@ export const PROVINCES: Province[] = [
   { id: 'ze', name: 'Zeeland', color: '#C690C9', capital: 'Middelburg', center: [51.5, 3.8], zoom: 10 },
   { id: 'li', name: 'Limburg', color: '#B884C6', capital: 'Maastricht', center: [51.2, 6.0], zoom: 9 },
   { id: 'water-nl', name: 'Wateren Nederland', color: '#BAE6FD', capital: '', center: [52.05, 5.25], zoom: 8, isStudyArea: true },
+  BENELUX_AREA,
   EUROPE_AREA,
   ...WORLD_AREAS,
 ];
@@ -63,6 +65,7 @@ export const CLUSTERS: Cluster[] = [
 ];
 
 export const LOCATIONS: Location[] = [
+  ...BENELUX_LOCATIONS,
   // --- ZUID-HOLLAND COMPLEET ---
   { id: 'zh-1', name: 'Den Haag', provinceId: 'zh', type: 'city', lat: 52.0705, lng: 4.3100, clusterId: 'kust', isCapital: true },
   { id: 'zh-15', name: 'Scheveningen', provinceId: 'zh', type: 'city', lat: 52.1100, lng: 4.2800, clusterId: 'kust' },

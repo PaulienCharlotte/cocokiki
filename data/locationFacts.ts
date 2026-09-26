@@ -382,6 +382,88 @@ export const LOCATION_FACTS: Record<string, LocationFact> = {
     fact: "In Drenthe staan de Hunebedden, grote grafstenen die 5000 jaar geleden zijn gebouwd door de eerste bewoners! 🗿"
   },
 
+  // --- BENELUX ---
+  "Antwerpen": {
+    emoji: "💎",
+    fact: "Antwerpen is al eeuwen een wereldstad voor diamanten. De enorme haven is bovendien een van de grootste van Europa. 💎"
+  },
+  "Mechelen": {
+    emoji: "🔔",
+    fact: "De Sint-Romboutstoren in Mechelen heeft twee beiaarden met samen bijna honderd klokken. Dat is een heleboel muziek boven de stad! 🔔"
+  },
+  "Leuven": {
+    emoji: "📚",
+    fact: "Leuven is een echte studentenstad. De universiteit werd al in 1425 opgericht en is een van de oudste in de Lage Landen. 📚"
+  },
+  "Brussel": {
+    emoji: "🏛️",
+    fact: "In Brussel staan belangrijke gebouwen van de Europese Unie. Op de Grote Markt vind je rijk versierde oude gildehuizen. 🏛️"
+  },
+  "Hasselt": {
+    emoji: "🌸",
+    fact: "Hasselt heeft een grote Japanse tuin met watervallen, bruggetjes en duizenden bloemen. De stad is ook bekend om jenever. 🌸"
+  },
+  "Luik": {
+    emoji: "🚆",
+    fact: "Het station Luik-Guillemins lijkt met zijn witte bogen bijna op een ruimteschip. De stad ligt aan de rivier de Maas. 🚆"
+  },
+  "Bastenaken": {
+    emoji: "⭐",
+    fact: "Bastenaken speelde een belangrijke rol in de Slag om de Ardennen. Het stervormige Mardassonmonument herinnert daaraan. ⭐"
+  },
+  "Luxemburg (stad)": {
+    emoji: "🏰",
+    fact: "Luxemburg-stad is gebouwd boven diepe dalen en oude vestingwerken. De sterke vesting kreeg de bijnaam Gibraltar van het Noorden. 🏰"
+  },
+  "Namen": {
+    emoji: "🏰",
+    fact: "Namen ligt waar de Samber en de Maas samenkomen. Hoog boven de rivieren staat een enorme citadel. 🏰"
+  },
+  "Charleroi": {
+    emoji: "⚙️",
+    fact: "Charleroi groeide door mijnbouw, staal en glas. Oude fabrieksterreinen vertellen nog veel over dat industriële verleden. ⚙️"
+  },
+  "Bergen": {
+    emoji: "🐉",
+    fact: "In Bergen vecht Sint-Joris tijdens het jaarlijkse Doudou-feest tegen een draak. De stad heet in het Frans Mons. 🐉"
+  },
+  "Gent": {
+    emoji: "🐑",
+    fact: "In Gent hangt het beroemde schilderij het Lam Gods. Vanuit het middeleeuwse Gravensteen kijk je uit over de oude stad. 🐑"
+  },
+  "Brugge": {
+    emoji: "🛶",
+    fact: "Het oude centrum van Brugge staat op de Werelderfgoedlijst. Door de vele grachten wordt de stad soms het Venetië van het Noorden genoemd. 🛶"
+  },
+  "Oostende": {
+    emoji: "🌊",
+    fact: "Oostende ligt direct aan de Noordzee en wordt de Koningin der Badsteden genoemd. Er is een lang strand en een grote vissershaven. 🌊"
+  },
+  "Ardennen": {
+    emoji: "🌲",
+    fact: "De Ardennen zijn een heuvelachtig gebied met dichte bossen, kronkelende rivieren en diepe dalen. 🌲"
+  },
+  "Schelde": {
+    emoji: "🚢",
+    fact: "De Schelde stroomt via Gent en Antwerpen naar de Noordzee. Dankzij deze rivier kunnen grote zeeschepen Antwerpen bereiken. 🚢"
+  },
+  "Noordzee": {
+    emoji: "🌊",
+    fact: "De Noordzee is vrij ondiep en druk bevaren. Op zee staan grote windparken die elektriciteit opwekken. 🌬️"
+  },
+  "Luxemburg (land)": {
+    emoji: "🇱🇺",
+    fact: "Luxemburg is een van de kleinste landen van Europa. In het hele land kun je gratis met trein, tram en bus reizen. 🚆"
+  },
+  "Wallonië": {
+    emoji: "⛰️",
+    fact: "Wallonië is het Franstalige zuiden van België. Je vindt er onder andere de Ardennen, grotten en oude kastelen. ⛰️"
+  },
+  "Vlaanderen": {
+    emoji: "🦁",
+    fact: "Vlaanderen is het Nederlandstalige noorden van België. Steden als Antwerpen, Gent en Brugge liggen in dit gebied. 🦁"
+  },
+
   // --- EUROPA LANDEN ---
   "Albanië": {
     emoji: "🏔️",

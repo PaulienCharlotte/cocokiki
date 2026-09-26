@@ -96,6 +96,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const [viewRevision, setViewRevision] = useState(0);
   const [tileError, setTileError] = useState(false);
   const isEuropeSelected = selectedProvince === 'europe';
+  const usesEuropeanBorders = isEuropeSelected || selectedProvince === 'benelux';
 
   const handleZoomIn = () => { if (mapRef.current) mapRef.current.zoomIn(); };
   const handleZoomOut = () => { if (mapRef.current) mapRef.current.zoomOut(); };
@@ -191,7 +192,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)]
       );
-      mapRef.current.flyToBounds(bounds, { padding: [35, 35], duration: 0.5, maxZoom: 11 });
+      const padding: [number, number] = selectedProvince === 'benelux' ? [10, 10] : [35, 35];
+      mapRef.current.flyToBounds(bounds, { padding, duration: 0.5, maxZoom: 11 });
     } else {
       // Fallback to province center if too few locations
       const prov = PROVINCES.find(p => p.id === selectedProvince);
@@ -212,7 +214,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       contextLayerRef.current = null;
     }
 
-    if (!isEuropeSelected && europeGeoData) {
+    if (!usesEuropeanBorders && europeGeoData) {
       contextLayerRef.current = L.geoJSON(europeGeoData, {
         interactive: false,
         style: {
@@ -227,7 +229,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
 
     const shouldDrawNetherlands = selectedProvince === 'all' || selectedProvince === 'water-nl' || !WORLD_AREA_IDS.has(selectedProvince);
-    const activeGeoData = isEuropeSelected ? europeGeoData : shouldDrawNetherlands ? geoData : null;
+    const activeGeoData = usesEuropeanBorders ? europeGeoData : shouldDrawNetherlands ? geoData : null;
     if (provinceLayerRef.current) {
       mapRef.current.removeLayer(provinceLayerRef.current);
       provinceLayerRef.current = null;
@@ -236,7 +238,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     provinceLayerRef.current = L.geoJSON(activeGeoData, {
       interactive: isEuropeSelected,
       style: (feature) => {
-        if (isEuropeSelected) {
+        if (selectedProvince === 'benelux') {
+          return {
+            fillColor: '#ffffff',
+            fillOpacity: 0.04,
+            color: '#52655e',
+            weight: 1.2,
+            dashArray: '',
+            opacity: 0.8
+          };
+        }
+
+        if (usesEuropeanBorders) {
           const country = getCountryLocationForFeature(feature);
           const isSelected = country?.id === highlightedLocation;
           const isGameTarget = country?.id === activeGameLocation && (gameMode === 'spell' || isRevealed);
@@ -278,7 +291,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       } : undefined
     }).addTo(mapRef.current);
     provinceLayerRef.current.bringToFront();
-  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, onLocationClick, gameMode, isRevealed, locations]);
+  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, usesEuropeanBorders, onLocationClick, gameMode, isRevealed, locations]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -380,7 +393,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         <button onClick={handleZoomOut} aria-label="Uitzoomen" title="Uitzoomen"><Minus size={22} /></button>
         <button onClick={() => {
           const points = (locations ?? []).map(l => [l.lat, l.lng] as [number, number]);
-          mapRef.current?.fitBounds(points.length ? L.latLngBounds(points).pad(0.15) : NL_BOUNDS, { maxZoom: 10, padding: [25, 25] });
+          const bounds = points.length ? L.latLngBounds(points).pad(selectedProvince === 'benelux' ? 0.02 : 0.15) : NL_BOUNDS;
+          mapRef.current?.fitBounds(bounds, { maxZoom: 10, padding: selectedProvince === 'benelux' ? [8, 8] : [25, 25] });
         }} aria-label="Hele gebied tonen" title="Hele gebied tonen"><LocateFixed size={22} /></button>
       </div>
     </div>

@@ -23,6 +23,7 @@ export default function LearningSelection({ selection, onChange, mobileActions }
           <label className="field"><span><Globe2 size={15} /> Waar?</span>
             <select aria-label="Gebied" value={dutch ? 'all' : areaId} onChange={e => chooseArea(e.target.value)}>
               <option value="all">Nederland</option>
+              <optgroup label="Leergebieden"><option value="benelux">Benelux</option></optgroup>
               <optgroup label="Werelddelen">{CONTINENT_IDS.map(id => <option key={id} value={id}>{PROVINCES.find(p => p.id === id)?.name}</option>)}</optgroup>
               <optgroup label="Wereld en poolgebieden"><option value="world">Hele wereld</option><option value="arctic">Noordpoolgebied</option></optgroup>
             </select>
