@@ -91,6 +91,25 @@ test('Benelux matches the complete school worksheet and every item has a fact', 
   assert.deepEqual(availableTopics('benelux'), ['cities', 'waters', 'regions', 'countries', 'facts', 'all']);
 });
 
+test('Midden-Nederland matches the complete school worksheet exactly', () => {
+  const cities = studyLocations({ areaId: 'midden-nederland', topicId: 'cities', clusterId: 'all' });
+  const regions = studyLocations({ areaId: 'midden-nederland', topicId: 'regions', clusterId: 'all' });
+  const waters = studyLocations({ areaId: 'midden-nederland', topicId: 'waters', clusterId: 'all' });
+  assert.deepEqual(cities.map(location => location.name), [
+    'Lelystad', 'Almere', 'Emmeloord', 'Utrecht', 'Amersfoort', 'Zeist', 'Nieuwegein',
+    'De Bilt', 'Soest', 'Veenendaal', 'Woerden', 'Dronten', 'Urk', 'Zeewolde',
+  ]);
+  assert.deepEqual(regions.map(location => location.name), [
+    'Noordoostpolder', 'Oostelijk Flevoland', 'Zuidelijk Flevoland', 'Grebbeberg',
+  ]);
+  assert.deepEqual(waters.map(location => location.name), [
+    'IJsselmeer', 'Veluwemeer', 'Markermeer', 'Gooimeer', 'Ketelmeer',
+    'Vecht', 'Neder-Rijn', 'Lek', 'Amsterdam-Rijnkanaal',
+  ]);
+  assert.equal(cities.length + regions.length + waters.length, 27);
+  assert.deepEqual(availableTopics('midden-nederland'), ['cities', 'waters', 'regions', 'all']);
+});
+
 test('learning groups are balanced and cover every location in every area and topic', () => {
   for (const areaId of ['all', ...PROVINCES.filter(p => p.id !== 'water-nl').map(p => p.id)]) {
     for (const topicId of availableTopics(areaId)) {

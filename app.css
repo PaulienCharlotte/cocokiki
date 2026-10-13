@@ -300,6 +300,7 @@ progress::-moz-progress-bar { background: #508669; }
   .selection-mobile-actions { display: block; margin-top: 7px; border-top: 1px solid var(--line); }
   .selection-mobile-actions .play-path { margin: 0; border-bottom: 0; }
   .selection-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .selection-fields .field:only-child { grid-column: 1 / -1; }
   .field { gap: 3px; }
   .field > span { font-size: 11px; }
   .field select { min-height: 36px; padding-top: 6px; padding-bottom: 6px; font-size: 15px; }

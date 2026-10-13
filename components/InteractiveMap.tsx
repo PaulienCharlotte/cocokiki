@@ -238,7 +238,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     provinceLayerRef.current = L.geoJSON(activeGeoData, {
       interactive: isEuropeSelected,
       style: (feature) => {
-        if (selectedProvince === 'benelux') {
+        if (selectedProvince === 'benelux' || selectedProvince === 'midden-nederland') {
           return {
             fillColor: '#ffffff',
             fillOpacity: 0.04,
