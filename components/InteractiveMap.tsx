@@ -385,8 +385,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   }, [selectedProvince, selectedCluster, highlightedLocation, activeGameLocation, showLabels, gameMode, isRevealed, onLocationClick, locations, viewRevision, revealAnswer]);
 
   return (
-    <div className="w-full h-full relative">
-      <div ref={mapContainerRef} className="w-full h-full z-10" />
+    <div className="interactive-map-shell">
+      <div ref={mapContainerRef} className="interactive-map-canvas" />
       {tileError && <div className="map-error" role="status">De achtergrondkaart laadt niet. Controleer je verbinding.</div>}
       <div className="map-zoom-controls">
         <button onClick={handleZoomIn} aria-label="Inzoomen" title="Inzoomen"><Plus size={22} /></button>

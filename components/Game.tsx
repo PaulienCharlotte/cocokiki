@@ -1,13 +1,17 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Brain, Check, Compass, Flag, ListFilter, Map, MousePointer2, Play, Settings2, Type, Wand2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, Check, Flag, ListFilter, Map, MousePointer2, Play, Settings2, Type, Wand2 } from 'lucide-react';
 import { Location } from '../types';
 import { areaName, availableModes, availableTopics, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { nextBatch, PREFERENCES_KEY, PROGRESS_KEY, readLocal, readProgress, recordAnswer, SCORE_KEY, writeLocal } from '../services/localProgress';
+import { nextBatch, PREFERENCES_KEY, PROGRESS_KEY, readLocal, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
+import { loadCurrency, saveCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
 import MapFactCard from './MapFactCard';
 import Passport from './Passport';
+import PlatformHeader from './platform/PlatformHeader';
+import CocoCoin from './platform/CocoCoin';
+import { GameModuleProps } from '../platform/gameRegistry';
 
 const InteractiveMap = lazy(() => import('./InteractiveMap'));
 const GameEngine = lazy(() => import('./GameEngine'));
@@ -33,17 +37,14 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
   { topic: 'countries', label: 'Land', ariaLabel: 'Toon alle landen', className: 'legend-country' },
 ];
 
-export default function Game() {
+export default function Game({ onHome }: Partial<GameModuleProps>) {
   const [selection, setSelection] = useState<Selection>(() => validateSelection(readLocal(PREFERENCES_KEY, null)));
   const [view, setView] = useState<View>('discover');
   const [pairCount, setPairCount] = useState(4);
   const [timer, setTimer] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [progress, setProgress] = useState(readProgress);
-  const [score, setScore] = useState(() => {
-    const saved = readLocal(SCORE_KEY, 0);
-    return typeof saved === 'number' && Number.isFinite(saved) && saved > 0 ? saved : 0;
-  });
+  const [score, setScore] = useState(loadCurrency);
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [showLabels, setShowLabels] = useState(() => selection.areaId !== 'benelux');
   const [activeLocation, setActiveLocation] = useState<Location | null>(null);
@@ -77,7 +78,7 @@ export default function Game() {
 
   useEffect(() => { writeLocal(PREFERENCES_KEY, selection); }, [selection]);
   useEffect(() => {
-    const savedScore = writeLocal(SCORE_KEY, score);
+    const savedScore = saveCurrency(score);
     const savedProgress = writeLocal(PROGRESS_KEY, progress);
     setStorageAvailable(savedScore && savedProgress);
   }, [score, progress]);
@@ -184,14 +185,10 @@ export default function Game() {
   </section>;
 
   return <div className={'topo-app view-' + view + (session ? ' in-session' : '')}>
-    <header className="app-header"><div className="header-inner">
-      <a className="brand" href="#" onClick={event => { event.preventDefault(); navigate('discover'); }}>
-        <img src="/images/logo-compas-geel.svg" width="40" height="40" alt="" />
-        <span>Topo met Coco</span>
-      </a>
+    <PlatformHeader gameTitle="Topo" onHome={onHome} actions={<>
       {!session && view === 'passport' && <button className="header-map-button" onClick={() => navigate('discover')}><ArrowLeft size={18} />Terug naar kaart</button>}
-      <button className="points-button" onClick={() => navigate('passport')} aria-label={'Paspoort, ' + score + ' reispunten'}><Compass size={18} /><span>{score}</span></button>
-    </div></header>
+      <button className="points-button" onClick={() => navigate('passport')} aria-label={'Paspoort, ' + score + ' CocoCoins'}><CocoCoin size={20} /><span>{score}</span></button>
+    </>} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
       {session ? <main className="session-page">

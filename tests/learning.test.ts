@@ -4,6 +4,88 @@ import { PROVINCES } from '../constants';
 import { LOCATION_FACTS } from '../data/locationFacts';
 import { areaLocations, availableModes, availableTopics, learningGroups, locationProgressKey, memoryPairs, nextLearningGroup, studyLocations, validateSelection } from '../data/learning';
 import { nextBatch, recordAnswer } from '../services/localProgress';
+import { GAME_LIBRARY } from '../platform/gameRegistry';
+import { resolveRoute } from '../platform/routes';
+import { createQuestion, nextDifficulty, nextQuestionType, questionIsValid } from '../games/red-baby-lua/game/systems/questions';
+import { QuestionType } from '../games/red-baby-lua/game/types';
+import { currencyReward, EMPTY_STATS, recordSuccess, recordTimeout, roundDuration, starsFor } from '../games/red-baby-lua/game/systems/progression';
+import { createWorldLayout } from '../games/treehouse/world/layout';
+
+test('platform routes keep games addressable and safely redirect old links', () => {
+  assert.deepEqual(resolveRoute('/').route, { page: 'home', path: '/' });
+  assert.deepEqual(resolveRoute('/treehouse'), { route: { page: 'home', path: '/' }, redirect: true });
+  assert.equal(resolveRoute('/treehouse/').route.path, '/');
+  assert.equal(resolveRoute('/games/topo').route.page, 'game');
+  assert.equal(resolveRoute('/games/topo/').route.path, '/games/topo');
+  assert.deepEqual(resolveRoute('/topo'), { route: { page: 'game', path: '/games/topo', gameId: 'topo' }, redirect: true });
+  assert.deepEqual(resolveRoute('/does-not-exist'), { route: { page: 'home', path: '/' }, redirect: true });
+});
+
+test('game registry exposes independent lazy-loaded modules', () => {
+  assert.deepEqual(GAME_LIBRARY.map(game => game.id), ['topo', 'red-baby-lua']);
+  assert.equal(new Set(GAME_LIBRARY.map(game => game.path)).size, GAME_LIBRARY.length);
+  assert.equal(GAME_LIBRARY[0].status, 'playable');
+  assert.equal(GAME_LIBRARY[1].status, 'playable');
+  assert.ok(GAME_LIBRARY.every(game => typeof game.load === 'function'));
+  assert.ok(GAME_LIBRARY.every(game => game.enabled && game.category && game.islandAsset));
+  assert.equal(new Set(GAME_LIBRARY.map(game => game.islandAsset)).size, GAME_LIBRARY.length);
+});
+
+test('adventure world derives stable, separate island positions from the game registry', () => {
+  const enabledGames = GAME_LIBRARY.filter(game => game.enabled);
+  const firstLayout = createWorldLayout(enabledGames);
+  const secondLayout = createWorldLayout(enabledGames);
+  assert.deepEqual(firstLayout, secondLayout);
+  assert.equal(firstLayout.length, enabledGames.length);
+  assert.equal(new Set(firstLayout.map(({ x, y }) => `${x}:${y}`)).size, enabledGames.length);
+  assert.deepEqual(firstLayout.map(island => island.game.id), enabledGames.map(game => game.id));
+});
+
+test('Baby Lua creates valid, unique multiplication choices for every table', () => {
+  for (let table = 1; table <= 10; table++) {
+    for (let index = 0; index < 25; index++) {
+      const question = createQuestion(table, '', () => (index % 10) / 10);
+      assert.ok(questionIsValid(question));
+      assert.equal(question.left, table);
+    }
+  }
+  assert.ok(questionIsValid(createQuestion('mix')));
+});
+
+test('Baby Lua supports varied question forms and adaptive difficulty', () => {
+  const types: QuestionType[] = ['classic', 'missing', 'check', 'bigger', 'factor'];
+  for (const type of types) {
+    const question = createQuestion(6, '', () => .42, 3, type);
+    assert.equal(question.type, type);
+    assert.ok(questionIsValid(question));
+  }
+  assert.equal(nextQuestionType(1, 1), 'classic');
+  assert.equal(nextQuestionType(2, 1), 'missing');
+  assert.equal(nextQuestionType(5, 3), 'factor');
+  assert.equal(nextDifficulty(1, 3, false), 2);
+  assert.equal(nextDifficulty(3, 0, true), 2);
+  assert.equal(nextDifficulty(1, 0, true), 1);
+});
+
+test('Baby Lua scoring separates first tries, retries and timeouts', () => {
+  const first = recordSuccess(EMPTY_STATS, true);
+  const retry = recordSuccess(first, false);
+  const missed = recordTimeout(retry);
+  assert.deepEqual({ firstTry: missed.firstTry, eventual: missed.eventual, missed: missed.missed }, { firstTry: 1, eventual: 2, missed: 1 });
+  assert.equal(first.score, 100);
+  assert.equal(retry.score, 160);
+  assert.equal(starsFor({ ...EMPTY_STATS, firstTry: 8, eventual: 9 }, 10), 3);
+  assert.equal(roundDuration(5000, { ...EMPTY_STATS, bestStreak: 9 }), 5000);
+  assert.equal(roundDuration(5000, { ...EMPTY_STATS, missed: 2 }), 5600);
+});
+
+test('Baby Lua rewards harder tables with more CocoKiki currency', () => {
+  assert.equal(currencyReward(1, true), 1);
+  assert.equal(currencyReward(4, true), 2);
+  assert.equal(currencyReward(8, true), 3);
+  assert.equal(currencyReward('mix', true), 4);
+  assert.ok(currencyReward(8, false) < currencyReward(8, true));
+});
 
 test('Nederland contains exactly twelve provinces and twelve provincial capitals', () => {
   const provinces = studyLocations({ areaId: 'all', topicId: 'provinces', clusterId: 'all' });
