@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PointerEvent, WheelEvent } from 'react';
 
 interface Camera { x: number; y: number; zoom: number; }
-const MIN_ZOOM = 0.42;
+const MIN_ZOOM = 0.36;
 const MAX_ZOOM = 1.35;
 
 export function useWorldCamera() {
@@ -15,7 +15,8 @@ export function useWorldCamera() {
   const reset = useCallback(() => {
     const width = viewportRef.current?.clientWidth ?? 1200;
     const height = viewportRef.current?.clientHeight ?? 700;
-    const zoom = Math.max(MIN_ZOOM, Math.min(1, Math.min(width / 1750, height / 1100)));
+    const targetWidth = width < 700 ? 1320 : 1750;
+    const zoom = Math.max(MIN_ZOOM, Math.min(1, Math.min(width / targetWidth, height / 1100)));
     setCamera({ x: 0, y: 0, zoom });
   }, []);
 

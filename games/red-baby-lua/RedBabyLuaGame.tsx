@@ -5,7 +5,7 @@ import CocoCoin from '../../components/platform/CocoCoin';
 import { createLuaGame } from './game/config';
 import PlayScene from './game/scenes/PlayScene';
 import { createQuestion, nextDifficulty, nextQuestionType } from './game/systems/questions';
-import { currencyReward, EMPTY_STATS, recordSuccess, recordTimeout, starsFor } from './game/systems/progression';
+import { currencyReward, EMPTY_STATS, recordSuccess, recordTimeout, roundDuration, starsFor } from './game/systems/progression';
 import { loadBest, loadCoins, loadPreferences, saveBest, saveCoins, savePreferences } from './game/systems/storage';
 import { LuaAudio } from './game/systems/audio';
 import { GamePhase, LuaGameMode, Preferences, Question, SessionStats, TableChoice } from './game/types';
@@ -15,8 +15,8 @@ const ROUND_COUNT = 8;
 const FEEDBACK = ['Goed gered!', 'Knap gedaan!', 'Super snel!', 'Lua is veilig!'];
 const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
   { id: 'calm', label: 'Rustig', detail: 'Zonder tijdsdruk' },
-  { id: 'adventure', label: 'Avontuur', detail: 'Een fijne uitdaging' },
-  { id: 'challenge', label: 'Uitdaging', detail: 'Snel en gemixt' },
+  { id: 'adventure', label: 'Avontuur', detail: 'Tot je levens op zijn' },
+  { id: 'challenge', label: 'Uitdaging', detail: 'Sneller en gemixt' },
 ];
 
 export default function RedBabyLuaGame({ onHome }: Props) {
@@ -67,7 +67,7 @@ export default function RedBabyLuaGame({ onHome }: Props) {
     questionRef.current = nextQuestion;
     setQuestion(nextQuestion); setRound(nextRound); setWrongChoices([]); setFeedback(''); setRemaining(1); setPaused(false);
     setGamePhase('active');
-    const duration = preferences.mode === 'challenge' ? 4200 : 5000;
+    const duration = roundDuration(preferences.mode === 'challenge' ? 4200 : 5000, sourceStats);
     sceneRef.current?.beginRound(duration, preferences.mode === 'calm');
   }, [preferences.mode, preferences.table]);
 
@@ -78,7 +78,7 @@ export default function RedBabyLuaGame({ onHome }: Props) {
     difficultyRef.current = nextDifficulty(difficultyRef.current, 0, true);
     if (questionRef.current) missedRef.current.push({ question: questionRef.current, availableRound: round + 2 });
     setStats(nextStats); setHearts(nextHearts); setFeedback(`Oeps! ${questionRef.current?.explanation}`);
-    transitionRef.current = window.setTimeout(() => nextHearts <= 0 || round >= ROUND_COUNT ? finish(nextStats, round) : beginRound(round + 1, nextStats, questionRef.current?.id), 2200);
+    transitionRef.current = window.setTimeout(() => nextHearts <= 0 ? finish(nextStats, round) : beginRound(round + 1, nextStats, questionRef.current?.id), 2200);
   }, [beginRound, calm, finish, hearts, round, stats]);
 
   useEffect(() => {
@@ -119,7 +119,8 @@ export default function RedBabyLuaGame({ onHome }: Props) {
     setCoins(previous => { const total = previous + earned; saveCoins(total); return total; });
     setSessionCoins(previous => previous + earned); setStats(nextStats);
     setFeedback(`${FEEDBACK[round % FEEDBACK.length]} ${activeQuestion.explanation}${comboBonus ? ` · Combo +${comboBonus}` : ''}`);
-    transitionRef.current = window.setTimeout(() => round >= ROUND_COUNT ? finish(nextStats, round) : beginRound(round + 1, nextStats, activeQuestion.id), 1350);
+    const calmFinished = preferences.mode === 'calm' && round >= ROUND_COUNT;
+    transitionRef.current = window.setTimeout(() => calmFinished ? finish(nextStats, round) : beginRound(round + 1, nextStats, activeQuestion.id), 1350);
   }, [beginRound, finish, preferences.mode, preferences.table, round, stats, wrongChoices]);
 
   useEffect(() => {
@@ -147,7 +148,7 @@ export default function RedBabyLuaGame({ onHome }: Props) {
       </section>}
       {phase === 'tutorial' && <section className="lua-dialog"><h2>Help Lua!</h2><p>Kies het goede antwoord. Je krijgt verschillende soorten tafelvragen en mag na een fout nog eens proberen.</p><button className="lua-play" onClick={() => { updatePreference('tutorialSeen', true); beginRound(1, EMPTY_STATS); }}>Op avontuur</button></section>}
       {(phase === 'active' || phase === 'resolving') && question && <>
-        <div className="lua-hud"><span className="lua-hearts">{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={21} fill={index < hearts ? 'currentColor' : 'none'} />)}</span><strong>{round}/{ROUND_COUNT}</strong><span className="lua-stage">{stage}</span>{stats.streak >= 2 && <span className="lua-combo">Combo {stats.streak}×</span>}<span className="lua-coins" aria-label={`${coins} CocoCoins`}><CocoCoin size={18} />{coins}</span><button aria-label={paused ? 'Doorgaan' : 'Pauzeren'} onClick={() => setPaused(value => !value)}>{paused ? <Play size={18} /> : <Pause size={18} />}</button></div>
+        <div className="lua-hud">{!calm && <span className="lua-hearts">{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={21} fill={index < hearts ? 'currentColor' : 'none'} />)}</span>}<strong>{calm ? `${round}/${ROUND_COUNT}` : `Som ${round}`}</strong><span className="lua-stage">{stage}</span>{stats.streak >= 2 && <span className="lua-combo">Combo {stats.streak}×</span>}<span className="lua-coins" aria-label={`${coins} CocoCoins`}><CocoCoin size={18} />{coins}</span>{!calm && <button aria-label={paused ? 'Doorgaan' : 'Pauzeren'} onClick={() => setPaused(value => !value)}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>}</div>
         {!calm && <div className="lua-timer" aria-label={`${Math.ceil(remaining * 100)} procent tijd over`}><span style={{ width: `${remaining * 100}%` }} /></div>}
         <section className="lua-question" aria-live="polite"><span className="lua-question-kind">{question.type === 'classic' ? 'Reken uit' : question.type === 'missing' ? 'Vul aan' : question.type === 'check' ? 'Klopt het?' : question.type === 'bigger' ? 'Vergelijk' : 'Vind de som'}</span><h2>{question.prompt}</h2><div className={`lua-answers ${question.choices.length === 2 ? 'two' : ''}`}>{question.choices.map((choice, index) => <button key={`${question.id}-${choice}`} disabled={phase !== 'active' || wrongChoices.includes(choice)} className={wrongChoices.includes(choice) ? 'wrong' : ''} onClick={() => answer(choice)}>{question.choiceLabels[index] ?? choice}</button>)}</div><p>{feedback}</p></section>
       </>}

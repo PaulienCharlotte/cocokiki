@@ -1,10 +1,10 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Brain, Check, Flag, ListFilter, Map, MousePointer2, Play, Settings2, Type, Wand2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Map, MousePointer2, Play, Settings2, Type, Wand2, X } from 'lucide-react';
 import { Location } from '../types';
-import { areaName, availableModes, availableTopics, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
+import { areaName, availableModes, availableTopics, initialSelection, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { nextBatch, PREFERENCES_KEY, PROGRESS_KEY, readLocal, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
+import { nextBatch, PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
 import { loadCurrency, saveCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
 import MapFactCard from './MapFactCard';
@@ -19,6 +19,7 @@ const LocationMemoryGame = lazy(() => import('./LocationMemoryGame'));
 const ToetsGame = lazy(() => import('./ToetsGame'));
 
 type View = 'discover' | 'passport';
+type OpenPanel = 'region' | 'play' | 'settings' | null;
 interface Session { id: number; mode: PlayMode; locations: Location[]; pairs: MemoryPair[] }
 
 const ICONS: Record<PlayMode, React.ComponentType<{ size?: number }>> = {
@@ -38,9 +39,8 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
 ];
 
 export default function Game({ onHome }: Partial<GameModuleProps>) {
-  const [selection, setSelection] = useState<Selection>(() => validateSelection(readLocal(PREFERENCES_KEY, null)));
+  const [selection, setSelection] = useState<Selection>(initialSelection);
   const [view, setView] = useState<View>('discover');
-  const [pairCount, setPairCount] = useState(4);
   const [timer, setTimer] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [progress, setProgress] = useState(readProgress);
@@ -48,14 +48,13 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
   const [storageAvailable, setStorageAvailable] = useState(true);
   const [showLabels, setShowLabels] = useState(() => selection.areaId !== 'benelux');
   const [activeLocation, setActiveLocation] = useState<Location | null>(null);
+  const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
   const exploreRef = useRef<HTMLElement>(null);
-  const topicFilterRef = useRef<HTMLDetailsElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const locations = useMemo(() => studyLocations(selection), [selection]);
   const pairs = useMemo(() => memoryPairs(selection), [selection]);
   const modes = useMemo(() => availableModes(selection), [selection]);
-  const pairOptions = [...new Set([Math.min(4, pairs.length), 6, 8].filter(n => n > 0 && n <= pairs.length))];
-  const activePairCount = pairOptions.includes(pairCount) ? pairCount : pairOptions[0];
   const context = areaName(selection.areaId) + ' · ' + TOPIC_LABELS[selection.topicId];
   const practiced = (selection.topicId === 'flags' || selection.topicId === 'facts')
     ? pairs.filter(pair => progress[pair.id]).length
@@ -67,21 +66,30 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
   }, [selection.areaId]);
   const mapCategoryFilters = MAP_CATEGORY_FILTERS.filter(filter => topics.includes(filter.topic));
 
-  const quickModes: PlayMode[] = modes.includes('quiz')
-    ? ['quiz']
-    : modes.includes('find')
-      ? (modes.includes('master') ? ['find', 'master'] : ['find'])
-      : modes.slice(0, 1);
-  const extraModes = modes.filter(mode => !quickModes.includes(mode));
   const hasTimerModes = modes.some(mode => mode === 'find' || mode === 'spell' || mode === 'master');
   const selectedFact = activeLocation ? LOCATION_FACTS[activeLocation.name] : undefined;
 
-  useEffect(() => { writeLocal(PREFERENCES_KEY, selection); }, [selection]);
   useEffect(() => {
     const savedScore = saveCurrency(score);
     const savedProgress = writeLocal(PROGRESS_KEY, progress);
     setStorageAvailable(savedScore && savedProgress);
   }, [score, progress]);
+
+  useEffect(() => {
+    if (!openPanel) return;
+    const closeOnOutside = (event: PointerEvent) => {
+      if (!toolbarRef.current?.contains(event.target as Node)) setOpenPanel(null);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpenPanel(null);
+    };
+    document.addEventListener('pointerdown', closeOnOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [openPanel]);
 
   const onAnswer = useCallback((id: string, correct: boolean, points: number) => {
     setProgress(previous => recordAnswer(previous, id, correct));
@@ -93,11 +101,11 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
     if (validated.areaId !== selection.areaId && validated.areaId === 'benelux') setShowLabels(false);
     setSelection(validated);
     setActiveLocation(null);
+    setOpenPanel(null);
   };
 
   const changeTopic = (topicId: TopicId) => {
     changeSelection({ ...selection, topicId, clusterId: 'all' });
-    topicFilterRef.current?.removeAttribute('open');
   };
 
   const navigate = (next: View) => {
@@ -117,7 +125,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
         : nextBatch(sourceLocations, roundSize, progress, locationProgressKey);
     const sessionPairs = retryIds
       ? sourcePairs.filter(pair => retryIds.includes(pair.id))
-      : nextBatch<MemoryPair>(sourcePairs, requestedMode === 'memory' ? activePairCount : 10, progress, pair => pair.id);
+      : nextBatch<MemoryPair>(sourcePairs, requestedMode === 'memory' ? Math.min(8, sourcePairs.length) : 10, progress, pair => pair.id);
 
     setSession({ id: Date.now(), mode: requestedMode, locations: sessionLocations, pairs: sessionPairs });
     window.scrollTo({ top: 0 });
@@ -149,6 +157,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
 
   const exploreFreely = () => {
     setActiveLocation(null);
+    setOpenPanel(null);
     window.requestAnimationFrame(() => exploreRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
 
@@ -162,27 +171,43 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
     onClose={() => setActiveLocation(null)}
   />;
 
-  const playPath = () => <section className="play-path" aria-label="Spel kiezen">
-    <div className="coco-route">
-      <img src="/images/logo-compas-geel.svg" width="52" height="52" alt="" />
-      <div><p className="eyebrow">Coco's route</p><h2>Kies je route</h2></div>
-    </div>
-    <div className="quick-modes">
-      <button className="journey-mode mode-explore" onClick={exploreFreely}><Map size={22} /><span>Vrij verkennen</span></button>
-      {quickModes.map(mode => modeButton(mode))}
-    </div>
-    {(extraModes.length > 0 || pairOptions.length > 1 || hasTimerModes) && <details className="more-play">
-      <summary><Settings2 size={17} />{modes.includes('memory') ? 'Memory en meer' : 'Meer spellen'}</summary>
-      <div className="more-play-panel">
-        {extraModes.length > 0 && <div className="extra-mode-buttons">{extraModes.map(mode => modeButton(mode, true))}</div>}
-        {modes.includes('memory') && pairOptions.length > 1 && <fieldset className="compact-setting">
-          <legend>Memorysetjes</legend>
-          <div className="segmented">{pairOptions.map(count => <label key={count}><input type="radio" name="pair-count" checked={activePairCount === count} onChange={() => setPairCount(count)} /><span>{count}</span></label>)}</div>
-        </fieldset>}
-        {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer</span></label>}
+  const togglePanel = (panel: Exclude<OpenPanel, null>) => setOpenPanel(current => current === panel ? null : panel);
+
+  const panelClose = <button type="button" className="map-panel-close" onClick={() => setOpenPanel(null)} aria-label="Sluiten"><X size={18} /></button>;
+
+  const mapControls = () => <div className="map-control-shell" ref={toolbarRef}>
+    <nav className="map-control-bar" aria-label="Kaartbediening">
+      <button type="button" className="region-trigger" aria-expanded={openPanel === 'region'} onClick={() => togglePanel('region')}>
+        <span><small>Gebied</small><strong>{areaName(selection.areaId)}</strong></span><ChevronDown size={17} />
+      </button>
+      <button type="button" className="map-action is-primary" title="Vrij verkennen" onClick={exploreFreely}><Map size={18} /><span>Verkennen</span></button>
+      <button type="button" className="map-action" title="Aanwijzen" onClick={() => modes.length && start(modes.includes('find') ? 'find' : modes[0])} disabled={!poolSize || modes.length === 0}><MousePointer2 size={18} /><span>Aanwijzen</span></button>
+      <button type="button" className="map-action" title="Spel kiezen" aria-expanded={openPanel === 'play'} onClick={() => togglePanel('play')} disabled={!poolSize}><Play size={18} /><span>Spel kiezen</span></button>
+      <button type="button" className="map-action icon-only" title="Kaartinstellingen" aria-label="Kaartinstellingen" aria-expanded={openPanel === 'settings'} onClick={() => togglePanel('settings')}><Settings2 size={19} /></button>
+    </nav>
+
+    {openPanel === 'region' && <section className="map-control-panel region-panel" aria-label="Gebied kiezen">
+      <div className="panel-heading"><div><small>Kaartgebied</small><h2>Kies wat je wilt oefenen</h2></div>{panelClose}</div>
+      <LearningSelection selection={selection} onChange={changeSelection} />
+    </section>}
+
+    {openPanel === 'play' && <section className="map-control-panel play-panel" aria-label="Spel kiezen">
+      <div className="panel-heading"><div><small>Spelvorm</small><h2>Kies een uitdaging</h2></div>{panelClose}</div>
+      <div className="extra-mode-buttons">{modes.filter(mode => mode !== 'find').map(mode => modeButton(mode, true))}</div>
+    </section>}
+
+    {openPanel === 'settings' && <section className="map-control-panel settings-panel" aria-label="Kaartinstellingen">
+      <div className="panel-heading"><div><small>Weergave</small><h2>Kaart instellen</h2></div>{panelClose}</div>
+      {topics.length > 1 && <fieldset className="setting-block">
+        <legend>Onderwerp</legend>
+        <div className="topic-options">{topics.map(topic => <button type="button" key={topic} aria-pressed={selection.topicId === topic} onClick={() => changeTopic(topic)}>{TOPIC_LABELS[topic]}</button>)}</div>
+      </fieldset>}
+      <div className="settings-toggles">
+        <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
+        {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer bij spellen</span></label>}
       </div>
-    </details>}
-  </section>;
+    </section>}
+  </div>;
 
   return <div className={'topo-app view-' + view + (session ? ' in-session' : '')}>
     <PlatformHeader gameTitle="Topo" onHome={onHome} actions={<>
@@ -204,35 +229,21 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
             : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={locations} timerEnabled={timer} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />}
       </main> : view === 'passport'
         ? <Passport score={score} progress={progress} onPlay={() => navigate('discover')} storageAvailable={storageAvailable} />
-        : <>
-          <LearningSelection selection={selection} onChange={changeSelection} mobileActions={playPath()} />
-          <main className="discover-page">
-            <div className="map-toolbar">
-              <h1>{areaName(selection.areaId)}</h1>
-              {topics.length > 1 && <details className="topic-filter" ref={topicFilterRef}>
-                <summary aria-label={`Onderwerp: ${TOPIC_LABELS[selection.topicId]}`}><ListFilter size={17} /><span>{selection.topicId === 'all' ? 'Filter' : TOPIC_LABELS[selection.topicId]}</span></summary>
-                <div className="topic-filter-menu" role="group" aria-label="Kies een onderwerp">
-                  {topics.map(topic => <button type="button" key={topic} aria-pressed={selection.topicId === topic} onClick={() => changeTopic(topic)}>
-                    <span>{TOPIC_LABELS[topic]}</span>{selection.topicId === topic && <Check size={17} />}
-                  </button>)}
-                </div>
-              </details>}
-              <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
-            </div>
-            {mapCategoryFilters.length > 0 && <div className="map-legend" role="group" aria-label="Toon op de kaart">
-              <button type="button" className="legend-all" aria-pressed={selection.topicId === 'all'} onClick={() => changeTopic('all')}>Alles</button>
-              {mapCategoryFilters.map(filter => <button
-                type="button"
-                key={filter.topic}
-                aria-label={filter.ariaLabel}
-                aria-pressed={selection.topicId === filter.topic}
-                onClick={() => changeTopic(filter.topic)}
-              >
-                <i className={filter.className} />{filter.label}
-              </button>)}
-            </div>}
-
+        : <main className="discover-page">
+            {mapControls()}
             <section className="map-zone" ref={exploreRef} aria-label="Vrij verkennen">
+              {mapCategoryFilters.length > 0 && <div className="map-legend" role="group" aria-label="Toon op de kaart">
+                <button type="button" className="legend-all" aria-pressed={selection.topicId === 'all'} onClick={() => changeTopic('all')}>Alles</button>
+                {mapCategoryFilters.map(filter => <button
+                  type="button"
+                  key={filter.topic}
+                  aria-label={filter.ariaLabel}
+                  aria-pressed={selection.topicId === filter.topic}
+                  onClick={() => changeTopic(filter.topic)}
+                >
+                  <i className={filter.className} />{filter.label}
+                </button>)}
+              </div>}
               {selection.topicId === 'flags' ? <>
                 <div className="flag-atlas">{locations.map(location => <button key={location.id} className="flag-item" onClick={() => setActiveLocation(location)}><span className="atlas-flag" role="img" aria-label={showLabels ? 'Vlag van ' + location.name : 'Vlag'}>{COUNTRY_FLAGS[location.name]}</span><span>{showLabels || activeLocation?.id === location.id ? location.name : '?'}</span></button>)}</div>
                 {discoveryDetail}
@@ -242,8 +253,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
               </div>}
               <div className="discovery-footer"><span>{locations.length} {selection.topicId === 'flags' ? 'vlaggen' : 'plekken'}</span><span>{practiced} geoefend</span></div>
             </section>
-          </main>
-        </>}
+          </main>}
     </Suspense>
     {!storageAvailable && view !== 'passport' && <p className="storage-warning" role="status">Je voortgang kan in deze browser niet worden bewaard.</p>}
   </div>;

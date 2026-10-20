@@ -1,28 +1,21 @@
-.treehouse-module { min-height: 100dvh; overflow: hidden; background: #a9dce7; color: #433841; }
+.treehouse-module { min-height: 100dvh; overflow: hidden; background: #9bc7e5; color: #433841; }
 .treehouse-module .treehouse-balance { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid #8a7546; border-radius: 6px; background: #e4c571; color: #493d27; font-size: 14px; font-weight: 800; }
-.treehouse-module .treehouse-main { min-height: calc(100dvh - 77px); }
-.treehouse-module .adventure-viewport { position: relative; min-height: calc(100dvh - 77px); overflow: hidden; isolation: isolate; touch-action: none; cursor: grab; background-color: #9bc7e5; background-image: url('/games/treehouse/adventure-world-background.png'); background-repeat: no-repeat; background-position: center; background-size: cover; }
-.treehouse-module .adventure-viewport:active { cursor: grabbing; }
-.treehouse-module .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.treehouse-module .adventure-world { position: absolute; left: 50%; top: 50%; width: 2400px; height: 1500px; transform-origin: center; transition: transform 120ms ease-out; will-change: transform; }
-.treehouse-module .adventure-home-island, .treehouse-module .adventure-island { position: absolute; transform: translate(-50%, -50%); }
-.treehouse-module .adventure-home-island { z-index: 4; width: 610px; height: 700px; pointer-events: none; }
-.treehouse-module .adventure-treehouse { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 28px 22px #3157654d); }
-.treehouse-module .adventure-character { position: absolute; z-index: 6; width: 150px; height: 205px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; cursor: grab; transform: translate(-50%, -50%); touch-action: none; }
-.treehouse-module .adventure-character:active { cursor: grabbing; }
-.treehouse-module .adventure-character:focus-visible { outline: 6px solid #fff5bd; outline-offset: 4px; border-radius: 28px; }
-.treehouse-module .adventure-character img { width: auto; height: 205px; object-fit: contain; filter: drop-shadow(0 10px 8px #31576547); pointer-events: none; user-select: none; }
-.treehouse-module .adventure-bridge { position: absolute; z-index: 1; height: 138px; transform-origin: left center; pointer-events: none; }
-.treehouse-module .adventure-bridge img { width: 100%; height: 100%; object-fit: fill; filter: drop-shadow(0 12px 8px #3157653d); }
-.treehouse-module .adventure-island { z-index: 3; width: 520px; min-height: 540px; padding: 0; border: 0; background: transparent; color: #3e3440; cursor: pointer; }
-.treehouse-module .adventure-island > img { width: 100%; height: 520px; object-fit: contain; display: block; filter: drop-shadow(0 24px 18px #31576552); transition: transform 180ms ease, filter 180ms ease; }
-.treehouse-module .adventure-island:hover > img, .treehouse-module .adventure-island:focus-visible > img { transform: translateY(-12px) scale(1.035); filter: drop-shadow(0 31px 22px #31576561); }
-.treehouse-module .adventure-island:focus-visible { outline: 6px solid #fff5bd; outline-offset: 5px; border-radius: 34px; }
+.treehouse-module .treehouse-main { min-height: calc(100dvh - 64px); }
+.treehouse-module .game-island-world { min-height: calc(100dvh - 64px); display: grid; place-items: center; overflow: hidden; isolation: isolate; padding: clamp(24px, 4vw, 64px); background-color: #9bc7e5; background-image: linear-gradient(#9bc7e514, #eaf1e51f), url('/games/treehouse/adventure-world-background.png'); background-repeat: no-repeat; background-position: center; background-size: cover; }
+.treehouse-module .game-island-grid { width: min(1120px, 100%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: clamp(18px, 4vw, 64px); }
+.treehouse-module .adventure-island { position: relative; left: auto !important; top: auto !important; width: 100%; min-width: 0; aspect-ratio: 1 / 1; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: #3e3440; cursor: pointer; transform: none; }
+.treehouse-module .adventure-island > img { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 24px 18px #31576552); transition: transform 180ms ease, filter 180ms ease; }
+.treehouse-module .adventure-island:hover > img, .treehouse-module .adventure-island:focus-visible > img { transform: translateY(-10px) scale(1.025); filter: drop-shadow(0 30px 22px #31576561); }
+.treehouse-module .adventure-island:focus-visible { outline: 5px solid #fff5bd; outline-offset: 5px; border-radius: 28px; }
 .treehouse-module .adventure-island:disabled { cursor: not-allowed; filter: saturate(.4); }
 .treehouse-module .adventure-island-lock { position: absolute; inset: 45% auto auto 50%; transform: translate(-50%, -50%); padding: 8px 12px; border-radius: 8px; background: #403447; color: white; font-weight: 800; }
-.treehouse-module .adventure-camera-controls { position: absolute; left: max(16px, env(safe-area-inset-left)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 10; display: flex; gap: 7px; padding: 7px; border: 1px solid #6f8d88; border-radius: 8px; background: #f8f3e9e8; box-shadow: 0 7px 20px #33545e35; }
-.treehouse-module .adventure-camera-controls button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid #8ca49b; border-radius: 6px; background: #fffaf0; color: #3d5f58; }
-.treehouse-module .adventure-camera-controls button:first-child { background: #4e725f; color: #fff; }
-.treehouse-module .adventure-camera-controls svg { width: 21px; height: 21px; }
-@media (max-width: 700px) { .treehouse-module .treehouse-main, .treehouse-module .adventure-viewport { min-height: calc(100dvh - 56px); } .treehouse-module .adventure-camera-controls { bottom: 12px; left: 12px; } .treehouse-module .adventure-camera-controls button { width: 42px; height: 42px; } }
-@media (prefers-reduced-motion: reduce) { .treehouse-module .adventure-world, .treehouse-module .adventure-island > img { transition: none; } }
+@media (max-width: 700px) {
+  .treehouse-module { overflow: auto; }
+  .treehouse-module .treehouse-main { min-height: calc(100dvh - 48px); }
+  .treehouse-module .game-island-world { min-height: calc(100dvh - 48px); place-items: start center; padding: 18px 14px 32px; overflow: visible; background-position: center top; }
+  .treehouse-module .game-island-grid { width: min(100%, 380px); grid-template-columns: 1fr; gap: 2px; }
+  .treehouse-module .adventure-island { aspect-ratio: 1.12 / 1; }
+  .treehouse-module .adventure-island > img { filter: drop-shadow(0 16px 14px #31576552); }
+  .treehouse-module .adventure-island:hover > img, .treehouse-module .adventure-island:focus-visible > img { transform: translateY(-5px) scale(1.015); }
+}
+@media (prefers-reduced-motion: reduce) { .treehouse-module .adventure-island > img { transition: none; } }

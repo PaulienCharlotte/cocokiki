@@ -51,7 +51,7 @@ export default class PlayScene extends Phaser.Scene {
 
   private makeLua(x: number, y: number) {
     const sprite = this.add.sprite(x, y, 'lua-new', POSE.idle).setOrigin(.5, .88).setScale(.39);
-    if (!this.reducedMotion) this.tweens.add({ targets: sprite, scaleY: .4, yoyo: true, repeat: -1, duration: 1150, ease: 'Sine.inOut' });
+    if (!this.reducedMotion) this.tweens.add({ targets: sprite, alpha: .96, yoyo: true, repeat: -1, duration: 1150, ease: 'Sine.inOut' });
     return sprite;
   }
 
@@ -66,17 +66,23 @@ export default class PlayScene extends Phaser.Scene {
   private layout(gameSize: Phaser.Structs.Size) {
     const source = this.textures.get('jungle-bg').getSourceImage() as HTMLImageElement;
     const cover = Math.max(gameSize.width / source.width, gameSize.height / source.height);
+    const narrow = gameSize.width < 640;
+    const luaX = gameSize.width * (narrow ? .5 : .54);
+    const luaY = gameSize.height * (narrow ? .65 : .76);
     this.background.setPosition(gameSize.width / 2, gameSize.height / 2).setScale(cover);
-    this.groundShadow.setPosition(gameSize.width * .54, gameSize.height * .79);
-    if (!this.activeRound) this.lua.setPosition(gameSize.width * .54, gameSize.height * .76);
+    this.groundShadow.setPosition(luaX, gameSize.height * (narrow ? .685 : .79)).setAlpha(narrow ? .34 : .24).setScale(narrow ? .72 : 1);
+    if (!this.activeRound) this.lua.setPosition(luaX, luaY).setScale(narrow ? .32 : .39);
   }
 
   beginRound(duration: number, calm: boolean) {
+    const narrow = this.scale.width < 640;
+    const luaX = this.scale.width * (narrow ? .5 : .54);
+    const luaY = this.scale.height * (narrow ? .65 : .76);
     this.tweens.killTweensOf([this.lua, this.rock]);
-    this.lua.setPosition(this.scale.width * .54, this.scale.height * .76).setScale(.39).setAngle(0).setAlpha(1);
-    this.groundShadow.setAlpha(.24).setScale(1);
+    this.lua.setPosition(luaX, luaY).setScale(narrow ? .32 : .39).setAngle(0).setAlpha(1);
+    this.groundShadow.setPosition(luaX, this.scale.height * (narrow ? .685 : .79)).setAlpha(narrow ? .34 : .24).setScale(narrow ? .72 : 1);
     this.setPose(calm ? POSE.idle : POSE.alert);
-    this.rock.setPosition(this.scale.width * .54, 90).setScale(.76).setAngle(0).setVisible(!calm);
+    this.rock.setPosition(luaX, narrow ? 68 : 90).setScale(narrow ? .58 : .76).setAngle(0).setVisible(!calm);
     this.setRock(Phaser.Math.Between(0, 2));
     this.vine.setVisible(false);
     this.duration = duration; this.elapsed = 0; this.calm = calm; this.activeRound = true;
@@ -96,11 +102,12 @@ export default class PlayScene extends Phaser.Scene {
     if (!this.activeRound) return;
     this.activeRound = false; this.rock.setVisible(true);
     const delay = this.reducedMotion ? 150 : 360;
-    const contactY = this.scale.height * .51;
+    const narrow = this.scale.width < 640;
+    const contactY = this.scale.height * (narrow ? .43 : .51);
     this.tweens.add({ targets: this.rock, y: contactY, duration: delay, ease: 'Quad.in' });
     this.time.delayedCall(delay, () => {
-      this.burst(0xe8c99a); this.makeImpactCloud(this.lua.x, this.scale.height * .7); this.setPose(POSE.sad);
-      this.lua.setPosition(this.scale.width * .54, this.scale.height * .8).setScale(.46, .17);
+      this.burst(0xe8c99a); this.makeImpactCloud(this.lua.x, this.scale.height * (narrow ? .55 : .7)); this.setPose(POSE.sad);
+      this.lua.setPosition(this.scale.width * (narrow ? .5 : .54), this.scale.height * (narrow ? .61 : .8)).setScale(narrow ? .36 : .46, narrow ? .14 : .17);
       this.cameras.main.shake(this.reducedMotion ? 0 : 110, .004);
       this.time.delayedCall(this.reducedMotion ? 120 : 520, () => {
         this.tweens.add({ targets: this.rock, x: this.scale.width * .32, y: this.scale.height * .7, angle: -22, duration: this.reducedMotion ? 120 : 340, ease: 'Back.out' });
@@ -126,8 +133,9 @@ export default class PlayScene extends Phaser.Scene {
     if (!this.activeRound || this.calm) return;
     this.elapsed = Math.min(this.duration, this.elapsed + delta);
     const remaining = 1 - this.elapsed / this.duration;
-    this.rock.y = Phaser.Math.Linear(90, this.scale.height * .51, 1 - remaining);
-    this.rock.setScale(Phaser.Math.Linear(.76, 1, 1 - remaining));
+    const narrow = this.scale.width < 640;
+    this.rock.y = Phaser.Math.Linear(narrow ? 68 : 90, this.scale.height * (narrow ? .43 : .51), 1 - remaining);
+    this.rock.setScale(Phaser.Math.Linear(narrow ? .58 : .76, narrow ? .76 : 1, 1 - remaining));
     this.rock.angle += delta * .018;
     this.callbacks.onTick(remaining);
     if (remaining <= 0) this.callbacks.onTimeout();

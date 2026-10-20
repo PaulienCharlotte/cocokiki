@@ -16,6 +16,7 @@ export default function TreehouseModule({ onNavigate }: TreehouseModuleProps) {
 
   return <div className="platform-page treehouse-module">
     <PlatformHeader
+      onHome={() => onNavigate('/')}
       actions={<span className="treehouse-balance" aria-label={`${coins} CocoCoins`}><CocoCoin size={22} />{coins}</span>}
     />
     <main className="treehouse-main">

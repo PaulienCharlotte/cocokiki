@@ -15,7 +15,7 @@ export const TOPIC_LABELS: Record<TopicId, string> = {
   regions: 'Gebieden en eilanden', countries: 'Landen', flags: 'Vlaggen', facts: 'Weetjes', all: 'Alles op de kaart',
 };
 export const MODE_LABELS: Record<PlayMode, string> = {
-  find: 'Alleen aanwijzen', spell: 'Alleen spellen', memory: 'Memory', quiz: 'Vlaggenquiz', master: 'Aanwijzen + spellen', test: 'Kaarttoets',
+  find: 'Aanwijzen', spell: 'Spellen', memory: 'Memory', quiz: 'Vlaggenquiz', master: 'Aanwijzen + spellen', test: 'Topo-toets',
 };
 export const isDutchArea = (id: string) => id === 'all' || DUTCH_PROVINCES.some(p => p.id === id);
 export const isBeneluxArea = (id: string) => id === 'benelux';
@@ -232,6 +232,10 @@ export function validateSelection(value?: Partial<Selection> | null): Selection 
   return studyLocations(result).length ? result : { ...result, clusterId: 'all' };
 }
 
+export function initialSelection(): Selection {
+  return validateSelection(null);
+}
+
 export function memoryPairs(selection: Selection): MemoryPair[] {
   const { areaId, topicId } = selection;
   const factPairs = () => studyLocations(selection).flatMap(location => {
@@ -254,10 +258,7 @@ export function memoryPairs(selection: Selection): MemoryPair[] {
 }
 
 export function availableModes(selection: Selection): PlayMode[] {
-  const pairs = memoryPairs(selection);
-  if (selection.topicId === 'flags') return pairs.length >= 2 ? ['quiz', 'memory'] : [];
-  if (selection.topicId === 'facts') return pairs.length >= 2 ? ['memory'] : ['find', 'spell'];
-  return ['find', 'spell', ...(pairs.length >= 2 ? ['memory' as const] : []), 'master', 'test'];
+  return studyLocations(selection).length ? ['find', 'spell', 'master', 'test'] : [];
 }
 
 export const locationProgressKey = (location: Location) => `map:${isDutchArea(location.provinceId) ? 'nl:' : ''}${location.type}:${location.name}`;

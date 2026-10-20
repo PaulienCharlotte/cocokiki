@@ -10,7 +10,7 @@ export function createLuaGame(parent: HTMLElement, callbacks: SceneCallbacks, re
     transparent: false,
     backgroundColor: '#9de2e2',
     scene: [new PlayScene(callbacks, reducedMotion)],
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
     render: { antialias: true, pixelArt: false },
   });
 }

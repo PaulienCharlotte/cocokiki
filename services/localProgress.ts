@@ -6,7 +6,6 @@ export interface PracticeRecord {
 
 export type Progress = Record<string, PracticeRecord>;
 export const PROGRESS_KEY = 'topo-coco-practice-v1';
-export const PREFERENCES_KEY = 'topo-coco-selection-v1';
 
 export function readLocal<T>(key: string, fallback: T): T {
   try {

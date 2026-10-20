@@ -38,7 +38,7 @@ const App: React.FC = () => {
 };
 
 function LoadingScreen() {
-  return <div className="platform-loading" role="status"><img src="/images/logo-compas-geel.svg" alt="" />Boomhut laden...</div>;
+  return <div className="platform-loading" role="status"><img src="/images/logo-compas-geel.svg" alt="" />Spellenwereld laden...</div>;
 }
 
 export default App;

@@ -26,7 +26,9 @@ export function starsFor(stats: SessionStats, rounds: number): number {
 }
 
 export function roundDuration(baseMs: number, stats: SessionStats): number {
-  return Math.max(5000, baseMs - Math.floor(stats.bestStreak / 3) * 400 + Math.min(1200, stats.missed * 300));
+  if (stats.bestStreak >= 10) return Math.round(baseMs * .64);
+  if (stats.bestStreak >= 5) return Math.round(baseMs * .8);
+  return baseMs;
 }
 
 export function currencyReward(table: TableChoice, firstTry: boolean): number {

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PROVINCES } from '../constants';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { areaLocations, availableModes, availableTopics, learningGroups, locationProgressKey, memoryPairs, nextLearningGroup, studyLocations, validateSelection } from '../data/learning';
+import { areaLocations, availableModes, availableTopics, initialSelection, learningGroups, locationProgressKey, memoryPairs, nextLearningGroup, studyLocations, validateSelection } from '../data/learning';
 import { nextBatch, recordAnswer } from '../services/localProgress';
 import { GAME_LIBRARY } from '../platform/gameRegistry';
 import { resolveRoute } from '../platform/routes';
@@ -75,8 +75,10 @@ test('Baby Lua scoring separates first tries, retries and timeouts', () => {
   assert.equal(first.score, 100);
   assert.equal(retry.score, 160);
   assert.equal(starsFor({ ...EMPTY_STATS, firstTry: 8, eventual: 9 }, 10), 3);
-  assert.equal(roundDuration(5000, { ...EMPTY_STATS, bestStreak: 9 }), 5000);
-  assert.equal(roundDuration(5000, { ...EMPTY_STATS, missed: 2 }), 5600);
+  assert.equal(roundDuration(5000, { ...EMPTY_STATS, bestStreak: 4 }), 5000);
+  assert.equal(roundDuration(5000, { ...EMPTY_STATS, bestStreak: 5 }), 4000);
+  assert.equal(roundDuration(5000, { ...EMPTY_STATS, bestStreak: 10 }), 3200);
+  assert.equal(roundDuration(4200, { ...EMPTY_STATS, bestStreak: 10 }), 2688);
 });
 
 test('Baby Lua rewards harder tables with more CocoKiki currency', () => {
@@ -117,10 +119,15 @@ test('incompatible selections recover to a nonempty topic in the selected area',
   assert.equal(validateSelection({ areaId: 'invalid' }).areaId, 'all');
 });
 
+test('a fresh Topo visit starts neutral instead of restoring the last region', () => {
+  assert.deepEqual(initialSelection(), { areaId: 'all', topicId: 'provinces', clusterId: 'all' });
+  assert.notDeepEqual(initialSelection(), validateSelection({ areaId: 'midden-nederland', topicId: 'cities', clusterId: 'all' }));
+});
+
 test('flags are countries only and never appear for a Dutch province or a polar area', () => {
   for (const areaId of ['all', 'fr', 'arctic', 'antarctica']) assert.ok(!availableTopics(areaId).includes('flags'));
   const selection = { areaId: 'europe', topicId: 'flags' as const, clusterId: 'all' };
-  assert.deepEqual(availableModes(selection), ['quiz', 'memory']);
+  assert.deepEqual(availableModes(selection), ['find', 'spell', 'master', 'test']);
   assert.ok(memoryPairs(selection).every(p => p.kind === 'flag' && p.right && p.id.startsWith('flag:')));
   assert.ok(!availableTopics('europe').includes('facts'));
 });
@@ -157,7 +164,7 @@ test('Groningen matches the complete school worksheet', () => {
   const allMemory = memoryPairs({ areaId: 'gr', topicId: 'all', clusterId: 'all' });
   assert.equal(allMemory.length, 20);
   assert.ok(allMemory.every(pair => pair.kind === 'fact'));
-  assert.ok(availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
+  assert.ok(!availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
 });
 
 test('Benelux matches the complete school worksheet and every item has a fact', () => {

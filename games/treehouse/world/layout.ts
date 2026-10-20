@@ -6,8 +6,8 @@ export interface GameIslandLayout extends WorldPoint { game: GameDefinition; }
 export const WORLD_CENTER: WorldPoint = { x: 1200, y: 780 };
 
 const FIRST_SLOTS: WorldPoint[] = [
-  { x: 600, y: 790 },
-  { x: 1800, y: 790 },
+  { x: 760, y: 790 },
+  { x: 1640, y: 790 },
   { x: 760, y: 250 },
   { x: 1640, y: 250 },
 ];

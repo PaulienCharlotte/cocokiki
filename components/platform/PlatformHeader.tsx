@@ -1,5 +1,4 @@
 import React from 'react';
-import { Home } from 'lucide-react';
 
 interface PlatformHeaderProps {
   gameTitle?: string;
@@ -15,10 +14,11 @@ export default function PlatformHeader({ gameTitle, onHome, actions }: PlatformH
 
   return <header className="app-header platform-header">
     <div className="header-inner">
-      <div className="brand">{brand}</div>
+      {onHome
+        ? <button className="brand platform-brand" type="button" onClick={onHome} aria-label="Naar home">{brand}</button>
+        : <div className="brand">{brand}</div>}
       {gameTitle && <span className="platform-game-title">{gameTitle}</span>}
       <div className="platform-header-actions">
-        {onHome && <button className="library-button" type="button" onClick={onHome} aria-label="Naar home"><Home size={18} /><span>Home</span></button>}
         {actions}
       </div>
     </div>
