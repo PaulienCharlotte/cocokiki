@@ -85,7 +85,11 @@ export default function InteractiveKitchen({ progress, sceneRef }: { progress: C
     <button className="kitchen-groceries-trigger" type="button" aria-label="Mijn boodschappen openen" title="Boodschappen" aria-expanded={inventoryOpen} aria-controls="kitchen-inventory" onClick={() => setInventoryOpen(true)}>
       <ShoppingBasket aria-hidden="true" />
     </button>
-    {canCook && <button type="button" className="treehouse-recipe-book" onClick={() => setCookingOpen(true)} aria-label="Verder met bananenpannenkoekjes"><BookOpen /><span>Ga verder</span></button>}
+    {canCook && <button type="button" className="treehouse-recipe-cta" onClick={() => setCookingOpen(true)} aria-label="Verder met bananenpannenkoekjes">
+      <img src={ASSET_LIBRARY.cooking.recipes.bananaPancakes} alt="" draggable={false} />
+      <span><small>Alles staat klaar</small><strong>Bananenpannenkoekjes</strong></span>
+      <i aria-hidden="true"><BookOpen /></i>
+    </button>}
     <div className="kitchen-fixed-stations">
       {(['worktop', 'cooktop'] as StationId[]).map(station => <button key={station} type="button" className={`kitchen-fixed-station kitchen-fixed-station--${station}`} data-kitchen-station={station} aria-label={`${station === 'worktop' ? 'Kookeiland' : 'Kookplaat'} openen`} onClick={() => setActiveStation(station)} />)}
     </div>

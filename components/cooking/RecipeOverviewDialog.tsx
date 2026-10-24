@@ -50,7 +50,8 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
       <span><Star size={19} /><small>Niveau</small><strong>{recipe.level}</strong></span>
     </div>
 
-    {recipe.ingredients.length > 0 && <section className="recipe-overview__ingredients" aria-labelledby="recipe-ingredients-title">
+    {(recipe.ingredients.length > 0 || recipe.equipmentIds.length > 0) && <div className="recipe-overview__needs">
+      {recipe.ingredients.length > 0 && <section className="recipe-overview__ingredients" aria-labelledby="recipe-ingredients-title">
         <h3 id="recipe-ingredients-title">Ingrediënten</h3>
         <ul>
           {recipe.ingredients.map(item => {
@@ -75,6 +76,7 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
           })}
         </ul>
       </section>}
+    </div>}
     {(canReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
       <summary aria-label="Meer opties"><MoreHorizontal /></summary>
       {canReplay && <button type="button" onClick={() => onReplay?.(recipe)}><RotateCcw size={17} />Ontdekken oefenen</button>}

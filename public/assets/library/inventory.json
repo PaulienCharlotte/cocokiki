@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-24T18:34:28.518Z",
-  "count": 231,
+  "generatedAt": "2026-10-24T18:46:49.673Z",
+  "count": 257,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -101,6 +101,162 @@
     {
       "id": "assets:library:cooking:banana-pancakes:whisk",
       "path": "/assets/library/cooking/banana-pancakes/whisk.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:baking-tray-cookies",
+      "path": "/assets/library/cooking/kit/baking-tray-cookies.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:baking-tray",
+      "path": "/assets/library/cooking/kit/baking-tray.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:banana-mashed",
+      "path": "/assets/library/cooking/kit/banana-mashed.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:banana-peeled",
+      "path": "/assets/library/cooking/kit/banana-peeled.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:banana",
+      "path": "/assets/library/cooking/kit/banana.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:bowl-batter",
+      "path": "/assets/library/cooking/kit/bowl-batter.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:bowl-eggs",
+      "path": "/assets/library/cooking/kit/bowl-eggs.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:bowl-empty",
+      "path": "/assets/library/cooking/kit/bowl-empty.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:bowl-mashed-banana",
+      "path": "/assets/library/cooking/kit/bowl-mashed-banana.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:butter",
+      "path": "/assets/library/cooking/kit/butter.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:egg-cracked",
+      "path": "/assets/library/cooking/kit/egg-cracked.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:egg-open",
+      "path": "/assets/library/cooking/kit/egg-open.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:egg",
+      "path": "/assets/library/cooking/kit/egg.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:flour",
+      "path": "/assets/library/cooking/kit/flour.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:fork",
+      "path": "/assets/library/cooking/kit/fork.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:milk",
+      "path": "/assets/library/cooking/kit/milk.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:oil",
+      "path": "/assets/library/cooking/kit/oil.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:pan-empty",
+      "path": "/assets/library/cooking/kit/pan-empty.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:pan-pancake",
+      "path": "/assets/library/cooking/kit/pan-pancake.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:pancake-golden",
+      "path": "/assets/library/cooking/kit/pancake-golden.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:pancake-raw",
+      "path": "/assets/library/cooking/kit/pancake-raw.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:scale",
+      "path": "/assets/library/cooking/kit/scale.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:spatula",
+      "path": "/assets/library/cooking/kit/spatula.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:spoon",
+      "path": "/assets/library/cooking/kit/spoon.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:sugar",
+      "path": "/assets/library/cooking/kit/sugar.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:kit:whisk",
+      "path": "/assets/library/cooking/kit/whisk.png",
       "category": "cooking",
       "format": "png"
     },

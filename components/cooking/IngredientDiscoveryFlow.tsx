@@ -124,12 +124,14 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   return <main className="discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
-      <div className="discovery-stage__topbar">
-        <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onExit}>Stoppen</Button>
-        <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)}><BookOpen size={17} />Bekijk recept</button>
+      <div className="stage-chrome">
+        <div className="discovery-stage__topbar">
+          <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onExit}>Stoppen</Button>
+          <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)}><BookOpen size={17} />Bekijk recept</button>
+        </div>
+        <JourneyStageProgress journey={journey} />
+        <ProgressIndicator label="Ontdekt" value={progressValue} max={recipeIngredientIds.length} />
       </div>
-      <JourneyStageProgress journey={journey} />
-      <ProgressIndicator label="Ontdekt" value={progressValue} max={recipeIngredientIds.length} />
 
       <div className="discovery-card__content" key={`${ingredientId}-${discovery.step}`}>
         {discovery.step === 'learn' && <>

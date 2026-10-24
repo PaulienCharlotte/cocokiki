@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId } from '../data/cooking/types';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID, type ShopCategory } from '../data/shopCatalog';
@@ -11,6 +11,19 @@ import ShopStreet from '../components/shop/ShopStreet';
 import DecorShop from '../components/shop/DecorShop';
 
 type ActiveCategory = 'all' | ShopCategory;
+
+function missingLabel(missing: number, unit: string): string {
+  if (unit === 'gram') return `Nog ${missing} g`;
+  if (unit === 'milliliter') return `Nog ${missing} ml`;
+  return `Nog ${missing}`;
+}
+
+/** Korte vorm voor op het ronde plaatje in de strip. */
+function missingBadge(missing: number, unit: string): string {
+  if (unit === 'gram') return `${missing}g`;
+  if (unit === 'milliliter') return `${missing}ml`;
+  return `${missing}`;
+}
 
 interface ShopScreenProps {
   recipeId?: RecipeId;
@@ -36,6 +49,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const count = basketCount(session);
   const requirements = recipeId ? recipeRequirementStatus(progress, recipeId, session) : [];
   const completedRequirements = requirements.filter(item => item.collected).length;
+  const missingRequirements = requirements.filter(item => !item.collected);
   const journeyRecipeId = recipeId ?? progress.activeRecipeId;
   const journey = journeyRecipeId ? progress.journeys[journeyRecipeId] : undefined;
   const journeyReady = !!journeyRecipeId && recipeRequirementsSatisfied(progress, journeyRecipeId);
@@ -75,16 +89,14 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   };
   const returnToJourney = () => {
     if (!journeyRecipeId || !journey) return;
-    const next = journey.stage === 'shopping' && journeyReady
+    if (!journeyReady) return setCheckoutComplete(false);
+    const next = journey.stage === 'shopping'
       ? advanceJourney(progress, journeyRecipeId, 'cooking')
       : progress;
     if (next !== progress) commitProgress(next);
     setCheckoutComplete(false);
-    if (journeyReady && onNavigate) onNavigate('/treehouse/kitchen');
-    else if (!recipeId) {
-      if (onNavigate) onNavigate('/treehouse/cookbook?resume=1');
-      else window.location.assign('/treehouse/cookbook?resume=1');
-    }
+    if (onNavigate) onNavigate('/treehouse/kitchen');
+    else window.location.assign('/treehouse/kitchen');
   };
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
 
@@ -99,7 +111,6 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         <span className="shop-catalog__mark" aria-hidden="true"><ShoppingBasket size={20} /></span>
         <div><small>{recipeId ? 'Receptboodschappen' : 'Vrij winkelen'}</small><h1 id="shop-title">Winkel</h1></div>
         <div className="shop-catalog__actions">
-          {recipeId && <button className="shop-icon-button" type="button" onClick={() => setListOpen(value => !value)} aria-label="Open boodschappenlijst"><ListChecks /></button>}
           <button className="shop-basket-button" type="button" onClick={() => setBasketOpen(true)} aria-label={`Open mandje met ${count} producten`}><ShoppingBasket /><span>{count}</span><strong>{total}</strong></button>
         </div>
       </header>
@@ -109,14 +120,32 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         <button type="button" onClick={returnToJourney}>Naar keuken <ChevronRight /></button>
       </div>}
 
-      {recipeId && listOpen && <aside className="shopping-list" aria-label="Jouw boodschappenlijstje">
-        <header><strong>Jouw boodschappenlijstje</strong><button type="button" onClick={() => setListOpen(false)} aria-label="Sluiten"><X /></button></header>
-        <div className="shopping-list__progress"><span style={{ width: `${requirements.length ? completedRequirements / requirements.length * 100 : 0}%` }} /></div>
-        {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
-          <span>{item.collected ? <Check /> : null}</span><img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
-          <p><strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong><small>{item.displayAmount}</small></p>
-        </div>)}
-      </aside>}
+      {recipeId && <div className="shopping-strip">
+        <button type="button" className="shopping-strip__toggle" onClick={() => setListOpen(value => !value)} aria-expanded={listOpen} aria-label={`Jouw receptlijstje, ${completedRequirements} van ${requirements.length} compleet`}>
+          <span className="shopping-strip__mark" aria-hidden="true"><ListChecks /></span>
+          <span className="shopping-strip__items" aria-hidden="true">
+            {requirements.map(item => <i key={item.ingredientId} className={item.collected ? 'is-complete' : ''}>
+              <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+              <em>{item.collected ? <Check /> : missingBadge(item.amount - item.inventory - item.basket, item.unit)}</em>
+            </i>)}
+          </span>
+          <span className="shopping-strip__count">{completedRequirements}/{requirements.length}</span>
+          <ChevronDown className={listOpen ? 'is-open' : ''} aria-hidden="true" />
+        </button>
+
+        {listOpen && <div className="shopping-strip__details">
+          {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
+            <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+            <p>
+              <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
+              <small>{item.displayAmount}</small>
+            </p>
+            <b className={item.collected ? 'is-complete' : ''}>
+              {item.collected ? 'Klaar' : missingLabel(item.amount - item.inventory - item.basket, item.unit)}
+            </b>
+          </div>)}
+        </div>}
+      </div>}
 
       <nav className="shop-categories" aria-label="Productcategorieën">
         {SHOP_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
@@ -143,17 +172,34 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         </div>
         <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>
           {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
-          {notice.includes('tekort') && <a className="shop-earn-link" href="/challenges">Oefen en verdien CocoCoins</a>}
+          {notice.includes('tekort') && <button className="shop-earn-link" type="button" onClick={() => onNavigate ? onNavigate('/challenges') : window.location.assign('/challenges')}>Oefen en verdien CocoCoins</button>}
         </footer>
       </aside>
     </div>}
 
-    {checkoutComplete && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="shop-success-title"><div><span aria-hidden="true"><Check /></span><h2 id="shop-success-title">Goed gewinkeld!</h2>
-      {journeyRecipeId && journey ? <>
-        <p>{journeyReady ? `Alles voor ${RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.` : 'Je boodschappen staan in je voorraad.'}</p>
-        <button type="button" onClick={returnToJourney}>{journeyReady ? 'Ga naar de keuken' : 'Terug naar je recept'} <ChevronRight /></button>
+    {checkoutComplete && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="shop-success-title"><div>
+      <span aria-hidden="true"><Check /></span>
+      {journeyRecipeId && journey && journeyReady ? <>
+        <h2 id="shop-success-title">Goed gewinkeld!</h2>
+        <p>Alles voor {RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.</p>
+        <button type="button" onClick={returnToJourney}>Ga naar de keuken <ChevronRight /></button>
         <button className="shop-success__secondary" type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
-      </> : <><p>Je boodschappen staan in je voorraad.</p><button type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button></>}
+      </> : recipeId && missingRequirements.length > 0 ? <>
+        <h2 id="shop-success-title">Je hebt al wat in huis!</h2>
+        <p>Dit heb je nog nodig:</p>
+        <ul className="shop-success__missing">
+          {missingRequirements.map(item => <li key={item.ingredientId}>
+            <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+            <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
+            <small>{missingLabel(item.amount - item.inventory - item.basket, item.unit)}</small>
+          </li>)}
+        </ul>
+        <button type="button" onClick={() => setCheckoutComplete(false)}>Dit ga ik halen <ChevronRight /></button>
+      </> : <>
+        <h2 id="shop-success-title">Goed gewinkeld!</h2>
+        <p>Je boodschappen staan in je voorraad.</p>
+        <button type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
+      </>}
     </div></div>}
     {recipeId && <button className="shop-exit" type="button" onClick={onExit}>Stoppen</button>}
   </main>;

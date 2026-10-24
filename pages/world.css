@@ -129,53 +129,124 @@
 .treehouse-recipe-book { position: absolute; z-index: 12; right: 3%; bottom: 5%; display: flex; align-items: center; gap: 9px; min-height: 54px; padding: 10px 16px; border: 2px solid #fff5df; border-radius: 8px; background: #557252; color: #fff; box-shadow: 0 8px 20px #39220d4a; font-weight: 800; }
 .treehouse-recipe-book svg { width: 25px; height: 25px; }
 
-.cooking-experience { position: fixed; z-index: 60; inset: 0; overflow: hidden; color: #3f322e; isolation: isolate; }
-.cooking-experience::after { content: ''; position: absolute; z-index: -1; inset: 0; background: #3a24122e; pointer-events: none; }
-.cooking-experience__station { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.cooking-experience__topbar { position: absolute; z-index: 5; top: 16px; left: 50%; width: min(720px, calc(100% - 32px)); min-height: 58px; display: grid; grid-template-columns: 46px 1fr 46px; align-items: center; gap: 14px; padding: 6px; border: 1px solid #fff8e4; border-radius: 8px; background: #fff9eee8; box-shadow: 0 7px 22px #3824103d; translate: -50% 0; backdrop-filter: blur(8px); }
-.cooking-experience__topbar > button, .cooking-recipe-drawer > button { width: 46px; height: 46px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: #ebe4da; color: #493952; }
-.cooking-experience__progress { display: flex; align-items: center; gap: 10px; font-weight: 850; }
-.cooking-experience__progress i { height: 9px; flex: 1; overflow: hidden; border-radius: 8px; background: #ddd6cb; }
-.cooking-experience__progress b { display: block; height: 100%; border-radius: inherit; background: #6e8c68; transition: width .3s ease; }
-.cooking-experience__task { position: absolute; z-index: 3; top: 91px; left: 50%; width: min(540px, calc(100% - 32px)); padding: 12px 18px; border: 1px solid #fff5df; border-radius: 8px; background: #fff9eee8; text-align: center; translate: -50% 0; backdrop-filter: blur(7px); }
-.cooking-experience__task small { color: #557252; font-size: .72rem; font-weight: 900; }
-.cooking-experience__task h1 { margin: 2px 0 0; font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: 0; }
-.cooking-experience__task p { margin: 3px 0 0; color: #6d625d; font-weight: 650; }
-.cooking-experience__play { position: absolute; z-index: 2; inset: 170px 0 68px; display: grid; place-items: center; }
-.cooking-main-object { width: min(42vw, 460px); max-height: 54vh; padding: 0; border: 0; background: transparent; cursor: pointer; touch-action: none; filter: drop-shadow(0 16px 16px #24190e45); }
-.cooking-main-object img, .cooking-main-object .cooking-asset-fallback { width: 100%; max-height: 54vh; display: grid; place-items: center; object-fit: contain; pointer-events: none; }
-.cooking-tool-grid { width: min(760px, 82vw); display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.cooking-tool-grid button { position: relative; min-width: 0; aspect-ratio: 1; display: grid; grid-template-rows: 1fr auto; place-items: center; padding: 10px; border: 3px solid transparent; border-radius: 8px; background: #fff9eee8; color: #49352d; font-weight: 850; box-shadow: 0 8px 18px #38241036; }
-.cooking-tool-grid button.is-selected { border-color: #6e8c68; background: #eef4e9; }
-.cooking-tool-grid img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
-.cooking-tool-grid svg { position: absolute; top: 8px; right: 8px; color: #557252; }
-.cooking-action-dots { position: absolute; bottom: 8%; display: flex; gap: 9px; }
-.cooking-action-dots i { width: 14px; height: 14px; border-radius: 50%; background: #fff9ee; border: 2px solid #557252; }
-.cooking-action-dots i.is-done { background: #557252; }
-.cooking-weigh, .cooking-heat, .cooking-timed, .cooking-optional { position: absolute; bottom: 2%; left: 50%; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; background: #fff9eee8; box-shadow: 0 8px 20px #38241036; translate: -50% 0; }
-.cooking-weigh strong { min-width: 80px; text-align: center; font-size: 1.5rem; }
-.cooking-weigh div, .cooking-heat div { display: flex; gap: 7px; }
-.cooking-weigh button, .cooking-heat button, .cooking-timed button, .cooking-optional button, .cooking-celebration button { min-height: 45px; padding: 9px 15px; border: 0; border-radius: 7px; background: #557252; color: #fff; font-weight: 850; }
-.cooking-weigh button:disabled, .cooking-heat button:disabled { opacity: .45; }
-.cooking-heat > button:first-child { display: flex; align-items: center; gap: 6px; background: #eee7da; color: #49352d; }
-.cooking-heat > button:first-child img { width: 42px; height: 42px; object-fit: contain; }
-.cooking-heat button.is-selected { outline: 4px solid #d4ac4f; }
-.cooking-timer { min-width: 170px; padding: 12px; text-align: center; color: #557252; font-weight: 850; }
-.cooking-experience__hint { position: absolute; z-index: 3; bottom: 14px; left: 50%; margin: 0; padding: 8px 12px; border-radius: 7px; background: #fff9eedb; color: #5f5652; font-size: .9rem; font-weight: 700; translate: -50% 0; }
-.cooking-recipe-drawer { position: absolute; z-index: 7; top: 86px; right: 16px; width: min(330px, calc(100% - 32px)); padding: 18px; border: 1px solid #fff5df; border-radius: 8px; background: #fff9eef5; box-shadow: 0 14px 38px #38241052; }
-.cooking-recipe-drawer > button { float: right; }
-.cooking-recipe-drawer small { color: #557252; font-weight: 900; }
-.cooking-recipe-drawer h2 { margin: 4px 0 14px; }
-.cooking-recipe-drawer p { margin: 7px 0; color: #6d625d; }
-.cooking-experience--complete { display: grid; place-items: center; }
-.cooking-celebration { position: relative; z-index: 2; width: min(560px, calc(100% - 32px)); padding: 20px; border: 1px solid #fff6df; border-radius: 8px; background: #fff9eef0; text-align: center; box-shadow: 0 18px 50px #3824105c; }
-.cooking-celebration > div { display: grid; place-items: center; }
-.cooking-celebration > div img, .cooking-celebration > div .cooking-asset-fallback { width: min(330px, 70vw); max-height: 45vh; object-fit: contain; }
-.cooking-celebration > svg { display: block; margin: -8px auto 0; color: #557252; }
-.cooking-celebration h1 { margin: 5px 0; }
-.cooking-celebration p { margin: 0 0 14px; }
-.cooking-celebration__actions { display: flex; justify-content: center; gap: 10px; }
-.cooking-celebration button.is-secondary { background: #e8e1d7; color: #49352d; }
+/* Uitnodiging om verder te koken: toont welk recept klaarstaat. */
+.treehouse-recipe-cta { position: absolute; z-index: 12; right: 3%; bottom: 5%; max-width: min(330px, calc(100% - 32px)); display: flex; align-items: center; gap: var(--space-3); min-height: 72px; padding: 10px 16px 10px 10px; border: 0; border-radius: var(--radius-card); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-raised); text-align: left; }
+.treehouse-recipe-cta img { width: 54px; height: 54px; flex: 0 0 54px; border-radius: var(--radius-control); object-fit: cover; }
+.treehouse-recipe-cta span { display: grid; gap: 1px; }
+.treehouse-recipe-cta small { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
+.treehouse-recipe-cta strong { font-size: var(--font-size-md); }
+.treehouse-recipe-cta i { width: 38px; height: 38px; flex: 0 0 38px; display: grid; place-items: center; margin-left: auto; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); }
+.treehouse-recipe-cta i svg { width: 19px; }
+@media (max-width: 560px) { .treehouse-recipe-cta { right: 50%; translate: 50% 0; } }
+
+/* Kookstap als flashcard: één taak per kaart, met een zichtbaar doel. */
+.cooking-stage { position: fixed; z-index: 60; inset: 0; overflow: hidden; color: var(--color-text); isolation: isolate; }
+.cooking-stage__background { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cooking-stage::after { content: ''; position: absolute; z-index: -1; inset: 0; background: #3a24124d; backdrop-filter: blur(3px); pointer-events: none; }
+.cooking-stage__shell { position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: clamp(14px, 3vh, 26px) 16px clamp(14px, 3vh, 24px); }
+
+.cooking-stage__bar { width: min(620px, 100%); display: grid; grid-template-columns: var(--touch-target) 1fr var(--touch-target); align-items: center; gap: var(--space-3); }
+.cooking-stage__icon { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface); color: var(--color-primary); box-shadow: var(--shadow-soft); }
+.cooking-stage__icon svg { width: 20px; }
+.cooking-stage__progress { display: grid; gap: 5px; padding: 7px 14px; border-radius: var(--radius-pill); background: var(--color-surface-glass); text-align: center; }
+.cooking-stage__progress span { color: var(--color-text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); }
+.cooking-stage__progress i { height: 7px; overflow: hidden; border-radius: var(--radius-pill); background: #e2dacf; }
+.cooking-stage__progress b { display: block; height: 100%; border-radius: inherit; background: var(--color-primary); transition: width var(--motion-gentle) var(--ease-storybook); }
+
+.cooking-card { width: min(620px, 100%); flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); overflow-y: auto; padding: clamp(18px, 3.2vh, 28px) clamp(18px, 4vw, 30px); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-raised); text-align: center; }
+.cooking-card__station { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); letter-spacing: .04em; text-transform: uppercase; }
+.cooking-card h1 { margin: 0; font-size: clamp(1.3rem, 3.4vw, 1.75rem); line-height: var(--line-height-tight); }
+.cooking-card__instruction { margin: 0; max-width: 34ch; color: var(--color-text-muted); font-weight: var(--font-weight-medium); }
+.cooking-card__scene { flex: 1 1 auto; width: 100%; min-height: 0; display: grid; place-items: center; padding: var(--space-3) 0; }
+.cooking-card__hint { margin: 0; padding: 9px 14px; border-radius: var(--radius-control); background: var(--color-background-soft); color: var(--color-text-subtle); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+.cooking-card__hint.is-nudge { background: var(--color-error-soft); color: var(--color-error); font-weight: var(--font-weight-bold); }
+
+.cooking-button { min-height: 48px; padding: 12px 22px; border: 0; border-radius: var(--radius-control); background: var(--color-primary); color: var(--color-on-primary); font-size: var(--font-size-md); font-weight: var(--font-weight-heavy); }
+.cooking-button:disabled { background: var(--color-surface-soft); color: var(--color-text-subtle); }
+.cooking-button.is-quiet { background: var(--color-surface-soft); color: var(--color-primary); }
+.cooking-chip { min-height: var(--touch-target); padding: 10px 18px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-weight: var(--font-weight-bold); }
+.cooking-chip.is-selected { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-primary); }
+
+/* Spullen verzamelen */
+.cooking-tools { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.cooking-tool { position: relative; min-height: 112px; display: grid; grid-template-rows: 1fr auto; gap: 6px; place-items: center; padding: 12px; border: 2px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font-weight: var(--font-weight-bold); }
+.cooking-tool img { max-width: 100%; max-height: 74px; object-fit: contain; }
+.cooking-tool.is-selected { border-color: var(--color-primary); background: var(--color-success-soft); }
+.cooking-tool__check { position: absolute; top: 7px; right: 7px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); }
+.cooking-tool__check svg { width: 14px; }
+
+/* Sleepstap met doel */
+.cooking-drop { width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-2); }
+.cooking-drop__source-slot, .cooking-drop__target-slot { display: grid; gap: 7px; justify-items: center; }
+.cooking-drop__source { width: min(150px, 30vw); aspect-ratio: 1; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; filter: drop-shadow(0 10px 12px #2419102e); }
+.cooking-drop__source:active { cursor: grabbing; }
+.cooking-drop__source img, .cooking-drop__source .cooking-asset-fallback { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.cooking-drop__caption { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
+.cooking-drop__arrow { width: 34px; height: 4px; border-radius: var(--radius-pill); background: repeating-linear-gradient(90deg, var(--color-border-strong) 0 7px, transparent 7px 13px); }
+.cooking-drop__target { position: relative; width: min(170px, 34vw); aspect-ratio: 1; display: grid; place-items: center; padding: 10px; border: 3px dashed var(--color-border-strong); border-radius: 50%; background: var(--color-background-soft); transition: border-color var(--motion-default) ease, background var(--motion-default) ease, scale var(--motion-default) ease; }
+.cooking-drop__target img, .cooking-drop__target .cooking-asset-fallback { width: 100%; height: 100%; object-fit: contain; }
+.cooking-drop__target.is-over { border-color: var(--color-primary); background: var(--color-success-soft); scale: 1.06; }
+.cooking-drop__target.is-filled { border-style: solid; border-color: var(--color-primary); background: var(--color-success-soft); }
+.cooking-drop__plate { width: 86%; aspect-ratio: 1; border: 7px solid #efe9e0; border-radius: 50%; background: var(--color-surface); box-shadow: inset 0 3px 10px #4f403218; }
+.cooking-drop__landed { position: absolute; width: 62%; }
+.cooking-drop__landed img, .cooking-drop__landed .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-drop__check { position: absolute; right: 2px; bottom: 2px; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--color-primary); color: var(--color-on-primary); }
+.cooking-drop__check svg { width: 19px; }
+
+/* Tikstap */
+.cooking-tap { display: grid; gap: var(--space-3); justify-items: center; }
+.cooking-tap__object { width: min(230px, 46vw); aspect-ratio: 1; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; filter: drop-shadow(0 12px 14px #2419102e); }
+.cooking-tap__object img, .cooking-tap__object .cooking-asset-fallback { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.cooking-tap__label { color: var(--color-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.cooking-dots { display: flex; gap: 10px; }
+.cooking-dots i { width: 15px; height: 15px; border: 2px solid var(--color-primary); border-radius: 50%; background: var(--color-surface); transition: background var(--motion-fast) ease; }
+.cooking-dots i.is-done { background: var(--color-primary); }
+
+/* Wegen */
+.cooking-weighing { display: grid; gap: var(--space-3); justify-items: center; }
+.cooking-weighing__art { width: min(150px, 32vw); object-fit: contain; }
+.cooking-weighing__readout { display: flex; align-items: baseline; gap: 7px; padding: 8px 22px; border-radius: var(--radius-control); background: var(--color-background-calm); }
+.cooking-weighing__readout strong { font-size: 2rem; line-height: 1; }
+.cooking-weighing__readout span { color: var(--color-text-muted); font-weight: var(--font-weight-bold); }
+.cooking-weighing__controls { display: flex; gap: var(--space-2); }
+
+/* Verwarmen */
+.cooking-heating { display: grid; gap: var(--space-3); justify-items: center; }
+.cooking-heating__levels { display: flex; gap: var(--space-2); }
+.cooking-choice { position: relative; min-height: var(--touch-target); display: flex; align-items: center; gap: 10px; padding: 8px 18px 8px 10px; border: 2px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font-weight: var(--font-weight-bold); }
+.cooking-choice img { width: 42px; height: 42px; object-fit: contain; }
+.cooking-choice.is-selected { border-color: var(--color-primary); background: var(--color-success-soft); }
+
+/* Bakken */
+.cooking-baking { display: grid; gap: var(--space-3); justify-items: center; }
+.cooking-baking__art { width: min(240px, 48vw); object-fit: contain; }
+.cooking-baking__timer { padding: 12px 22px; border-radius: var(--radius-control); background: var(--color-background-calm); color: var(--color-primary); font-weight: var(--font-weight-heavy); }
+
+.cooking-choices, .cooking-card__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
+
+/* Receptkaartje */
+.cooking-recipe-card { width: min(620px, 100%); padding: var(--space-4) var(--space-5); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-raised); text-align: left; }
+.cooking-recipe-card header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.cooking-recipe-card small { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
+.cooking-recipe-card h2 { margin: 2px 0 0; font-size: var(--font-size-lg); }
+.cooking-recipe-card header button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-text); }
+.cooking-recipe-card p { margin: var(--space-2) 0 0; color: var(--color-text-muted); }
+.cooking-recipe-card p strong { color: var(--color-text); }
+
+/* Klaar */
+.cooking-card--celebrate { flex: 0 1 auto; justify-content: center; }
+.cooking-card__dish { display: grid; place-items: center; }
+.cooking-card__dish img, .cooking-card__dish .cooking-asset-fallback { width: min(300px, 62vw); max-height: 38vh; object-fit: contain; }
+.cooking-card__badge { width: 52px; height: 52px; display: grid; place-items: center; margin-top: -10px; border-radius: 50%; background: var(--color-success-soft); color: var(--color-primary); }
+.cooking-stage--done .cooking-stage__shell { justify-content: center; }
+
+@media (max-width: 560px) {
+  .cooking-drop { grid-template-columns: 1fr; justify-items: center; gap: var(--space-3); }
+  .cooking-drop__arrow { width: 4px; height: 26px; background: repeating-linear-gradient(180deg, var(--color-border-strong) 0 7px, transparent 7px 13px); }
+  .cooking-drop__source { width: min(120px, 34vw); }
+  .cooking-drop__target { width: min(150px, 44vw); }
+  .cooking-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .treehouse-overview__rooms { position: absolute; z-index: 2; inset: 0; }
 .treehouse-overview__room { position: absolute; width: clamp(66px, 7vw, 104px); padding: 0; border: 0; background: transparent; color: #49352d; transition: transform var(--motion-default) var(--ease-storybook), filter var(--motion-fast) ease; }
 .treehouse-overview__room--bedroom { top: 29%; left: 28%; }
@@ -272,7 +343,7 @@
 .shopping-list header svg { width: 18px; }
 .shopping-list__progress { height: 5px; margin: 7px 0; overflow: hidden; border-radius: 3px; background: #e6dfd5; }
 .shopping-list__progress span { display: block; height: 100%; background: var(--color-primary); }
-.shopping-list > div:not(.shopping-list__progress) { display: grid; grid-template-columns: 26px 40px 1fr; align-items: center; gap: 7px; min-height: 48px; border-top: 1px solid #e5ddd2; }
+.shopping-list > div:not(.shopping-list__progress):not(.shopping-list__items) { display: grid; grid-template-columns: 26px 40px 1fr; align-items: center; gap: 7px; min-height: 48px; border-top: 1px solid #e5ddd2; }
 .shopping-list > div > span { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #b9afa4; border-radius: 50%; }
 .shopping-list > div.is-complete > span { border-color: var(--color-primary); background: var(--color-primary); color: white; }
 .shopping-list > div svg { width: 14px; }
@@ -312,6 +383,32 @@
 .shop-success p { color: var(--color-text-muted); }
 .shop-success .shop-success__secondary { min-height: 42px; margin-top: 7px; border: 1px solid var(--color-border) !important; background: transparent !important; color: var(--color-primary) !important; }
 .shop-exit { position: fixed; z-index: 5; left: 24px; bottom: 20px; min-height: 44px; padding: 8px 18px; border: 1px solid #fff9; border-radius: 22px; background: #fffaf0e8; color: var(--color-primary); font-weight: 800; }
+.shop-earn-link { width: 100%; border: 0; background: transparent; }
+
+/* Receptboodschappen: het lijstje staat vast in beeld in plaats van achter een icoon. */
+.shop-catalog { display: flex; flex-direction: column; }
+.shop-catalog > * { flex: 0 0 auto; }
+.shop-catalog .shop-products { flex: 1 1 auto; }
+.shop-product__art { height: 100%; aspect-ratio: auto; }
+.shopping-list--inline { position: static; width: auto; padding: 12px 14px; background: #fbfaf6; box-shadow: none; }
+.shopping-list--inline header { padding-bottom: 2px; }
+.shopping-list--inline header strong { font-size: .92rem; }
+.shopping-list__count { color: var(--color-text-muted); font-size: .78rem; font-weight: 800; }
+.shopping-list__items { display: grid; grid-template-columns: 1fr; gap: 2px; min-height: 0; border-top: 0 !important; }
+.shopping-list--inline .shopping-list__items > div { display: grid; grid-template-columns: 26px 36px 1fr auto; align-items: center; gap: 8px; min-height: 44px; border-top: 1px solid #e5ddd2; }
+.shopping-list--inline .shopping-list__items > div:first-child { border-top: 0; }
+.shopping-list--inline .shopping-list__items > div > span { width: 23px; height: 23px; display: grid; place-items: center; border: 2px solid #b9afa4; border-radius: 50%; }
+.shopping-list--inline .shopping-list__items > div.is-complete > span { border-color: var(--color-primary); background: var(--color-primary); color: white; }
+.shopping-list--inline .shopping-list__items svg { width: 14px; }
+.shopping-list--inline img { width: 36px; height: 36px; }
+.shopping-list--inline p strong { font-size: .88rem; }
+.shopping-list--inline p small { font-size: .72rem; }
+.shopping-list--inline b { padding: 3px 8px; border-radius: var(--radius-pill); background: #efe9df; color: var(--color-text-muted); font-size: .72rem; font-weight: 800; white-space: nowrap; }
+.shopping-list--inline b.is-complete { background: var(--color-success-soft); color: var(--color-primary); }
+.shop-success__missing { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.shop-success__missing li { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 9px; padding: 6px 10px; border-radius: 8px; background: #f4f1ea; text-align: left; }
+.shop-success__missing img { width: 38px; height: 38px; object-fit: contain; }
+.shop-success__missing small { color: var(--color-text-muted); font-weight: 800; white-space: nowrap; }
 
 .shop-street { position: relative; width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: none; background: #789968; isolation: isolate; }
 .shop-street::-webkit-scrollbar { display: none; }
@@ -585,20 +682,6 @@
 .math-scaling__row > b { color: var(--color-text-muted); font-size: .7rem; }
 .math-weighing { width: 100%; display: grid; justify-items: center; gap: 10px; }
 .digital-scale-wrap { width: 100%; display: grid; justify-items: center; gap: 9px; }
-.digital-scale { position: relative; width: min(310px, 82vw); height: 188px; display: grid; justify-items: center; align-content: end; }
-.digital-scale__ingredient { position: absolute; z-index: 0; top: 3px; width: 88px; height: 58px; object-fit: contain; transition: transform .18s ease; }
-.digital-scale__bowl { position: absolute; z-index: 1; top: 25px; width: 184px; height: 112px; object-fit: contain; filter: drop-shadow(0 9px 9px #3f2d1e26); transition: transform .18s ease; }
-.digital-scale__body { width: 236px; height: 74px; display: grid; place-items: center; padding: 9px 16px 13px; border-radius: 8px 8px 6px 6px; background: #b8c9b2; box-shadow: inset 0 -10px #8fa487, 0 9px 14px #35251924; }
-.digital-scale__display { min-width: 132px; height: 44px; display: grid; grid-template-columns: 22px 1fr 15px; align-items: center; gap: 6px; padding: 4px 10px; border: 3px solid #53675c; border-radius: 7px; background: #e7eee6; color: #34463d; font-variant-numeric: tabular-nums; }
-.digital-scale__display svg { width: 18px; }
-.digital-scale__display strong { font-size: 1.35rem; text-align: right; }
-.digital-scale__display span { font-size: .78rem; font-weight: 800; }
-.digital-scale.is-balanced .digital-scale__display { border-color: #547452; background: #e4f0df; }
-.digital-scale.is-balanced .digital-scale__bowl, .digital-scale.is-balanced .digital-scale__ingredient { transform: translateY(3px); }
-.digital-scale__controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
-.digital-scale__controls button { min-width: 60px; min-height: 44px; display: grid; place-items: center; padding: 7px 11px; border: 1px solid #bdcbb9; border-radius: 8px; background: #edf3e9; color: #476047; font: inherit; font-size: .78rem; font-weight: 850; }
-.digital-scale__controls button:last-child { min-width: 44px; padding: 7px; }
-.digital-scale__controls svg { width: 18px; }
 .math-scale { position: relative; width: min(300px, 82vw); height: 190px; display: grid; justify-items: center; align-content: end; padding-bottom: 18px; }
 .math-scale__bowl { position: absolute; top: 8px; left: 50%; width: 168px; height: 112px; transform: translateX(-50%); }
 .math-scale__bowl > img, .math-scale__bowl > .cooking-asset-fallback { width: 100%; height: 100%; min-height: 0; display: block; object-fit: contain; background: transparent; }
@@ -935,3 +1018,179 @@
   .math-card { animation: none; }
   .math-scale__bowl, .math-scale__display { transition: none; }
 }
+
+/* Ontdekken en rekenen: de begeleiding staat los van de opdracht.
+   De chrome (stoppen, reisbalk, voortgang) zweeft erboven; de vraag zelf
+   krijgt een eigen witte kaart met diepte. */
+.discovery-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); padding: 92px 16px 20px; }
+.discovery-card { width: min(540px, 100%); display: flex; flex-direction: column; gap: var(--space-3); padding: 6px 8px 18px; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
+.stage-chrome { display: grid; gap: var(--space-2); padding: 10px 16px; border-radius: var(--radius-card); background: var(--color-surface-glass); box-shadow: var(--shadow-soft); backdrop-filter: blur(10px); }
+.stage-chrome .discovery-stage__topbar { margin-bottom: 0; }
+.stage-chrome .journey-stages { margin-bottom: 2px; }
+
+.discovery-card__content { width: 100%; max-width: none; margin: 0; gap: var(--space-3); padding: clamp(20px, 3.4vh, 30px) clamp(18px, 4vw, 26px); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-raised); }
+.discovery-card--question .discovery-card__content, .discovery-card--correct .discovery-card__content { gap: var(--space-3); }
+.discovery-card--question .discovery-card__ingredient { width: 132px; height: 104px; }
+.discovery-card__content h1 { font-size: clamp(1.25rem, 3vw, 1.55rem); }
+.discovery-card__eyebrow { margin: 0; color: var(--color-primary); font-size: .7rem; letter-spacing: .04em; }
+
+/* Antwoordknoppen met een voelbare rand, zodat ze als knop lezen. */
+.discovery-options { gap: var(--space-2); }
+.discovery-options button { border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); box-shadow: 0 2px 0 #e7ded4, 0 6px 14px #4f40320f; transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease, border-color var(--motion-fast) ease, background var(--motion-fast) ease; }
+.discovery-options button:hover { border-color: var(--color-primary); background: var(--color-surface); transform: translateY(-2px); box-shadow: 0 4px 0 #e2d8ce, 0 12px 22px #4f403219; }
+.discovery-options button:active { transform: translateY(1px); box-shadow: 0 1px 0 #e7ded4; }
+.discovery-options button.is-correct { box-shadow: 0 2px 0 #c3d4c1; }
+.discovery-options button.is-wrong { box-shadow: 0 2px 0 #e3c8c2; }
+.discovery-feedback { border-radius: var(--radius-control); }
+
+/* De afrondschermen blijven één kaart, in dezelfde witte stijl. */
+.discovery-card--centered, .discovery-card--completion, .discovery-card--unavailable { display: grid; justify-items: center; align-content: center; gap: var(--space-3); padding: clamp(20px, 3.4vh, 30px) clamp(18px, 4vw, 26px); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-raised); text-align: center; }
+.discovery-card--completion .discovery-stage__topbar, .discovery-card--completion .journey-stages { width: 100%; }
+
+/* Rekenen krijgt dezelfde opbouw als ontdekken. */
+.math-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); padding: 92px 16px 20px; }
+.math-stage__frame { width: min(540px, 100%); display: flex; flex-direction: column; gap: var(--space-3); padding: 6px 8px 18px; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
+.math-card { width: 100%; max-width: none; margin: 0; gap: var(--space-3); padding: clamp(20px, 3.4vh, 30px) clamp(18px, 4vw, 26px); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-raised); }
+.math-card--centered, .math-card--feedback, .math-card--complete { min-height: 0; }
+.math-card h1 { font-size: clamp(1.25rem, 3vw, 1.55rem); }
+.math-stage .stage-chrome .math-stage__topbar { margin-bottom: 0; }
+.math-scaling__row, .math-sequence > li { border: 1px solid var(--color-border); border-radius: var(--radius-control); box-shadow: 0 2px 0 #e7ded4, 0 6px 14px #4f40320f; }
+.math-sequence > li.is-selected { box-shadow: 0 2px 0 #c3d4c1; }
+.math-sequence > li.is-hinted { box-shadow: 0 2px 0 #e2caa4; }
+.math-stepper { border-radius: var(--radius-control); }
+
+@media (max-width: 700px) {
+  /* De verzamelde ingrediënten kregen een vaste hoogte die het plaatje afkapte. */
+  .discovery-collected { flex-wrap: wrap; }
+  .discovery-collected > span { width: 76px; height: auto; }
+  .discovery-collected img, .discovery-collected .cooking-asset-fallback { width: 62px; height: 62px; }
+  .discovery-stage, .math-stage { padding: 80px 10px 16px; }
+  .discovery-card, .math-stage__frame { gap: var(--space-2); }
+}
+
+/* Receptvenster: één rustige kaart in plaats van losse blokken. */
+.recipe-dialog { width: min(100%, 440px); padding: 18px; border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-dialog); }
+.recipe-dialog .ck-dialog__illustration { min-height: 0; margin: 0 0 10px; padding: 10px; border-radius: var(--radius-control); background: var(--color-background-soft); }
+.recipe-dialog .ck-dialog__illustration img, .recipe-dialog .ck-dialog__illustration .cooking-asset-fallback { max-height: 140px; }
+.recipe-dialog .ck-dialog__copy h2 { padding: 0 36px; font-size: clamp(1.25rem, 3vw, 1.5rem); }
+.recipe-dialog .ck-dialog__close { top: 12px; right: 12px; }
+.recipe-dialog .ck-dialog__actions { margin-top: 12px; }
+.recipe-overview__facts { gap: 6px; margin-top: 8px; }
+.recipe-overview__facts > span { gap: 4px; padding: 5px 10px; border-radius: var(--radius-pill); background: var(--color-background-soft); font-size: .76rem; }
+.recipe-overview__facts svg { width: 15px; height: 15px; }
+.recipe-overview__needs { margin-top: 12px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-control); }
+.recipe-overview__ingredients, .recipe-overview__equipment { margin-top: 0; }
+.recipe-overview__ingredients h3, .recipe-overview__equipment h3 { margin: 0 0 6px; color: var(--color-primary); font-size: .72rem; letter-spacing: .03em; text-transform: uppercase; }
+.recipe-overview__ingredients li > img, .recipe-overview__ingredients li > .cooking-asset-fallback { width: 52px; height: 48px; min-height: 48px; }
+.recipe-overview__equipment { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--color-border); }
+.recipe-overview__equipment ul { gap: 6px 12px; }
+
+/* Verdubbelen: de oorspronkelijke hoeveelheid blijft zichtbaar, de eenheid
+   staat in de teller zelf in plaats van er los naast. */
+.math-scaling__row { grid-template-columns: 50px minmax(0, 1fr) auto; gap: 10px; padding: 8px 10px; }
+.math-scaling__name { min-width: 0; display: grid; gap: 1px; }
+.math-scaling__name strong { font-size: .88rem; }
+.math-scaling__name small { color: var(--color-text-muted); font-size: .7rem; font-weight: var(--font-weight-medium); }
+.math-stepper { width: auto; grid-template-columns: 44px minmax(62px, auto) 44px; }
+.math-stepper strong { display: flex; align-items: baseline; justify-content: center; gap: 2px; padding: 0 6px; }
+.math-stepper strong em { color: var(--color-text-muted); font-size: .72rem; font-style: normal; font-weight: var(--font-weight-bold); }
+.math-stepper strong { height: 46px; display: flex; align-items: center; justify-content: center; gap: 3px; padding: 0 8px; }
+.math-stepper strong em { align-self: center; }
+
+/* Feest bij een afronding: confetti over het gerecht, verder bijna geen tekst. */
+.celebration-card { gap: var(--space-4); }
+.celebration-card__stage { position: relative; width: 100%; display: grid; place-items: center; overflow: hidden; padding: var(--space-4) 0 var(--space-2); }
+.celebration-card__dish { display: grid; place-items: center; }
+.celebration-card__dish img, .celebration-card__dish .cooking-asset-fallback { width: min(290px, 60vw); max-height: 34vh; object-fit: contain; filter: drop-shadow(0 16px 18px #46321f2b); }
+.celebration-card h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); }
+.celebration-card .math-complete__checks, .celebration-card .stage-completion-status { display: none; }
+
+.confetti { position: absolute; z-index: 1; inset: -10% 0 0; overflow: hidden; pointer-events: none; }
+.confetti i { position: absolute; top: -14px; width: 9px; height: 14px; border-radius: 2px; opacity: 0; animation-name: confetti-fall; animation-timing-function: cubic-bezier(.35, .1, .55, 1); animation-iteration-count: 1; animation-fill-mode: forwards; }
+.confetti i.is-round { width: 9px; height: 9px; border-radius: 50%; }
+@keyframes confetti-fall {
+  0% { opacity: 0; transform: translate3d(0, -20px, 0) rotate(0deg); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(var(--confetti-drift, 0), 320px, 0) rotate(var(--confetti-spin, 180deg)); }
+}
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } }
+
+/* Receptlijstje als smalle strip: altijd een geheugensteuntje, uitklapbaar
+   voor de details, zonder de schappen weg te drukken. */
+.shopping-strip { display: grid; gap: 8px; }
+.shopping-strip__toggle { width: 100%; min-height: 56px; display: flex; align-items: center; gap: 10px; padding: 7px 12px 7px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; box-shadow: 0 2px 0 #e7ded4; }
+.shopping-strip__toggle:hover { border-color: var(--color-primary); }
+.shopping-strip__mark { width: 38px; height: 38px; flex: 0 0 38px; display: grid; place-items: center; border-radius: 50%; background: var(--color-success-soft); color: var(--color-primary); }
+.shopping-strip__mark svg { width: 19px; }
+.shopping-strip__items { display: flex; align-items: center; gap: 10px; }
+.shopping-strip__items i { position: relative; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--color-background-soft); }
+.shopping-strip__items i.is-complete { background: var(--color-success-soft); }
+.shopping-strip__items img { width: 30px; height: 30px; object-fit: contain; }
+.shopping-strip__items em { position: absolute; right: -5px; bottom: -3px; min-width: 20px; height: 20px; display: grid; place-items: center; padding: 0 4px; border: 2px solid var(--color-surface); border-radius: var(--radius-pill); background: var(--color-brown); color: #fff; font-size: .62rem; font-style: normal; font-weight: var(--font-weight-heavy); }
+.shopping-strip__items i.is-complete em { background: var(--color-primary); }
+.shopping-strip__items em svg { width: 11px; }
+.shopping-strip__count { margin-left: auto; color: var(--color-text-muted); font-size: .8rem; font-weight: var(--font-weight-heavy); }
+.shopping-strip__toggle > svg { width: 18px; color: var(--color-text-muted); transition: rotate var(--motion-default) ease; }
+.shopping-strip__toggle > svg.is-open { rotate: 180deg; }
+.shopping-strip__details { display: grid; gap: 2px; padding: 4px 12px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-background-soft); }
+.shopping-strip__details > div { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 9px; min-height: 44px; border-top: 1px solid #e5ddd2; }
+.shopping-strip__details > div:first-child { border-top: 0; }
+.shopping-strip__details img { width: 34px; height: 34px; object-fit: contain; }
+.shopping-strip__details p, .shopping-strip__details p strong, .shopping-strip__details p small { display: block; margin: 0; }
+.shopping-strip__details p strong { font-size: .86rem; }
+.shopping-strip__details p small { color: var(--color-text-muted); font-size: .72rem; }
+.shopping-strip__details b { padding: 3px 8px; border-radius: var(--radius-pill); background: #efe9df; color: var(--color-text-muted); font-size: .72rem; white-space: nowrap; }
+.shopping-strip__details b.is-complete { background: var(--color-success-soft); color: var(--color-primary); }
+/* De keuken staat vast: geen sleepcursor meer op de meubels. */
+.treehouse-kitchen-furnishing { cursor: pointer; }
+
+/* De handeling speelt zich af op het werkblad of de kookplaat, niet op wit. */
+.cooking-card__scene.has-surface { position: relative; width: 100%; border-radius: var(--radius-control); background-position: center; background-size: cover; box-shadow: inset 0 2px 14px #2d1b1033; }
+.cooking-card__scene.has-surface::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: #fffaf21f; pointer-events: none; }
+.cooking-card__scene.has-surface > * { position: relative; z-index: 1; }
+.cooking-card__scene--collect { padding: 0; }
+
+/* Tikstap: de kom staat op het blad, het gereedschap beweegt ernaartoe. */
+.cooking-tap__scene { position: relative; display: grid; place-items: center; padding: var(--space-3) 0; }
+.cooking-tap__vessel { width: min(200px, 42vw); display: grid; place-items: center; filter: drop-shadow(0 12px 14px #24191038); }
+.cooking-tap__vessel img, .cooking-tap__vessel .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-tap__tool { position: absolute; right: 4%; bottom: 2%; width: min(120px, 26vw); padding: 0; border: 0; background: transparent; cursor: pointer; filter: drop-shadow(0 8px 10px #24191040); }
+.cooking-tap__tool img, .cooking-tap__tool .cooking-asset-fallback { width: 100%; object-fit: contain; pointer-events: none; }
+.cooking-tap__tool:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 4px; border-radius: var(--radius-control); }
+.cooking-tap__label { padding: 5px 12px; border-radius: var(--radius-pill); background: var(--color-surface-glass); }
+.cooking-drop, .cooking-weighing, .cooking-heating, .cooking-baking, .cooking-choices { padding: var(--space-3); }
+.cooking-tap__overlay { position: absolute; top: 50%; left: 50%; width: min(220px, 46vw); aspect-ratio: 1; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; translate: -50% -50%; }
+.cooking-tap__overlay:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 4px; }
+.cooking-tap__tool { right: 1%; bottom: 4%; width: min(108px, 24vw); }
+
+/* Bedieningselementen moeten ook op de donkere kookplaat leesbaar blijven. */
+.cooking-card__scene.has-surface .cooking-button,
+.cooking-card__scene.has-surface .cooking-chip,
+.cooking-card__scene.has-surface .cooking-choice { box-shadow: 0 6px 16px #24191047; }
+.cooking-button:disabled { background: #efe8df; color: #6a5f57; }
+.cooking-heating__pan { position: relative; display: grid; place-items: center; width: min(190px, 40vw); filter: drop-shadow(0 12px 14px #24191047); }
+.cooking-heating__pan img, .cooking-heating__pan .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-heating__butter { position: absolute; top: 42%; left: 42%; width: 34%; translate: -50% -50%; }
+.cooking-card__scene.has-surface .cooking-drop__caption { padding: 3px 10px; border-radius: var(--radius-pill); background: var(--color-surface-glass); color: var(--color-text); }
+
+/* Weegschaal uit de keukenset: de waarde staat op het echte schermpje. */
+.cooking-scale { position: relative; width: min(230px, 48vw); display: grid; place-items: center; filter: drop-shadow(0 14px 16px #24191040); }
+.cooking-scale__body { width: 100%; display: block; }
+.cooking-scale__load { position: absolute; top: 12%; left: 50%; width: 44%; display: grid; place-items: center; translate: -50% 0; }
+.cooking-scale__load img, .cooking-scale__load .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-scale__display { position: absolute; top: 71%; left: 25%; width: 47%; height: 13%; display: flex; align-items: center; justify-content: center; gap: 3px; color: #3c4a3a; font-variant-numeric: tabular-nums; }
+.cooking-scale__display b { font-size: clamp(1rem, 4.4vw, 1.45rem); line-height: 1; }
+.cooking-scale__display em { font-size: .7em; font-style: normal; font-weight: var(--font-weight-bold); }
+.cooking-weighing__controls .cooking-chip { min-width: 58px; }
+.cooking-chip.is-add-5 { background: #f7cbb6; border-color: #e7b49c; color: #6d4433; }
+.cooking-chip.is-add-10 { background: #f8d79a; border-color: #e8c483; color: #6b5120; }
+.cooking-chip.is-subtract { background: #d8c9ee; border-color: #c5b3e0; color: #4c3a68; }
+.cooking-chip.is-reset { display: grid; place-items: center; background: var(--color-success-soft); border-color: #bfd2bb; color: var(--color-primary); }
+.cooking-chip.is-reset svg { width: 18px; }
+
+/* Bakken: de pannenkoek ligt in de pan. */
+.cooking-baking__pan { position: relative; width: min(230px, 48vw); display: grid; place-items: center; filter: drop-shadow(0 12px 14px #24191047); }
+.cooking-baking__pan > img, .cooking-baking__pan > .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-baking__pancake { position: absolute; top: 50%; left: 38%; width: 42%; translate: -50% -50%; }
+.cooking-baking__pancake img, .cooking-baking__pancake .cooking-asset-fallback { width: 100%; object-fit: contain; }
+.cooking-baking__pancake { left: 40.5%; width: 40%; }
