@@ -147,7 +147,7 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
 
 function MathShell({ journey, progress, onExit, children }: { journey: NonNullable<CookingProgressState['journeys'][RecipeConfig['id']]>; progress?: string; onExit?: () => void; children: React.ReactNode }) {
   return <main className="math-stage">
-    <img className="math-stage__background" src="/assets/library/treehouse/rooms/kitchen.png" alt="" />
+    <img className="math-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
     <div className="math-stage__frame">
       {(onExit || progress) && <header className="math-stage__topbar">
         {onExit ? <button type="button" onClick={onExit}><ArrowLeft />Stoppen</button> : <span />}

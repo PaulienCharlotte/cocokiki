@@ -12,6 +12,8 @@ export default function DecorAsset({ product, className = '' }: DecorAssetProps)
     src={product.image}
     alt={product.name}
     draggable={false}
+    loading="lazy"
+    decoding="async"
   />;
 }
 

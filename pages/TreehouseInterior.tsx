@@ -33,6 +33,10 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     const viewport = viewportRef.current;
     if (!viewport) return;
     const maximum = viewport.scrollWidth - viewport.clientWidth;
+    if (maximum <= 48) {
+      setScrollEdges({ left: true, right: true });
+      return;
+    }
     setScrollEdges({
       left: viewport.scrollLeft <= 2,
       right: viewport.scrollLeft >= maximum - 2,
@@ -79,14 +83,14 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
       </nav>}
 
       {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} />}
-      <RoomInventoryDrawer />
+      <RoomInventoryDrawer room={room} sceneRef={sceneRef} />
     </div>
 
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/treehouse/cookbook')} aria-label="Mijn Kookboek openen" title="Mijn Kookboek">
       <BookOpen aria-hidden="true" /><span>Kookboek</span>
     </button>}
 
-    <div className="treehouse-interior__pan-controls" aria-label="Kijk rond in de kamer">
+    <div className="treehouse-interior__pan-controls" aria-label="Kijk rond in de kamer" style={scrollEdges.left && scrollEdges.right ? { display: 'none' } : undefined}>
       <button type="button" aria-label="Kijk naar links" disabled={scrollEdges.left} onClick={() => panRoom(-1)}>
         <img src={ASSET_LIBRARY.treehouse.icons.arrowLeft} alt="" />
       </button>

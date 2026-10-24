@@ -114,7 +114,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   />;
 
   if (playingRecipe && playingJourney?.stage === 'cooking') return <main className="cooking-room cooking-coming-soon cooking-go-home">
-    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen.png" alt="De keuken in jouw eigen boomhut" />
+    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="De keuken in jouw eigen boomhut" />
     <section>
       <JourneyStageProgress journey={playingJourney} />
       <span aria-hidden="true"><ChefHat /></span>
@@ -125,7 +125,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   </main>;
 
   return <main className="cooking-room">
-    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen.png" alt="De keuken in jouw eigen boomhut" />
+    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="De keuken in jouw eigen boomhut" />
     <section className="recipe-library" aria-labelledby="cooking-title">
       <div className="recipe-library__controls">
         <header className="recipe-library__header">

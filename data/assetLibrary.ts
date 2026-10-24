@@ -25,7 +25,7 @@ export const ASSET_LIBRARY = {
     overview: '/assets/library/treehouse/overview/treehouse-overview.png',
     rooms: {
       livingRoom: '/assets/library/treehouse/rooms/living-room.png',
-      kitchen: '/assets/library/treehouse/rooms/kitchen.png',
+      kitchen: '/assets/library/treehouse/rooms/kitchen-furnished.png',
       bedroom: '/assets/library/treehouse/rooms/bedroom.png',
       terrace: '/assets/library/treehouse/rooms/terrace.png',
     },

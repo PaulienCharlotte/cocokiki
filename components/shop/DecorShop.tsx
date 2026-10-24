@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Armchair, Check, ChevronLeft, ChevronRight, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
+import { Armchair, Check, ChevronRight, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, saveRoomInventory } from '../../services/roomInventory';
@@ -25,8 +25,8 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
   const [coins, setCoins] = useState(loadCurrency);
   const definition = DECOR_STORES[store];
   const products = useMemo(() => DECOR_PRODUCTS.filter(product => product.store === store && (category === 'all' || product.category === category)), [category, store]);
-  const count = Object.values(basket).reduce((total, amount) => total + amount, 0);
-  const total = Object.entries(basket).reduce((sum, [id, amount]) => sum + DECOR_PRODUCTS_BY_ID[id].price * amount, 0);
+  const count = Object.values(basket).reduce<number>((total, amount) => total + Number(amount), 0);
+  const total = Object.entries(basket).reduce<number>((sum, [id, amount]) => sum + DECOR_PRODUCTS_BY_ID[id].price * Number(amount), 0);
   const Icon = store === 'furniture' ? Armchair : Sprout;
 
   const adjust = (id: string, delta: number) => {
@@ -65,7 +65,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
 
   return <main className={`shop-room decor-shop decor-shop--${store}`}>
     <img className="shop-room__background" src="/games/shop/shop-street.png" alt="Het gezellige winkelplein" />
-    <button className="decor-shop__back" type="button" onClick={onBack}><ChevronLeft /> Winkelplein</button>
+    <button className="shop-dismiss" type="button" onClick={onBack} aria-label="Terug naar het winkelplein" />
     <section className="shop-catalog decor-shop__catalog" aria-labelledby="decor-shop-title">
       <header className="shop-catalog__header">
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
@@ -92,7 +92,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
           {Object.entries(basket).map(([id, amount]) => { const product = DECOR_PRODUCTS_BY_ID[id]; return <div className="shop-basket-row" key={id}>
             <DecorAsset product={product} /><div><strong>{product.name}</strong><small>{store === 'furniture' ? 'Meubel' : 'Plant'}</small></div>
             <div className="shop-quantity"><button type="button" onClick={() => adjust(id, -1)} aria-label={`Minder ${product.name}`}><Minus /></button><span>{amount}</span><button type="button" onClick={() => adjust(id, 1)} aria-label={`Meer ${product.name}`}><Plus /></button></div>
-            <b>{amount * product.price}</b><button className="shop-remove" type="button" onClick={() => adjust(id, -amount)} aria-label={`Verwijder ${product.name}`}><Trash2 /></button>
+            <b>{Number(amount) * product.price}</b><button className="shop-remove" type="button" onClick={() => adjust(id, -Number(amount))} aria-label={`Verwijder ${product.name}`}><Trash2 /></button>
           </div>; })}
         </div>
         <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>

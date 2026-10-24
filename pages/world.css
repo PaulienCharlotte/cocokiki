@@ -65,6 +65,23 @@
 .treehouse-overview__background, .treehouse-interior__background { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
 .treehouse-overview::after, .treehouse-interior::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, #25150c16, transparent 30%, #25150c25); pointer-events: none; }
 .treehouse-interior__scene { position: relative; width: 100%; min-height: 100dvh; }
+.treehouse-interior--kitchen { width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
+.treehouse-interior--kitchen::-webkit-scrollbar { display: none; }
+.treehouse-interior--kitchen .treehouse-interior__scene { width: max(100vw, calc(100dvh * 1516 / 1038)); height: max(100dvh, calc(100vw * 1038 / 1516)); min-height: 0; }
+.treehouse-interior--kitchen .treehouse-interior__pan-controls { position: fixed; z-index: 4; top: 48%; right: 8px; left: 8px; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(-50%); }
+.treehouse-interior--kitchen .treehouse-interior__pan-controls button { width: 46px; height: 46px; display: grid; place-items: center; padding: 4px; border: 1px solid #fff7e8d9; border-radius: 50%; background: #fff8eddb; pointer-events: auto; }
+.treehouse-interior--kitchen .treehouse-interior__pan-controls button img { width: 100%; height: 100%; object-fit: contain; }
+.treehouse-interior--kitchen .treehouse-interior__pan-controls button:disabled { opacity: .28; pointer-events: none; }
+.kitchen-fixed-stations { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
+.kitchen-fixed-station { position: absolute; padding: 0; border: 0; border-radius: 8px; background: transparent; pointer-events: auto; cursor: pointer; }
+.kitchen-fixed-station:focus-visible { outline: 4px solid #fff0a8; outline-offset: 4px; background: #fff8df20; }
+.kitchen-fixed-station--worktop { left: 20.7%; top: 54%; width: 55.5%; height: 10%; }
+.kitchen-fixed-station--cooktop { left: 68%; top: 44%; width: 16%; height: 10%; }
+.treehouse-interior--kitchen .treehouse-kitchen-worktop { left: 25%; top: 55%; bottom: auto; width: 45%; height: 10%; }
+.kitchen-groceries-trigger { position: fixed; z-index: 10; top: 174px; right: 18px; width: 52px; height: 52px; display: grid; place-items: center; padding: 9px; border: 2px solid #fff5db; border-radius: 50%; background: #557052ed; color: #fffdf7; box-shadow: 0 10px 24px #2a190e52; }
+.kitchen-groceries-trigger:focus-visible { outline: 4px solid var(--color-focus); outline-offset: 3px; }
+.room-inventory-drawer.kitchen-inventory-drawer { grid-template-rows: auto auto minmax(0, 1fr); }
+.kitchen-inventory-drawer > nav { padding-top: 12px; }
 .treehouse-interior__pan-controls { display: none; }
 .treehouse-kitchen-furnishings { position: absolute; z-index: 2; inset: 0; overflow: hidden; pointer-events: none; }
 .treehouse-kitchen-furnishing { position: absolute; display: block; height: auto; padding: 0; border: 0; background: transparent; cursor: grab; pointer-events: auto; touch-action: none; user-select: none; filter: drop-shadow(0 14px 12px #2d1b1042); }
@@ -296,7 +313,18 @@
 .shop-success .shop-success__secondary { min-height: 42px; margin-top: 7px; border: 1px solid var(--color-border) !important; background: transparent !important; color: var(--color-primary) !important; }
 .shop-exit { position: fixed; z-index: 5; left: 24px; bottom: 20px; min-height: 44px; padding: 8px 18px; border: 1px solid #fff9; border-radius: 22px; background: #fffaf0e8; color: var(--color-primary); font-weight: 800; }
 
-.shop-street { position: relative; min-height: 100dvh; overflow: hidden; background: #789968; isolation: isolate; }
+.shop-street { position: relative; width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: none; background: #789968; isolation: isolate; }
+.shop-street::-webkit-scrollbar { display: none; }
+.shop-street__scene { position: relative; width: max(100vw, calc(100dvh * 2)); height: max(100dvh, calc(100vw / 2)); }
+.shop-street .shop-street__background { width: 100%; height: 100%; max-width: none; object-fit: fill; }
+.shop-street__scene .shop-street__stores { inset: 0; width: 100%; min-width: 0; }
+.shop-street__scene .shop-street__store { top: 13%; bottom: 25%; transform: none; }
+.shop-street__pan { position: fixed; z-index: 5; top: 54%; left: 10px; right: 10px; display: flex; justify-content: space-between; pointer-events: none; }
+.shop-street__pan button { width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid #fff7e8; border-radius: 50%; background: #fff8eded; color: #4e654c; box-shadow: 0 4px 15px #38291840; pointer-events: auto; }
+.shop-street__pan button:disabled { opacity: .3; pointer-events: none; }
+.shop-dismiss { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.shop-dismiss:focus-visible { outline: 3px solid #fff1a8; outline-offset: -6px; }
+.shop-dismiss + .shop-catalog { position: relative; z-index: 1; }
 .shop-street__background { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
 .shop-street__stores { position: absolute; z-index: 2; inset: 0; }
 .shop-street__store { position: absolute; top: 13%; bottom: 20%; padding: 0; border: 3px solid transparent; border-radius: 8px; background: transparent; color: transparent; cursor: pointer; transition: background var(--motion-fast) ease, border-color var(--motion-fast) ease, transform var(--motion-fast) ease; }
@@ -312,10 +340,6 @@
 .decor-shop__catalog { grid-template-rows: auto auto minmax(0, 1fr); }
 .decor-asset { display: block; object-fit: contain; }
 .decor-product .decor-asset.shop-product__art { width: 100%; height: 108px; max-width: 100%; min-height: 0; justify-self: center; aspect-ratio: auto; object-fit: contain; object-position: center; background-color: transparent; }
-.decor-shop--plants .decor-asset--monstera-basket { clip-path: inset(0 0 0 10%); }
-.decor-shop--plants .decor-asset--palm-white-pot,
-.decor-shop--plants .decor-asset--palm-clay-pot,
-.decor-shop--plants .decor-asset--snake-plant { clip-path: inset(0 10% 0 0); }
 .shop-basket-row > .decor-asset { width: 52px; height: 52px; }
 
 .room-inventory-trigger { position: fixed; z-index: 10; top: 112px; right: 18px; min-width: 52px; min-height: 52px; display: flex; align-items: center; gap: 7px; padding: 9px 13px; border: 2px solid #fff5db; border-radius: 26px; background: #557052ed; color: #fffdf7; font: inherit; font-size: .78rem; font-weight: 850; box-shadow: 0 10px 24px #2a190e52; backdrop-filter: blur(8px); }
@@ -625,8 +649,8 @@
 .school-room__activity:active { transform: translateY(-1px) scale(.985); }
 .school-room__activity--clock:active { transform: translate(-50%, -1px) scale(.985); }
 .school-room__activity:focus-visible { outline: 5px solid #fff1a8; outline-offset: 2px; background: #fff8dc21; }
-.school-clock-card { width: 100%; height: 100%; display: grid; place-items: center; align-content: center; gap: 2px; padding: 4%; border: 0; background: transparent; box-shadow: none; }
-.school-clock-card img { width: 68%; height: 72%; object-fit: contain; }
+.school-clock-card { width: 100%; height: 100%; display: grid; grid-template-rows: minmax(0, 1fr) auto; place-items: center; gap: 2px; padding: 4%; border: 0; background: transparent; box-shadow: none; }
+.school-clock-card img { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
 .school-clock-card strong { color: #4a3329; font-size: clamp(1.15rem, 2vw, 1.75rem); text-shadow: 0 2px 2px #fff7e0, 0 4px 10px #fff7e0; }
 
 @media (max-width: 860px) {
@@ -773,6 +797,7 @@
   .decor-shop__back { top: 86px; left: 10px; }
   .decor-shop { padding-top: 25vh; }
   .room-inventory-trigger { top: 82px; right: 10px; }
+  .kitchen-groceries-trigger { top: 144px; right: 10px; }
   .kitchen-cookbook-trigger { top: 82px; left: 10px; min-height: 48px; padding: 9px 12px; }
   .room-inventory-trigger span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .room-inventory-drawer { top: auto; right: 0; bottom: 0; left: 0; width: 100%; max-height: 76dvh; border-radius: 8px 8px 0 0; }
@@ -884,6 +909,21 @@
   .shop-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .recipe-library__header > span { display: none; }
 }
+
+.room-decor-layer { position: absolute; inset: 0; z-index: 12; pointer-events: none; }
+.room-placed-object { position: absolute; transform: translate(-50%, -50%); pointer-events: auto; }
+.room-placed-object__move { display: block; width: 100%; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; }
+.room-placed-object__move:active { cursor: grabbing; }
+.room-placed-object .decor-asset { display: block; width: 100%; height: auto; max-height: 48dvh; aspect-ratio: auto; object-fit: contain; }
+.room-placed-object .decor-asset img { display: block; width: 100%; height: auto; max-height: 48dvh; object-fit: contain; }
+.room-placed-object.is-selected { outline: 2px dashed #607754; outline-offset: 5px; border-radius: 8px; }
+.room-placed-object__return { position: absolute; right: -15px; top: -22px; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #c9cfc2; border-radius: 50%; background: #fffaf1; color: #526b48; box-shadow: 0 3px 8px #302a3020; }
+.room-inventory-place { width: 100%; padding: 0; border: 0; background: transparent; cursor: grab; touch-action: none; }
+.room-decor-ghost { position: fixed; z-index: 1000; width: 180px; max-width: 40vw; transform: translate(-50%, -50%); pointer-events: none; filter: drop-shadow(0 12px 10px #302a3038); }
+.room-decor-ghost .decor-asset { width: 100%; height: 180px; }
+.room-return-target { position: fixed; z-index: 999; right: 16px; bottom: max(20px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; padding: 18px; border: 2px dashed #607754; border-radius: 8px; background: #fffaf1; color: #526b48; pointer-events: none; }
+.room-return-target.is-over, .room-inventory-trigger.is-drop-target { background: #dcebcf; outline: 3px solid #607754; }
+.room-decor-notice { position: fixed; z-index: 1001; bottom: 15px; left: 10px; padding: 12px; background: #fffaf1; color: #803c35; }
 
 @media (prefers-reduced-motion: reduce) {
   .world-island, .world-island > span, .world-hud__brand, .world-profile__trigger, .world-profile__trigger svg, .avatar-picker > button, .treehouse-overview__room, .treehouse-interior__collections button { transition: none; }

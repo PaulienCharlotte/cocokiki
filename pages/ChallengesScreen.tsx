@@ -22,7 +22,7 @@ export default function ChallengesScreen({ onNavigate }: ChallengesScreenProps) 
       </button>
       <button className="school-room__activity school-room__activity--clock" type="button" aria-label="Klokkijken openen" onClick={() => onNavigate('/school/clock')}>
         <span className="school-clock-card">
-          <img src="/games/school/clock/clock-navigation.png" alt="" draggable={false} />
+          <img src="/games/school/clock/clock-school-navigation-v2.png" alt="" draggable={false} />
           <strong>Klokkijken</strong>
         </span>
       </button>

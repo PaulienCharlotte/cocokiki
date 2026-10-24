@@ -53,8 +53,8 @@ const decor = (
   crop: SpriteCrop,
 ): DecorProduct => ({ id, name, store, category, price, image: `/assets/library/shop/decor/products/${id}.png?v=2`, crop });
 
-// Crops are percentages of the supplied transparent overview sheet.
-export const DECOR_PRODUCTS: DecorProduct[] = [
+// Source-sheet crops are retained for reference; the shop renders isolated PNGs.
+const EXISTING_DECOR_PRODUCTS: DecorProduct[] = [
   decor('single-bed', 'Eenpersoonsbed', 'furniture', 'sleeping', 85, { x: 0, y: 0, width: 13, height: 25 }),
   decor('double-bed', 'Tweepersoonsbed', 'furniture', 'sleeping', 120, { x: 13, y: 0, width: 17.5, height: 27 }),
   decor('bunk-bed', 'Hoogslaper', 'furniture', 'sleeping', 135, { x: 31, y: 0, width: 17, height: 28 }),
@@ -89,6 +89,27 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
   decor('succulent', 'Vetplantje', 'plants', 'small-plants', 18, { x: 82, y: 80, width: 8, height: 11 }),
   decor('small-cactus', 'Kleine cactus', 'plants', 'small-plants', 18, { x: 88.5, y: 69, width: 6, height: 20 }),
   decor('tall-cactus', 'Hoge cactus', 'plants', 'small-plants', 24, { x: 94, y: 68, width: 6, height: 21 }),
+];
+
+const cleanPlants = new Set(['monstera-basket', 'orange-tree', 'pink-flower', 'hanging-vine', 'white-flower', 'hanging-fern', 'snake-plant']);
+const furniture = (id: string, name: string, category: DecorCategory, price: number): DecorProduct => ({
+  id, name, store: 'furniture', category, price,
+  image: `/assets/library/shop/decor/products/${id}.png?v=3`,
+  crop: { x: 0, y: 0, width: 100, height: 100 },
+});
+
+export const DECOR_PRODUCTS: DecorProduct[] = [
+  furniture('corner-sofa', 'Zachte hoekbank', 'seating', 110),
+  furniture('dining-set', 'Ronde eethoek', 'tables', 95),
+  furniture('ribbed-sideboard', 'Geribbeld dressoir', 'storage', 75),
+  furniture('arched-cabinet', 'Boogkast', 'storage', 85),
+  furniture('rose-armchair', 'Roze fauteuil', 'seating', 55),
+  furniture('rose-pouf', 'Roze poef', 'seating', 30),
+  furniture('terrazzo-table', 'Terrazzo bijzettafel', 'tables', 45),
+  furniture('arched-floor-lamp', 'Booglamp', 'lighting', 35),
+  ...EXISTING_DECOR_PRODUCTS.map(product => cleanPlants.has(product.id)
+    ? { ...product, image: `/assets/library/shop/decor/products/${product.id}-v3.png` }
+    : { ...product, image: `/assets/library/shop/decor/products/${product.id}-v4.png` }),
 ];
 
 export const DECOR_PRODUCTS_BY_ID = Object.fromEntries(

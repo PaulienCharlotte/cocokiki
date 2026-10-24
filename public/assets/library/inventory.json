@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-24T09:39:55.611Z",
-  "count": 184,
+  "generatedAt": "2026-10-24T18:34:28.518Z",
+  "count": 231,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -111,8 +111,32 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:arched-cabinet",
+      "path": "/assets/library/shop/decor/products/arched-cabinet.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:arched-floor-lamp",
+      "path": "/assets/library/shop/decor/products/arched-floor-lamp.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-v4",
+      "path": "/assets/library/shop/decor/products/bunk-bed-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:bunk-bed",
       "path": "/assets/library/shop/decor/products/bunk-bed.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:coffee-table-v4",
+      "path": "/assets/library/shop/decor/products/coffee-table-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -123,8 +147,32 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:corner-sofa",
+      "path": "/assets/library/shop/decor/products/corner-sofa.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-wardrobe-v4",
+      "path": "/assets/library/shop/decor/products/cream-wardrobe-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:cream-wardrobe",
       "path": "/assets/library/shop/decor/products/cream-wardrobe.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:dining-set",
+      "path": "/assets/library/shop/decor/products/dining-set.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:double-bed-v4",
+      "path": "/assets/library/shop/decor/products/double-bed-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -135,8 +183,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:drawer-chest-v4",
+      "path": "/assets/library/shop/decor/products/drawer-chest-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:drawer-chest",
       "path": "/assets/library/shop/decor/products/drawer-chest.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:flower-lights-v4",
+      "path": "/assets/library/shop/decor/products/flower-lights-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -147,8 +207,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:flower-rug-v4",
+      "path": "/assets/library/shop/decor/products/flower-rug-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:flower-rug",
       "path": "/assets/library/shop/decor/products/flower-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:green-chair-v4",
+      "path": "/assets/library/shop/decor/products/green-chair-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -159,8 +231,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:green-lamp-v4",
+      "path": "/assets/library/shop/decor/products/green-lamp-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:green-lamp",
       "path": "/assets/library/shop/decor/products/green-lamp.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:green-wardrobe-v4",
+      "path": "/assets/library/shop/decor/products/green-wardrobe-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -171,8 +255,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:hanging-chair-v4",
+      "path": "/assets/library/shop/decor/products/hanging-chair-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:hanging-chair",
       "path": "/assets/library/shop/decor/products/hanging-chair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:hanging-fern-v3",
+      "path": "/assets/library/shop/decor/products/hanging-fern-v3.png",
       "category": "shop",
       "format": "png"
     },
@@ -183,8 +279,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:hanging-vine-v3",
+      "path": "/assets/library/shop/decor/products/hanging-vine-v3.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:hanging-vine",
       "path": "/assets/library/shop/decor/products/hanging-vine.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:jute-rug-v4",
+      "path": "/assets/library/shop/decor/products/jute-rug-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -195,8 +303,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:leaf-rug-v4",
+      "path": "/assets/library/shop/decor/products/leaf-rug-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:leaf-rug",
       "path": "/assets/library/shop/decor/products/leaf-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:media-cabinet-v4",
+      "path": "/assets/library/shop/decor/products/media-cabinet-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -207,8 +327,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:monstera-basket-v3",
+      "path": "/assets/library/shop/decor/products/monstera-basket-v3.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:monstera-basket",
       "path": "/assets/library/shop/decor/products/monstera-basket.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:orange-tree-v3",
+      "path": "/assets/library/shop/decor/products/orange-tree-v3.png",
       "category": "shop",
       "format": "png"
     },
@@ -219,8 +351,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:orchid-v4",
+      "path": "/assets/library/shop/decor/products/orchid-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:orchid",
       "path": "/assets/library/shop/decor/products/orchid.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:palm-clay-pot-v4",
+      "path": "/assets/library/shop/decor/products/palm-clay-pot-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -231,8 +375,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:palm-white-pot-v4",
+      "path": "/assets/library/shop/decor/products/palm-white-pot-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:palm-white-pot",
       "path": "/assets/library/shop/decor/products/palm-white-pot.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pink-flower-v3",
+      "path": "/assets/library/shop/decor/products/pink-flower-v3.png",
       "category": "shop",
       "format": "png"
     },
@@ -243,8 +399,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:pink-lamp-v4",
+      "path": "/assets/library/shop/decor/products/pink-lamp-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:pink-lamp",
       "path": "/assets/library/shop/decor/products/pink-lamp.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pink-rug-v4",
+      "path": "/assets/library/shop/decor/products/pink-rug-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -255,8 +423,38 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:rattan-chair-v4",
+      "path": "/assets/library/shop/decor/products/rattan-chair-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:rattan-chair",
       "path": "/assets/library/shop/decor/products/rattan-chair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-sideboard",
+      "path": "/assets/library/shop/decor/products/ribbed-sideboard.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:rose-armchair",
+      "path": "/assets/library/shop/decor/products/rose-armchair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:rose-pouf",
+      "path": "/assets/library/shop/decor/products/rose-pouf.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:round-table-v4",
+      "path": "/assets/library/shop/decor/products/round-table-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -267,8 +465,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:single-bed-v4",
+      "path": "/assets/library/shop/decor/products/single-bed-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:single-bed",
       "path": "/assets/library/shop/decor/products/single-bed.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:small-cactus-v4",
+      "path": "/assets/library/shop/decor/products/small-cactus-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -279,8 +489,20 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:snake-plant-v3",
+      "path": "/assets/library/shop/decor/products/snake-plant-v3.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:snake-plant",
       "path": "/assets/library/shop/decor/products/snake-plant.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:soft-sofa-v4",
+      "path": "/assets/library/shop/decor/products/soft-sofa-v4.png",
       "category": "shop",
       "format": "png"
     },
@@ -291,14 +513,38 @@
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:succulent-v4",
+      "path": "/assets/library/shop/decor/products/succulent-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:succulent",
       "path": "/assets/library/shop/decor/products/succulent.png",
       "category": "shop",
       "format": "png"
     },
     {
+      "id": "assets:library:shop:decor:products:tall-cactus-v4",
+      "path": "/assets/library/shop/decor/products/tall-cactus-v4.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
       "id": "assets:library:shop:decor:products:tall-cactus",
       "path": "/assets/library/shop/decor/products/tall-cactus.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:terrazzo-table",
+      "path": "/assets/library/shop/decor/products/terrazzo-table.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:white-flower-v3",
+      "path": "/assets/library/shop/decor/products/white-flower-v3.png",
       "category": "shop",
       "format": "png"
     },
@@ -413,6 +659,12 @@
     {
       "id": "assets:library:treehouse:rooms:bedroom",
       "path": "/assets/library/treehouse/rooms/bedroom.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:kitchen-furnished",
+      "path": "/assets/library/treehouse/rooms/kitchen-furnished.png",
       "category": "treehouse",
       "format": "png"
     },
@@ -533,6 +785,36 @@
     {
       "id": "games:red-baby-lua:rocks",
       "path": "/games/red-baby-lua/rocks.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:clock:clock-memory",
+      "path": "/games/school/clock/clock-memory.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:clock:clock-navigation",
+      "path": "/games/school/clock/clock-navigation.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:clock:clock-race",
+      "path": "/games/school/clock/clock-race.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:clock:clock-school-navigation-v2",
+      "path": "/games/school/clock/clock-school-navigation-v2.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:clock:clock-set",
+      "path": "/games/school/clock/clock-set.png",
       "category": "games",
       "format": "png"
     },

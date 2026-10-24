@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import AppShell from '../components/platform/AppShell';
@@ -23,7 +24,7 @@ import { resolveRoute } from '../platform/routes';
 import { PROFILE_AVATARS, PROFILE_AVATAR_KEY } from '../services/profile';
 import { createEmptyCookingProgress } from '../services/cookingProgress';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_STORES } from '../data/decorCatalog';
-import { addRoomPurchasesOnce, createEmptyRoomInventory } from '../services/roomInventory';
+import { addRoomPurchasesOnce, availableRoomQuantity, createEmptyRoomInventory, migrateRoomInventory, moveRoomItem, placeRoomItem, returnRoomItem } from '../services/roomInventory';
 
 test('destination registry exposes the remaining world destinations', () => {
   assert.deepEqual(DESTINATIONS.map(destination => destination.id), ['treehouse', 'travel', 'shop']);
@@ -105,12 +106,13 @@ test('travel and challenges remain gateways to existing games', () => {
   assert.match(challenges, /games\/school\/school-interior\.jpg/);
   assert.match(challenges, /games\/school\/topo-cta\.png/);
   assert.match(challenges, /games\/school\/tables-cta\.png/);
+  assert.match(challenges, /games\/school\/clock\/clock-school-navigation-v2\.png/);
 });
 
 test('destination rooms use their dedicated illustrated backgrounds', () => {
   const cookbook = renderToStaticMarkup(<CookbookScreen />);
   const shop = renderToStaticMarkup(<ShopScreen />);
-  assert.match(cookbook, /assets\/library\/treehouse\/rooms\/kitchen\.png/);
+  assert.match(cookbook, /assets\/library\/treehouse\/rooms\/kitchen-furnished\.png/);
   assert.match(cookbook, /Mijn Kookboek/);
   assert.match(cookbook, /Receptcategorieën/);
   assert.match(cookbook, /Bananenpannenkoekjes/);
@@ -135,9 +137,18 @@ test('furniture and plant shops expose filters, scrollable products and local as
   const plants = renderToStaticMarkup(<DecorShop store="plants" onBack={() => undefined} />);
   assert.match(furniture, /Meubelwinkel/);
   assert.match(furniture, /Meubels en planten|Meubel/);
-  assert.match(furniture, /assets\/library\/shop\/decor\/products\/single-bed\.png\?v=2/);
+  assert.match(furniture, /assets\/library\/shop\/decor\/products\/single-bed-v4\.png/);
   assert.match(plants, /Plantenwinkel/);
   assert.match(plants, /Grote planten/);
+});
+
+test('decor products have individual local PNG assets with transparency', () => {
+  for (const product of DECOR_PRODUCTS) {
+    const filename = `public${product.image.split('?')[0]}`;
+    const png = readFileSync(filename);
+    assert.equal(png.subarray(1, 4).toString(), 'PNG', product.id);
+    assert.equal(png[25], 6, `${product.id} needs RGBA transparency`);
+  }
 });
 
 test('room inventory applies decor purchases only once', () => {
@@ -146,6 +157,35 @@ test('room inventory applies decor purchases only once', () => {
   assert.equal(bought.owned['soft-sofa'], 1);
   assert.equal(bought.owned.monstera, undefined);
   assert.equal(addRoomPurchasesOnce(bought, 'decor:test', { 'soft-sofa': 1 }), bought);
+});
+
+test('room decoration conserves purchases across rooms, moving and returning', () => {
+  const bought = addRoomPurchasesOnce(createEmptyRoomInventory(), 'placement:test', { 'soft-sofa': 1 });
+  const item = { id: 'sofa:1', productId: 'soft-sofa', room: 'living-room' as const, x: 50, y: 70 };
+  const placed = placeRoomItem(bought, item);
+  assert.equal(availableRoomQuantity(placed, item.productId), 0);
+  assert.equal(placeRoomItem(placed, { ...item, id: 'sofa:2', room: 'bedroom' }), placed);
+  const moved = moveRoomItem(placed, item.id, 60, 80);
+  assert.deepEqual(moved.placements[0], { ...item, x: 60, y: 80 });
+  assert.equal(moved.owned['soft-sofa'], 1);
+  assert.deepEqual(migrateRoomInventory(JSON.parse(JSON.stringify(moved))), moved);
+  const returned = returnRoomItem(moved, item.id);
+  assert.equal(availableRoomQuantity(returned, item.productId), 1);
+  assert.equal(returnRoomItem(returned, item.id), returned);
+  assert.equal(placeRoomItem(returned, { ...item, room: 'bedroom' }).placements[0].room, 'bedroom');
+});
+
+test('room inventory migrates existing purchases and rejects invalid or excess placements', () => {
+  const legacy = { version: 1, owned: { 'soft-sofa': 1, unknown: 4 }, appliedTransactions: ['old'] };
+  const migrated = migrateRoomInventory(legacy);
+  assert.deepEqual(migrated.placements, []);
+  assert.equal(availableRoomQuantity(migrated, 'soft-sofa'), 1);
+  assert.deepEqual(migrated.appliedTransactions, ['old']);
+  const item = { id: 'one', productId: 'soft-sofa', room: 'kitchen', x: 50, y: 70 };
+  const recovered = migrateRoomInventory({ ...legacy, placements: [null, { ...item, room: 'missing' }, { ...item, x: NaN }, item, item, { ...item, id: 'extra' }] });
+  assert.equal(recovered.placements.length, 1);
+  assert.equal(availableRoomQuantity(recovered, 'soft-sofa'), 0);
+  assert.equal(addRoomPurchasesOnce(recovered, 'old', { 'soft-sofa': 1 }), recovered);
 });
 
 test('shop catalog has configurable package prices and enables purchases', () => {
@@ -178,8 +218,10 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(kitchen, /aria-label="Mijn Kookboek openen"/);
   assert.doesNotMatch(kitchen, /Mijn keuken/);
   assert.doesNotMatch(kitchen, /Naar Kookstudio/);
-  assert.equal((kitchen.match(/treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/g) ?? []).length, 5);
-  assert.match(kitchen, /aria-label="Kookeiland openen of verslepen"/);
+  assert.doesNotMatch(kitchen, /treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/);
+  assert.match(kitchen, /aria-label="Kookeiland openen"/);
+  assert.match(kitchen, /aria-label="Kookplaat openen"/);
+  assert.match(kitchen, /aria-label="Mijn boodschappen openen"/);
   assert.match(kitchen, /data-kitchen-station="worktop"/);
   assert.match(kitchen, /data-kitchen-station="cooktop"/);
   assert.match(kitchen, /aria-label="Kijk naar links"/);
@@ -210,9 +252,7 @@ test('asset library exposes stable treehouse rooms and all extracted icons', () 
 test('interactive kitchen separates groceries and keeps standard equipment available', () => {
   const progress = createEmptyCookingProgress();
   progress.inventory.consumables = { banana: 2, eggs: 3, oats: 40 };
-  assert.deepEqual(buildKitchenInventory(progress, 'fridge').map(item => item.id), ['banana', 'eggs']);
-  assert.deepEqual(buildKitchenInventory(progress, 'pantry').map(item => item.id), ['oats']);
-  assert.deepEqual(buildKitchenInventory(progress, 'island'), []);
-  assert.deepEqual(buildKitchenInventory(progress, 'cart').map(item => item.id), ['bowl', 'fork', 'pan', 'spatula']);
-  assert.deepEqual(buildKitchenInventory(progress, 'oven'), []);
+  assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.id), ['banana', 'eggs', 'oats']);
+  assert.deepEqual(buildKitchenInventory(progress, 'equipment').map(item => item.id), ['bowl', 'fork', 'pan', 'spatula']);
+  assert.deepEqual(buildKitchenInventory(createEmptyCookingProgress(), 'groceries'), []);
 });
