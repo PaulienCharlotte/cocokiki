@@ -2,7 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import './design-system/tokens.css';
 import './app.css';
+import './design-system/components.css';
+import './pages/world.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

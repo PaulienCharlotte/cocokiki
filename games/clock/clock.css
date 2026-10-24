@@ -1,0 +1,181 @@
+.clock-module {
+  min-height: 100dvh;
+  padding: 104px 18px 32px;
+  color: var(--color-text);
+  background:
+    linear-gradient(#6b47263d, #6b47263d),
+    url('/games/school/school-interior.jpg') center / cover fixed;
+}
+
+.clock-module button { font-family: inherit; }
+.analog-clock { width: 100%; height: auto; display: block; overflow: visible; }
+.analog-clock.is-interactive { touch-action: none; cursor: grab; }
+.analog-clock.is-interactive:active, .analog-clock.is-dragging { cursor: grabbing; }
+.analog-clock__drag-target { cursor: grab; pointer-events: stroke; }
+
+.clock-hub,
+.clock-game {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  border: 1px solid #e0d5c9;
+  border-radius: 8px;
+  background: #fffaf2f2;
+  box-shadow: 0 22px 60px #452d1f3d;
+  backdrop-filter: blur(9px);
+}
+
+.clock-hub { padding: clamp(16px, 3vw, 30px); }
+.clock-hub__intro { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 2px 4px 24px; }
+.clock-hub__mascot { width: clamp(112px, 15vw, 170px); flex: 0 0 auto; }
+.clock-hub__intro p { margin: 0 0 2px; color: #577052; font-size: .75rem; font-weight: 850; text-transform: uppercase; }
+.clock-hub__intro h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1; }
+.clock-hub__intro span { display: block; margin-top: 8px; color: var(--color-text-muted); font-size: 1rem; }
+.clock-hub__games { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+.clock-mode-card { min-width: 0; overflow: hidden; border: 1px solid #dfd4c8; border-radius: 8px; background: #fffdf9; box-shadow: 0 9px 24px #5b402017; }
+.clock-mode-card__art { height: 230px; display: grid; place-items: center; padding: 18px; background: #f6eadc; }
+.clock-mode-card--coral .clock-mode-card__art { background: #f3ddd7; }
+.clock-mode-card--blue .clock-mode-card__art { background: #deebe8; }
+.clock-mode-card__art > img { width: 100%; height: 100%; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; display: block; object-fit: contain; filter: drop-shadow(0 9px 10px #67462b28); }
+.clock-mode-card__copy { min-height: 176px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 13px; padding: 16px; }
+.clock-mode-card__copy > div { grid-column: 1 / -1; align-self: start; }
+.clock-mode-card h2 { margin: 0; font-size: 1.25rem; }
+.clock-mode-card p { margin: 4px 0 0; color: var(--color-text-muted); font-size: .86rem; }
+.clock-mode-card__progress { color: #6e7d68; font-size: .72rem; font-weight: 750; }
+.clock-mode-card .ck-button { min-width: 104px; }
+
+.clock-game { position: relative; min-height: 650px; padding: 16px; }
+.clock-game-header { min-height: 70px; display: grid; grid-template-columns: 120px minmax(0, 1fr) 300px; align-items: center; gap: 12px; border-bottom: 1px solid #e0d6cc; }
+.clock-game-header h1 { margin: 0; text-align: center; font-size: 1.15rem; }
+.clock-level-picker { min-width: 0; display: grid; grid-template-columns: minmax(112px, 1fr) auto; align-items: center; gap: 8px; }
+.clock-level-picker__label { min-width: 0; display: grid; gap: 1px; text-align: right; }
+.clock-level-picker__label span { color: #6f8069; font-size: .64rem; font-weight: 850; text-transform: uppercase; }
+.clock-level-picker__label strong { overflow: hidden; color: #564b45; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.clock-levels { display: flex; justify-content: flex-end; gap: 4px; }
+.clock-levels button { position: relative; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid #d8cfc4; border-radius: 50%; background: #f2ece5; color: #776b64; font-size: .72rem; font-weight: 850; }
+.clock-levels button[aria-pressed='true'] { border-color: #52694c; background: #52694c; color: #fff; }
+.clock-levels button svg { position: absolute; right: -2px; bottom: -2px; padding: 1px; border-radius: 50%; background: #fff9ef; color: #4f7258; }
+.clock-round-meta { display: flex; justify-content: space-between; margin: 12px 2px; color: var(--color-text-muted); font-size: .8rem; }
+
+.clock-memory__grid { width: min(100%, 720px); margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; perspective: 900px; }
+.clock-memory-card { aspect-ratio: 1; min-width: 0; padding: 0; border: 0; background: transparent; perspective: 900px; }
+.clock-memory-card__inner { position: relative; width: 100%; height: 100%; display: block; transform-style: preserve-3d; transition: transform 360ms var(--ease-storybook); }
+.clock-memory-card.is-open .clock-memory-card__inner { transform: rotateY(180deg); }
+.clock-memory-card__back,
+.clock-memory-card__front { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; border: 1px solid #ddcdb9; border-radius: 8px; backface-visibility: hidden; box-shadow: 0 5px 14px #64462e20; }
+.clock-memory-card__back { background: linear-gradient(145deg, #e9bd79, #d99d5e); }
+.clock-memory-card__back i { width: 34%; aspect-ratio: 1; display: block; border: 3px solid #f7dfb2; border-radius: 50% 50% 45% 55%; transform: rotate(-18deg); }
+.clock-memory-card__front { padding: 7px; background: #fffdf9; transform: rotateY(180deg); }
+.clock-memory-card__front .analog-clock { width: 92%; }
+.clock-memory-card__front strong { padding: 8px 10px; border: 1px solid #9ebbb1; border-radius: 6px; background: #e3efea; font-size: clamp(1rem, 3vw, 1.65rem); }
+.clock-memory-card.is-matched .clock-memory-card__front { border-color: #6f906c; background: #edf4e9; }
+
+.clock-instruction { width: min(100%, 650px); margin: 14px auto 8px; padding: 12px 16px; border-left: 4px solid #789071; background: #f5efe5; text-align: center; }
+.clock-instruction span { color: #6f625d; font-size: .8rem; }
+.clock-instruction h2 { margin: 2px 0; font-size: clamp(1.3rem, 4vw, 2rem); }
+.clock-instruction small { color: #6d7d67; font-weight: 750; }
+.clock-set__workspace { width: min(100%, 760px); margin: 0 auto; display: grid; grid-template-columns: minmax(260px, 1fr) 230px; align-items: center; gap: 20px; }
+.clock-set__workspace > .analog-clock { width: min(100%, 390px); justify-self: center; }
+.clock-set__controls { display: grid; gap: 10px; }
+.clock-set__controls > div { display: grid; grid-template-columns: 1fr 44px 46px 44px; align-items: center; gap: 5px; padding: 7px; border: 1px solid #d8cec2; border-radius: 8px; background: #fffdf9; }
+.clock-set__controls span { color: var(--color-text-muted); font-size: .76rem; font-weight: 750; }
+.clock-set__controls button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid #bfccba; border-radius: 8px; background: #eaf1e7; color: #4f6850; }
+.clock-set__controls button svg { width: 18px; }
+.clock-set__controls strong { text-align: center; font-size: 1.15rem; }
+.clock-game__feedback { min-height: 32px; display: grid; place-items: center; margin-top: 5px; color: #665b55; font-size: .84rem; font-weight: 750; text-align: center; }
+.clock-game__feedback span { display: inline-flex; align-items: center; gap: 5px; }
+.clock-game__feedback .is-correct { color: #4f7258; }
+.clock-game__feedback .is-wrong { color: #92534e; }
+.clock-game__actions { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+
+.clock-race__modes { width: fit-content; display: flex; margin: 12px auto 0; padding: 3px; border: 1px solid #d8cfc4; border-radius: 8px; background: #eee8df; }
+.clock-race__modes button { min-height: 34px; padding: 5px 13px; border: 0; border-radius: 6px; background: transparent; color: #71655f; font-size: .76rem; font-weight: 800; }
+.clock-race__modes button[aria-pressed='true'] { background: #fffdf9; color: #4e694f; box-shadow: 0 2px 6px #5d44331c; }
+
+.clock-race__choices { width: min(100%, 860px); margin: 24px auto 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.clock-race__choices button { min-width: 0; display: grid; gap: 5px; padding: 10px; border: 2px solid transparent; border-radius: 8px; background: transparent; color: var(--color-text-muted); font-weight: 750; }
+.clock-race__choices button:not(:disabled):hover { background: #f0ebe2; }
+.clock-race__choices button.is-selected { border-color: #9f8d7f; background: #f2ece5; }
+.clock-race__choices button.is-correct { border-color: #5f805c; background: #e8f0e4; }
+.clock-race__choices button.is-wrong { border-color: #ad655e; background: #f6e5df; }
+.clock-race__choices .analog-clock { width: 100%; }
+.clock-digital-choice { width: 100%; aspect-ratio: 1; display: grid; place-items: center; border: 2px solid #9cb8ae; border-radius: 8px; background: #e4efea; color: #304941; font-size: clamp(1.45rem, 5vw, 2.8rem); font-variant-numeric: tabular-nums; letter-spacing: 0; box-shadow: inset 0 0 0 7px #f9f5ec, 0 7px 16px #5c463023; }
+
+.clock-completion { position: absolute; z-index: 4; top: 50%; left: 50%; width: min(calc(100% - 28px), 430px); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; padding: 20px; border: 1px solid #d9ccbd; border-radius: 8px; background: #fffaf2; text-align: left; box-shadow: 0 22px 60px #452d1f55; transform: translate(-50%, -50%); }
+.clock-completion__check { width: 62px; height: 62px; display: grid; place-items: center; border-radius: 50%; background: #dfeade; color: #4f7258; }
+.clock-completion__check svg { width: 30px; height: 30px; }
+.clock-completion strong { font-size: 1.5rem; }
+.clock-completion p { display: flex; align-items: center; gap: 5px; margin: 4px 0; color: var(--color-text-muted); }
+.clock-completion .ck-button { width: 100%; }
+
+@media (max-width: 760px) {
+  .clock-module { padding: 82px 7px 12px; background-attachment: scroll; }
+  .clock-hub, .clock-game { width: 100%; }
+  .clock-hub__intro { justify-content: flex-start; gap: 12px; padding-bottom: 14px; }
+  .clock-hub__mascot { width: 92px; }
+  .clock-hub__intro span { font-size: .85rem; }
+  .clock-hub__games { grid-template-columns: 1fr; }
+  .clock-mode-card { display: grid; grid-template-columns: 42% minmax(0, 1fr); }
+  .clock-mode-card__art { height: 160px; padding: 9px; }
+  .clock-mode-card__copy { min-height: 160px; padding: 13px; }
+  .clock-mode-card__digital { margin: 66px 0 0 70px; font-size: .9rem; }
+  .clock-game { min-height: calc(100dvh - 90px); padding: 10px; }
+  .clock-game-header { grid-template-columns: auto 1fr; gap: 6px; padding-bottom: 8px; }
+  .clock-game-header h1 { text-align: right; font-size: 1rem; }
+  .clock-level-picker { grid-column: 1 / -1; grid-template-columns: minmax(105px, auto) auto; justify-content: center; }
+  .clock-level-picker__label { text-align: left; }
+  .clock-levels { justify-content: center; }
+  .clock-memory__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .clock-memory-card__front { padding: 4px; }
+  .clock-set__workspace { grid-template-columns: 1fr; gap: 2px; }
+  .clock-set__workspace > .analog-clock { width: min(70vw, 270px); }
+  .clock-set__controls { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .clock-set__controls > div { grid-template-columns: 1fr 40px 34px 40px; padding: 5px; }
+  .clock-set__controls button { width: 40px; height: 40px; }
+  .clock-race__choices { gap: 3px; margin-top: 12px; }
+  .clock-race__choices button { padding: 3px; }
+  .clock-race__choices .clock-choice-label { font-size: .68rem; }
+  .clock-digital-choice { font-size: clamp(1.15rem, 8vw, 2rem); }
+  .clock-completion { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .clock-completion p { justify-content: center; }
+}
+
+@media (max-width: 360px) {
+  .clock-module { padding-inline: 4px; }
+  .clock-hub { padding: 11px; }
+  .clock-hub__mascot { width: 78px; }
+  .clock-hub__intro h1 { font-size: 1.8rem; }
+  .clock-mode-card { grid-template-columns: 39% minmax(0, 1fr); }
+  .clock-mode-card__art, .clock-mode-card__copy { min-height: 145px; height: 145px; }
+  .clock-mode-card h2 { font-size: 1.05rem; }
+  .clock-mode-card__copy { gap: 6px; padding: 10px; }
+  .clock-mode-card__progress { display: none; }
+  .clock-mode-card .ck-button { min-width: 0; }
+  .clock-memory__grid { gap: 4px; }
+  .clock-instruction { margin-top: 8px; padding: 8px; }
+  .clock-set__workspace > .analog-clock { width: 218px; }
+  .clock-set__controls { grid-template-columns: 1fr; }
+  .clock-set__controls > div { grid-template-columns: 1fr 38px 30px 38px; gap: 2px; }
+  .clock-set__controls button { width: 38px; height: 38px; }
+  .clock-game__actions .ck-button { padding-inline: 10px; }
+  .clock-level-picker { grid-template-columns: 1fr; gap: 5px; }
+  .clock-level-picker__label { text-align: center; }
+  .clock-level-picker__label span { display: none; }
+  .clock-levels button { width: 30px; height: 30px; }
+  .clock-race__modes button { padding-inline: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-memory-card__inner { transition: none; }
+  .clock-game__feedback .is-correct { animation: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .clock-game__feedback .is-correct { animation: clock-success 420ms ease-out; }
+}
+
+@keyframes clock-success {
+  0% { transform: scale(.92); opacity: .4; }
+  65% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}

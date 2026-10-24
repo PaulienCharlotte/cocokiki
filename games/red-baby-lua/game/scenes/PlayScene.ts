@@ -8,6 +8,17 @@ export interface SceneCallbacks {
 
 const POSE = { idle: 0, swing: 1, ready: 2, sleep: 3, jump: 4, alert: 5, celebrate: 6, sad: 7 } as const;
 
+function luaAnchor(width: number, height: number) {
+  const narrow = width < 640;
+  return {
+    narrow,
+    x: width * (narrow ? .37 : .47),
+    y: height * (narrow ? .69 : .735),
+    scale: narrow ? .35 : .43,
+    shadowY: height * (narrow ? .73 : .765),
+  };
+}
+
 export default class PlayScene extends Phaser.Scene {
   private background!: Phaser.GameObjects.Image;
   private groundShadow!: Phaser.GameObjects.Ellipse;
@@ -38,9 +49,9 @@ export default class PlayScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#77bda9');
     this.background = this.add.image(width / 2, height / 2, 'jungle-bg').setDepth(-10);
-    this.groundShadow = this.add.ellipse(width * .54, height * .77, 116, 25, 0x173e30, .24).setDepth(2);
+    this.groundShadow = this.add.ellipse(width * .54, height * .735, 116, 25, 0x173e30, .24).setDepth(2);
     this.vine = this.add.arc(width * .68, -90, 280, 22, 158, false, 0x573b24, 0).setStrokeStyle(9, 0x573b24, .95).setVisible(false);
-    this.lua = this.makeLua(width * .54, height * .76);
+    this.lua = this.makeLua(width * .54, height * .7);
     this.rock = this.makeRock(width * .54, -100).setDepth(6);
     this.lua.setDepth(4);
     this.layout(this.scale.gameSize);
@@ -66,23 +77,19 @@ export default class PlayScene extends Phaser.Scene {
   private layout(gameSize: Phaser.Structs.Size) {
     const source = this.textures.get('jungle-bg').getSourceImage() as HTMLImageElement;
     const cover = Math.max(gameSize.width / source.width, gameSize.height / source.height);
-    const narrow = gameSize.width < 640;
-    const luaX = gameSize.width * (narrow ? .5 : .54);
-    const luaY = gameSize.height * (narrow ? .65 : .76);
+    const anchor = luaAnchor(gameSize.width, gameSize.height);
     this.background.setPosition(gameSize.width / 2, gameSize.height / 2).setScale(cover);
-    this.groundShadow.setPosition(luaX, gameSize.height * (narrow ? .685 : .79)).setAlpha(narrow ? .34 : .24).setScale(narrow ? .72 : 1);
-    if (!this.activeRound) this.lua.setPosition(luaX, luaY).setScale(narrow ? .32 : .39);
+    this.groundShadow.setPosition(anchor.x, anchor.shadowY).setAlpha(anchor.narrow ? .34 : .24).setScale(anchor.narrow ? .72 : 1);
+    if (!this.activeRound) this.lua.setPosition(anchor.x, anchor.y).setScale(anchor.scale);
   }
 
   beginRound(duration: number, calm: boolean) {
-    const narrow = this.scale.width < 640;
-    const luaX = this.scale.width * (narrow ? .5 : .54);
-    const luaY = this.scale.height * (narrow ? .65 : .76);
+    const anchor = luaAnchor(this.scale.width, this.scale.height);
     this.tweens.killTweensOf([this.lua, this.rock]);
-    this.lua.setPosition(luaX, luaY).setScale(narrow ? .32 : .39).setAngle(0).setAlpha(1);
-    this.groundShadow.setPosition(luaX, this.scale.height * (narrow ? .685 : .79)).setAlpha(narrow ? .34 : .24).setScale(narrow ? .72 : 1);
+    this.lua.setPosition(anchor.x, anchor.y).setScale(anchor.scale).setAngle(0).setAlpha(1);
+    this.groundShadow.setPosition(anchor.x, anchor.shadowY).setAlpha(anchor.narrow ? .34 : .24).setScale(anchor.narrow ? .72 : 1);
     this.setPose(calm ? POSE.idle : POSE.alert);
-    this.rock.setPosition(luaX, narrow ? 68 : 90).setScale(narrow ? .58 : .76).setAngle(0).setVisible(!calm);
+    this.rock.setPosition(anchor.x, anchor.narrow ? 68 : 90).setScale(anchor.narrow ? .58 : .76).setAngle(0).setVisible(!calm);
     this.setRock(Phaser.Math.Between(0, 2));
     this.vine.setVisible(false);
     this.duration = duration; this.elapsed = 0; this.calm = calm; this.activeRound = true;
@@ -107,7 +114,8 @@ export default class PlayScene extends Phaser.Scene {
     this.tweens.add({ targets: this.rock, y: contactY, duration: delay, ease: 'Quad.in' });
     this.time.delayedCall(delay, () => {
       this.burst(0xe8c99a); this.makeImpactCloud(this.lua.x, this.scale.height * (narrow ? .55 : .7)); this.setPose(POSE.sad);
-      this.lua.setPosition(this.scale.width * (narrow ? .5 : .54), this.scale.height * (narrow ? .61 : .8)).setScale(narrow ? .36 : .46, narrow ? .14 : .17);
+      const anchor = luaAnchor(this.scale.width, this.scale.height);
+      this.lua.setPosition(anchor.x, this.scale.height * (narrow ? .64 : .82)).setScale(narrow ? .39 : .48, narrow ? .15 : .18);
       this.cameras.main.shake(this.reducedMotion ? 0 : 110, .004);
       this.time.delayedCall(this.reducedMotion ? 120 : 520, () => {
         this.tweens.add({ targets: this.rock, x: this.scale.width * .32, y: this.scale.height * .7, angle: -22, duration: this.reducedMotion ? 120 : 340, ease: 'Back.out' });

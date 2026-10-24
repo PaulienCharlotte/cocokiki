@@ -237,28 +237,17 @@ export function initialSelection(): Selection {
 }
 
 export function memoryPairs(selection: Selection): MemoryPair[] {
-  const { areaId, topicId } = selection;
-  const factPairs = () => studyLocations(selection).flatMap(location => {
+  const pairs = areaLocations(selection.areaId).flatMap(location => {
     const fact = LOCATION_FACTS[location.name]?.fact;
     return fact ? [{ id: `fact:${location.name}`, left: location.name, right: fact, kind: 'fact' as const }] : [];
   });
-  const capitalPairs = () => areaLocations(areaId).filter(l => l.type === 'country').flatMap(country => {
-    const capital = LOCATIONS.find(l => l.id === `cap-${country.id}`);
-    return capital ? [{ id: `country-capital:${country.name}`, left: country.name, right: capital.name, kind: 'capital' as const }] : [];
-  });
-
-  if (topicId === 'flags') return studyLocations(selection).map(l => ({ id: `flag:${l.name}`, left: l.name, right: COUNTRY_FLAGS[l.name], kind: 'flag' }));
-  if (topicId === 'facts') return factPairs();
-  if (topicId === 'provinces' || (topicId === 'capitals' && isDutchArea(areaId))) {
-    return DUTCH_PROVINCES.filter(p => areaId === 'all' || p.id === areaId).map(p => ({ id: `province-capital:${p.id}`, left: p.name, right: p.capital, kind: 'capital' }));
-  }
-  if (topicId === 'countries' || topicId === 'capitals' || (topicId === 'all' && !isDutchArea(areaId) && !isBeneluxArea(areaId))) return capitalPairs();
-  if (topicId === 'cities' || topicId === 'waters' || topicId === 'regions' || topicId === 'all') return factPairs();
-  return [];
+  return [...new Map(pairs.map(pair => [pair.id, pair])).values()];
 }
 
 export function availableModes(selection: Selection): PlayMode[] {
-  return studyLocations(selection).length ? ['find', 'spell', 'master', 'test'] : [];
+  if (!studyLocations(selection).length) return [];
+  const hasMemory = memoryPairs(selection).length >= 2;
+  return ['find', 'spell', ...(hasMemory ? ['memory' as const] : []), 'master', 'test'];
 }
 
 export const locationProgressKey = (location: Location) => `map:${isDutchArea(location.provinceId) ? 'nl:' : ''}${location.type}:${location.name}`;

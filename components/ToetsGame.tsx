@@ -55,44 +55,38 @@ const Section: React.FC<SectionProps> = ({
 }) => {
   if (!items.length) return null;
   return (
-    <div>
-      <h3 className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color }}>{title}</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <section className="toets-section">
+      <h3 className="toets-section-title" style={{ color }}>{title}</h3>
+      <div className="toets-answer-grid">
         {items.map((loc, i) => {
           const label   = getLabel(i);
           const correct = correctMap?.[loc.id];
           return (
-            <div key={loc.id} className="flex items-start gap-2">
+            <div key={loc.id} className="toets-answer-row">
               <span
-                className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white font-black text-[10px] mt-0.5"
+                className="toets-answer-label"
                 style={{ background: color }}
               >
                 {label}
               </span>
-              <div className="flex-1">
+              <div className="toets-answer-field">
                 <input
                   type="text"
                   disabled={submitted}
                   value={answers[loc.id] ?? ''}
                   onChange={e => onChange(loc.id, e.target.value)}
                   placeholder="naam…"
-                  className={`w-full px-2.5 py-1.5 rounded-lg border-2 text-xs font-semibold outline-none transition-colors ${
-                    submitted
-                      ? correct
-                        ? 'border-green-400 bg-green-50 text-green-800'
-                        : 'border-red-400 bg-red-50 text-red-800'
-                      : 'border-[#DDD6FE] bg-white text-slate-800 focus:border-[#7C3AED]'
-                  }`}
+                  className={`toets-answer-input${submitted ? correct ? ' is-correct' : ' is-wrong' : ''}`}
                 />
                 {submitted && !correct && (
-                  <div className="flex items-center gap-1 mt-0.5 pl-0.5">
-                    <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />
-                    <span className="text-[10px] text-red-600 font-semibold">{loc.name}</span>
+                  <div className="toets-answer-feedback is-wrong">
+                    <XCircle />
+                    <span>{loc.name}</span>
                   </div>
                 )}
                 {submitted && correct && (
-                  <div className="flex items-center gap-1 mt-0.5 pl-0.5">
-                    <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
+                  <div className="toets-answer-feedback is-correct">
+                    <CheckCircle />
                   </div>
                 )}
               </div>
@@ -100,7 +94,7 @@ const Section: React.FC<SectionProps> = ({
           );
         })}
       </div>
-    </div>
+    </section>
   );
 };
 
@@ -180,7 +174,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool }) => {
     if (!mapContainerRef.current || mapRef.current) return;
     mapRef.current = L.map(mapContainerRef.current, {
       center: [52.1, 5.2], zoom: 8,
-      zoomControl: true, attributionControl: true,
+      zoomControl: false, attributionControl: true,
       maxBounds: [[-85, -180], [85, 180]], minZoom: 2,
     });
     mapRef.current.attributionControl.setPrefix('');
@@ -283,15 +277,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool }) => {
     [],
   );
 
-  const gradeColor =
-    result && result.grade >= 8   ? 'text-green-600' :
-    result && result.grade >= 5.5 ? 'text-amber-600' :
-    'text-red-600';
-
-  const gradeBg =
-    result && result.grade >= 8   ? 'bg-green-50 border-green-300' :
-    result && result.grade >= 5.5 ? 'bg-amber-50 border-amber-300' :
-    'bg-red-50 border-red-300';
+  const resultTone = result && result.grade >= 8 ? 'good' : result && result.grade >= 5.5 ? 'pass' : 'retry';
 
   const gradeMsg =
     result && result.grade >= 8   ? '🎉 Uitstekend!' :
@@ -301,62 +287,62 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool }) => {
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col bg-[#EDE9FE] ${isFullscreen ? 'fixed inset-0 z-[9999]' : 'h-full'}`}
+      className={`toets-game${isFullscreen ? ' is-fullscreen' : ''}`}
     >
 
       {/* Map */}
-      <div className="flex-1 min-h-0 relative">
-        <div ref={mapContainerRef} className="w-full h-full" />
+      <div className="toets-map-stage">
+        <div ref={mapContainerRef} className="toets-map" />
 
         {/* Fullscreen toggle — top-right of map */}
         <button
           onClick={toggleFullscreen}
           title={isFullscreen ? 'Verkleinen' : 'Volledig scherm'}
-          className="absolute top-3 right-3 z-[4000] w-8 h-8 bg-white rounded-lg shadow border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-[#F5F3FF] transition-colors"
+          className="toets-map-button toets-fullscreen-button"
         >
           {isFullscreen
-            ? <Minimize2 className="w-4 h-4" />
-            : <Maximize2 className="w-4 h-4" />}
+            ? <Minimize2 />
+            : <Maximize2 />}
         </button>
 
-        <div className="absolute bottom-3 left-3 z-[4000] bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl px-3 py-2 shadow-md">
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Legenda</p>
+        <div className="toets-legend">
+          <p>Legenda</p>
           {[
             { color: '#EAB308', label: 'Plaatsen (1, 2, 3…)' },
             { color: '#38bdf8', label: 'Wateren (A, B, C…)'  },
             { color: '#7C3AED', label: 'Gebieden (I, II, III…)' },
           ].map(({ color, label }) => (
-            <div key={label} className="flex items-center gap-1.5 mb-1 last:mb-0">
-              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color }} />
-              <span className="text-[10px] font-semibold text-slate-600">{label}</span>
+            <div key={label}>
+              <i style={{ background: color }} />
+              <span>{label}</span>
             </div>
           ))}
         </div>
 
-        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-[4000]">
-          <button onClick={() => mapRef.current?.zoomIn()}  className="w-8 h-8 bg-white rounded-lg shadow border border-slate-200 flex items-center justify-center text-slate-700 font-black text-lg leading-none hover:bg-[#F5F3FF] transition-colors">+</button>
-          <button onClick={() => mapRef.current?.zoomOut()} className="w-8 h-8 bg-white rounded-lg shadow border border-slate-200 flex items-center justify-center text-slate-700 font-black text-lg leading-none hover:bg-[#F5F3FF] transition-colors">−</button>
+        <div className="toets-zoom-controls">
+          <button onClick={() => mapRef.current?.zoomIn()} aria-label="Inzoomen">+</button>
+          <button onClick={() => mapRef.current?.zoomOut()} aria-label="Uitzoomen">−</button>
         </div>
       </div>
 
       {/* Answer form — scrollable, capped at ~55% screen height on mobile, 50% desktop */}
-      <div className="flex-none overflow-y-auto bg-white border-t-[3px] border-[#7C3AED] max-h-[55%] md:max-h-[50%]">
-        <div className="p-3 md:p-4">
+      <div className="toets-answer-panel">
+        <div className="toets-answer-content">
 
-          <div className="flex items-start justify-between mb-3 md:mb-4 gap-2">
-            <div className="min-w-0">
-              <h2 className="font-black text-[#3B0764] text-sm">Vul de namen in</h2>
-              <p className="text-[10px] text-slate-500 mt-0.5">Schrijf bij elk getal / letter de juiste naam</p>
+          <div className="toets-answer-heading">
+            <div>
+              <h2>Vul de namen in</h2>
+              <p>Schrijf bij elk getal / letter de juiste naam</p>
             </div>
             {result && (
-              <div className="text-right flex-shrink-0">
-                <div className={`font-black text-2xl md:text-3xl leading-none ${gradeColor}`}>{result.grade}</div>
-                <div className="text-[10px] text-slate-500 mt-0.5">{result.correct}/{result.total} goed</div>
+              <div className={`toets-score is-${resultTone}`}>
+                <strong>{result.grade}</strong>
+                <span>{result.correct}/{result.total} goed</span>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col gap-5">
+          <div className="toets-sections">
             <Section
               title="Plaatsen" color="#D97706" items={cities}
               getLabel={i => String(i + 1)}
@@ -384,27 +370,27 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool }) => {
           </div>
 
           {locations.length === 0 && (
-            <p className="text-sm text-slate-400 text-center py-6">Selecteer een provincie of gebied om de toets te starten.</p>
+            <p className="toets-empty">Selecteer een provincie of gebied om de toets te starten.</p>
           )}
 
           {!submitted ? (
             <button
               onClick={() => setSubmitted(true)}
               disabled={locations.length === 0}
-              className="mt-5 w-full py-3 bg-[#7C3AED] disabled:bg-slate-300 disabled:shadow-none text-white font-black rounded-xl shadow-[0_4px_0_#5B21B6] active:translate-y-1 active:shadow-none transition-all text-sm"
+              className="toets-submit"
             >
               Nakijken →
             </button>
           ) : (
-            <div className="mt-5 flex flex-col gap-2">
-              <div className={`px-4 py-3 rounded-xl text-center font-black text-sm border-2 ${gradeBg} ${gradeColor}`}>
+            <div className="toets-result-actions">
+              <div className={`toets-result is-${resultTone}`}>
                 {gradeMsg} &nbsp;·&nbsp; Cijfer: {result!.grade}
               </div>
               <button
                 onClick={() => { setSubmitted(false); setAnswers({}); }}
-                className="w-full py-2.5 bg-[#F5F3FF] text-[#7C3AED] font-black rounded-xl border-2 border-[#DDD6FE] flex items-center justify-center gap-2 text-sm hover:bg-[#EDE9FE] transition-colors"
+                className="toets-retry"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw />
                 Opnieuw proberen
               </button>
             </div>

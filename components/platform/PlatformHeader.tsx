@@ -1,26 +1,15 @@
-import React from 'react';
+import { loadCurrency } from '../../services/currency';
+import WorldTopBar from './WorldTopBar';
 
 interface PlatformHeaderProps {
-  gameTitle?: string;
   onHome?: () => void;
-  actions?: React.ReactNode;
+  coins?: number;
 }
 
-export default function PlatformHeader({ gameTitle, onHome, actions }: PlatformHeaderProps) {
-  const brand = <>
-    <img src="/images/logo-compas-geel.svg" width="40" height="40" alt="" />
-    <span>CocoKiki</span>
-  </>;
+export default function PlatformHeader({ onHome, coins = loadCurrency() }: PlatformHeaderProps) {
+  if (!onHome) return null;
 
-  return <header className="app-header platform-header">
-    <div className="header-inner">
-      {onHome
-        ? <button className="brand platform-brand" type="button" onClick={onHome} aria-label="Naar home">{brand}</button>
-        : <div className="brand">{brand}</div>}
-      {gameTitle && <span className="platform-game-title">{gameTitle}</span>}
-      <div className="platform-header-actions">
-        {actions}
-      </div>
-    </div>
-  </header>;
+  return <div className="platform-world-header">
+    <WorldTopBar coins={coins} onHome={onHome} />
+  </div>;
 }

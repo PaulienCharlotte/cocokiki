@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import PlatformHeader from '../../components/platform/PlatformHeader';
-import CocoCoin from '../../components/platform/CocoCoin';
 import { GAME_LIBRARY } from '../../platform/gameRegistry';
 import { loadCurrency } from '../../services/currency';
 import TreehouseCanvas from './TreehouseCanvas';
@@ -15,10 +14,7 @@ export default function TreehouseModule({ onNavigate }: TreehouseModuleProps) {
   const games = useMemo(() => GAME_LIBRARY.filter(game => game.enabled && game.status === 'playable'), []);
 
   return <div className="platform-page treehouse-module">
-    <PlatformHeader
-      onHome={() => onNavigate('/')}
-      actions={<span className="treehouse-balance" aria-label={`${coins} CocoCoins`}><CocoCoin size={22} />{coins}</span>}
-    />
+    <PlatformHeader onHome={() => onNavigate('/')} coins={coins} />
     <main className="treehouse-main">
       <TreehouseCanvas
         games={games}

@@ -1,6 +1,6 @@
 # CocoKiki backlog
 
-Laatst bijgewerkt: 18 oktober 2026
+Laatst bijgewerkt: 21 oktober 2026
 
 De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarna de visuele basis, vervolgens merkonderdelen en ten slotte het interactieve spelmaatje.
 
@@ -50,3 +50,12 @@ De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarn
   - Kiki biedt op verzoek contextuele, kindvriendelijke hulp.
   - Kiki mag spelbediening of belangrijke inhoud niet afdekken, ook niet op mobiel en tablet.
   - Voeg pas later AI-functionaliteit toe als daar een duidelijke en veilige rol voor is.
+
+## 6. Gepersonaliseerde Memory
+
+- [ ] Voeg een interessekeuze toe aan Memory.
+  - Laat kinderen kiezen uit bijvoorbeeld voedingsmiddelen, geschiedenis, aardrijkskunde en economie.
+  - Koppel iedere plaats per interessegebied aan een passend, controleerbaar weetje.
+  - Gebruik dezelfde plaatsenset en spelregels; alleen het type weetje verandert.
+  - Laat de definitieve weetjes per interessegebied eerst inhoudelijk samenstellen en controleren voordat ze in het spel komen.
+  - Bewaar de gekozen interesse lokaal, maar bied altijd een neutrale standaardset met algemene aardrijkskundige weetjes.

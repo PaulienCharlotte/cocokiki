@@ -1,0 +1,1110 @@
+{
+  "generatedAt": "2026-10-24T09:39:55.611Z",
+  "count": 184,
+  "assets": [
+    {
+      "id": "assets:baby-lua:backgrounds:jungle-source",
+      "path": "/assets/baby-lua/backgrounds/jungle-source.png",
+      "category": "assets",
+      "format": "png"
+    },
+    {
+      "id": "assets:baby-lua:backgrounds:jungle",
+      "path": "/assets/baby-lua/backgrounds/jungle.png",
+      "category": "assets",
+      "format": "png"
+    },
+    {
+      "id": "assets:baby-lua:characters:lua-poses-source",
+      "path": "/assets/baby-lua/characters/lua-poses-source.png",
+      "category": "assets",
+      "format": "png"
+    },
+    {
+      "id": "assets:baby-lua:characters:lua-poses",
+      "path": "/assets/baby-lua/characters/lua-poses.png",
+      "category": "assets",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:banana",
+      "path": "/assets/library/cooking/banana-pancakes/banana.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:batter",
+      "path": "/assets/library/cooking/banana-pancakes/batter.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:bowl",
+      "path": "/assets/library/cooking/banana-pancakes/bowl.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:butter",
+      "path": "/assets/library/cooking/banana-pancakes/butter.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:eggs",
+      "path": "/assets/library/cooking/banana-pancakes/eggs.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:finished",
+      "path": "/assets/library/cooking/banana-pancakes/finished.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:fork",
+      "path": "/assets/library/cooking/banana-pancakes/fork.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:mashed-banana",
+      "path": "/assets/library/cooking/banana-pancakes/mashed-banana.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:pan",
+      "path": "/assets/library/cooking/banana-pancakes/pan.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:pancake-golden",
+      "path": "/assets/library/cooking/banana-pancakes/pancake-golden.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:pancake-raw",
+      "path": "/assets/library/cooking/banana-pancakes/pancake-raw.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:spatula",
+      "path": "/assets/library/cooking/banana-pancakes/spatula.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:banana-pancakes:whisk",
+      "path": "/assets/library/cooking/banana-pancakes/whisk.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:furniture-plants-sheet",
+      "path": "/assets/library/shop/decor/furniture-plants-sheet.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed",
+      "path": "/assets/library/shop/decor/products/bunk-bed.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:coffee-table",
+      "path": "/assets/library/shop/decor/products/coffee-table.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-wardrobe",
+      "path": "/assets/library/shop/decor/products/cream-wardrobe.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:double-bed",
+      "path": "/assets/library/shop/decor/products/double-bed.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:drawer-chest",
+      "path": "/assets/library/shop/decor/products/drawer-chest.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:flower-lights",
+      "path": "/assets/library/shop/decor/products/flower-lights.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:flower-rug",
+      "path": "/assets/library/shop/decor/products/flower-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:green-chair",
+      "path": "/assets/library/shop/decor/products/green-chair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:green-lamp",
+      "path": "/assets/library/shop/decor/products/green-lamp.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:green-wardrobe",
+      "path": "/assets/library/shop/decor/products/green-wardrobe.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:hanging-chair",
+      "path": "/assets/library/shop/decor/products/hanging-chair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:hanging-fern",
+      "path": "/assets/library/shop/decor/products/hanging-fern.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:hanging-vine",
+      "path": "/assets/library/shop/decor/products/hanging-vine.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:jute-rug",
+      "path": "/assets/library/shop/decor/products/jute-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:leaf-rug",
+      "path": "/assets/library/shop/decor/products/leaf-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:media-cabinet",
+      "path": "/assets/library/shop/decor/products/media-cabinet.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:monstera-basket",
+      "path": "/assets/library/shop/decor/products/monstera-basket.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:orange-tree",
+      "path": "/assets/library/shop/decor/products/orange-tree.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:orchid",
+      "path": "/assets/library/shop/decor/products/orchid.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:palm-clay-pot",
+      "path": "/assets/library/shop/decor/products/palm-clay-pot.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:palm-white-pot",
+      "path": "/assets/library/shop/decor/products/palm-white-pot.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pink-flower",
+      "path": "/assets/library/shop/decor/products/pink-flower.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pink-lamp",
+      "path": "/assets/library/shop/decor/products/pink-lamp.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pink-rug",
+      "path": "/assets/library/shop/decor/products/pink-rug.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:rattan-chair",
+      "path": "/assets/library/shop/decor/products/rattan-chair.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:round-table",
+      "path": "/assets/library/shop/decor/products/round-table.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:single-bed",
+      "path": "/assets/library/shop/decor/products/single-bed.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:small-cactus",
+      "path": "/assets/library/shop/decor/products/small-cactus.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:snake-plant",
+      "path": "/assets/library/shop/decor/products/snake-plant.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:soft-sofa",
+      "path": "/assets/library/shop/decor/products/soft-sofa.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:succulent",
+      "path": "/assets/library/shop/decor/products/succulent.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:tall-cactus",
+      "path": "/assets/library/shop/decor/products/tall-cactus.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:shop:decor:products:white-flower",
+      "path": "/assets/library/shop/decor/products/white-flower.png",
+      "category": "shop",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:cart",
+      "path": "/assets/library/treehouse/furnishings/cart.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:fridge-open",
+      "path": "/assets/library/treehouse/furnishings/fridge-open.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:fridge",
+      "path": "/assets/library/treehouse/furnishings/fridge.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:island",
+      "path": "/assets/library/treehouse/furnishings/island.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:oven-open",
+      "path": "/assets/library/treehouse/furnishings/oven-open.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:oven",
+      "path": "/assets/library/treehouse/furnishings/oven.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:pantry-open",
+      "path": "/assets/library/treehouse/furnishings/pantry-open.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:furnishings:pantry",
+      "path": "/assets/library/treehouse/furnishings/pantry.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:add",
+      "path": "/assets/library/treehouse/icons/add.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:arrow-left",
+      "path": "/assets/library/treehouse/icons/arrow-left.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:arrow-right",
+      "path": "/assets/library/treehouse/icons/arrow-right.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:bedroom",
+      "path": "/assets/library/treehouse/icons/bedroom.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:garden",
+      "path": "/assets/library/treehouse/icons/garden.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:home",
+      "path": "/assets/library/treehouse/icons/home.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:kitchen",
+      "path": "/assets/library/treehouse/icons/kitchen.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:icons:living-room",
+      "path": "/assets/library/treehouse/icons/living-room.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:overview:treehouse-overview",
+      "path": "/assets/library/treehouse/overview/treehouse-overview.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:bedroom",
+      "path": "/assets/library/treehouse/rooms/bedroom.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:kitchen",
+      "path": "/assets/library/treehouse/rooms/kitchen.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:living-room",
+      "path": "/assets/library/treehouse/rooms/living-room.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:terrace",
+      "path": "/assets/library/treehouse/rooms/terrace.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:stations:cooktop",
+      "path": "/assets/library/treehouse/stations/cooktop.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:stations:worktop",
+      "path": "/assets/library/treehouse/stations/worktop.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:banana-pancakes",
+      "path": "/games/cooking/banana-pancakes.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:equipment:fork",
+      "path": "/games/cooking/equipment/fork.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:equipment:frying-pan",
+      "path": "/games/cooking/equipment/frying-pan.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:equipment:mixing-bowl",
+      "path": "/games/cooking/equipment/mixing-bowl.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:equipment:spatula",
+      "path": "/games/cooking/equipment/spatula.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:fruit-yogurt",
+      "path": "/games/cooking/fruit-yogurt.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:cooking:oat-muffins",
+      "path": "/games/cooking/oat-muffins.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:destinations:cooking-studio",
+      "path": "/games/destinations/cooking-studio.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:destinations:shop-interior",
+      "path": "/games/destinations/shop-interior.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:destinations:topo-entry",
+      "path": "/games/destinations/topo-entry.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:destinations:travel-room",
+      "path": "/games/destinations/travel-room.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:red-baby-lua:cloud-reference",
+      "path": "/games/red-baby-lua/cloud-reference.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:red-baby-lua:lua-poses",
+      "path": "/games/red-baby-lua/lua-poses.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:red-baby-lua:plant-reference",
+      "path": "/games/red-baby-lua/plant-reference.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:red-baby-lua:rocks",
+      "path": "/games/red-baby-lua/rocks.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:school-interior",
+      "path": "/games/school/school-interior.jpg",
+      "category": "games",
+      "format": "jpg"
+    },
+    {
+      "id": "games:school:tables-cta",
+      "path": "/games/school/tables-cta.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:school:topo-cta",
+      "path": "/games/school/topo-cta.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products-sheet",
+      "path": "/games/shop/products-sheet.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:apple",
+      "path": "/games/shop/products/apple.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:avocado",
+      "path": "/games/shop/products/avocado.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:banana",
+      "path": "/games/shop/products/banana.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:basil",
+      "path": "/games/shop/products/basil.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:blueberry",
+      "path": "/games/shop/products/blueberry.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:bread",
+      "path": "/games/shop/products/bread.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:broccoli",
+      "path": "/games/shop/products/broccoli.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:butter",
+      "path": "/games/shop/products/butter.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:canned-tomatoes",
+      "path": "/games/shop/products/canned-tomatoes.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:carrot",
+      "path": "/games/shop/products/carrot.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:cheese",
+      "path": "/games/shop/products/cheese.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:cherry-tomatoes",
+      "path": "/games/shop/products/cherry-tomatoes.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:cucumber",
+      "path": "/games/shop/products/cucumber.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:eggs",
+      "path": "/games/shop/products/eggs.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:flour",
+      "path": "/games/shop/products/flour.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:garlic",
+      "path": "/games/shop/products/garlic.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:honey",
+      "path": "/games/shop/products/honey.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:lemon",
+      "path": "/games/shop/products/lemon.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:lettuce",
+      "path": "/games/shop/products/lettuce.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:milk",
+      "path": "/games/shop/products/milk.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:mushrooms",
+      "path": "/games/shop/products/mushrooms.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:oats",
+      "path": "/games/shop/products/oats.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:olive-oil",
+      "path": "/games/shop/products/olive-oil.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:onion",
+      "path": "/games/shop/products/onion.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:orange",
+      "path": "/games/shop/products/orange.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:parsley",
+      "path": "/games/shop/products/parsley.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:pasta",
+      "path": "/games/shop/products/pasta.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:pear",
+      "path": "/games/shop/products/pear.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:pepper",
+      "path": "/games/shop/products/pepper.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:potato",
+      "path": "/games/shop/products/potato.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:raspberry",
+      "path": "/games/shop/products/raspberry.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:rice",
+      "path": "/games/shop/products/rice.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:spaghetti",
+      "path": "/games/shop/products/spaghetti.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:spinach",
+      "path": "/games/shop/products/spinach.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:spring-onion",
+      "path": "/games/shop/products/spring-onion.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:strawberry",
+      "path": "/games/shop/products/strawberry.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:sugar",
+      "path": "/games/shop/products/sugar.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:tomato-sauce",
+      "path": "/games/shop/products/tomato-sauce.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:tomato",
+      "path": "/games/shop/products/tomato.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:products:yogurt",
+      "path": "/games/shop/products/yogurt.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:shop:shop-street",
+      "path": "/games/shop/shop-street.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:adventure-world-background",
+      "path": "/games/treehouse/adventure-world-background.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:cocokiki-world-hub",
+      "path": "/games/treehouse/cocokiki-world-hub.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:cookbook-cta",
+      "path": "/games/treehouse/cookbook-cta.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:encyclopedia-cta",
+      "path": "/games/treehouse/encyclopedia-cta.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:treehouse-home-clean",
+      "path": "/games/treehouse/treehouse-home-clean.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:treehouse-interior",
+      "path": "/games/treehouse/treehouse-interior.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:bridge-cutout",
+      "path": "/games/treehouse/world-v2/bridge-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:bridge",
+      "path": "/games/treehouse/world-v2/bridge.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:coco-cutout",
+      "path": "/games/treehouse/world-v2/coco-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:coco",
+      "path": "/games/treehouse/world-v2/coco.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:island-tables-cutout",
+      "path": "/games/treehouse/world-v2/island-tables-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:island-tables",
+      "path": "/games/treehouse/world-v2/island-tables.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:island-topo-cutout",
+      "path": "/games/treehouse/world-v2/island-topo-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:island-topo",
+      "path": "/games/treehouse/world-v2/island-topo.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:kiki-cutout",
+      "path": "/games/treehouse/world-v2/kiki-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:kiki",
+      "path": "/games/treehouse/world-v2/kiki.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:treehouse-central-cutout",
+      "path": "/games/treehouse/world-v2/treehouse-central-cutout.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world-v2:treehouse-central",
+      "path": "/games/treehouse/world-v2/treehouse-central.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:bridge-rope",
+      "path": "/games/treehouse/world/bridge-rope.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:coco",
+      "path": "/games/treehouse/world/coco.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:island-forest-tafels",
+      "path": "/games/treehouse/world/island-forest-tafels.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:island-forest",
+      "path": "/games/treehouse/world/island-forest.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:island-mountain-topo",
+      "path": "/games/treehouse/world/island-mountain-topo.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:island-mountain",
+      "path": "/games/treehouse/world/island-mountain.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:kiki",
+      "path": "/games/treehouse/world/kiki.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:treehouse:world:treehouse-central",
+      "path": "/games/treehouse/world/treehouse-central.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:world-hub:challenges-control",
+      "path": "/games/world-hub/challenges-control.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:world-hub:coins-control",
+      "path": "/games/world-hub/coins-control.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:world-hub:settings-control",
+      "path": "/games/world-hub/settings-control.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:world-hub:treehouse-control",
+      "path": "/games/world-hub/treehouse-control.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "games:world-hub:v2:cooking-island",
+      "path": "/games/world-hub/v2/cooking-island.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:world-hub:v2:school-island",
+      "path": "/games/world-hub/v2/school-island.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:world-hub:v2:shop-island",
+      "path": "/games/world-hub/v2/shop-island.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:world-hub:v2:treehouse-island",
+      "path": "/games/world-hub/v2/treehouse-island.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:world-hub:v2:world-background-desktop",
+      "path": "/games/world-hub/v2/world-background-desktop.jpg",
+      "category": "games",
+      "format": "jpg"
+    },
+    {
+      "id": "games:world-hub:v2:world-background-mobile",
+      "path": "/games/world-hub/v2/world-background-mobile.jpg",
+      "category": "games",
+      "format": "jpg"
+    },
+    {
+      "id": "games:world-hub:v2:world-background",
+      "path": "/games/world-hub/v2/world-background.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:world-hub:world-hub-v2",
+      "path": "/games/world-hub/world-hub-v2.png",
+      "category": "games",
+      "format": "png"
+    },
+    {
+      "id": "images:avatars:avonturier",
+      "path": "/images/avatars/avonturier.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:coco",
+      "path": "/images/avatars/coco.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki",
+      "path": "/images/avatars/kiki.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:lua",
+      "path": "/images/avatars/lua.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:luiaard",
+      "path": "/images/avatars/luiaard.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:samen",
+      "path": "/images/avatars/samen.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:cocokiki-logo",
+      "path": "/images/cocokiki-logo.png",
+      "category": "images",
+      "format": "png"
+    },
+    {
+      "id": "images:headertopo",
+      "path": "/images/headertopo.svg",
+      "category": "images",
+      "format": "svg"
+    },
+    {
+      "id": "images:logo-compas-geel",
+      "path": "/images/logo-compas-geel.svg",
+      "category": "images",
+      "format": "svg"
+    },
+    {
+      "id": "images:logo-compas",
+      "path": "/images/logo-compas.svg",
+      "category": "images",
+      "format": "svg"
+    },
+    {
+      "id": "images:logo-kikicoco",
+      "path": "/images/logo-kikicoco.png",
+      "category": "images",
+      "format": "png"
+    },
+    {
+      "id": "images:topococoicon_1",
+      "path": "/images/topococoicon_1.svg",
+      "category": "images",
+      "format": "svg"
+    }
+  ]
+}

@@ -10,7 +10,10 @@ import { loadBest, loadCoins, loadPreferences, saveBest, saveCoins, savePreferen
 import { LuaAudio } from './game/systems/audio';
 import { GamePhase, LuaGameMode, Preferences, Question, SessionStats, TableChoice } from './game/types';
 
-interface Props { onHome: () => void }
+interface Props {
+  onHome: () => void;
+  onCoinsChange?: (coins: number) => void;
+}
 const ROUND_COUNT = 8;
 const FEEDBACK = ['Goed gered!', 'Knap gedaan!', 'Super snel!', 'Lua is veilig!'];
 const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
@@ -19,7 +22,7 @@ const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
   { id: 'challenge', label: 'Uitdaging', detail: 'Sneller en gemixt' },
 ];
 
-export default function RedBabyLuaGame({ onHome }: Props) {
+export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const sceneRef = useRef<PlayScene | null>(null);
@@ -91,6 +94,7 @@ export default function RedBabyLuaGame({ onHome }: Props) {
   useEffect(() => { savePreferences(preferences); audioRef.current.enabled = preferences.sound; }, [preferences]);
   useEffect(() => { questionRef.current = question; }, [question]);
   useEffect(() => { phaseRef.current = phase; }, [phase]);
+  useEffect(() => { onCoinsChange?.(coins); }, [coins, onCoinsChange]);
   useEffect(() => { const handler = () => setPaused(document.hidden); document.addEventListener('visibilitychange', handler); return () => document.removeEventListener('visibilitychange', handler); }, []);
   useEffect(() => { if (gameRef.current) paused ? gameRef.current.loop.sleep() : gameRef.current.loop.wake(); }, [paused]);
 

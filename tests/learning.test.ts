@@ -13,8 +13,9 @@ import { createWorldLayout } from '../games/treehouse/world/layout';
 
 test('platform routes keep games addressable and safely redirect old links', () => {
   assert.deepEqual(resolveRoute('/').route, { page: 'home', path: '/' });
-  assert.deepEqual(resolveRoute('/treehouse'), { route: { page: 'home', path: '/' }, redirect: true });
-  assert.equal(resolveRoute('/treehouse/').route.path, '/');
+  assert.deepEqual(resolveRoute('/design-system').route, { page: 'design-system', path: '/design-system' });
+  assert.deepEqual(resolveRoute('/treehouse'), { route: { page: 'destination', path: '/treehouse', destinationId: 'treehouse' }, redirect: false });
+  assert.equal(resolveRoute('/treehouse/').route.path, '/treehouse');
   assert.equal(resolveRoute('/games/topo').route.page, 'game');
   assert.equal(resolveRoute('/games/topo/').route.path, '/games/topo');
   assert.deepEqual(resolveRoute('/topo'), { route: { page: 'game', path: '/games/topo', gameId: 'topo' }, redirect: true });
@@ -65,6 +66,17 @@ test('Baby Lua supports varied question forms and adaptive difficulty', () => {
   assert.equal(nextDifficulty(1, 3, false), 2);
   assert.equal(nextDifficulty(3, 0, true), 2);
   assert.equal(nextDifficulty(1, 0, true), 1);
+});
+
+test('Baby Lua comparison questions never compare equal products', () => {
+  for (let seed = 0; seed < 100; seed++) {
+    let state = seed + 1;
+    const random = () => ((state = (state * 16807) % 2147483647) - 1) / 2147483646;
+    const question = createQuestion('mix', '', random, 3, 'bigger');
+    const products = question.choiceLabels.map(label => label.split('×').map(Number).reduce((total, factor) => total * factor, 1));
+    assert.notEqual(products[0], products[1]);
+    assert.ok(questionIsValid(question));
+  }
 });
 
 test('Baby Lua scoring separates first tries, retries and timeouts', () => {
@@ -127,18 +139,17 @@ test('a fresh Topo visit starts neutral instead of restoring the last region', (
 test('flags are countries only and never appear for a Dutch province or a polar area', () => {
   for (const areaId of ['all', 'fr', 'arctic', 'antarctica']) assert.ok(!availableTopics(areaId).includes('flags'));
   const selection = { areaId: 'europe', topicId: 'flags' as const, clusterId: 'all' };
-  assert.deepEqual(availableModes(selection), ['find', 'spell', 'master', 'test']);
-  assert.ok(memoryPairs(selection).every(p => p.kind === 'flag' && p.right && p.id.startsWith('flag:')));
+  assert.deepEqual(availableModes(selection), ['find', 'spell', 'memory', 'master', 'test']);
   assert.ok(!availableTopics('europe').includes('facts'));
 });
 
-test('capital memory retains explicit country and province relationships', () => {
-  const europe = memoryPairs({ areaId: 'europe', topicId: 'capitals', clusterId: 'all' });
-  assert.equal(europe.find(p => p.left === 'Italië')?.right, 'Rome');
-  assert.equal(europe.find(p => p.left === 'San Marino')?.right, 'San Marino');
-  const nl = memoryPairs({ areaId: 'all', topicId: 'provinces', clusterId: 'all' });
-  assert.equal(nl.length, 12);
-  assert.equal(nl.find(p => p.left === 'Friesland')?.right, 'Leeuwarden');
+test('memory always combines places with their facts', () => {
+  for (const areaId of ['all', 'gr', 'benelux', 'europe']) {
+    const pairs = memoryPairs({ areaId, topicId: 'all', clusterId: 'all' });
+    assert.ok(pairs.length >= 8);
+    assert.ok(pairs.every(pair => pair.kind === 'fact'));
+    assert.ok(pairs.every(pair => LOCATION_FACTS[pair.left]?.fact === pair.right));
+  }
 });
 
 test('water topic includes the dedicated Netherlands water dataset', () => {
@@ -164,7 +175,7 @@ test('Groningen matches the complete school worksheet', () => {
   const allMemory = memoryPairs({ areaId: 'gr', topicId: 'all', clusterId: 'all' });
   assert.equal(allMemory.length, 20);
   assert.ok(allMemory.every(pair => pair.kind === 'fact'));
-  assert.ok(!availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
+  assert.ok(availableModes({ areaId: 'gr', topicId: 'all', clusterId: 'all' }).includes('memory'));
 });
 
 test('Benelux matches the complete school worksheet and every item has a fact', () => {
@@ -243,7 +254,7 @@ test('a new route advances to the next learning group and wraps after the last g
   assert.equal(nextLearningGroup({ ...base, clusterId: 'all' }).clusterId, 'all');
 });
 
-test('repeated short rounds cover every flag before repeating any', () => {
+test('repeated memory rounds cover every available fact before repeating any', () => {
   const pool = memoryPairs({ areaId: 'world', topicId: 'flags', clusterId: 'all' });
   let progress = {};
   const visited = new Set<string>();

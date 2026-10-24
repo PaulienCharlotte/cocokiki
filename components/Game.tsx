@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Map, MousePointer2, Play, Settings2, Type, Wand2, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Gamepad2, Map, MousePointer2, Play, Settings2, Type, Wand2, X } from 'lucide-react';
 import { Location } from '../types';
 import { areaName, availableModes, availableTopics, initialSelection, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
@@ -8,9 +8,7 @@ import { nextBatch, PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from 
 import { loadCurrency, saveCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
 import MapFactCard from './MapFactCard';
-import Passport from './Passport';
 import PlatformHeader from './platform/PlatformHeader';
-import CocoCoin from './platform/CocoCoin';
 import { GameModuleProps } from '../platform/gameRegistry';
 
 const InteractiveMap = lazy(() => import('./InteractiveMap'));
@@ -18,7 +16,6 @@ const GameEngine = lazy(() => import('./GameEngine'));
 const LocationMemoryGame = lazy(() => import('./LocationMemoryGame'));
 const ToetsGame = lazy(() => import('./ToetsGame'));
 
-type View = 'discover' | 'passport';
 type OpenPanel = 'region' | 'play' | 'settings' | null;
 interface Session { id: number; mode: PlayMode; locations: Location[]; pairs: MemoryPair[] }
 
@@ -40,7 +37,6 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
 
 export default function Game({ onHome }: Partial<GameModuleProps>) {
   const [selection, setSelection] = useState<Selection>(initialSelection);
-  const [view, setView] = useState<View>('discover');
   const [timer, setTimer] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [progress, setProgress] = useState(readProgress);
@@ -106,12 +102,6 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
 
   const changeTopic = (topicId: TopicId) => {
     changeSelection({ ...selection, topicId, clusterId: 'all' });
-  };
-
-  const navigate = (next: View) => {
-    setView(next);
-    setSession(null);
-    window.scrollTo({ top: 0 });
   };
 
   const start = (requestedMode: PlayMode, retryIds?: string[], sourceSelection = selection) => {
@@ -180,9 +170,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
       <button type="button" className="region-trigger" aria-expanded={openPanel === 'region'} onClick={() => togglePanel('region')}>
         <span><small>Gebied</small><strong>{areaName(selection.areaId)}</strong></span><ChevronDown size={17} />
       </button>
-      <button type="button" className="map-action is-primary" title="Vrij verkennen" onClick={exploreFreely}><Map size={18} /><span>Verkennen</span></button>
-      <button type="button" className="map-action" title="Aanwijzen" onClick={() => modes.length && start(modes.includes('find') ? 'find' : modes[0])} disabled={!poolSize || modes.length === 0}><MousePointer2 size={18} /><span>Aanwijzen</span></button>
-      <button type="button" className="map-action" title="Spel kiezen" aria-expanded={openPanel === 'play'} onClick={() => togglePanel('play')} disabled={!poolSize}><Play size={18} /><span>Spel kiezen</span></button>
+      <button type="button" className="map-action icon-only game-menu-trigger" title="Spelmodus kiezen" aria-label="Spelmodus kiezen" aria-expanded={openPanel === 'play'} onClick={() => togglePanel('play')} disabled={!poolSize}><Gamepad2 size={21} /></button>
       <button type="button" className="map-action icon-only" title="Kaartinstellingen" aria-label="Kaartinstellingen" aria-expanded={openPanel === 'settings'} onClick={() => togglePanel('settings')}><Settings2 size={19} /></button>
     </nav>
 
@@ -193,7 +181,10 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
 
     {openPanel === 'play' && <section className="map-control-panel play-panel" aria-label="Spel kiezen">
       <div className="panel-heading"><div><small>Spelvorm</small><h2>Kies een uitdaging</h2></div>{panelClose}</div>
-      <div className="extra-mode-buttons">{modes.filter(mode => mode !== 'find').map(mode => modeButton(mode, true))}</div>
+      <div className="extra-mode-buttons">
+        <button type="button" className="journey-mode compact mode-explore" onClick={exploreFreely}><Map size={18} /><span>Verkennen</span></button>
+        {modes.map(mode => modeButton(mode, true))}
+      </div>
     </section>}
 
     {openPanel === 'settings' && <section className="map-control-panel settings-panel" aria-label="Kaartinstellingen">
@@ -209,17 +200,14 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
     </section>}
   </div>;
 
-  return <div className={'topo-app view-' + view + (session ? ' in-session' : '')}>
-    <PlatformHeader gameTitle="Topo" onHome={onHome} actions={<>
-      {!session && view === 'passport' && <button className="header-map-button" onClick={() => navigate('discover')}><ArrowLeft size={18} />Terug naar kaart</button>}
-      <button className="points-button" onClick={() => navigate('passport')} aria-label={'Paspoort, ' + score + ' CocoCoins'}><CocoCoin size={20} /><span>{score}</span></button>
-    </>} />
+  return <div className={'topo-app view-discover' + (session ? ' in-session' : '')}>
+    <PlatformHeader onHome={onHome} coins={score} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
       {session ? <main className="session-page">
         <div className="session-heading">
           <button className="back-button" onClick={() => setSession(null)}><ArrowLeft size={18} />Terug naar de kaart</button>
-          <span>{context}</span>
+          <span>{session.mode === 'memory' ? `${areaName(selection.areaId)} · Weetjes` : context}</span>
           <strong>{MODE_LABELS[session.mode]}</strong>
         </div>
         {session.mode === 'memory' || session.mode === 'quiz'
@@ -227,9 +215,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
           : session.mode === 'test'
             ? <div className="test-workspace"><ToetsGame provinceId={selection.areaId} clusterId="all" studyPool={session.locations} /></div>
             : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={locations} timerEnabled={timer} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />}
-      </main> : view === 'passport'
-        ? <Passport score={score} progress={progress} onPlay={() => navigate('discover')} storageAvailable={storageAvailable} />
-        : <main className="discover-page">
+      </main> : <main className="discover-page">
             {mapControls()}
             <section className="map-zone" ref={exploreRef} aria-label="Vrij verkennen">
               {mapCategoryFilters.length > 0 && <div className="map-legend" role="group" aria-label="Toon op de kaart">
@@ -255,6 +241,6 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
             </section>
           </main>}
     </Suspense>
-    {!storageAvailable && view !== 'passport' && <p className="storage-warning" role="status">Je voortgang kan in deze browser niet worden bewaard.</p>}
+    {!storageAvailable && <p className="storage-warning" role="status">Je voortgang kan in deze browser niet worden bewaard.</p>}
   </div>;
 }

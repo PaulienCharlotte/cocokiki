@@ -25,6 +25,18 @@ function numericChoices(answer: number, random: () => number): number[] {
   return shuffled([...candidates], random);
 }
 
+function comparisonFactors(left: number, right: number, random: () => number): [number, number] {
+  const product = left * right;
+  const candidates: Array<[number, number]> = [];
+  for (let first = 1; first <= 10; first++) {
+    for (let second = 1; second <= 10; second++) {
+      if (first * second !== product) candidates.push([first, second]);
+    }
+  }
+  const nearby = candidates.filter(([first, second]) => Math.abs(first * second - product) <= 16);
+  return pick(nearby.length ? nearby : candidates, random);
+}
+
 export function nextQuestionType(round: number, difficulty: number): QuestionType {
   const unlocked = difficulty <= 1 ? TYPES.slice(0, 2) : difficulty === 2 ? TYPES.slice(0, 4) : TYPES;
   return unlocked[(round - 1) % unlocked.length];
@@ -65,10 +77,9 @@ export function createQuestion(
   }
 
   if (requestedType === 'bigger') {
-    const otherLeft = Math.max(1, Math.min(10, left + pick([-2, -1, 1, 2], random)));
-    const otherRight = 1 + Math.floor(random() * 10);
+    const [otherLeft, otherRight] = comparisonFactors(left, right, random);
     const labels = [`${left} × ${right}`, `${otherLeft} × ${otherRight}`];
-    const answer = product >= otherLeft * otherRight ? 0 : 1;
+    const answer = product > otherLeft * otherRight ? 0 : 1;
     return { ...base, answer, choices: [0, 1], choiceLabels: labels, prompt: 'Welke som is groter?', explanation: `${labels[answer]} is het grootst` };
   }
 
@@ -84,9 +95,13 @@ export function createQuestion(
 }
 
 export function questionIsValid(question: Question): boolean {
+  const comparisonProducts = question.type === 'bigger'
+    ? question.choiceLabels.map(label => label.split('×').map(Number).reduce((total, factor) => total * factor, 1))
+    : [];
   return question.choices.includes(question.answer)
     && new Set(question.choices).size === question.choices.length
     && question.choiceLabels.length !== 1
     && (question.choiceLabels.length === 0 || question.choiceLabels.length === question.choices.length)
+    && (question.type !== 'bigger' || (comparisonProducts.length === 2 && comparisonProducts[0] !== comparisonProducts[1]))
     && question.prompt.length > 0;
 }
