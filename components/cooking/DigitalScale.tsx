@@ -1,6 +1,6 @@
 import React from 'react';
-import { RotateCcw, Scale } from 'lucide-react';
-import CookingAssetImage from './CookingAssetImage';
+import { RotateCcw } from 'lucide-react';
+import KitchenScale from './KitchenScale';
 
 interface DigitalScaleProps {
   bowlImage: string;
@@ -11,19 +11,20 @@ interface DigitalScaleProps {
   onChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function DigitalScale({ bowlImage, ingredientImage, value, target, increments, onChange }: DigitalScaleProps) {
+const INCREMENT_STYLE: Record<number, string> = { 5: 'is-add-5', 10: 'is-add-10' };
+
+export default function DigitalScale({ ingredientImage, value, target, increments, onChange }: DigitalScaleProps) {
   return <div className="digital-scale-wrap">
-    <div className={`digital-scale${value === target ? ' is-balanced' : ''}`} aria-label={`Weegschaal: ${value} gram`}>
-      <CookingAssetImage className="digital-scale__ingredient" src={ingredientImage} alt="Havermout" />
-      <CookingAssetImage className="digital-scale__bowl" src={bowlImage} alt="Mengkom" />
-      <div className="digital-scale__body">
-        <div className="digital-scale__display"><Scale /><strong aria-live="polite">{value}</strong><span>g</span></div>
-      </div>
-    </div>
-    <div className="digital-scale__controls">
-      {increments.map(increment => <button type="button" key={increment} onClick={() => onChange(current => current + increment)}>+{increment} g</button>)}
-      <button type="button" onClick={() => onChange(current => Math.max(0, current - 5))}>−5 g</button>
-      <button type="button" aria-label="Weegschaal leegmaken" title="Opnieuw" onClick={() => onChange(0)}><RotateCcw /></button>
+    <KitchenScale value={value} full={target} ingredientImage={ingredientImage} />
+    <div className="cooking-weighing__controls">
+      {increments.map(increment => <button
+        type="button"
+        key={increment}
+        className={`cooking-chip ${INCREMENT_STYLE[increment] ?? 'is-add-10'}`}
+        onClick={() => onChange(current => current + increment)}
+      >+{increment} g</button>)}
+      <button type="button" className="cooking-chip is-subtract" onClick={() => onChange(current => Math.max(0, current - 5))}>−5 g</button>
+      <button type="button" className="cooking-chip is-reset" aria-label="Weegschaal leegmaken" title="Opnieuw" onClick={() => onChange(0)}><RotateCcw /></button>
     </div>
   </div>;
 }

@@ -179,7 +179,8 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.doesNotMatch(kitchen, /Mijn keuken/);
   assert.doesNotMatch(kitchen, /Naar Kookstudio/);
   assert.equal((kitchen.match(/treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/g) ?? []).length, 5);
-  assert.match(kitchen, /aria-label="Kookeiland openen of verslepen"/);
+  assert.match(kitchen, /aria-label="Kookeiland openen"/);
+  assert.doesNotMatch(kitchen, /verslepen/);
   assert.match(kitchen, /data-kitchen-station="worktop"/);
   assert.match(kitchen, /data-kitchen-station="cooktop"/);
   assert.match(kitchen, /aria-label="Kijk naar links"/);

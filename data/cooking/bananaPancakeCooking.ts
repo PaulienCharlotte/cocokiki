@@ -16,6 +16,11 @@ export interface CookingStepConfig {
   dropTarget?: { label: string; sourceLabel: string; asset?: string };
   /** Wat de hoofdafbeelding doet bij een tikstap. */
   tapLabel?: string;
+  /** Het gereedschap dat bij een tikstap naar de kom beweegt. */
+  tapTool?: { asset: string; label: string };
+  /** Beeld van kom en gereedschap per aantal tikjes; de laatste geldt daarna. */
+  vesselByCount?: string[];
+  toolByCount?: string[];
 }
 
 export interface BananaPancakeSession {
@@ -33,18 +38,19 @@ export interface BananaPancakeSession {
 }
 
 const a = ASSET_LIBRARY.cooking.bananaPancakes;
+const k = ASSET_LIBRARY.cooking.kit;
 
 export const BANANA_PANCAKE_STEPS: CookingStepConfig[] = [
-  { id: 'tools', title: 'Leg alles klaar', instruction: 'Kies kom, vork, pan en spatel.', station: 'kitchen', mechanic: 'collect', target: 4, asset: a.bowl, hint: 'Tik op vier spullen.' },
-  { id: 'banana', title: 'Pak de banaan', instruction: 'Sleep de banaan naar de kom.', station: 'worktop', mechanic: 'drag', target: 1, asset: a.banana, hint: 'Sleep de banaan op de kom. Tikken mag ook.', dropTarget: { label: 'Kom', sourceLabel: 'Banaan', asset: a.bowl } },
-  { id: 'mash', title: 'Prak de banaan', instruction: 'Prak tot de stukjes klein zijn.', station: 'worktop', mechanic: 'repeat', target: 5, asset: a.mashedBanana, hint: 'Tik een paar keer met de vork.', tapLabel: 'Tik om te prakken' },
-  { id: 'eggs', title: 'Breek de eieren', instruction: 'Tik elk ei tegen de rand.', station: 'worktop', mechanic: 'repeat', target: 2, asset: a.eggs, hint: 'Twee eieren, dus twee keer tikken.', tapLabel: 'Tik om een ei te breken' },
-  { id: 'mix-eggs', title: 'Meng banaan en ei', instruction: 'Roer tot alles gemengd is.', station: 'worktop', mechanic: 'repeat', target: 5, asset: a.mashedBanana, hint: 'Maak rustige rondjes.', tapLabel: 'Tik om te roeren' },
+  { id: 'tools', title: 'Leg alles klaar', instruction: 'Kies kom, vork, pan en spatel.', station: 'kitchen', mechanic: 'collect', target: 4, asset: k.bowlEmpty, hint: 'Tik op vier spullen.' },
+  { id: 'banana', title: 'Pak de banaan', instruction: 'Sleep de banaan naar de kom.', station: 'worktop', mechanic: 'drag', target: 1, asset: k.banana, hint: 'Sleep de banaan op de kom. Tikken mag ook.', dropTarget: { label: 'Kom', sourceLabel: 'Banaan', asset: k.bowlEmpty } },
+  { id: 'mash', title: 'Prak de banaan', instruction: 'Prak tot de stukjes klein zijn.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlMashedBanana, hint: 'Tik een paar keer met de vork.', tapLabel: 'Tik op de vork', tapTool: { asset: k.fork, label: 'Vork' } },
+  { id: 'eggs', title: 'Breek de eieren', instruction: 'Tik elk ei tegen de rand van de kom.', station: 'worktop', mechanic: 'repeat', target: 2, asset: k.bowlEmpty, hint: 'Twee eieren, dus twee keer tikken.', tapLabel: 'Tik op het ei', tapTool: { asset: k.egg, label: 'Ei' }, vesselByCount: [k.bowlEmpty, k.bowlEggs], toolByCount: [k.egg, k.eggCracked, k.eggOpen] },
+  { id: 'mix-eggs', title: 'Meng banaan en ei', instruction: 'Roer tot alles gemengd is.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlMashedBanana, hint: 'Maak rustige rondjes.', tapLabel: 'Tik op de garde', tapTool: { asset: k.whisk, label: 'Garde' } },
   { id: 'oats', title: 'Weeg havermout', instruction: 'Maak precies 40 gram.', station: 'worktop', mechanic: 'weigh', target: 40, asset: '/games/shop/products/oats.png?v=2', hint: 'Met +10 kom je snel bij 40.' },
-  { id: 'batter', title: 'Maak het beslag', instruction: 'Klop het beslag glad.', station: 'worktop', mechanic: 'repeat', target: 5, asset: a.batter, hint: 'Blijf nog even kloppen.', tapLabel: 'Tik om te kloppen' },
-  { id: 'heat', title: 'Verwarm de pan', instruction: 'Doe er boter in en kies de juiste stand.', station: 'cooktop', mechanic: 'heat', target: 2, asset: a.pan, hint: 'Middel is precies goed: niet te heet.' },
-  { id: 'cook', title: 'Bak de pannenkoek', instruction: 'Giet, wacht en draai om.', station: 'cooktop', mechanic: 'timed', target: 3, asset: a.pancakeRaw, hint: 'Wacht tot de rand stevig wordt.' },
-  { id: 'serve', title: 'Leg op het bord', instruction: 'Sleep de pannenkoek naar het bord.', station: 'worktop', mechanic: 'drag', target: 1, asset: a.pancakeGolden, hint: 'Het bord staat klaar. Tikken mag ook.', dropTarget: { label: 'Bord', sourceLabel: 'Pannenkoek' } },
+  { id: 'batter', title: 'Maak het beslag', instruction: 'Klop het beslag glad.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlBatter, hint: 'Blijf nog even kloppen.', tapLabel: 'Tik op de garde', tapTool: { asset: k.whisk, label: 'Garde' } },
+  { id: 'heat', title: 'Verwarm de pan', instruction: 'Doe er boter in en kies de juiste stand.', station: 'cooktop', mechanic: 'heat', target: 2, asset: k.panEmpty, hint: 'Middel is precies goed: niet te heet.' },
+  { id: 'cook', title: 'Bak de pannenkoek', instruction: 'Giet, wacht en draai om.', station: 'cooktop', mechanic: 'timed', target: 3, asset: k.panEmpty, hint: 'Wacht tot de rand stevig wordt.' },
+  { id: 'serve', title: 'Leg op het bord', instruction: 'Sleep de pannenkoek naar het bord.', station: 'worktop', mechanic: 'drag', target: 1, asset: k.panPancake, hint: 'Het bord staat klaar. Tikken mag ook.', dropTarget: { label: 'Bord', sourceLabel: 'Pannenkoek' } },
   { id: 'cover', title: 'Extra luchtig?', instruction: 'Dek kort af of serveer meteen.', station: 'worktop', mechanic: 'optional', target: 1, asset: a.finished, hint: 'Beide keuzes zijn goed.' },
 ];
 

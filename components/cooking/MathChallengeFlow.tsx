@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '../../design-system';
 import { EQUIPMENT_BY_ID, INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { MATH_CHALLENGES_BY_RECIPE } from '../../data/cooking/mathChallenges';
@@ -13,6 +14,7 @@ import {
   type MathChallengeAnswer,
 } from '../../services/cookingProgress';
 import { awardCurrencyOnce } from '../../services/currency';
+import Confetti from './Confetti';
 import CookingAssetImage from './CookingAssetImage';
 import DigitalScale from './DigitalScale';
 import JourneyStageProgress from './JourneyStageProgress';
@@ -31,15 +33,20 @@ function assetFor(id: string) {
   return INGREDIENTS_BY_ID[id]?.image ?? EQUIPMENT_BY_ID[id]?.image ?? '';
 }
 
+/** Alleen gewicht en inhoud krijgen een eenheid; losse stuks spreken voor zich. */
+function unitSuffix(unit: string): string | undefined {
+  return unit === 'stuks' || unit === 'stuk' ? undefined : unit;
+}
+
 /**
  * De knoppen geven een richting door in plaats van een uitkomst. Zo telt elke
  * tik mee, ook wanneer een kind sneller tikt dan het scherm bijwerkt.
  */
-function Stepper({ value, step, minimum = 0, maximum = 100, onStep, label }: { value: number; step: number; minimum?: number; maximum?: number; onStep: (next: (current: number) => number) => void; label: string }) {
+function Stepper({ value, step, minimum = 0, maximum = 100, onStep, label, unit }: { value: number; step: number; minimum?: number; maximum?: number; onStep: (next: (current: number) => number) => void; label: string; unit?: string }) {
   const clamp = (current: number, direction: -1 | 1) => Math.min(maximum, Math.max(minimum, current + direction * step));
   return <div className="math-stepper" aria-label={label}>
     <button type="button" aria-label={`${label} verminderen`} onClick={() => onStep(current => clamp(current, -1))}><Minus /></button>
-    <strong aria-live="polite">{value}</strong>
+    <strong aria-live="polite">{value}{unit && <em>{unit}</em>}</strong>
     <button type="button" aria-label={`${label} vermeerderen`} onClick={() => onStep(current => clamp(current, 1))}><Plus /></button>
   </div>;
 }
@@ -106,14 +113,19 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
   if (math.step === 'complete') {
     const goToShop = () => replay ? onExit() : commit(advanceJourney(progress, recipe.id, 'shopping'));
     return <MathShell journey={journey}>
-      <section className="math-card math-card--complete" aria-labelledby="math-complete-title">
-        <span className="math-success-icon" aria-hidden="true"><Sparkles /></span>
-        <h1 id="math-complete-title">Goed gedaan, chef!</h1>
-        <CookingAssetImage className="math-complete__dish" src={recipe.image} alt={recipe.name} />
-        <div className="math-complete__checks" aria-label="Vier opdrachten voltooid">
-          {challenges.map(item => <span key={item.id}><Check />{item.title}</span>)}
+      <section className="math-card math-card--complete celebration-card" aria-labelledby="math-complete-title">
+        <div className="celebration-card__stage">
+          <Confetti />
+          <motion.div
+            className="celebration-card__dish"
+            initial={{ scale: .72, y: 14 }}
+            animate={{ scale: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 16 }}
+          >
+            <CookingAssetImage src={recipe.image} alt={recipe.name} />
+          </motion.div>
         </div>
-        <p className="stage-completion-status"><Check />Vier opdrachten voltooid</p>
+        <h1 id="math-complete-title">Goed gedaan, chef!</h1>
         {replay && <small className="stage-completion-note"><Check />Beloning al ontvangen</small>}
         <Button size="large" onClick={goToShop}>{replay ? 'Klaar' : 'Naar de winkel'}</Button>
         {!replay && <details className="journey-more"><summary aria-label="Meer opties"><MoreHorizontal /></summary><button type="button" onClick={onReplay}><RotateCcw />Opnieuw oefenen</button></details>}
@@ -154,11 +166,13 @@ function MathShell({ journey, progress, onExit, children }: { journey: NonNullab
   return <main className="math-stage">
     <img className="math-stage__background" src="/assets/library/treehouse/rooms/kitchen.png" alt="" />
     <div className="math-stage__frame">
-      {(onExit || progress) && <header className="math-stage__topbar">
-        {onExit ? <button type="button" onClick={onExit}><ArrowLeft />Stoppen</button> : <span />}
-        {progress && <strong>{progress}</strong>}
-      </header>}
-      <JourneyStageProgress journey={journey} />
+      <div className="stage-chrome">
+        {(onExit || progress) && <header className="math-stage__topbar">
+          {onExit ? <button type="button" onClick={onExit}><ArrowLeft />Stoppen</button> : <span />}
+          {progress && <strong>{progress}</strong>}
+        </header>}
+        <JourneyStageProgress journey={journey} />
+      </div>
       {children}
     </div>
   </main>;
@@ -187,15 +201,18 @@ function ChallengeInteraction(props: InteractionProps) {
     <div className="math-scaling__reference"><span>2 porties</span><strong>→</strong><span>4 porties</span></div>
     {challenge.quantities.map(item => <div className="math-scaling__row" key={item.ingredientId}>
       <CookingAssetImage src={assetFor(item.ingredientId)} alt={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId} />
-      <strong>{INGREDIENTS_BY_ID[item.ingredientId]?.name}</strong>
+      <span className="math-scaling__name">
+        <strong>{INGREDIENTS_BY_ID[item.ingredientId]?.name}</strong>
+        <small>in het recept: {item.base}{unitSuffix(item.unit) ? ` ${item.unit}` : ''}</small>
+      </span>
       <Stepper
         value={props.scaled[item.ingredientId] ?? item.base}
         step={item.step}
         maximum={item.target * 2}
         onStep={next => props.setScaled(current => ({ ...current, [item.ingredientId]: next(current[item.ingredientId] ?? item.base) }))}
         label={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId}
+        unit={unitSuffix(item.unit)}
       />
-      <b>{item.unit}</b>
     </div>)}
   </div>;
 

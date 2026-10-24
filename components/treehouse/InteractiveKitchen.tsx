@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState, type RefObject } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, BookOpen, Hand, X } from 'lucide-react';
 import { motion, type PanInfo } from 'framer-motion';
@@ -37,8 +37,8 @@ interface WorktopItem extends KitchenItem {
   stationY: number;
 }
 
-const LAYOUT_STORAGE_KEY = 'cocokiki:kitchen-layout:v1';
-const EMPTY_OFFSET: Offset = { x: 0, y: 0 };
+/** Sleutel van de oude, versleepbare indeling; wordt alleen nog opgeruimd. */
+const LEGACY_LAYOUT_STORAGE_KEY = 'cocokiki:kitchen-layout:v1';
 
 const FURNITURE: Array<{
   id: FurnitureId;
@@ -58,20 +58,6 @@ const STATIONS: Record<StationId, { label: string; image: string }> = {
   worktop: { label: 'Werkblad', image: ASSET_LIBRARY.treehouse.stations.worktop },
   cooktop: { label: 'Kookplaat', image: ASSET_LIBRARY.treehouse.stations.cooktop },
 };
-
-function readLayout(): Partial<Record<FurnitureId, Offset>> {
-  if (typeof window === 'undefined') return {};
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(LAYOUT_STORAGE_KEY) ?? '{}') as Record<string, unknown>;
-    return Object.fromEntries(Object.entries(parsed).filter(([, value]) => {
-      if (!value || typeof value !== 'object') return false;
-      const position = value as Partial<Offset>;
-      return Number.isFinite(position.x) && Number.isFinite(position.y);
-    })) as Partial<Record<FurnitureId, Offset>>;
-  } catch {
-    return {};
-  }
-}
 
 function formatQuantity(amount: number): string {
   return amount === 1 ? '1 in voorraad' : `${amount} in voorraad`;
@@ -103,9 +89,7 @@ export function buildKitchenInventory(progress: CookingProgressState, furnitureI
 }
 
 export default function InteractiveKitchen({ progress, sceneRef }: InteractiveKitchenProps) {
-  const draggedFurnitureRef = useRef<FurnitureId | null>(null);
   const stationCanvasRef = useRef<HTMLDivElement>(null);
-  const [positions, setPositions] = useState<Partial<Record<FurnitureId, Offset>>>(readLayout);
   const [openFurniture, setOpenFurniture] = useState<FurnitureId | null>(null);
   const [activeStation, setActiveStation] = useState<StationId | null>(null);
   const [worktopItems, setWorktopItems] = useState<WorktopItem[]>([]);
@@ -120,14 +104,8 @@ export default function InteractiveKitchen({ progress, sceneRef }: InteractiveKi
     [openFurniture, progress],
   );
 
-  const saveFurniturePosition = useCallback((id: FurnitureId, info: PanInfo) => {
-    setPositions(current => {
-      const previous = current[id] ?? EMPTY_OFFSET;
-      const next = { ...current, [id]: { x: previous.x + info.offset.x, y: previous.y + info.offset.y } };
-      window.localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(next));
-      return next;
-    });
-  }, []);
+  // De keuken ligt vast; een eerder versleepte indeling hoeft niet meer bewaard te blijven.
+  useEffect(() => { window.localStorage.removeItem(LEGACY_LAYOUT_STORAGE_KEY); }, []);
 
   const placeOnWorktop = useCallback((item: KitchenItem) => {
     setWorktopItems(current => {
@@ -186,27 +164,16 @@ export default function InteractiveKitchen({ progress, sceneRef }: InteractiveKi
       {FURNITURE.map(item => {
         const isOpen = openFurniture === item.id;
         const isStationOpen = activeStation === item.station;
-        const position = positions[item.id] ?? EMPTY_OFFSET;
         return <motion.button
           key={item.id}
           type="button"
           className={`treehouse-kitchen-furnishing treehouse-kitchen-furnishing--${item.id}${isOpen ? ' is-open' : ''}`}
-          aria-label={`${item.label} openen of verslepen`}
+          aria-label={`${item.label} openen`}
           aria-expanded={isOpen || isStationOpen}
           data-kitchen-station={item.station}
-          drag
-          dragConstraints={sceneRef}
-          dragMomentum={false}
-          animate={{ x: position.x, y: position.y }}
-          whileDrag={{ scale: 1.035, cursor: 'grabbing', zIndex: 7 }}
           whileHover={{ scale: 1.02 }}
-          onDragStart={() => { draggedFurnitureRef.current = item.id; }}
-          onDragEnd={(_, info) => {
-            saveFurniturePosition(item.id, info);
-            window.requestAnimationFrame(() => { draggedFurnitureRef.current = null; });
-          }}
+          whileTap={{ scale: .99 }}
           onClick={() => {
-            if (draggedFurnitureRef.current === item.id) return;
             if (item.station) {
               setOpenFurniture(null);
               setActiveStation(item.station);

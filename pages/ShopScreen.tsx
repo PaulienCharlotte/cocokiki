@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId } from '../data/cooking/types';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID, type ShopCategory } from '../data/shopCatalog';
@@ -18,6 +18,13 @@ function missingLabel(missing: number, unit: string): string {
   return `Nog ${missing}`;
 }
 
+/** Korte vorm voor op het ronde plaatje in de strip. */
+function missingBadge(missing: number, unit: string): string {
+  if (unit === 'gram') return `${missing}g`;
+  if (unit === 'milliliter') return `${missing}ml`;
+  return `${missing}`;
+}
+
 interface ShopScreenProps {
   recipeId?: RecipeId;
   progress?: CookingProgressState;
@@ -34,7 +41,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const [progress, setProgress] = useState<CookingProgressState>(() => externalProgress ?? loadCookingProgress());
   const [coins, setCoins] = useState(loadCurrency);
   const [basketOpen, setBasketOpen] = useState(false);
-  const [listOpen, setListOpen] = useState(Boolean(recipeId));
+  const [listOpen, setListOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
@@ -104,7 +111,6 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         <span className="shop-catalog__mark" aria-hidden="true"><ShoppingBasket size={20} /></span>
         <div><small>{recipeId ? 'Receptboodschappen' : 'Vrij winkelen'}</small><h1 id="shop-title">Winkel</h1></div>
         <div className="shop-catalog__actions">
-          {recipeId && <button className="shop-icon-button" type="button" onClick={() => setListOpen(value => !value)} aria-label="Open boodschappenlijst"><ListChecks /></button>}
           <button className="shop-basket-button" type="button" onClick={() => setBasketOpen(true)} aria-label={`Open mandje met ${count} producten`}><ShoppingBasket /><span>{count}</span><strong>{total}</strong></button>
         </div>
       </header>
@@ -114,15 +120,22 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         <button type="button" onClick={returnToJourney}>Naar keuken <ChevronRight /></button>
       </div>}
 
-      {recipeId && listOpen && <aside className="shopping-list shopping-list--inline" aria-label="Jouw boodschappenlijstje">
-        <header>
-          <strong>Jouw boodschappenlijstje</strong>
-          <span className="shopping-list__count">{completedRequirements} van {requirements.length}</span>
-        </header>
-        <div className="shopping-list__progress"><span style={{ width: `${requirements.length ? completedRequirements / requirements.length * 100 : 0}%` }} /></div>
-        <div className="shopping-list__items">
+      {recipeId && <div className="shopping-strip">
+        <button type="button" className="shopping-strip__toggle" onClick={() => setListOpen(value => !value)} aria-expanded={listOpen} aria-label={`Jouw receptlijstje, ${completedRequirements} van ${requirements.length} compleet`}>
+          <span className="shopping-strip__mark" aria-hidden="true"><ListChecks /></span>
+          <span className="shopping-strip__items" aria-hidden="true">
+            {requirements.map(item => <i key={item.ingredientId} className={item.collected ? 'is-complete' : ''}>
+              <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+              <em>{item.collected ? <Check /> : missingBadge(item.amount - item.inventory - item.basket, item.unit)}</em>
+            </i>)}
+          </span>
+          <span className="shopping-strip__count">{completedRequirements}/{requirements.length}</span>
+          <ChevronDown className={listOpen ? 'is-open' : ''} aria-hidden="true" />
+        </button>
+
+        {listOpen && <div className="shopping-strip__details">
           {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
-            <span>{item.collected ? <Check /> : null}</span><img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+            <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
             <p>
               <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
               <small>{item.displayAmount}</small>
@@ -131,8 +144,8 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
               {item.collected ? 'Klaar' : missingLabel(item.amount - item.inventory - item.basket, item.unit)}
             </b>
           </div>)}
-        </div>
-      </aside>}
+        </div>}
+      </div>}
 
       <nav className="shop-categories" aria-label="Productcategorieën">
         {SHOP_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
