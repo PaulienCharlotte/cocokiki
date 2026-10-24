@@ -21,10 +21,7 @@ export default function ChallengesScreen({ onNavigate }: ChallengesScreenProps) 
         <img src="/games/school/topo-cta.png" alt="Topo" draggable={false} />
       </button>
       <button className="school-room__activity school-room__activity--clock" type="button" aria-label="Klokkijken openen" onClick={() => onNavigate('/school/clock')}>
-        <span className="school-clock-card">
-          <img src="/games/school/clock/clock-school-navigation-v2.png" alt="" draggable={false} />
-          <strong>Klokkijken</strong>
-        </span>
+        <img src="/games/school/clock/clock-school-navigation-v2.png" alt="" draggable={false} />
       </button>
       <button className="school-room__activity school-room__activity--tables" type="button" aria-label="Tafels oefenen openen" onClick={() => onNavigate(tables.path)}>
         <img src="/games/school/tables-cta.png" alt="Tafels oefenen" draggable={false} />
