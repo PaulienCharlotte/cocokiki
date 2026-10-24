@@ -177,8 +177,10 @@ export default function InteractiveKitchen({ progress, sceneRef }: InteractiveKi
   }, []);
 
   return <>
-    {canCookBananaPancakes && <button type="button" className="treehouse-recipe-book" onClick={() => setCookingOpen(true)} aria-label="Verder met bananenpannenkoekjes">
-      <BookOpen aria-hidden="true" /><span>Ga verder</span>
+    {canCookBananaPancakes && <button type="button" className="treehouse-recipe-cta" onClick={() => setCookingOpen(true)} aria-label="Verder met bananenpannenkoekjes">
+      <img src={ASSET_LIBRARY.cooking.recipes.bananaPancakes} alt="" draggable={false} />
+      <span><small>Alles staat klaar</small><strong>Bananenpannenkoekjes</strong></span>
+      <i aria-hidden="true"><BookOpen /></i>
     </button>}
     <div className="treehouse-kitchen-furnishings">
       {FURNITURE.map(item => {

@@ -31,11 +31,16 @@ function assetFor(id: string) {
   return INGREDIENTS_BY_ID[id]?.image ?? EQUIPMENT_BY_ID[id]?.image ?? '';
 }
 
-function Stepper({ value, step, minimum = 0, maximum = 100, onChange, label }: { value: number; step: number; minimum?: number; maximum?: number; onChange: (value: number) => void; label: string }) {
+/**
+ * De knoppen geven een richting door in plaats van een uitkomst. Zo telt elke
+ * tik mee, ook wanneer een kind sneller tikt dan het scherm bijwerkt.
+ */
+function Stepper({ value, step, minimum = 0, maximum = 100, onStep, label }: { value: number; step: number; minimum?: number; maximum?: number; onStep: (next: (current: number) => number) => void; label: string }) {
+  const clamp = (current: number, direction: -1 | 1) => Math.min(maximum, Math.max(minimum, current + direction * step));
   return <div className="math-stepper" aria-label={label}>
-    <button type="button" aria-label={`${label} verminderen`} onClick={() => onChange(Math.max(minimum, value - step))}><Minus /></button>
+    <button type="button" aria-label={`${label} verminderen`} onClick={() => onStep(current => clamp(current, -1))}><Minus /></button>
     <strong aria-live="polite">{value}</strong>
-    <button type="button" aria-label={`${label} vermeerderen`} onClick={() => onChange(Math.min(maximum, value + step))}><Plus /></button>
+    <button type="button" aria-label={`${label} vermeerderen`} onClick={() => onStep(current => clamp(current, 1))}><Plus /></button>
   </div>;
 }
 
@@ -161,9 +166,9 @@ function MathShell({ journey, progress, onExit, children }: { journey: NonNullab
 
 interface InteractionProps {
   challenge: MathChallengeConfig;
-  quantity: number; setQuantity: (value: number) => void;
-  scaled: Record<string, number>; setScaled: (value: Record<string, number>) => void;
-  weight: number; setWeight: (value: number) => void;
+  quantity: number; setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  scaled: Record<string, number>; setScaled: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  weight: number; setWeight: React.Dispatch<React.SetStateAction<number>>;
   order: string[]; setOrder: (value: string[]) => void;
   selectedStep: string | null; setSelectedStep: (value: string | null) => void;
   draggedStep: string | null; setDraggedStep: (value: string | null) => void;
@@ -174,7 +179,7 @@ function ChallengeInteraction(props: InteractionProps) {
   const { challenge } = props;
   if (challenge.type === 'quantity-selection') return <div className="math-quantity">
     <CookingAssetImage src={assetFor(challenge.ingredientId)} alt="Eieren" />
-    <Stepper value={props.quantity} step={1} maximum={challenge.maximum} minimum={challenge.minimum} onChange={props.setQuantity} label="Aantal eieren" />
+    <Stepper value={props.quantity} step={1} maximum={challenge.maximum} minimum={challenge.minimum} onStep={props.setQuantity} label="Aantal eieren" />
     <span>eieren</span>
   </div>;
 
@@ -183,7 +188,13 @@ function ChallengeInteraction(props: InteractionProps) {
     {challenge.quantities.map(item => <div className="math-scaling__row" key={item.ingredientId}>
       <CookingAssetImage src={assetFor(item.ingredientId)} alt={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId} />
       <strong>{INGREDIENTS_BY_ID[item.ingredientId]?.name}</strong>
-      <Stepper value={props.scaled[item.ingredientId] ?? item.base} step={item.step} maximum={item.target * 2} onChange={value => props.setScaled({ ...props.scaled, [item.ingredientId]: value })} label={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId} />
+      <Stepper
+        value={props.scaled[item.ingredientId] ?? item.base}
+        step={item.step}
+        maximum={item.target * 2}
+        onStep={next => props.setScaled(current => ({ ...current, [item.ingredientId]: next(current[item.ingredientId] ?? item.base) }))}
+        label={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId}
+      />
       <b>{item.unit}</b>
     </div>)}
   </div>;

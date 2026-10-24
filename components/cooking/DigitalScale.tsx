@@ -8,7 +8,7 @@ interface DigitalScaleProps {
   value: number;
   target: number;
   increments: number[];
-  onChange: (value: number) => void;
+  onChange: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function DigitalScale({ bowlImage, ingredientImage, value, target, increments, onChange }: DigitalScaleProps) {
@@ -21,8 +21,8 @@ export default function DigitalScale({ bowlImage, ingredientImage, value, target
       </div>
     </div>
     <div className="digital-scale__controls">
-      {increments.map(increment => <button type="button" key={increment} onClick={() => onChange(value + increment)}>+{increment} g</button>)}
-      <button type="button" onClick={() => onChange(Math.max(0, value - 5))}>−5 g</button>
+      {increments.map(increment => <button type="button" key={increment} onClick={() => onChange(current => current + increment)}>+{increment} g</button>)}
+      <button type="button" onClick={() => onChange(current => Math.max(0, current - 5))}>−5 g</button>
       <button type="button" aria-label="Weegschaal leegmaken" title="Opnieuw" onClick={() => onChange(0)}><RotateCcw /></button>
     </div>
   </div>;

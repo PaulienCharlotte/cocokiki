@@ -12,6 +12,12 @@ import DecorShop from '../components/shop/DecorShop';
 
 type ActiveCategory = 'all' | ShopCategory;
 
+function missingLabel(missing: number, unit: string): string {
+  if (unit === 'gram') return `Nog ${missing} g`;
+  if (unit === 'milliliter') return `Nog ${missing} ml`;
+  return `Nog ${missing}`;
+}
+
 interface ShopScreenProps {
   recipeId?: RecipeId;
   progress?: CookingProgressState;
@@ -28,7 +34,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const [progress, setProgress] = useState<CookingProgressState>(() => externalProgress ?? loadCookingProgress());
   const [coins, setCoins] = useState(loadCurrency);
   const [basketOpen, setBasketOpen] = useState(false);
-  const [listOpen, setListOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(Boolean(recipeId));
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
@@ -36,6 +42,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const count = basketCount(session);
   const requirements = recipeId ? recipeRequirementStatus(progress, recipeId, session) : [];
   const completedRequirements = requirements.filter(item => item.collected).length;
+  const missingRequirements = requirements.filter(item => !item.collected);
   const journeyRecipeId = recipeId ?? progress.activeRecipeId;
   const journey = journeyRecipeId ? progress.journeys[journeyRecipeId] : undefined;
   const journeyReady = !!journeyRecipeId && recipeRequirementsSatisfied(progress, journeyRecipeId);
@@ -75,16 +82,14 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   };
   const returnToJourney = () => {
     if (!journeyRecipeId || !journey) return;
-    const next = journey.stage === 'shopping' && journeyReady
+    if (!journeyReady) return setCheckoutComplete(false);
+    const next = journey.stage === 'shopping'
       ? advanceJourney(progress, journeyRecipeId, 'cooking')
       : progress;
     if (next !== progress) commitProgress(next);
     setCheckoutComplete(false);
-    if (journeyReady && onNavigate) onNavigate('/treehouse/kitchen');
-    else if (!recipeId) {
-      if (onNavigate) onNavigate('/treehouse/cookbook?resume=1');
-      else window.location.assign('/treehouse/cookbook?resume=1');
-    }
+    if (onNavigate) onNavigate('/treehouse/kitchen');
+    else window.location.assign('/treehouse/kitchen');
   };
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
 
@@ -109,13 +114,24 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         <button type="button" onClick={returnToJourney}>Naar keuken <ChevronRight /></button>
       </div>}
 
-      {recipeId && listOpen && <aside className="shopping-list" aria-label="Jouw boodschappenlijstje">
-        <header><strong>Jouw boodschappenlijstje</strong><button type="button" onClick={() => setListOpen(false)} aria-label="Sluiten"><X /></button></header>
+      {recipeId && listOpen && <aside className="shopping-list shopping-list--inline" aria-label="Jouw boodschappenlijstje">
+        <header>
+          <strong>Jouw boodschappenlijstje</strong>
+          <span className="shopping-list__count">{completedRequirements} van {requirements.length}</span>
+        </header>
         <div className="shopping-list__progress"><span style={{ width: `${requirements.length ? completedRequirements / requirements.length * 100 : 0}%` }} /></div>
-        {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
-          <span>{item.collected ? <Check /> : null}</span><img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
-          <p><strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong><small>{item.displayAmount}</small></p>
-        </div>)}
+        <div className="shopping-list__items">
+          {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
+            <span>{item.collected ? <Check /> : null}</span><img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+            <p>
+              <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
+              <small>{item.displayAmount}</small>
+            </p>
+            <b className={item.collected ? 'is-complete' : ''}>
+              {item.collected ? 'Klaar' : missingLabel(item.amount - item.inventory - item.basket, item.unit)}
+            </b>
+          </div>)}
+        </div>
       </aside>}
 
       <nav className="shop-categories" aria-label="Productcategorieën">
@@ -143,17 +159,34 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         </div>
         <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>
           {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
-          {notice.includes('tekort') && <a className="shop-earn-link" href="/challenges">Oefen en verdien CocoCoins</a>}
+          {notice.includes('tekort') && <button className="shop-earn-link" type="button" onClick={() => onNavigate ? onNavigate('/challenges') : window.location.assign('/challenges')}>Oefen en verdien CocoCoins</button>}
         </footer>
       </aside>
     </div>}
 
-    {checkoutComplete && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="shop-success-title"><div><span aria-hidden="true"><Check /></span><h2 id="shop-success-title">Goed gewinkeld!</h2>
-      {journeyRecipeId && journey ? <>
-        <p>{journeyReady ? `Alles voor ${RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.` : 'Je boodschappen staan in je voorraad.'}</p>
-        <button type="button" onClick={returnToJourney}>{journeyReady ? 'Ga naar de keuken' : 'Terug naar je recept'} <ChevronRight /></button>
+    {checkoutComplete && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="shop-success-title"><div>
+      <span aria-hidden="true"><Check /></span>
+      {journeyRecipeId && journey && journeyReady ? <>
+        <h2 id="shop-success-title">Goed gewinkeld!</h2>
+        <p>Alles voor {RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.</p>
+        <button type="button" onClick={returnToJourney}>Ga naar de keuken <ChevronRight /></button>
         <button className="shop-success__secondary" type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
-      </> : <><p>Je boodschappen staan in je voorraad.</p><button type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button></>}
+      </> : recipeId && missingRequirements.length > 0 ? <>
+        <h2 id="shop-success-title">Je hebt al wat in huis!</h2>
+        <p>Dit heb je nog nodig:</p>
+        <ul className="shop-success__missing">
+          {missingRequirements.map(item => <li key={item.ingredientId}>
+            <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
+            <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
+            <small>{missingLabel(item.amount - item.inventory - item.basket, item.unit)}</small>
+          </li>)}
+        </ul>
+        <button type="button" onClick={() => setCheckoutComplete(false)}>Dit ga ik halen <ChevronRight /></button>
+      </> : <>
+        <h2 id="shop-success-title">Goed gewinkeld!</h2>
+        <p>Je boodschappen staan in je voorraad.</p>
+        <button type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
+      </>}
     </div></div>}
     {recipeId && <button className="shop-exit" type="button" onClick={onExit}>Stoppen</button>}
   </main>;
