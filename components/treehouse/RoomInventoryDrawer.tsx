@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, Sprout, X } from 'lucide-react';
+import { Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
 import { PLANT_SPECIES_BY_ID } from '../../data/plants/species';
-import { loadPlantFamily } from '../../services/plantFamily';
+import { loadPlantFamily, plantThirst, savePlantFamily, STAGE_LABEL, stageImage, waterPlant } from '../../services/plantFamily';
 import PlantFlashcard from '../plants/PlantFlashcard';
-import PlantFamilyPanel from '../plants/PlantFamilyPanel';
 import InventorySellButton from './InventorySellButton';
 import { subscribeLocalState } from '../../services/localState';
 
@@ -34,7 +33,6 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   const [overReturn, setOverReturn] = useState(false);
   const [notice, setNotice] = useState('');
   const [plantCard, setPlantCard] = useState<{ speciesId: string; nickname?: string } | null>(null);
-  const [familyOpen, setFamilyOpen] = useState(false);
   const drag = useRef<DragState | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const returnRef = useRef<HTMLDivElement>(null);
@@ -169,7 +167,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   const overlay = <>
     {open && <div className="room-inventory-backdrop room-decor-backdrop" onMouseDown={() => setOpen(false)}>
       <aside className="room-inventory-drawer" role="dialog" aria-modal="true" aria-labelledby="room-inventory-title" onMouseDown={event => event.stopPropagation()}>
-        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Voorraad</h2></div><div className="room-inventory-drawer__actions"><button type="button" aria-label="Mijn Plantenfamilie openen" title="Mijn Plantenfamilie" onClick={() => { setOpen(false); setFamilyOpen(true); }}><Sprout /></button><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></div></header>
+        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Voorraad</h2></div><div className="room-inventory-drawer__actions"><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></div></header>
         {products.length > 0 ? <div className="room-inventory-grid">
           {products.map(({ product, amount }) => <article key={product.id}>
             <button className="room-inventory-place" type="button" aria-label={`${product.name} in kamer plaatsen`} onPointerDown={event => begin(event, product)} onClick={event => { if (event.detail === 0) { place(product, window.innerWidth / 2, window.innerHeight * .72); setOpen(false); } }}><DecorAsset product={product} /></button>
@@ -180,7 +178,6 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
       </aside>
     </div>}
     {plantCard && <PlantFlashcard speciesId={plantCard.speciesId} nickname={plantCard.nickname} onClose={() => setPlantCard(null)} />}
-    {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
     {ghost && <>
       <div className="room-decor-ghost" style={{ left: ghost.x, top: ghost.y }}><DecorAsset product={ghost.product} /></div>
       {ghost.returnable && <div ref={returnRef} className={`room-return-target${overReturn ? ' is-over' : ''}`}><PackageOpen /><span>Terug in voorraad</span></div>}
@@ -198,10 +195,27 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
             const delta = event.shiftKey ? 5 : 1;
             const directions: Record<string, [number, number]> = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
             if (directions[event.key]) { event.preventDefault(); const [x, y] = directions[event.key]; commit(current => moveRoomItem(current, item.id, item.x + x, item.y + y)); }
-          }}><DecorAsset product={product} view={item.view} /></button>
+          }}>{(() => {
+            const plant = plantOf(item);
+            const soort = plant && PLANT_SPECIES_BY_ID[plant.speciesId];
+            const ziek = plant && soort ? stageImage(soort.stages, plantThirst(plant, soort.waterDays).stage) : null;
+            return ziek
+              ? <img className="decor-asset" src={ziek} alt={`${plant!.nickname} heeft dorst`} draggable={false} />
+              : <DecorAsset product={product} view={item.view} />;
+          })()}</button>
 
-          {isSelected && plantOf(item) && <span className="room-placed-object__label">{plantOf(item)!.nickname}</span>}
+          {(() => {
+            const plant = plantOf(item);
+            const soort = plant && PLANT_SPECIES_BY_ID[plant.speciesId];
+            if (!plant || !soort) return null;
+            const dorst = plantThirst(plant, soort.waterDays);
+            return <>
+              {dorst.stage !== 'fresh' && <span className={`room-placed-object__thirst is-${dorst.stage}`} title={STAGE_LABEL[dorst.stage]}><Droplet aria-hidden="true" /><span className="sr-only">{plant.nickname}: {STAGE_LABEL[dorst.stage]}</span></span>}
+              {isSelected && <span className="room-placed-object__label">{plant.nickname}</span>}
+            </>;
+          })()}
           {isSelected && <div className="room-placed-object__tools" aria-label={`${product.name} aanpassen`}>
+            {plantOf(item) && <button type="button" title="Water geven" aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}><Droplet /></button>}
             {PLANT_SPECIES_BY_ID[product.id] && <button type="button" title="Meer over deze plant" aria-label={`Meer weten over ${plantOf(item)?.nickname ?? product.name}`} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })}><Info /></button>}
             {product.views > 1 && <>
               <button type="button" title="Draai naar links" aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}><RotateCcw /></button>

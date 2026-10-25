@@ -1348,3 +1348,59 @@
 .room-inventory-drawer__actions { display: flex; align-items: center; gap: 6px; }
 .room-inventory-drawer__actions button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-primary); }
 .room-inventory-drawer__actions svg { width: 19px; }
+
+/* --- Planten verzorgen: dorst tonen en water geven --- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.plant-family__stage { width: 86px; height: 86px; object-fit: contain; }
+.plant-family__stage-label { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--color-primary); font-size: .68rem; font-weight: var(--font-weight-bold); }
+.plant-family__stage-label svg { width: 13px; }
+.plant-family__stage-label.is-droopy { color: #8a6d2f; }
+.plant-family__stage-label.is-yellow { color: #96682a; }
+.plant-family__stage-label.is-crispy { color: var(--color-error); }
+.plant-family__card.is-crispy { border-color: #e0c3bd; }
+.plant-family__water { background: var(--color-sky) !important; border-color: #9cc8e3 !important; color: #2c5a76 !important; }
+.plant-family__water:hover { border-color: #6ea9cd !important; }
+
+.plant-family__alert { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: center; gap: var(--space-2); margin-top: var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) 0; border-radius: var(--radius-card); background: #f6f1e8; }
+.plant-family__alert img { width: 62px; }
+.plant-family__alert p { margin: 0; font-size: var(--font-size-sm); line-height: var(--line-height-default); }
+.plant-family__alert strong { display: block; color: var(--color-primary); font-size: .72rem; font-weight: var(--font-weight-bold); }
+
+/* Een druppel op de plant in de kamer, ook zonder hem te selecteren. */
+.room-placed-object__thirst { position: absolute; z-index: 2; top: -6px; right: -6px; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-sky); color: #2c5a76; box-shadow: var(--shadow-soft); }
+.room-placed-object__thirst svg { width: 15px; }
+.room-placed-object__thirst.is-yellow { background: var(--color-honey); color: #6b5120; }
+.room-placed-object__thirst.is-crispy { background: var(--color-peach); color: #7a3b33; animation: thirst-pulse 1.8s ease-in-out infinite; }
+@keyframes thirst-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
+@media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-crispy { animation: none; } }
+
+/* Mijn Planten: vaste ingang in de boomhut, met het aantal dorstige planten. */
+.treehouse-overview__plants {
+  position: absolute; z-index: 3; left: 50%; bottom: clamp(14px, 3vh, 28px);
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 10px 18px 10px 14px;
+  border: 1px solid #fff4e8c4; border-radius: var(--radius-pill);
+  background: #fff7ebf2; box-shadow: 0 8px 20px #43271638;
+  color: #2f6b3d; font-size: .82rem; font-weight: var(--font-weight-heavy);
+  transform: translateX(-50%);
+  transition: transform var(--motion-fast) var(--ease-storybook), box-shadow var(--motion-fast) ease;
+}
+.treehouse-overview__plants svg { width: 19px; height: 19px; }
+.treehouse-overview__plants:hover { transform: translateX(-50%) translateY(-3px); box-shadow: 0 12px 26px #43271645; }
+.treehouse-overview__plants:focus-visible { outline: 4px solid #fff2b8; outline-offset: 3px; }
+.treehouse-overview__plants em {
+  min-width: 21px; padding: 2px 6px; border-radius: var(--radius-pill);
+  background: #d9643c; color: #fff; font-size: .72rem; font-style: normal; text-align: center;
+}
+.treehouse-overview__plants.is-thirsty { color: #a8441f; }
+
+@media (prefers-reduced-motion: reduce) {
+  .treehouse-overview__plants { transition: none; }
+  .treehouse-overview__plants:hover { transform: translateX(-50%); }
+}
+
+.plant-family > header p { margin: 3px 0 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+
+/* De vaste bovenbalk mag de kop van een plantenkaart niet afsnijden. */
+.plant-card-backdrop { padding-top: max(var(--space-4), 84px); }

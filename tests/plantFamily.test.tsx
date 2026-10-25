@@ -10,7 +10,10 @@ import {
   createEmptyPlantFamily,
   MAX_NICKNAME_LENGTH,
   migratePlantFamily,
+  plantThirst,
   renamePlant,
+  stageImage,
+  waterPlant,
 } from '../services/plantFamily';
 import PlantFlashcard from '../components/plants/PlantFlashcard';
 
@@ -79,4 +82,55 @@ test('de leerkaart toont naam, soortnaam, verzorging en een tip van Kiki', () =>
   assert.match(kaart, /Kiki zegt/);
   assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.png/);
   assert.equal(renderToStaticMarkup(<PlantFlashcard speciesId="bestaat-niet" onClose={() => undefined} />), '');
+});
+
+test('dorst loopt op volgens de waterbehoefte van de soort', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const plant = { id: 'p', speciesId: 'monstera-basket', nickname: 'Henk', adoptedAt: new Date(start).toISOString() };
+  const monstera = PLANT_SPECIES_BY_ID['monstera-basket'];
+  assert.equal(monstera.waterDays, 7);
+
+  assert.equal(plantThirst(plant, monstera.waterDays, start).stage, 'fresh');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 6 * dag).stage, 'fresh');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 8 * dag).stage, 'droopy');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 15 * dag).stage, 'yellow');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 30 * dag).stage, 'crispy');
+
+  // Een cactus mag veel langer wachten dan een varen.
+  assert.ok(PLANT_SPECIES_BY_ID['tall-cactus'].waterDays > PLANT_SPECIES_BY_ID['hanging-fern'].waterDays * 5);
+  assert.equal(plantThirst(plant, PLANT_SPECIES_BY_ID['tall-cactus'].waterDays, start + 15 * dag).stage, 'fresh');
+});
+
+test('water geven brengt elke plant helemaal terug; hij gaat nooit dood', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const veelLater = start + 400 * dag;
+  const family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:9', { 'monstera-basket': 1 }, new Date(start).toISOString(), () => 'p1');
+  const soort = PLANT_SPECIES_BY_ID['monstera-basket'];
+
+  // Ook na ruim een jaar is het ergste stadium 'crispy', niet dood.
+  const verwaarloosd = plantThirst(family.plants[0], soort.waterDays, veelLater);
+  assert.equal(verwaarloosd.stage, 'crispy');
+  assert.ok(verwaarloosd.ratio > 50);
+
+  const begoten = waterPlant(family, 'p1', new Date(veelLater).toISOString());
+  assert.equal(plantThirst(begoten.plants[0], soort.waterDays, veelLater).stage, 'fresh');
+  // Water geven verandert niets aan de naam of de soort.
+  assert.equal(begoten.plants[0].nickname, 'Monstera');
+  assert.equal(begoten.plants[0].speciesId, 'monstera-basket');
+  // Water geven aan iets dat niet bestaat verandert niets.
+  assert.equal(waterPlant(begoten, 'bestaat-niet'), begoten);
+  // De waterbeurt blijft bewaard na een herstart.
+  assert.deepEqual(migratePlantFamily(JSON.parse(JSON.stringify(begoten))), begoten);
+});
+
+test('alleen de monstera heeft eigen dorstplaatjes; de rest valt terug op het winkelplaatje', () => {
+  const monstera = PLANT_SPECIES_BY_ID['monstera-basket'];
+  assert.ok(monstera.stages);
+  assert.equal(stageImage(monstera.stages, 'fresh'), null);
+  assert.match(stageImage(monstera.stages, 'droopy') ?? '', /monstera-basket\/droopy\.png/);
+  assert.match(stageImage(monstera.stages, 'crispy') ?? '', /monstera-basket\/crispy\.png/);
+  assert.equal(stageImage(undefined, 'crispy'), null);
+  for (const species of PLANT_SPECIES) assert.ok(species.waterDays >= 1, `${species.id} mist waterDays`);
 });

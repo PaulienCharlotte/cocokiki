@@ -12,6 +12,8 @@ export interface AdoptedPlant {
   speciesId: string;
   nickname: string;
   adoptedAt: string;
+  /** Wanneer er voor het laatst water is gegeven; leeg betekent sinds de adoptie. */
+  lastWateredAt?: string;
 }
 
 export interface PlantFamilyState {
@@ -43,7 +45,11 @@ export function migratePlantFamily(value: unknown): PlantFamilyState {
     && typeof plant.id === 'string' && plant.id.length > 0
     && typeof plant.speciesId === 'string' && Boolean(PLANT_SPECIES_BY_ID[plant.speciesId])
     && typeof plant.adoptedAt === 'string',
-  ).map(plant => ({ ...plant, nickname: cleanNickname(plant.nickname, plant.speciesId) })) : [];
+  ).map(plant => ({
+    ...plant,
+    nickname: cleanNickname(plant.nickname, plant.speciesId),
+    ...(typeof plant.lastWateredAt === 'string' ? { lastWateredAt: plant.lastWateredAt } : {}),
+  })) : [];
   // Dubbele id's zouden hernoemen onvoorspelbaar maken.
   const seen = new Set<string>();
   return {
@@ -106,4 +112,56 @@ export function renamePlant(state: PlantFamilyState, id: string, nickname: strin
   const schoon = cleanNickname(nickname, plant.speciesId);
   if (schoon === plant.nickname) return state;
   return { ...state, plants: state.plants.map(item => item.id === id ? { ...item, nickname: schoon } : item) };
+}
+
+/**
+ * Dorst. Een plant wordt na verloop van tijd dorstig en ziet er dan slechter
+ * uit, maar hij gaat nooit dood: water geven brengt hem altijd helemaal terug.
+ * Een kind dat een week niet speelt vindt dus geen dode planten.
+ */
+export type PlantStage = 'fresh' | 'droopy' | 'yellow' | 'crispy';
+
+const DAG = 24 * 60 * 60 * 1000;
+
+/** Vanaf welk veelvoud van de waterbeurt een stadium begint. */
+const STAGE_FROM: Array<[PlantStage, number]> = [
+  ['crispy', 3.5],
+  ['yellow', 2],
+  ['droopy', 1],
+];
+
+export interface PlantThirst {
+  stage: PlantStage;
+  /** 0 is net water gehad, 1 is precies toe aan een beurt, hoger is te lang geleden. */
+  ratio: number;
+  daysSinceWater: number;
+}
+
+export function plantThirst(plant: AdoptedPlant, waterDays: number, now = Date.now()): PlantThirst {
+  const since = plant.lastWateredAt ?? plant.adoptedAt;
+  const moment = Date.parse(since);
+  const dagen = Number.isFinite(moment) ? Math.max(0, (now - moment) / DAG) : 0;
+  const interval = Math.max(1, waterDays);
+  const ratio = dagen / interval;
+  const stage = STAGE_FROM.find(([, vanaf]) => ratio >= vanaf)?.[0] ?? 'fresh';
+  return { stage, ratio, daysSinceWater: dagen };
+}
+
+/** Water geven zet de teller terug; dat kan altijd, ook als hij geen dorst heeft. */
+export function waterPlant(state: PlantFamilyState, id: string, now = new Date().toISOString()): PlantFamilyState {
+  if (!state.plants.some(plant => plant.id === id)) return state;
+  return { ...state, plants: state.plants.map(plant => plant.id === id ? { ...plant, lastWateredAt: now } : plant) };
+}
+
+export const STAGE_LABEL: Record<PlantStage, string> = {
+  fresh: 'Lekker fris',
+  droopy: 'Heeft dorst',
+  yellow: 'Veel dorst',
+  crispy: 'Snel water!',
+};
+
+/** Het plaatje bij een stadium; zonder eigen tekening blijft het winkelplaatje staan. */
+export function stageImage(stages: { droopy: string; yellow: string; crispy: string } | undefined, stage: PlantStage): string | null {
+  if (!stages || stage === 'fresh') return null;
+  return stages[stage];
 }

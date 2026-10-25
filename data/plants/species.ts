@@ -23,6 +23,10 @@ export interface PlantSpecies {
   funFact: string;
   /** Wat Kiki erover zegt, in kindertaal. */
   kikiTip: string;
+  /** Na hoeveel dagen deze plant weer water wil. */
+  waterDays: number;
+  /** Eigen plaatjes voor de dorststadia; zonder deze vallen we terug op het winkelplaatje. */
+  stages?: { droopy: string; yellow: string; crispy: string };
 }
 
 export const PLANT_SPECIES: PlantSpecies[] = [
@@ -37,6 +41,12 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Water als de bovenste laag aarde droog voelt.',
     funFact: 'De gaten in de bladeren laten wind en regen erdoor, zodat grote bladeren niet scheuren.',
     kikiTip: 'Zie je die gaten? Daar waait de wind zo doorheen. Slim bedacht door de plant zelf!',
+    waterDays: 7,
+    stages: {
+      droopy: '/assets/library/plants/monstera-basket/droopy.png',
+      yellow: '/assets/library/plants/monstera-basket/yellow.png',
+      crispy: '/assets/library/plants/monstera-basket/crispy.png',
+    },
   },
   {
     id: 'palm-white-pot',
@@ -49,6 +59,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Houd de aarde een beetje vochtig, maar nooit kletsnat.',
     funFact: 'Een palm heeft geen takken: alle bladeren groeien uit één punt bovenaan de stam.',
     kikiTip: 'Een palm vindt natte voeten niet fijn. Giet het water weg dat in de schotel blijft staan.',
+    waterDays: 7,
   },
   {
     id: 'palm-clay-pot',
@@ -61,6 +72,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Een beetje vochtig houden; laat de pot goed uitlekken.',
     funFact: 'Een kleipot ademt: er verdampt water door de wand, waardoor de aarde sneller droogt.',
     kikiTip: 'In een kleipot droogt de aarde sneller. Voel dus iets vaker of hij water wil.',
+    waterDays: 6,
   },
   {
     id: 'snake-plant',
@@ -73,6 +85,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Heel weinig. In de winter soms maar één keer per maand.',
     funFact: 'Deze plant heette vroeger Sansevieria, maar onderzoekers ontdekten dat hij bij Dracaena hoort.',
     kikiTip: 'Dit is de makkelijkste plant die er is. Vergeet je water te geven? Hij vindt het prima.',
+    waterDays: 21,
   },
   {
     id: 'hanging-fern',
@@ -85,6 +98,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Houd de aarde steeds een beetje vochtig.',
     funFact: 'Varens maken geen zaadjes maar sporen: piepkleine stipjes aan de onderkant van het blad.',
     kikiTip: 'Varens houden van vochtige lucht. In de badkamer voelen ze zich thuis.',
+    waterDays: 3,
   },
   {
     id: 'hanging-vine',
@@ -97,6 +111,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Water als de bovenste laag aarde droog aanvoelt.',
     funFact: 'Hangplanten gebruiken luchtworteltjes om zich aan bomen en muren vast te houden.',
     kikiTip: 'Hang deze hoog op, dan kunnen de ranken lekker naar beneden groeien.',
+    waterDays: 7,
   },
   {
     id: 'white-flower',
@@ -109,6 +124,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Regelmatig water; hij laat zijn bladeren hangen als hij dorst heeft.',
     funFact: 'Het witte "bloemblad" is geen bloem maar een schutblad; de echte bloemetjes zitten op de kolf in het midden.',
     kikiTip: 'Laat hij zijn blad hangen? Geef water, dan staat hij een paar uur later weer rechtop.',
+    waterDays: 5,
   },
   {
     id: 'pink-flower',
@@ -121,6 +137,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Een beetje vochtig houden, nooit in een laagje water.',
     funFact: 'Net als bij de lepelplant is het gekleurde deel een schutblad en geen echte bloem.',
     kikiTip: 'Zie je dat staafje in het midden? Daar zitten de echte bloemetjes op.',
+    waterDays: 6,
   },
   {
     id: 'orange-tree',
@@ -133,6 +150,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'In de zomer regelmatig, in de winter veel minder.',
     funFact: 'Citrusbomen kunnen bloeien en vruchten dragen op hetzelfde moment.',
     kikiTip: 'Wrijf eens zachtjes over een blaadje en ruik aan je vingers. Citrus!',
+    waterDays: 5,
   },
   {
     id: 'orchid',
@@ -145,6 +163,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Weinig. Een klein beetje water per week is genoeg.',
     funFact: 'Orchideeën groeien niet in gewone aarde maar in boomschors, want hun wortels willen lucht.',
     kikiTip: 'Dikke grijsgroene wortels boven de pot zijn normaal. Laat ze gewoon zitten.',
+    waterDays: 7,
   },
   {
     id: 'succulent',
@@ -157,6 +176,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Heel weinig. Laat de aarde eerst helemaal opdrogen.',
     funFact: 'Vetplanten bewaren water in hun dikke blaadjes; daarom voelen die zo stevig aan.',
     kikiTip: 'Te veel water is voor een vetplant erger dan te weinig. Echt waar.',
+    waterDays: 21,
   },
   {
     id: 'small-cactus',
@@ -169,6 +189,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Bijna nooit. In de winter helemaal niet.',
     funFact: 'De stekels van een cactus zijn omgebouwde bladeren; zo verdampt er bijna geen water.',
     kikiTip: 'Een cactus drinkt bijna niets. Eén keer per maand een scheutje is al genoeg.',
+    waterDays: 30,
   },
   {
     id: 'tall-cactus',
@@ -181,6 +202,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     water: 'Heel weinig, en in de winter niet.',
     funFact: 'Een cactus zet zijn stam uit als een harmonica wanneer hij water opslaat.',
     kikiTip: 'Pak hem voorzichtig vast bij de pot, niet bij de cactus zelf.',
+    waterDays: 30,
   },
 ];
 

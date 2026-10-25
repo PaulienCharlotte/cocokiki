@@ -13,6 +13,7 @@ export const ASSET_LIBRARY = {
       tip: '/images/avatars/kiki/kiki-tip.png',
       cheer: '/images/avatars/kiki/kiki-cheer.png',
       explore: '/images/avatars/kiki/kiki-explore.png',
+      worried: '/images/avatars/kiki/kiki-worried.png',
     },
     lua: '/images/avatars/lua.webp',
     together: '/images/avatars/samen.webp',
