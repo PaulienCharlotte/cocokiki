@@ -1,5 +1,5 @@
 import { BestResult, Preferences } from '../types';
-import { loadCurrency, saveCurrency } from '../../../../services/currency';
+import { loadCurrency } from '../../../../services/currency';
 
 const PREFS_KEY = 'cocokiki:baby-lua:v1:preferences';
 const BEST_KEY = 'cocokiki:baby-lua:v1:best';
@@ -29,8 +29,4 @@ export function saveBest(value: BestResult): void {
 
 export function loadCoins(): number {
   return loadCurrency();
-}
-
-export function saveCoins(value: number): void {
-  saveCurrency(value);
 }

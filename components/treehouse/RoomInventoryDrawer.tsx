@@ -5,6 +5,7 @@ import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { availableRoomQuantity, loadRoomInventory, moveRoomItem, placeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
+import { subscribeLocalState } from '../../services/localState';
 
 interface Props {
   room: TreehouseRoomId;
@@ -77,10 +78,11 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
 
   useEffect(() => {
     const update = (event: Event) => setInventory((event as CustomEvent<RoomInventoryState>).detail ?? loadRoomInventory());
+    const unsubscribe = subscribeLocalState(() => setInventory(loadRoomInventory()), ROOM_INVENTORY_KEY);
     const sync = (event: StorageEvent) => { if (event.key === ROOM_INVENTORY_KEY) setInventory(loadRoomInventory()); };
     window.addEventListener(ROOM_INVENTORY_CHANGE_EVENT, update);
     window.addEventListener('storage', sync);
-    return () => { window.removeEventListener(ROOM_INVENTORY_CHANGE_EVENT, update); window.removeEventListener('storage', sync); };
+    return () => { unsubscribe(); window.removeEventListener(ROOM_INVENTORY_CHANGE_EVENT, update); window.removeEventListener('storage', sync); };
   }, []);
 
   useEffect(() => {

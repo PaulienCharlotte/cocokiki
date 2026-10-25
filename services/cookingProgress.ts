@@ -1,7 +1,11 @@
-import { RECIPES_BY_ID } from '../data/cooking/catalog';
+import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import { getRecipeAccess } from '../data/cooking/availability';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../data/cooking/discovery';
-import { MATH_CHALLENGES_BY_RECIPE, MATH_COMPLETION_BONUS } from '../data/cooking/mathChallenges';
+import { MATH_COMPLETION_BONUS } from '../data/cooking/mathChallenges';
+import { commitLocalState, readDocument, readLocalState } from './localState';
+import { ingredientRequirements } from './recipeInventory';
+import { createCookingSession, migrateCookingSession, migrateLegacyCookingSession } from '../data/cooking/session';
+import { COOKING_SESSION_KEY } from '../data/cooking/bananaPancakeCooking';
 import type {
   CookingProgressState,
   IngredientDiscoveryState,
@@ -53,6 +57,7 @@ export function createEmptyCookingProgress(): CookingProgressState {
     inventory: { consumables: {}, equipmentIds: [], acquisitions: [] },
     shoppingTransactions: {},
     completions: {},
+    preparationSessions: {},
   };
 }
 
@@ -110,6 +115,7 @@ export function migrateCookingProgress(value: unknown): CookingProgressState {
   if (!value || typeof value !== 'object') return createEmptyCookingProgress();
   const source = value as Partial<CookingProgressState>;
   const result = createEmptyCookingProgress();
+  result.revision = Number.isSafeInteger(source.revision) && source.revision! >= 0 ? source.revision : 0;
   result.activeRecipeId = isRecipeId(source.activeRecipeId) ? source.activeRecipeId : null;
   result.discoveredIngredientIds = uniqueStrings(source.discoveredIngredientIds);
 
@@ -180,27 +186,71 @@ export function migrateCookingProgress(value: unknown): CookingProgressState {
       };
     }
   }
+  if (source.preparationSessions && typeof source.preparationSessions === 'object') {
+    for (const [id, session] of Object.entries(source.preparationSessions)) {
+      const recipe = RECIPES_BY_ID[id];
+      if (recipe?.preparation?.steps.length) result.preparationSessions[id] = migrateCookingSession(session, recipe);
+    }
+  }
   return result;
 }
 
 export function loadCookingProgress(): CookingProgressState {
   try {
-    const stored = localStorage.getItem(COOKING_PROGRESS_KEY);
+    const stored = readDocument(COOKING_PROGRESS_KEY);
     const migrated = migrateCookingProgress(stored ? JSON.parse(stored) : null);
-    localStorage.setItem(COOKING_PROGRESS_KEY, JSON.stringify(migrated));
+    const legacyRecipe = RECIPES_BY_ID['banana-pancakes'];
+    const legacyJourney = migrated.journeys[legacyRecipe.id];
+    if (legacyJourney && !migrated.preparationSessions[legacyRecipe.id] && (legacyJourney.stage === 'cooking' || legacyJourney.status === 'completed')) {
+      try {
+        const legacy = JSON.parse(localStorage.getItem(COOKING_SESSION_KEY) ?? 'null');
+        if (legacy) migrated.preparationSessions[legacyRecipe.id] = migrateLegacyCookingSession(legacy, legacyRecipe, legacyJourney.startedAt, legacyJourney.status === 'completed');
+      } catch { /* A damaged legacy session must not discard valid inventory and progress. */ }
+    }
     return migrated;
   } catch {
     return createEmptyCookingProgress();
   }
 }
 
-export function saveCookingProgress(progress: CookingProgressState): boolean {
+export function saveCookingProgress(progress: CookingProgressState, spend?: { id: string; amount: number }): boolean {
+  let revision: number;
+  let ledger: Record<string, number>;
   try {
-    localStorage.setItem(COOKING_PROGRESS_KEY, JSON.stringify(progress));
-    return true;
-  } catch {
-    return false;
+    const saved = JSON.parse(readDocument(COOKING_PROGRESS_KEY) ?? 'null');
+    revision = saved?.revision ?? 0;
+    if (revision !== (progress.revision ?? 0)) return false;
+    ledger = readLocalState().appliedTransactions;
+  } catch { return false; }
+  const operations: Array<{ id: string; amount: number }> = [];
+  for (const [recipeId, journey] of Object.entries(progress.journeys)) {
+    if (!journey) continue;
+    for (const id of journey.discovery.rewardClaimedIngredientIds) {
+      const config = INGREDIENT_DISCOVERIES_BY_ID[id];
+      if (config) operations.push({ id: `cooking-discovery:${id}`, amount: config.rewardCoins });
+    }
+    const math = RECIPES_BY_ID[recipeId]?.education?.math ?? [];
+    for (const id of journey.math.rewardClaimedChallengeIds) {
+      const challenge = math.find(item => item.id === id);
+      if (challenge) operations.push({ id: `cooking-math:${recipeId}:${id}`, amount: challenge.rewardCoins });
+    }
+    if (journey.math.completionBonusClaimed) operations.push({ id: `cooking-math:${recipeId}:complete`, amount: MATH_COMPLETION_BONUS });
+    const completion = progress.completions[recipeId];
+    const reward = RECIPES_BY_ID[recipeId]?.rewardCoins;
+    if (completion?.rewardClaimed && reward) operations.push({ id: `cooking-complete:${recipeId}`, amount: reward });
   }
+  for (let index = operations.length - 1; index >= 0; index--) {
+    if (ledger[operations[index].id] !== undefined) operations.splice(index, 1);
+  }
+  if (spend) {
+    if (ledger[spend.id] !== undefined) return false;
+    operations.push({ id: spend.id, amount: -spend.amount });
+  }
+  const result = commitLocalState({ [COOKING_PROGRESS_KEY]: JSON.stringify({ ...progress, revision: revision + 1 }) }, operations);
+  const saved = result.status === 'applied' || result.status === 'duplicate';
+  // Carry the storage revision back to the caller's committed snapshot.
+  if (saved) progress.revision = revision + 1;
+  return saved;
 }
 
 function clone(progress: CookingProgressState): CookingProgressState {
@@ -208,7 +258,8 @@ function clone(progress: CookingProgressState): CookingProgressState {
 }
 
 export function startJourney(progress: CookingProgressState, recipe: RecipeConfig, now = new Date().toISOString()): CookingProgressState {
-  if (!getRecipeAccess(recipe, progress).playable || progress.journeys[recipe.id]) return progress;
+  if (!getRecipeAccess(recipe, progress).playable) return progress;
+  if (progress.journeys[recipe.id]) return progress.activeRecipeId === recipe.id ? progress : { ...progress, activeRecipeId: recipe.id };
   const next = clone(progress);
   next.activeRecipeId = recipe.id;
   next.journeys[recipe.id] = {
@@ -225,6 +276,7 @@ export function restartJourney(progress: CookingProgressState, recipe: RecipeCon
   const previous = progress.journeys[recipe.id];
   if (!getRecipeAccess(recipe, progress).playable || !previous) return progress;
   const next = clone(progress);
+  if (recipe.preparation) next.preparationSessions[recipe.id] = createCookingSession(recipe);
   next.activeRecipeId = recipe.id;
   next.journeys[recipe.id] = {
     recipeId: recipe.id,
@@ -277,9 +329,8 @@ export function nextRequiredStage(progress: CookingProgressState, recipeId: Reci
 }
 
 export function recipeRequirementsSatisfied(progress: CookingProgressState, recipeId: RecipeId): boolean {
-  return RECIPES_BY_ID[recipeId].ingredients.every(item =>
-    (progress.inventory.consumables[item.ingredientId] ?? 0) >= item.amount,
-  );
+  const recipe = RECIPES_BY_ID[recipeId];
+  return !!recipe && ingredientRequirements(recipe, progress).every(item => item.sufficient);
 }
 
 function nextUndiscoveredForRecipe(progress: CookingProgressState, recipeId: RecipeId): string | null {
@@ -326,12 +377,12 @@ export interface MathValidationResult {
 export function validateMathChallengeAnswer(config: MathChallengeConfig, answer: MathChallengeAnswer, attempt: number): MathValidationResult {
   if (config.type === 'quantity-selection') {
     const correct = typeof answer === 'number' && answer === config.correctQuantity;
-    return { correct, hint: !correct && attempt >= 2 ? `Verdubbel ${config.baseQuantity}: ${config.baseQuantity} + ${config.baseQuantity}.` : null };
+    return { correct, hint: !correct && attempt >= 2 ? config.targetServings === config.baseServings * 2 ? `Verdubbel ${config.baseQuantity}: ${config.baseQuantity} + ${config.baseQuantity}.` : `Voor ${config.targetServings} porties heb je ${config.correctQuantity} nodig.` : null };
   }
   if (config.type === 'recipe-scaling') {
     const values = !Array.isArray(answer) && typeof answer === 'object' ? answer : {};
     const incorrect = config.quantities.find(item => values[item.ingredientId] !== item.target);
-    return { correct: !incorrect, hint: incorrect && attempt >= 2 ? `Kijk nog eens naar ${incorrect.ingredientId === 'oats' ? 'de havermout' : incorrect.ingredientId === 'eggs' ? 'de eieren' : 'de banaan'}.` : null };
+    return { correct: !incorrect, hint: incorrect && attempt >= 2 ? `Kijk nog eens naar ${INGREDIENTS_BY_ID[incorrect.ingredientId]?.name.toLowerCase() ?? incorrect.ingredientId}.` : null };
   }
   if (config.type === 'interactive-weighing') {
     const weight = typeof answer === 'number' ? answer : 0;
@@ -363,7 +414,7 @@ export interface MathSubmissionResult extends MathValidationResult {
 
 export function submitMathChallenge(progress: CookingProgressState, recipeId: RecipeId, answer: MathChallengeAnswer, now = new Date().toISOString()): MathSubmissionResult {
   const journey = progress.journeys[recipeId];
-  const challenges = MATH_CHALLENGES_BY_RECIPE[recipeId];
+  const challenges = RECIPES_BY_ID[recipeId]?.education?.math ?? [];
   const challenge = challenges?.[journey?.math.currentChallengeIndex ?? -1];
   if (!journey || journey.stage !== 'challenges' || journey.math.step !== 'challenge' || !challenge) {
     return { progress, correct: false, hint: null, coinDelta: 0 };
@@ -388,7 +439,7 @@ export function submitMathChallenge(progress: CookingProgressState, recipeId: Re
 
 export function continueMathChallenges(progress: CookingProgressState, recipeId: RecipeId, now = new Date().toISOString()): { progress: CookingProgressState; coinDelta: number } {
   const journey = progress.journeys[recipeId];
-  const challenges = MATH_CHALLENGES_BY_RECIPE[recipeId];
+  const challenges = RECIPES_BY_ID[recipeId]?.education?.math ?? [];
   if (!journey || journey.stage !== 'challenges' || journey.math.step !== 'feedback' || !challenges.length) return { progress, coinDelta: 0 };
   const next = clone(progress);
   const math = next.journeys[recipeId]!.math;
@@ -455,10 +506,11 @@ export function answerDiscoveryQuestion(progress: CookingProgressState, recipeId
   next.journeys[recipeId]!.updatedAt = now;
   if (optionId !== question.correctOptionId) return { progress: next, correct: false, coinDelta: 0 };
 
-  if (!discovery.correctIngredientIds.includes(ingredientId)) discovery.correctIngredientIds.push(ingredientId);
+  const finalQuestion = discovery.questionIndex === config.questions.length - 1;
+  if (finalQuestion && !discovery.correctIngredientIds.includes(ingredientId)) discovery.correctIngredientIds.push(ingredientId);
   discovery.step = 'correct';
   const firstDiscovery = !progress.discoveredIngredientIds.includes(ingredientId);
-  const canReward = firstDiscovery && !discovery.rewardClaimedIngredientIds.includes(ingredientId);
+  const canReward = finalQuestion && firstDiscovery && !discovery.rewardClaimedIngredientIds.includes(ingredientId);
   if (canReward) {
     discovery.rewardClaimedIngredientIds.push(ingredientId);
     discovery.coinsEarned += config.rewardCoins;
@@ -491,7 +543,15 @@ function finishIngredient(progress: CookingProgressState, recipeId: RecipeId, in
 export function collectCurrentIngredient(progress: CookingProgressState, recipeId: RecipeId, now = new Date().toISOString()): CookingProgressState {
   const journey = progress.journeys[recipeId];
   const ingredientId = journey?.discovery.currentIngredientId;
-  if (!journey || journey.discovery.step !== 'collection' || !ingredientId || !journey.discovery.correctIngredientIds.includes(ingredientId)) return progress;
+  if (!journey || journey.discovery.step !== 'collection' || !ingredientId) return progress;
+  const config = INGREDIENT_DISCOVERIES_BY_ID[ingredientId];
+  if (config && journey.discovery.questionIndex + 1 < config.questions.length) {
+    const next = clone(progress);
+    next.journeys[recipeId]!.discovery.questionIndex += 1;
+    next.journeys[recipeId]!.discovery.step = 'question';
+    return next;
+  }
+  if (!journey.discovery.correctIngredientIds.includes(ingredientId)) return progress;
   return finishIngredient(progress, recipeId, ingredientId, true, now);
 }
 

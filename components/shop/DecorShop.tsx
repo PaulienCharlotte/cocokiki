@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Armchair, Check, ChevronRight, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
-import { addRoomPurchasesOnce, loadRoomInventory, saveRoomInventory } from '../../services/roomInventory';
+import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
 import DecorAsset from './DecorAsset';
 
 interface DecorShopProps {
@@ -42,7 +42,8 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
   const checkout = () => {
     if (count === 0) return;
     const transactionId = createTransactionId(store);
-    const spend = spendCurrencyOnce(transactionId, total);
+    const nextInventory = addRoomPurchasesOnce(loadRoomInventory(), transactionId, basket);
+    const spend = spendCurrencyOnce(transactionId, total, { [ROOM_INVENTORY_KEY]: JSON.stringify(nextInventory) });
     if (spend.status === 'insufficient') {
       setCoins(spend.balance);
       setNotice(`Je komt nog ${total - spend.balance} CocoCoins tekort.`);
@@ -50,11 +51,6 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
     }
     if (spend.status !== 'applied') {
       setNotice('Afrekenen lukte niet. Probeer het opnieuw.');
-      return;
-    }
-    const nextInventory = addRoomPurchasesOnce(loadRoomInventory(), transactionId, basket);
-    if (!saveRoomInventory(nextInventory)) {
-      setNotice('Je aankoop kon niet worden opgeslagen.');
       return;
     }
     setCoins(spend.balance);

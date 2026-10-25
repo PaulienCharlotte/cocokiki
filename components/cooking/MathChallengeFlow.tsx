@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '../../design-system';
 import { EQUIPMENT_BY_ID, INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
-import { MATH_CHALLENGES_BY_RECIPE } from '../../data/cooking/mathChallenges';
 import type { CookingProgressState, MathChallengeConfig, RecipeConfig } from '../../data/cooking/types';
 import {
   advanceJourney,
@@ -13,7 +12,6 @@ import {
   submitMathChallenge,
   type MathChallengeAnswer,
 } from '../../services/cookingProgress';
-import { awardCurrencyOnce } from '../../services/currency';
 import Confetti from './Confetti';
 import CookingAssetImage from './CookingAssetImage';
 import DigitalScale from './DigitalScale';
@@ -54,7 +52,7 @@ function Stepper({ value, step, minimum = 0, maximum = 100, onStep, label, unit 
 export default function MathChallengeFlow({ recipe, progress, onProgressChange, onExit, onReplay = onExit, replay = false }: MathChallengeFlowProps) {
   const journey = progress.journeys[recipe.id];
   const math = journey?.math;
-  const challenges = MATH_CHALLENGES_BY_RECIPE[recipe.id];
+  const challenges = recipe.education?.math ?? [];
   const challenge = math ? challenges[math.currentChallengeIndex] : undefined;
   const [quantity, setQuantity] = useState(0);
   const [scaled, setScaled] = useState<Record<string, number>>({});
@@ -63,6 +61,9 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
   const [selectedStep, setSelectedStep] = useState<string | null>(null);
   const [draggedStep, setDraggedStep] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
+  const [toastCoins, setToastCoins] = useState(0);
+  const [pendingSave, setPendingSave] = useState<CookingProgressState | null>(null);
+  const initializedIntro = useRef<string | null>(null);
 
   useEffect(() => {
     if (!challenge) return;
@@ -75,13 +76,18 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
   }, [challenge?.id]);
 
   const commit = (next: CookingProgressState) => {
-    if (!replay) saveCookingProgress(next);
+    if (!replay && !saveCookingProgress(next)) { setPendingSave(next); return false; }
+    setPendingSave(null);
     onProgressChange(next);
+    return true;
   };
 
   useEffect(() => {
     if (!journey || journey.stage !== 'challenges') return;
     if (math.step === 'intro') {
+      const key = `${recipe.id}:${progress.revision ?? 0}`;
+      if (initializedIntro.current === key) return;
+      initializedIntro.current = key;
       commit(startMathChallenges(progress, recipe.id));
       return;
     }
@@ -89,12 +95,13 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
     const timer = window.setTimeout(() => {
       const result = continueMathChallenges(progress, recipe.id);
       commit(result.progress);
-      if (result.coinDelta > 0) awardCurrencyOnce(`cooking-math:${recipe.id}:complete`, result.coinDelta);
     }, 1000);
     return () => window.clearTimeout(timer);
   }, [journey?.stage, math.step, math.currentChallengeIndex]);
 
   if (!journey || !math) return null;
+  if (pendingSave) return <MathShell journey={journey} onExit={onExit}><section className="math-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button></section></MathShell>;
+  if (!challenges.length) return <MathShell journey={journey} onExit={onExit}><section className="math-card"><h1>Dit recept is nog niet helemaal klaar</h1><Button onClick={onExit}>Terug naar het kookboek</Button></section></MathShell>;
 
   if (journey.stage === 'shopping') return <MathShell journey={journey}>
     <section className="math-card math-card--centered" aria-labelledby="shopping-unavailable-title">
@@ -133,12 +140,12 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
     </MathShell>;
   }
 
-  if (!challenge) return null;
+  if (!challenge) return <MathShell journey={journey} onExit={onExit}><section className="math-card"><h1>Deze opdracht is nog niet beschikbaar</h1><p>Je voortgang blijft bewaard.</p><Button onClick={onExit}>Terug naar het kookboek</Button></section></MathShell>;
   const submit = (answer: MathChallengeAnswer) => {
     const result = submitMathChallenge(progress, recipe.id, answer);
-    commit(result.progress);
+    if (!commit(result.progress)) return;
+    setToastCoins(replay ? 0 : result.coinDelta);
     setHint(result.correct ? null : result.hint ?? 'Probeer het nog eens!');
-    if (result.coinDelta > 0) awardCurrencyOnce(`cooking-math:${recipe.id}:${challenge.id}`, result.coinDelta);
   };
   return <MathShell journey={journey} progress={`${math.currentChallengeIndex + 1} van ${challenges.length}`} onExit={onExit}>
     <section className={`math-card${math.step === 'feedback' ? ' is-success' : ''}`} aria-labelledby="math-challenge-title" aria-busy={math.step === 'feedback'}>
@@ -156,7 +163,7 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
       />
       {hint && <div className="math-hint" role="alert">{hint}</div>}
       {math.step === 'feedback'
-        ? <RewardToast message={challenge.successFeedback} coins={replay ? 0 : challenge.rewardCoins} />
+        ? <RewardToast message={challenge.successFeedback} coins={toastCoins} />
         : <Button size="large" onClick={() => submit(challenge.type === 'quantity-selection' ? quantity : challenge.type === 'recipe-scaling' ? scaled : challenge.type === 'interactive-weighing' ? weight : order)}>Controleer</Button>}
     </section>
   </MathShell>;
@@ -192,13 +199,13 @@ interface InteractionProps {
 function ChallengeInteraction(props: InteractionProps) {
   const { challenge } = props;
   if (challenge.type === 'quantity-selection') return <div className="math-quantity">
-    <CookingAssetImage src={assetFor(challenge.ingredientId)} alt="Eieren" />
-    <Stepper value={props.quantity} step={1} maximum={challenge.maximum} minimum={challenge.minimum} onStep={props.setQuantity} label="Aantal eieren" />
-    <span>eieren</span>
+    <CookingAssetImage src={assetFor(challenge.ingredientId)} alt={INGREDIENTS_BY_ID[challenge.ingredientId]?.name ?? challenge.ingredientId} />
+    <Stepper value={props.quantity} step={1} maximum={challenge.maximum} minimum={challenge.minimum} onStep={props.setQuantity} label={`Aantal ${INGREDIENTS_BY_ID[challenge.ingredientId]?.name.toLowerCase() ?? challenge.ingredientId}`} />
+    <span>{INGREDIENTS_BY_ID[challenge.ingredientId]?.name.toLowerCase()}</span>
   </div>;
 
   if (challenge.type === 'recipe-scaling') return <div className="math-scaling">
-    <div className="math-scaling__reference"><span>2 porties</span><strong>→</strong><span>4 porties</span></div>
+    <div className="math-scaling__reference"><span>{challenge.baseServings} porties</span><strong>→</strong><span>{challenge.targetServings} porties</span></div>
     {challenge.quantities.map(item => <div className="math-scaling__row" key={item.ingredientId}>
       <CookingAssetImage src={assetFor(item.ingredientId)} alt={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId} />
       <span className="math-scaling__name">

@@ -2,6 +2,7 @@ import { RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId, ShoppingTransactionItem } from '../data/cooking/types';
 import { SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID } from '../data/shopCatalog';
 import { getProductPrice, getShopSeason, SHOP_PRICE_VERSION, type ShopSeason } from '../data/shopPricing';
+import { canonicalQuantity } from '../data/cooking/quantities';
 
 export const SHOPPING_SESSION_KEY = 'cocokiki:shopping:v1';
 
@@ -99,9 +100,11 @@ export function basketTotal(session: ShoppingSession): number {
 export function recipeRequirementStatus(progress: CookingProgressState, recipeId: RecipeId, session?: ShoppingSession) {
   return RECIPES_BY_ID[recipeId].ingredients.map(requirement => {
     const product = SHOP_PRODUCTS_BY_ID[requirement.ingredientId];
+    const quantity = canonicalQuantity(requirement);
+    const compatible = quantity?.unit === product?.unit;
     const inventory = progress.inventory.consumables[requirement.ingredientId] ?? 0;
     const basket = session ? (session.basket[requirement.ingredientId] ?? 0) * (product?.unitAmount ?? 0) : 0;
-    return { ...requirement, inventory, basket, collected: inventory + basket >= requirement.amount };
+    return { ...requirement, inventory, basket, collected: compatible && inventory + basket >= quantity.amount };
   });
 }
 

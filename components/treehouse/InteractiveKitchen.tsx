@@ -1,12 +1,15 @@
-import React, { useCallback, useRef, useState, type RefObject } from 'react';
+import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, BookOpen, ShoppingBasket, X } from 'lucide-react';
 import { motion, type PanInfo } from 'framer-motion';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
-import { EQUIPMENT } from '../../data/cooking/catalog';
+import { EQUIPMENT, RECIPES_BY_ID } from '../../data/cooking/catalog';
+import { getRecipeIssues } from '../../data/cooking/validation';
 import type { CookingProgressState } from '../../data/cooking/types';
 import { SHOP_PRODUCTS_BY_ID } from '../../data/shopCatalog';
-import BananaPancakeExperience from '../cooking/BananaPancakeExperience';
+import CookingExperience from '../cooking/CookingExperience';
+import { COOKING_PROGRESS_KEY, loadCookingProgress } from '../../services/cookingProgress';
+import { subscribeLocalState } from '../../services/localState';
 
 type StationId = 'worktop' | 'cooktop';
 type InventoryTab = 'groceries' | 'equipment';
@@ -40,16 +43,19 @@ export function buildKitchenInventory(progress: CookingProgressState, tab: Inven
     .map(({ product, amount }) => ({ id: product.id, label: product.name, image: product.image, quantityLabel: `${amount} in voorraad`, kind: 'ingredient' }));
 }
 
-export default function InteractiveKitchen({ progress, sceneRef }: { progress: CookingProgressState; sceneRef: RefObject<HTMLDivElement | null> }) {
+export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: { progress: CookingProgressState; sceneRef: RefObject<HTMLDivElement | null>; onNavigate?: (path: string) => void }) {
   const stationCanvasRef = useRef<HTMLDivElement>(null);
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [tab, setTab] = useState<InventoryTab>('groceries');
   const [activeStation, setActiveStation] = useState<StationId | null>(null);
   const [worktopItems, setWorktopItems] = useState<WorktopItem[]>([]);
   const [cookingProgress, setCookingProgress] = useState(progress);
-  const [cookingOpen, setCookingOpen] = useState(false);
+  const [openRecipeId, setOpenRecipeId] = useState<string | null>(null);
+  useEffect(() => subscribeLocalState(() => setCookingProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   const activeJourney = cookingProgress.activeRecipeId ? cookingProgress.journeys[cookingProgress.activeRecipeId] : undefined;
-  const canCook = cookingProgress.activeRecipeId === 'banana-pancakes' && activeJourney?.stage === 'cooking';
+  const recipe = cookingProgress.activeRecipeId ? RECIPES_BY_ID[cookingProgress.activeRecipeId] : undefined;
+  const openRecipe = openRecipeId ? RECIPES_BY_ID[openRecipeId] : undefined;
+  const canCook = recipe && getRecipeIssues(recipe).length === 0 && activeJourney?.stage === 'cooking';
   const inventory = buildKitchenInventory(cookingProgress, tab);
 
   const placeOnWorktop = useCallback((item: KitchenItem) => {
@@ -85,9 +91,9 @@ export default function InteractiveKitchen({ progress, sceneRef }: { progress: C
     <button className="kitchen-groceries-trigger" type="button" aria-label="Mijn boodschappen openen" title="Boodschappen" aria-expanded={inventoryOpen} aria-controls="kitchen-inventory" onClick={() => setInventoryOpen(true)}>
       <ShoppingBasket aria-hidden="true" />
     </button>
-    {canCook && <button type="button" className="treehouse-recipe-cta" onClick={() => setCookingOpen(true)} aria-label="Verder met bananenpannenkoekjes">
-      <img src={ASSET_LIBRARY.cooking.recipes.bananaPancakes} alt="" draggable={false} />
-      <span><small>Alles staat klaar</small><strong>Bananenpannenkoekjes</strong></span>
+    {canCook && <button type="button" className="treehouse-recipe-cta" onClick={() => setOpenRecipeId(recipe.id)} aria-label={`Verder met ${recipe.name.toLowerCase()}`}>
+      <img src={recipe.image} alt="" draggable={false} />
+      <span><small>Alles staat klaar</small><strong>{recipe.name}</strong></span>
       <i aria-hidden="true"><BookOpen /></i>
     </button>}
     <div className="kitchen-fixed-stations">
@@ -121,6 +127,6 @@ export default function InteractiveKitchen({ progress, sceneRef }: { progress: C
         </motion.button>)}
       </div>
     </section>, document.body)}
-    {cookingOpen && typeof document !== 'undefined' && createPortal(<BananaPancakeExperience progress={cookingProgress} onProgressChange={setCookingProgress} onClose={() => setCookingOpen(false)} />, document.body)}
+    {openRecipe && typeof document !== 'undefined' && createPortal(<CookingExperience recipe={openRecipe} progress={cookingProgress} onProgressChange={setCookingProgress} onClose={() => { setOpenRecipeId(null); setCookingProgress(loadCookingProgress()); }} onShop={() => onNavigate ? onNavigate('/shop') : window.location.assign('/shop')} />, document.body)}
   </>;
 }

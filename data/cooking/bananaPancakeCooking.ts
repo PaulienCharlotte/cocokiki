@@ -1,27 +1,7 @@
 import { ASSET_LIBRARY } from '../assetLibrary';
 
-export type CookingStation = 'kitchen' | 'worktop' | 'cooktop';
-export type CookingMechanic = 'collect' | 'drag' | 'repeat' | 'weigh' | 'heat' | 'timed' | 'optional';
-
-export interface CookingStepConfig {
-  id: string;
-  title: string;
-  instruction: string;
-  station: CookingStation;
-  mechanic: CookingMechanic;
-  target: number;
-  asset: string;
-  hint: string;
-  /** Waar het ingrediënt naartoe moet bij een sleepstap, en hoe het heet. */
-  dropTarget?: { label: string; sourceLabel: string; asset?: string };
-  /** Wat de hoofdafbeelding doet bij een tikstap. */
-  tapLabel?: string;
-  /** Het gereedschap dat bij een tikstap naar de kom beweegt. */
-  tapTool?: { asset: string; label: string };
-  /** Beeld van kom en gereedschap per aantal tikjes; de laatste geldt daarna. */
-  vesselByCount?: string[];
-  toolByCount?: string[];
-}
+import type { CookingStepConfig, PreparationConfig } from './preparation';
+export type { CookingStepConfig, CookingStation } from './preparation';
 
 export interface BananaPancakeSession {
   version: 1;
@@ -41,17 +21,17 @@ const a = ASSET_LIBRARY.cooking.bananaPancakes;
 const k = ASSET_LIBRARY.cooking.kit;
 
 export const BANANA_PANCAKE_STEPS: CookingStepConfig[] = [
-  { id: 'tools', title: 'Leg alles klaar', instruction: 'Kies kom, vork, pan en spatel.', station: 'kitchen', mechanic: 'collect', target: 4, asset: k.bowlEmpty, hint: 'Tik op vier spullen.' },
+  { id: 'tools', title: 'Leg alles klaar', instruction: 'Kies kom, vork, pan en spatel.', station: 'kitchen', mechanic: 'collect', target: 4, asset: k.bowlEmpty, hint: 'Tik op vier spullen.', tools: [{ id: 'bowl', label: 'Kom', asset: k.bowlEmpty }, { id: 'fork', label: 'Vork', asset: k.fork }, { id: 'pan', label: 'Pan', asset: k.panEmpty }, { id: 'spatula', label: 'Spatel', asset: k.spatula }] },
   { id: 'banana', title: 'Pak de banaan', instruction: 'Sleep de banaan naar de kom.', station: 'worktop', mechanic: 'drag', target: 1, asset: k.banana, hint: 'Sleep de banaan op de kom. Tikken mag ook.', dropTarget: { label: 'Kom', sourceLabel: 'Banaan', asset: k.bowlEmpty } },
   { id: 'mash', title: 'Prak de banaan', instruction: 'Prak tot de stukjes klein zijn.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlMashedBanana, hint: 'Tik een paar keer met de vork.', tapLabel: 'Tik op de vork', tapTool: { asset: k.fork, label: 'Vork' } },
   { id: 'eggs', title: 'Breek de eieren', instruction: 'Tik elk ei tegen de rand van de kom.', station: 'worktop', mechanic: 'repeat', target: 2, asset: k.bowlEmpty, hint: 'Twee eieren, dus twee keer tikken.', tapLabel: 'Tik op het ei', tapTool: { asset: k.egg, label: 'Ei' }, vesselByCount: [k.bowlEmpty, k.bowlEggs], toolByCount: [k.egg, k.eggCracked, k.eggOpen] },
   { id: 'mix-eggs', title: 'Meng banaan en ei', instruction: 'Roer tot alles gemengd is.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlMashedBanana, hint: 'Maak rustige rondjes.', tapLabel: 'Tik op de garde', tapTool: { asset: k.whisk, label: 'Garde' } },
-  { id: 'oats', title: 'Weeg havermout', instruction: 'Maak precies 40 gram.', station: 'worktop', mechanic: 'weigh', target: 40, asset: '/games/shop/products/oats.png?v=2', hint: 'Met +10 kom je snel bij 40.' },
+  { id: 'oats', title: 'Weeg havermout', instruction: 'Maak precies 40 gram.', station: 'worktop', mechanic: 'weigh', target: 40, unit: 'gram', increments: [5, 10], maximum: 80, asset: '/games/shop/products/oats.png?v=2', hint: 'Met +10 kom je snel bij 40.' },
   { id: 'batter', title: 'Maak het beslag', instruction: 'Klop het beslag glad.', station: 'worktop', mechanic: 'repeat', target: 5, asset: k.bowlBatter, hint: 'Blijf nog even kloppen.', tapLabel: 'Tik op de garde', tapTool: { asset: k.whisk, label: 'Garde' } },
-  { id: 'heat', title: 'Verwarm de pan', instruction: 'Doe er boter in en kies de juiste stand.', station: 'cooktop', mechanic: 'heat', target: 2, asset: k.panEmpty, hint: 'Middel is precies goed: niet te heet.' },
-  { id: 'cook', title: 'Bak de pannenkoek', instruction: 'Giet, wacht en draai om.', station: 'cooktop', mechanic: 'timed', target: 3, asset: k.panEmpty, hint: 'Wacht tot de rand stevig wordt.' },
+  { id: 'heat', title: 'Verwarm de pan', instruction: 'Doe er boter in en kies de juiste stand.', station: 'cooktop', mechanic: 'heat', target: 2, addition: { asset: a.butter, label: 'Boter erin' }, levels: [{ value: 1, label: 'Laag' }, { value: 2, label: 'Middel' }, { value: 3, label: 'Hoog' }], buttonLabel: 'Verwarm de pan', asset: k.panEmpty, hint: 'Middel is precies goed: niet te heet.' },
+  { id: 'cook', title: 'Bak de pannenkoek', instruction: 'Giet, wacht en draai om.', station: 'cooktop', mechanic: 'timed', target: 3, durationMs: 2500, pouredAsset: k.pancakeRaw, cookedAsset: k.panPancake, startLabel: 'Giet het beslag', finishLabel: 'Draai om', asset: k.panEmpty, hint: 'Wacht tot de rand stevig wordt.' },
   { id: 'serve', title: 'Leg op het bord', instruction: 'Sleep de pannenkoek naar het bord.', station: 'worktop', mechanic: 'drag', target: 1, asset: k.panPancake, hint: 'Het bord staat klaar. Tikken mag ook.', dropTarget: { label: 'Bord', sourceLabel: 'Pannenkoek' } },
-  { id: 'cover', title: 'Extra luchtig?', instruction: 'Dek kort af of serveer meteen.', station: 'worktop', mechanic: 'optional', target: 1, asset: a.finished, hint: 'Beide keuzes zijn goed.' },
+  { id: 'cover', title: 'Extra luchtig?', instruction: 'Dek kort af of serveer meteen.', station: 'worktop', mechanic: 'optional', target: 1, choices: [{ id: 'cover', label: 'Even afdekken' }, { id: 'serve', label: 'Meteen serveren' }], asset: a.finished, hint: 'Beide keuzes zijn goed.' },
 ];
 
 export const COOKING_SESSION_KEY = 'cocokiki:cooking-session:banana-pancakes:v1';
@@ -92,3 +72,5 @@ export function advanceCookingSession(session: BananaPancakeSession, now = new D
   if (session.stepIndex >= BANANA_PANCAKE_STEPS.length - 1) return { ...session, completed: true, updatedAt: now };
   return { ...session, stepIndex: session.stepIndex + 1, actionCount: 0, updatedAt: now };
 }
+
+export const BANANA_PREPARATION: PreparationConfig = { version: 1, steps: BANANA_PANCAKE_STEPS, finishedAsset: a.finished, finishedAlt: 'Bananenpannenkoekjes op een bord', consumption: 'on-completion' };

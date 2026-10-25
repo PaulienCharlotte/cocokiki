@@ -20,7 +20,7 @@ export default function IngredientDiscoveryCard({ config, ingredient }: Ingredie
     </header>
     <div className="ingredient-lesson__sections">
       <section><span aria-hidden="true"><Globe2 /></span><div><h2>{config.origin.label}</h2><p>{config.origin.text}</p></div></section>
-      <section className="ingredient-lesson__nutrition"><span aria-hidden="true"><Leaf /></span><div><h2>Voeding</h2><ul>{config.nutrition.map(item => <NutritionFact key={item.nutrient} {...item} />)}</ul></div></section>
+      <section className="ingredient-lesson__nutrition"><span aria-hidden="true"><Leaf /></span><div><h2>Voeding</h2><ul>{config.nutrition.map(item => <React.Fragment key={item.nutrient}><NutritionFact {...item} /></React.Fragment>)}</ul></div></section>
       <section><span aria-hidden="true"><Sparkles /></span><div><h2>{config.foodKnowledge.label}</h2><p>{config.foodKnowledge.text}</p></div></section>
     </div>
   </div>;

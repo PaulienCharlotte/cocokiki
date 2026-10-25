@@ -9,13 +9,14 @@ interface KitchenScaleProps {
   /** Hoeveel gram een volle kom is; bepaalt hoe hard het ingrediënt meegroeit. */
   full: number;
   ingredientImage: string;
+  unit?: string;
 }
 
 /**
  * De weegschaal uit de keukenset. Het ingrediënt groeit mee met het gewicht en
  * de waarde staat op het schermpje van de weegschaal zelf.
  */
-export default function KitchenScale({ value, full, ingredientImage }: KitchenScaleProps) {
+export default function KitchenScale({ value, full, ingredientImage, unit = 'g' }: KitchenScaleProps) {
   return <div className="cooking-scale">
     <img className="cooking-scale__body" src={ASSET_LIBRARY.cooking.kit.scale} alt="" />
     {value > 0 && <motion.span
@@ -25,8 +26,8 @@ export default function KitchenScale({ value, full, ingredientImage }: KitchenSc
     >
       <CookingAssetImage src={ingredientImage} />
     </motion.span>}
-    <span className="cooking-scale__display" aria-live="polite" aria-label={`${value} gram`}>
-      <b>{value}</b><em>g</em>
+    <span className="cooking-scale__display" aria-live="polite" aria-label={`${value} ${unit === 'g' ? 'gram' : 'milliliter'}`}>
+      <b>{value}</b><em>{unit}</em>
     </span>
   </div>;
 }

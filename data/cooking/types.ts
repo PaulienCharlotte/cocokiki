@@ -1,4 +1,5 @@
-export type RecipeId = 'banana-pancakes' | 'fruit-yogurt' | 'oat-muffins';
+import type { CookingSession, PreparationConfig } from './preparation';
+export type RecipeId = string;
 export type RecipeCategory = 'breakfast' | 'snack' | 'baking';
 export type RecipeAvailability = 'playable' | 'preview' | 'locked';
 export type ContentStatus = 'ready' | 'pending';
@@ -174,6 +175,8 @@ export interface RecipeConfig {
   actions: CookingAction[];
   rewardCoins: number | null;
   contentStatus: ContentStatus;
+  preparation?: PreparationConfig;
+  education?: { math: MathChallengeConfig[] };
 }
 
 export type JourneyStage = 'overview' | 'discovery' | 'challenges' | 'shopping' | 'cooking' | 'complete';
@@ -246,10 +249,12 @@ export interface CookingAssetRegistry {
 
 export interface CookingProgressState {
   version: 1;
+  revision?: number;
   activeRecipeId: RecipeId | null;
   journeys: Partial<Record<RecipeId, JourneyProgress>>;
   discoveredIngredientIds: string[];
   inventory: CookingInventory;
   shoppingTransactions: Record<string, ShoppingTransaction>;
   completions: Partial<Record<RecipeId, CompletionRecord>>;
+  preparationSessions: Record<RecipeId, CookingSession>;
 }

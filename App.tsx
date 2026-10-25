@@ -33,7 +33,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const onCurrencyChange = (event: Event) => setCoins((event as CustomEvent<number>).detail ?? loadCurrency());
     window.addEventListener(CURRENCY_CHANGE_EVENT, onCurrencyChange);
-    return () => window.removeEventListener(CURRENCY_CHANGE_EVENT, onCurrencyChange);
+    const refresh = () => setCoins(loadCurrency());
+    window.addEventListener('storage', refresh);
+    return () => { window.removeEventListener(CURRENCY_CHANGE_EVENT, onCurrencyChange); window.removeEventListener('storage', refresh); };
   }, []);
 
   const navigate = useCallback((path: string) => {

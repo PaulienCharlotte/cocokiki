@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
 import Phaser from 'phaser';
 import CocoCoin from '../../components/platform/CocoCoin';
+import { awardCurrencyOnce, CURRENCY_CHANGE_EVENT, loadCurrency } from '../../services/currency';
 import { createLuaGame } from './game/config';
 import PlayScene from './game/scenes/PlayScene';
 import { createQuestion, nextDifficulty, nextQuestionType } from './game/systems/questions';
 import { currencyReward, EMPTY_STATS, recordSuccess, recordTimeout, roundDuration, starsFor } from './game/systems/progression';
-import { loadBest, loadCoins, loadPreferences, saveBest, saveCoins, savePreferences } from './game/systems/storage';
+import { loadBest, loadCoins, loadPreferences, saveBest, savePreferences } from './game/systems/storage';
 import { LuaAudio } from './game/systems/audio';
 import { GamePhase, LuaGameMode, Preferences, Question, SessionStats, TableChoice } from './game/types';
 
@@ -45,6 +46,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
   const [paused, setPaused] = useState(false);
   const [best, setBest] = useState(loadBest);
   const [coins, setCoins] = useState(loadCoins);
+  const coinSessionId = useRef(crypto.randomUUID());
   const [sessionCoins, setSessionCoins] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
   const reducedMotion = useMemo(() => matchMedia('(prefers-reduced-motion: reduce)').matches, []);
@@ -95,11 +97,18 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
   useEffect(() => { questionRef.current = question; }, [question]);
   useEffect(() => { phaseRef.current = phase; }, [phase]);
   useEffect(() => { onCoinsChange?.(coins); }, [coins, onCoinsChange]);
+  useEffect(() => {
+    const sync = () => setCoins(loadCurrency());
+    window.addEventListener(CURRENCY_CHANGE_EVENT, sync);
+    window.addEventListener('storage', sync);
+    return () => { window.removeEventListener(CURRENCY_CHANGE_EVENT, sync); window.removeEventListener('storage', sync); };
+  }, []);
   useEffect(() => { const handler = () => setPaused(document.hidden); document.addEventListener('visibilitychange', handler); return () => document.removeEventListener('visibilitychange', handler); }, []);
   useEffect(() => { if (gameRef.current) paused ? gameRef.current.loop.sleep() : gameRef.current.loop.wake(); }, [paused]);
 
   const startSession = () => {
     if (!sceneReady) return;
+    coinSessionId.current = crypto.randomUUID();
     audioRef.current.unlock(); missedRef.current = []; difficultyRef.current = preferences.mode === 'challenge' ? 3 : 1;
     setStats(EMPTY_STATS); setHearts(3); setRound(0); setSessionCoins(0);
     if (!preferences.tutorialSeen) setGamePhase('tutorial'); else beginRound(1, EMPTY_STATS);
@@ -120,7 +129,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     difficultyRef.current = nextDifficulty(difficultyRef.current, nextStats.streak, !firstTry);
     const comboBonus = firstTry && nextStats.streak >= 5 ? 2 : firstTry && nextStats.streak >= 3 ? 1 : 0;
     const earned = currencyReward(preferences.mode === 'challenge' ? 'mix' : preferences.table, firstTry) + comboBonus;
-    setCoins(previous => { const total = previous + earned; saveCoins(total); return total; });
+    setCoins(awardCurrencyOnce(`lua:${coinSessionId.current}:${round}:${activeQuestion.id}`, earned).balance);
     setSessionCoins(previous => previous + earned); setStats(nextStats);
     setFeedback(`${FEEDBACK[round % FEEDBACK.length]} ${activeQuestion.explanation}${comboBonus ? ` · Combo +${comboBonus}` : ''}`);
     const calmFinished = preferences.mode === 'calm' && round >= ROUND_COUNT;

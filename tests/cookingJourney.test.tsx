@@ -310,8 +310,8 @@ test('CocoCoin transactions are applied at most once', () => {
     const second = awardCurrencyOnce('cooking-discovery:banana', 5);
     assert.deepEqual(first, { applied: true, balance: 25 });
     assert.deepEqual(second, { applied: false, balance: 25 });
-    assert.equal(JSON.parse(memory.get(CURRENCY_KEY)!), 25);
-    assert.equal(JSON.parse(memory.get(CURRENCY_LEDGER_KEY)!).appliedTransactions['cooking-discovery:banana'], 5);
+    assert.equal(JSON.parse(memory.get(CURRENCY_KEY)!).balance, 25);
+    assert.equal(JSON.parse(memory.get(CURRENCY_KEY)!).appliedTransactions['cooking-discovery:banana'], 5);
   } finally {
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: original });
   }
@@ -397,7 +397,8 @@ test('recipe unlocks count distinct completed recipes and keep pending content u
   progress.completions[yogurt.id] = { recipeId: yogurt.id, completedAt: '2026-10-25', rewardClaimed: false };
   assert.equal(getRecipeAccess(muffins, progress).locked, false);
   assert.equal(getRecipeAccess(muffins, progress).status, 'Binnenkort');
-  const readyMuffins: RecipeConfig = { ...muffins, contentStatus: 'ready', actions: banana.actions };
+  assert.equal(getRecipeAccess({ ...muffins, contentStatus: 'ready', actions: banana.actions }, progress).playable, false);
+  const readyMuffins: RecipeConfig = { ...banana, id: muffins.id, requiredCompletedRecipes: 2 };
   assert.equal(getRecipeAccess(readyMuffins, progress).playable, true);
   assert.notEqual(startJourney(progress, readyMuffins), progress);
   assert.equal(startJourney(createEmptyCookingProgress(), readyMuffins).activeRecipeId, null);

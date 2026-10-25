@@ -3,12 +3,14 @@ import { Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBask
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId } from '../data/cooking/types';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID, type ShopCategory } from '../data/shopCatalog';
-import { CURRENCY_CHANGE_EVENT, loadCurrency, spendCurrencyOnce } from '../services/currency';
+import { CURRENCY_CHANGE_EVENT, loadCurrency } from '../services/currency';
 import { advanceJourney, loadCookingProgress, recipeRequirementsSatisfied, saveCookingProgress } from '../services/cookingProgress';
 import { adjustBasket, basketCount, basketTotal, checkoutBasket, createShoppingSession, loadShoppingSession, recipeRequirementStatus, saveShoppingSession, type ShoppingSession } from '../services/shopping';
 import type { DecorStoreId } from '../data/decorCatalog';
 import ShopStreet from '../components/shop/ShopStreet';
 import DecorShop from '../components/shop/DecorShop';
+import { subscribeLocalState } from '../services/localState';
+import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 
 type ActiveCategory = 'all' | ShopCategory;
 
@@ -44,6 +46,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const [listOpen, setListOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
+  useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
   const total = basketTotal(session);
   const count = basketCount(session);
@@ -65,22 +68,21 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
     saveShoppingSession(next);
     setNotice('');
   };
-  const commitProgress = (next: CookingProgressState) => {
-    saveCookingProgress(next);
+  const commitProgress = (next: CookingProgressState, spend?: { id: string; amount: number }) => {
+    if (!saveCookingProgress(next, spend)) { setNotice('Opslaan lukt even niet. Je munten en boodschappen blijven bewaard. Probeer opnieuw.'); return false; }
     setProgress(next);
     onProgressChange?.(next);
+    return true;
   };
   const checkout = () => {
-    const prepared = checkoutBasket(progress, session, coins);
+    const current = loadCookingProgress();
+    const prepared = checkoutBasket(current, session, loadCurrency());
     if (prepared.status === 'empty') return setNotice('Je mandje is leeg.');
     if (prepared.status === 'insufficient') return setNotice(`Je hebt nog wat CocoCoins nodig! Je komt ${prepared.total - coins} tekort.`);
     if (prepared.status === 'invalid') return setNotice('Dit mandje kan niet worden afgerekend.');
-    const spend = spendCurrencyOnce(`shopping:${session.id}`, prepared.total);
-    if (spend.status === 'insufficient') return setNotice(`Je hebt nog wat CocoCoins nodig! Je komt ${prepared.total - spend.balance} tekort.`);
-    if (spend.status !== 'applied' && spend.status !== 'duplicate') return setNotice('Afrekenen lukte niet. Probeer het opnieuw.');
-    const purchased = prepared.status === 'duplicate' ? progress : prepared.progress;
-    commitProgress(purchased);
-    setCoins(spend.balance);
+    const purchased = prepared.status === 'duplicate' ? current : prepared.progress;
+    if (!commitProgress(purchased, { id: `shopping:${session.id}`, amount: prepared.total })) return;
+    setCoins(loadCurrency());
     setBasketOpen(false);
     setCheckoutComplete(true);
     const nextSession = createShoppingSession(mode, recipeId ?? null);
@@ -93,7 +95,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
     const next = journey.stage === 'shopping'
       ? advanceJourney(progress, journeyRecipeId, 'cooking')
       : progress;
-    if (next !== progress) commitProgress(next);
+    if (next !== progress && !commitProgress(next)) return;
     setCheckoutComplete(false);
     if (onNavigate) onNavigate('/treehouse/kitchen');
     else window.location.assign('/treehouse/kitchen');

@@ -13,7 +13,6 @@ import {
   showIngredientCollection,
   skipKnownIngredient,
 } from '../../services/cookingProgress';
-import { awardCurrencyOnce } from '../../services/currency';
 import CookingAssetImage from './CookingAssetImage';
 import IngredientDiscoveryCard from './IngredientDiscoveryCard';
 import JourneyStageProgress from './JourneyStageProgress';
@@ -34,6 +33,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [toastCoins, setToastCoins] = useState(0);
   const [showRecipe, setShowRecipe] = useState(false);
+  const [pendingSave, setPendingSave] = useState<CookingProgressState | null>(null);
   const cardRef = useRef<HTMLElement>(null);
   const journey = progress.journeys[recipe.id];
   const discovery = journey?.discovery;
@@ -50,8 +50,10 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   }, [discovery?.step, ingredientId]);
 
   const commit = (next: CookingProgressState) => {
-    if (!replay) saveCookingProgress(next);
+    if (!replay && !saveCookingProgress(next)) { setPendingSave(next); return false; }
+    setPendingSave(null);
     onProgressChange(next);
+    return true;
   };
 
   useEffect(() => {
@@ -66,6 +68,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   }, [discovery?.step, ingredientId]);
 
   if (!journey) return null;
+  if (pendingSave) return <main className="discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
 
   if (journey.stage === 'challenges') return <main className="discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
@@ -102,13 +105,13 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     </main>;
   }
 
-  if (!config || !ingredient) return null;
+  if (!config || !ingredient || !config.questions[discovery.questionIndex]) return <main className="discovery-stage"><section className="discovery-card"><h1>Dit recept is nog niet helemaal klaar</h1><p>Je voortgang blijft bewaard.</p><Button onClick={onExit}>Terug naar het kookboek</Button></section></main>;
   const question = config.questions[discovery.questionIndex];
   const progressValue = Math.min(recipeIngredientIds.length, completedCount + (discovery.step === 'collection' ? 1 : 0));
 
   const answer = (optionId: string) => {
     const result = answerDiscoveryQuestion(progress, recipe.id, optionId);
-    commit(result.progress);
+    if (!commit(result.progress)) return;
     if (!result.correct) {
       setWrongAnswer(optionId);
       return;
@@ -116,7 +119,6 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     setWrongAnswer(null);
     setSelectedAnswer(optionId);
     setToastCoins(result.coinDelta);
-    if (result.coinDelta > 0) awardCurrencyOnce(`cooking-discovery:${ingredientId}`, result.coinDelta);
   };
 
   const skip = () => commit(skipKnownIngredient(progress, recipe.id));

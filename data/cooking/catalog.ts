@@ -1,3 +1,5 @@
+import { BANANA_PREPARATION } from './bananaPancakeCooking';
+import { BANANA_PANCAKE_MATH_CHALLENGES } from './mathChallenges';
 import type {
   CookingProgressState,
   CookingAssetRegistry,
@@ -91,7 +93,7 @@ export const RECIPES: RecipeConfig[] = [
   {
     id: 'banana-pancakes', name: 'Bananenpannenkoekjes', category: 'breakfast', availability: 'playable', requiredCompletedRecipes: 0, level: 1,
     shortDescription: 'Zachte pannenkoekjes van banaan, ei en havermout.', preparationMinutes: 15, servings: 2,
-    image: COOKING_ASSETS.recipes['banana-pancakes'], contentStatus: 'ready', rewardCoins: null,
+    image: COOKING_ASSETS.recipes['banana-pancakes'], contentStatus: 'ready', rewardCoins: 10,
     ingredients: [
       { ingredientId: 'banana', amount: 1, unit: 'piece', displayAmount: '1 banaan' },
       { ingredientId: 'eggs', amount: 2, unit: 'piece', displayAmount: '2 eieren' },
@@ -110,6 +112,8 @@ export const RECIPES: RecipeConfig[] = [
       ...['bowl', 'fork', 'pan', 'spatula'].map(itemId => ({ itemId, kind: 'equipment' as const, quantity: 1, required: true, price: null, purchasable: false as const, consumption: 'persistent' as const })),
     ],
     actions: bananaPancakeActions,
+    preparation: BANANA_PREPARATION,
+    education: { math: BANANA_PANCAKE_MATH_CHALLENGES },
   },
   {
     id: 'fruit-yogurt', name: 'Yoghurt met fruit', category: 'snack', availability: 'preview', requiredCompletedRecipes: 1, level: 1,
@@ -118,7 +122,7 @@ export const RECIPES: RecipeConfig[] = [
     ingredients: [
       { ingredientId: 'yogurt', amount: 150, unit: 'gram', displayAmount: '150 g yoghurt' },
       { ingredientId: 'banana', amount: 1, unit: 'piece', displayAmount: '1 banaan' },
-      { ingredientId: 'strawberry', amount: 5, unit: 'piece', displayAmount: '5 aardbeien' },
+      { ingredientId: 'strawberry', amount: 75, unit: 'gram', displayAmount: '75 g aardbeien' },
     ],
     equipmentIds: ['bowl', 'spoon'], challenges: [], shoppingRequirements: [], actions: [],
   },

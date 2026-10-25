@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
 import { motion, type PanInfo } from 'framer-motion';
 import CookingAssetImage from './CookingAssetImage';
@@ -21,6 +21,9 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
   const targetRef = useRef<HTMLDivElement>(null);
   const [landed, setLanded] = useState(false);
   const [over, setOver] = useState(false);
+  const timerRef = useRef<number | null>(null);
+  const landedRef = useRef(false);
+  useEffect(() => () => { if (timerRef.current !== null) window.clearTimeout(timerRef.current); }, []);
 
   const isOverTarget = (point: { x: number; y: number }) => {
     const bounds = targetRef.current?.getBoundingClientRect();
@@ -31,10 +34,11 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
   };
 
   const land = () => {
-    if (landed) return;
+    if (landedRef.current) return;
+    landedRef.current = true;
     setLanded(true);
     setOver(false);
-    window.setTimeout(onHit, 520);
+    timerRef.current = window.setTimeout(onHit, 520);
   };
 
   return <div className="cooking-drop">

@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { subscribeLocalState } from '../services/localState';
+import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 import { ChefHat } from 'lucide-react';
 import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
@@ -9,7 +11,6 @@ import ShopScreen from './ShopScreen';
 import { RECIPES, RECIPE_CATEGORIES } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeCategory, RecipeConfig } from '../data/cooking/types';
 import { beginDiscoveryStage, createDiscoveryReplay, createMathReplay, loadCookingProgress, restartJourney, saveCookingProgress, startJourney } from '../services/cookingProgress';
-import { COOKING_SESSION_KEY } from '../data/cooking/bananaPancakeCooking';
 import { getRecipeAccess } from '../data/cooking/availability';
 
 type ActiveCategory = 'all' | 'completed' | RecipeCategory;
@@ -30,6 +31,8 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   );
   const [replayProgress, setReplayProgress] = useState<CookingProgressState | null>(null);
   const [replayKind, setReplayKind] = useState<ReplayKind | null>(null);
+  const [notice, setNotice] = useState('');
+  useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   const recipes = useMemo(() => category === 'all' ? RECIPES : RECIPES.filter(recipe => category === 'completed' ? Boolean(progress.completions[recipe.id]) : recipe.category === category), [category, progress]);
 
   const handleStart = (recipe: RecipeConfig) => {
@@ -38,14 +41,13 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     const started = completed ? restartJourney(progress, recipe) : startJourney(progress, recipe);
     const next = beginDiscoveryStage(started, recipe.id);
     if (next !== progress) {
-      saveCookingProgress(next);
+      if (!saveCookingProgress(next)) { setNotice('Opslaan lukt even niet. Je voortgang blijft bewaard. Probeer opnieuw.'); return; }
       setProgress(next);
     }
     setSelected(null);
     setReplayProgress(null);
     setReplayKind(null);
     setPlayingRecipeId(recipe.id);
-    if (completed && recipe.id === 'banana-pancakes') window.localStorage.removeItem(COOKING_SESSION_KEY);
   };
 
   const handleDiscoveryReplay = (recipe: RecipeConfig) => {
@@ -60,8 +62,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const handleRestart = (recipe: RecipeConfig) => {
     const restarted = beginDiscoveryStage(restartJourney(progress, recipe), recipe.id);
     if (restarted === progress) return;
-    saveCookingProgress(restarted);
-    if (recipe.id === 'banana-pancakes') window.localStorage.removeItem(COOKING_SESSION_KEY);
+    if (!saveCookingProgress(restarted)) { setNotice('Opslaan lukt even niet. Probeer opnieuw.'); return; }
     setProgress(restarted);
     setSelected(null);
     setReplayProgress(null);
@@ -138,6 +139,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
         </nav>
       </div>
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
+        {notice && <p role="alert">{notice}</p>}
         {recipes.map(recipe => <div role="listitem" key={recipe.id}><RecipeCard recipe={recipe} progress={progress} journey={progress.journeys[recipe.id]} onOpen={setSelected} /></div>)}
         {recipes.length === 0 && <p className="cookbook-filter-empty">Nog geen recepten gemaakt.</p>}
       </div>

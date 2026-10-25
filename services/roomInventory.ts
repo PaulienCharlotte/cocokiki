@@ -1,5 +1,6 @@
 import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
 import { TREEHOUSE_ROOMS_BY_ID, type TreehouseRoomId } from '../data/treehouse';
+import { commitLocalState, readDocument } from './localState';
 
 export const ROOM_INVENTORY_KEY = 'cocokiki:room-inventory:v1';
 export const ROOM_INVENTORY_CHANGE_EVENT = 'cocokiki:room-inventory-change';
@@ -58,7 +59,7 @@ export function migrateRoomInventory(value: unknown): RoomInventoryState {
 
 export function loadRoomInventory(): RoomInventoryState {
   try {
-    return migrateRoomInventory(JSON.parse(localStorage.getItem(ROOM_INVENTORY_KEY) ?? 'null'));
+    return migrateRoomInventory(JSON.parse(readDocument(ROOM_INVENTORY_KEY) ?? 'null'));
   } catch {
     return createEmptyRoomInventory();
   }
@@ -66,7 +67,7 @@ export function loadRoomInventory(): RoomInventoryState {
 
 export function saveRoomInventory(state: RoomInventoryState): boolean {
   try {
-    localStorage.setItem(ROOM_INVENTORY_KEY, JSON.stringify(state));
+    if (commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify(state) }).status !== 'applied') return false;
     window.dispatchEvent(new CustomEvent(ROOM_INVENTORY_CHANGE_EVENT, { detail: state }));
     return true;
   } catch {

@@ -5,7 +5,7 @@ import { areaName, availableModes, availableTopics, initialSelection, locationCo
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
 import { nextBatch, PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
-import { loadCurrency, saveCurrency } from '../services/currency';
+import { awardCurrencyOnce, CURRENCY_CHANGE_EVENT, loadCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
 import MapFactCard from './MapFactCard';
 import PlatformHeader from './platform/PlatformHeader';
@@ -66,10 +66,15 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
   const selectedFact = activeLocation ? LOCATION_FACTS[activeLocation.name] : undefined;
 
   useEffect(() => {
-    const savedScore = saveCurrency(score);
     const savedProgress = writeLocal(PROGRESS_KEY, progress);
-    setStorageAvailable(savedScore && savedProgress);
-  }, [score, progress]);
+    setStorageAvailable(savedProgress);
+  }, [progress]);
+  useEffect(() => {
+    const sync = () => setScore(loadCurrency());
+    window.addEventListener(CURRENCY_CHANGE_EVENT, sync);
+    window.addEventListener('storage', sync);
+    return () => { window.removeEventListener(CURRENCY_CHANGE_EVENT, sync); window.removeEventListener('storage', sync); };
+  }, []);
 
   useEffect(() => {
     if (!openPanel) return;
@@ -89,7 +94,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
 
   const onAnswer = useCallback((id: string, correct: boolean, points: number) => {
     setProgress(previous => recordAnswer(previous, id, correct));
-    setScore(previous => previous + points);
+    setScore(awardCurrencyOnce(`topo:${crypto.randomUUID()}`, points).balance);
   }, []);
 
   const changeSelection = (next: Selection) => {

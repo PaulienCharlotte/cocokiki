@@ -82,7 +82,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
         </button>
       </nav>}
 
-      {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} />}
+      {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} onNavigate={onNavigate} />}
       <RoomInventoryDrawer room={room} sceneRef={sceneRef} />
     </div>
 
