@@ -18,6 +18,24 @@ export interface RoomPlacement {
   room: TreehouseRoomId;
   x: number;
   y: number;
+  /** Welk aanzicht van het meubel naar voren staat. */
+  view: number;
+  /** Vergroting ten opzichte van de standaardmaat. */
+  scale: number;
+}
+
+export const MIN_PLACEMENT_SCALE = .6;
+export const MAX_PLACEMENT_SCALE = 1.8;
+const SCALE_STEP = .15;
+
+function clampScale(value: unknown): number {
+  const scale = typeof value === 'number' && Number.isFinite(value) ? value : 1;
+  return Math.min(MAX_PLACEMENT_SCALE, Math.max(MIN_PLACEMENT_SCALE, Math.round(scale * 100) / 100));
+}
+
+function clampView(value: unknown, views: number): number {
+  const view = typeof value === 'number' && Number.isFinite(value) ? Math.round(value) : 0;
+  return ((view % views) + views) % views;
 }
 
 export function createEmptyRoomInventory(): RoomInventoryState {
@@ -29,8 +47,33 @@ export function availableRoomQuantity(state: RoomInventoryState, productId: stri
 }
 
 export function placeRoomItem(state: RoomInventoryState, item: RoomPlacement): RoomInventoryState {
-  if (!DECOR_PRODUCTS_BY_ID[item.productId] || !TREEHOUSE_ROOMS_BY_ID[item.room] || !item.id || state.placements.some(entry => entry.id === item.id) || availableRoomQuantity(state, item.productId) < 1 || !Number.isFinite(item.x) || !Number.isFinite(item.y)) return state;
-  return { ...state, placements: [...state.placements, { ...item, x: Math.max(3, Math.min(97, item.x)), y: Math.max(12, Math.min(95, item.y)) }] };
+  const product = DECOR_PRODUCTS_BY_ID[item.productId];
+  if (!product || !TREEHOUSE_ROOMS_BY_ID[item.room] || !item.id || state.placements.some(entry => entry.id === item.id) || availableRoomQuantity(state, item.productId) < 1 || !Number.isFinite(item.x) || !Number.isFinite(item.y)) return state;
+  return { ...state, placements: [...state.placements, {
+    ...item,
+    x: Math.max(3, Math.min(97, item.x)),
+    y: Math.max(12, Math.min(95, item.y)),
+    view: clampView(item.view, product.views),
+    scale: clampScale(item.scale),
+  }] };
+}
+
+/** Draait het meubel een aanzicht verder; stap -1 draait de andere kant op. */
+export function turnRoomItem(state: RoomInventoryState, id: string, step: number): RoomInventoryState {
+  const placement = state.placements.find(item => item.id === id);
+  const product = placement && DECOR_PRODUCTS_BY_ID[placement.productId];
+  if (!placement || !product || product.views < 2) return state;
+  return { ...state, placements: state.placements.map(item => item.id === id
+    ? { ...item, view: clampView(item.view + step, product.views) }
+    : item) };
+}
+
+/** Maakt het meubel een stap groter of kleiner, binnen vaste grenzen. */
+export function resizeRoomItem(state: RoomInventoryState, id: string, step: number): RoomInventoryState {
+  if (!state.placements.some(item => item.id === id)) return state;
+  return { ...state, placements: state.placements.map(item => item.id === id
+    ? { ...item, scale: clampScale(item.scale + step * SCALE_STEP) }
+    : item) };
 }
 
 export function moveRoomItem(state: RoomInventoryState, id: string, x: number, y: number): RoomInventoryState {

@@ -16,6 +16,32 @@ export interface DecorProduct {
   price: number;
   image: string;
   crop: SpriteCrop;
+  /** Breedte in de kamer, als percentage van de kamerbreedte. */
+  roomWidth: number;
+  /** Aantal aanzichten rondom; 1 betekent dat het meubel niet draait. */
+  views: number;
+}
+
+/**
+ * Standaardbreedte per soort, zodat een nieuw meubel alleen een eigen maat
+ * hoeft op te geven wanneer het uit de toon valt.
+ */
+function defaultRoomWidth(id: string, category: DecorCategory): number {
+  if (id.includes('sofa') || id.includes('sideboard')) return 34;
+  if (category === 'sleeping' || category === 'rugs') return 30;
+  if (category === 'tables') return 25;
+  if (category === 'storage') return 19;
+  return 15;
+}
+
+/**
+ * Het plaatje bij een aanzicht. Meubels met meerdere aanzichten hebben een
+ * eigen map met view-1 tot en met view-N; de rest heeft één vast plaatje.
+ */
+export function decorViewImage(product: DecorProduct, view: number): string {
+  if (product.views < 2) return product.image;
+  const index = ((Math.round(view) % product.views) + product.views) % product.views;
+  return `/assets/library/shop/decor/products/${product.id}/view-${index + 1}.png`;
 }
 
 export const DECOR_SHEET = '/assets/library/shop/decor/furniture-plants-sheet.png';
@@ -51,7 +77,13 @@ const decor = (
   category: DecorCategory,
   price: number,
   crop: SpriteCrop,
-): DecorProduct => ({ id, name, store, category, price, image: `/assets/library/shop/decor/products/${id}.png?v=2`, crop });
+): DecorProduct => ({
+  id, name, store, category, price,
+  image: `/assets/library/shop/decor/products/${id}.png?v=2`,
+  crop,
+  roomWidth: defaultRoomWidth(id, category),
+  views: 1,
+});
 
 // Source-sheet crops are retained for reference; the shop renders isolated PNGs.
 const EXISTING_DECOR_PRODUCTS: DecorProduct[] = [
@@ -96,9 +128,32 @@ const furniture = (id: string, name: string, category: DecorCategory, price: num
   id, name, store: 'furniture', category, price,
   image: `/assets/library/shop/decor/products/${id}.png?v=3`,
   crop: { x: 0, y: 0, width: 100, height: 100 },
+  roomWidth: defaultRoomWidth(id, category),
+  views: 1,
+});
+
+/**
+ * Een draaibaar meubel: acht aanzichten in een eigen map. Een nieuw exemplaar
+ * toevoegen is de frames neerzetten en hier één regel bijschrijven.
+ */
+const turnable = (id: string, name: string, category: DecorCategory, price: number, roomWidth: number): DecorProduct => ({
+  id, name, store: 'furniture', category, price,
+  image: `/assets/library/shop/decor/products/${id}/view-1.png`,
+  crop: { x: 0, y: 0, width: 100, height: 100 },
+  roomWidth,
+  views: 8,
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  turnable('cream-corner-sofa', 'Crème hoekbank', 'seating', 115, 30),
+  turnable('cream-two-seater', 'Crème tweezitsbank', 'seating', 90, 25),
+  turnable('swivel-armchair', 'Draaifauteuil', 'seating', 65, 15),
+  turnable('bunny-chair', 'Konijnenstoeltje', 'seating', 40, 10),
+  turnable('bunk-bed-stairs', 'Stapelbed met trap', 'sleeping', 140, 26),
+  turnable('shell-bed', 'Schelpbed', 'sleeping', 95, 24),
+  turnable('ribbed-tv-cabinet', 'Tv-dressoir', 'storage', 70, 22),
+  turnable('low-coffee-table', 'Lage salontafel', 'tables', 50, 19),
+
   furniture('corner-sofa', 'Zachte hoekbank', 'seating', 110),
   furniture('dining-set', 'Ronde eethoek', 'tables', 95),
   furniture('ribbed-sideboard', 'Geribbeld dressoir', 'storage', 75),

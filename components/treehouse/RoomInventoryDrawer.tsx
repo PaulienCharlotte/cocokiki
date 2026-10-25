@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { PackageOpen, PackagePlus, X } from 'lucide-react';
+import { Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
-import { availableRoomQuantity, loadRoomInventory, moveRoomItem, placeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, type RoomInventoryState } from '../../services/roomInventory';
+import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
 import { subscribeLocalState } from '../../services/localState';
 
@@ -20,13 +20,6 @@ interface DragState {
   active: boolean;
 }
 
-function itemWidth(product: DecorProduct): number {
-  if (product.id.includes('sofa') || product.id.includes('sideboard')) return 34;
-  if (product.category === 'sleeping' || product.category === 'rugs') return 30;
-  if (product.category === 'tables') return 25;
-  if (product.category === 'storage') return 19;
-  return 15;
-}
 
 export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   const [open, setOpen] = useState(false);
@@ -59,7 +52,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     const point = coordinates(x, y);
     if (!point) return;
     const id = crypto.randomUUID();
-    commit(current => placeRoomItem(current, { id, productId: product.id, room, ...point }));
+    commit(current => placeRoomItem(current, { id, productId: product.id, room, view: 0, scale: 1, ...point }));
     setSelected(id);
   }, [commit, coordinates, room]);
 
@@ -168,14 +161,24 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     <div className="room-decor-layer" aria-label="Kamerinrichting">
       {currentPlacements.map(item => {
         const product = DECOR_PRODUCTS_BY_ID[item.productId];
-        return <div key={item.id} className={`room-placed-object${selected === item.id ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, width: `${itemWidth(product)}%`, zIndex: selected === item.id ? 110 : product.category === 'rugs' ? 1 : 2 + Math.round(item.y) }}>
+        const isSelected = selected === item.id;
+        return <div key={item.id} className={`room-placed-object${isSelected ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, width: `${product.roomWidth * item.scale}%`, zIndex: isSelected ? 110 : product.category === 'rugs' ? 1 : 2 + Math.round(item.y) }}>
           <button type="button" className="room-placed-object__move" aria-label={`${product.name} verplaatsen`} title={product.name} onPointerDown={event => begin(event, product, item.id)} onFocus={() => setSelected(item.id)} onKeyDown={event => {
             if (event.key === 'Delete' || event.key === 'Backspace') { event.preventDefault(); commit(current => returnRoomItem(current, item.id)); }
             const delta = event.shiftKey ? 5 : 1;
             const directions: Record<string, [number, number]> = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
             if (directions[event.key]) { event.preventDefault(); const [x, y] = directions[event.key]; commit(current => moveRoomItem(current, item.id, item.x + x, item.y + y)); }
-          }}><DecorAsset product={product} /></button>
-          {selected === item.id && <button className="room-placed-object__return" type="button" title="Terug in voorraad" aria-label={`${product.name} terug in voorraad`} onClick={() => commit(current => returnRoomItem(current, item.id))}><PackagePlus /></button>}
+          }}><DecorAsset product={product} view={item.view} /></button>
+
+          {isSelected && <div className="room-placed-object__tools" aria-label={`${product.name} aanpassen`}>
+            {product.views > 1 && <>
+              <button type="button" title="Draai naar links" aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}><RotateCcw /></button>
+              <button type="button" title="Draai naar rechts" aria-label={`${product.name} naar rechts draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, 1))}><RotateCw /></button>
+            </>}
+            <button type="button" title="Kleiner" aria-label={`${product.name} kleiner maken`} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))}><Minus /></button>
+            <button type="button" title="Groter" aria-label={`${product.name} groter maken`} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))}><Plus /></button>
+            <button type="button" title="Terug in voorraad" aria-label={`${product.name} terug in voorraad`} onClick={() => commit(current => returnRoomItem(current, item.id))}><PackagePlus /></button>
+          </div>}
         </div>;
       })}
     </div>

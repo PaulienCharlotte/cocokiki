@@ -1193,3 +1193,16 @@
 .cooking-baking__pancake { position: absolute; top: 50%; left: 38%; width: 42%; translate: -50% -50%; }
 .cooking-baking__pancake img, .cooking-baking__pancake .cooking-asset-fallback { width: 100%; object-fit: contain; }
 .cooking-baking__pancake { left: 40.5%; width: 40%; }
+
+/* Gereedschap bij een geselecteerd meubel: draaien, maat en terugleggen. */
+.room-placed-object__tools { position: absolute; left: 50%; bottom: calc(100% + 8px); display: flex; gap: 5px; padding: 5px; border-radius: var(--radius-pill); background: var(--color-surface); box-shadow: var(--shadow-raised); translate: -50% 0; }
+.room-placed-object__tools button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-background-soft); color: var(--color-primary); }
+.room-placed-object__tools button:hover { background: var(--color-success-soft); }
+.room-placed-object__tools button:disabled { opacity: .4; }
+.room-placed-object__tools button:last-child { background: var(--color-primary); color: var(--color-on-primary); }
+.room-placed-object__tools svg { width: 20px; }
+@media (max-width: 700px) {
+  .room-placed-object__tools { gap: 3px; padding: 4px; }
+  .room-placed-object__tools button { width: 40px; height: 40px; }
+  .room-placed-object__tools svg { width: 18px; }
+}

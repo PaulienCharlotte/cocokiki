@@ -23,8 +23,8 @@ import { DESTINATIONS, DESTINATIONS_BY_ID } from '../platform/destinationRegistr
 import { resolveRoute } from '../platform/routes';
 import { PROFILE_AVATARS, PROFILE_AVATAR_KEY } from '../services/profile';
 import { createEmptyCookingProgress } from '../services/cookingProgress';
-import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_STORES } from '../data/decorCatalog';
-import { addRoomPurchasesOnce, availableRoomQuantity, createEmptyRoomInventory, migrateRoomInventory, moveRoomItem, placeRoomItem, returnRoomItem } from '../services/roomInventory';
+import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, decorViewImage } from '../data/decorCatalog';
+import { addRoomPurchasesOnce, availableRoomQuantity, createEmptyRoomInventory, MAX_PLACEMENT_SCALE, migrateRoomInventory, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, turnRoomItem } from '../services/roomInventory';
 
 test('destination registry exposes the remaining world destinations', () => {
   assert.deepEqual(DESTINATIONS.map(destination => destination.id), ['treehouse', 'travel', 'shop']);
@@ -161,7 +161,7 @@ test('room inventory applies decor purchases only once', () => {
 
 test('room decoration conserves purchases across rooms, moving and returning', () => {
   const bought = addRoomPurchasesOnce(createEmptyRoomInventory(), 'placement:test', { 'soft-sofa': 1 });
-  const item = { id: 'sofa:1', productId: 'soft-sofa', room: 'living-room' as const, x: 50, y: 70 };
+  const item = { id: 'sofa:1', productId: 'soft-sofa', room: 'living-room' as const, x: 50, y: 70, view: 0, scale: 1 };
   const placed = placeRoomItem(bought, item);
   assert.equal(availableRoomQuantity(placed, item.productId), 0);
   assert.equal(placeRoomItem(placed, { ...item, id: 'sofa:2', room: 'bedroom' }), placed);
@@ -173,6 +173,34 @@ test('room decoration conserves purchases across rooms, moving and returning', (
   assert.equal(availableRoomQuantity(returned, item.productId), 1);
   assert.equal(returnRoomItem(returned, item.id), returned);
   assert.equal(placeRoomItem(returned, { ...item, room: 'bedroom' }).placements[0].room, 'bedroom');
+});
+
+test('turnable furniture keeps its view and size within bounds and survives a reload', () => {
+  const sofa = DECOR_PRODUCTS_BY_ID['cream-corner-sofa'];
+  assert.equal(sofa.views, 8);
+  assert.equal(decorViewImage(sofa, 0), '/assets/library/shop/decor/products/cream-corner-sofa/view-1.png');
+  assert.equal(decorViewImage(sofa, 8), decorViewImage(sofa, 0));
+  assert.equal(decorViewImage(sofa, -1), decorViewImage(sofa, 7));
+  assert.equal(decorViewImage(DECOR_PRODUCTS_BY_ID['soft-sofa'], 3), DECOR_PRODUCTS_BY_ID['soft-sofa'].image);
+
+  const owned = addRoomPurchasesOnce(createEmptyRoomInventory(), 'turn:test', { 'cream-corner-sofa': 1 });
+  const placed = placeRoomItem(owned, { id: 'turn:1', productId: 'cream-corner-sofa', room: 'living-room', x: 50, y: 70, view: 0, scale: 1 });
+  assert.equal(turnRoomItem(placed, 'turn:1', -1).placements[0].view, 7);
+  assert.equal(turnRoomItem(placed, 'turn:1', 1).placements[0].view, 1);
+
+  let big = placed;
+  for (let step = 0; step < 20; step += 1) big = resizeRoomItem(big, 'turn:1', 1);
+  assert.equal(big.placements[0].scale, MAX_PLACEMENT_SCALE);
+  let small = placed;
+  for (let step = 0; step < 20; step += 1) small = resizeRoomItem(small, 'turn:1', -1);
+  assert.equal(small.placements[0].scale, MIN_PLACEMENT_SCALE);
+
+  const turned = resizeRoomItem(turnRoomItem(placed, 'turn:1', 3), 'turn:1', 2);
+  assert.deepEqual(migrateRoomInventory(JSON.parse(JSON.stringify(turned))), turned);
+
+  // Meubels zonder extra aanzichten blijven staan waar ze staan.
+  const plain = placeRoomItem(addRoomPurchasesOnce(createEmptyRoomInventory(), 'plain:test', { 'soft-sofa': 1 }), { id: 'plain:1', productId: 'soft-sofa', room: 'bedroom', x: 40, y: 60, view: 0, scale: 1 });
+  assert.equal(turnRoomItem(plain, 'plain:1', 1), plain);
 });
 
 test('room inventory migrates existing purchases and rejects invalid or excess placements', () => {
