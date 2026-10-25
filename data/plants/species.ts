@@ -10,6 +10,20 @@ import { DECOR_PRODUCTS_BY_ID } from '../decorCatalog';
  */
 export type NameCertainty = 'species' | 'genus' | 'family';
 
+/**
+ * Hoe dorstig een plant is. De namen zijn met opzet neutraal: wat je ziet
+ * verschilt per soort. Een varen wordt bruin en bros waar een monstera slap
+ * gaat hangen, en juist dat verschil is wat er te leren valt.
+ */
+export type PlantStage = 'fresh' | 'thirst1' | 'thirst2' | 'thirst3';
+
+export interface PlantSymptom {
+  /** Kort en concreet: wat je aan de plant ziet. */
+  label: string;
+  /** Wat Kiki erover zegt, in kindertaal. */
+  kiki: string;
+}
+
 export interface PlantSpecies {
   /** Gelijk aan het product-id in de plantenwinkel. */
   id: string;
@@ -25,8 +39,14 @@ export interface PlantSpecies {
   kikiTip: string;
   /** Na hoeveel dagen deze plant weer water wil. */
   waterDays: number;
-  /** Eigen plaatjes voor de dorststadia; zonder deze vallen we terug op het winkelplaatje. */
-  stages?: { droopy: string; yellow: string; crispy: string };
+  /** Wat er te zien is bij toenemende dorst; verschilt per soort. */
+  symptoms: Record<Exclude<PlantStage, 'fresh'>, PlantSymptom>;
+  /**
+   * Of er eigen tekenwerk is voor de zieke toestanden. Zo ja, dan staan de
+   * plaatjes in /assets/library/plants/<id>/thirst-1.png tot thirst-3.png.
+   * Zonder tekenwerk blijft het winkelplaatje staan; de tekst klopt dan nog wel.
+   */
+  stageArt?: boolean;
 }
 
 export const PLANT_SPECIES: PlantSpecies[] = [
@@ -42,10 +62,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'De gaten in de bladeren laten wind en regen erdoor, zodat grote bladeren niet scheuren.',
     kikiTip: 'Zie je die gaten? Daar waait de wind zo doorheen. Slim bedacht door de plant zelf!',
     waterDays: 7,
-    stages: {
-      droopy: '/assets/library/plants/monstera-basket/droopy.png',
-      yellow: '/assets/library/plants/monstera-basket/yellow.png',
-      crispy: '/assets/library/plants/monstera-basket/crispy.png',
+    stageArt: true,
+    symptoms: {
+      thirst1: { label: 'Bladeren hangen slap', kiki: 'De bladeren hangen omlaag. Dat is hoe een monstera om water vraagt.' },
+      thirst2: { label: 'Gele onderbladeren', kiki: 'De onderste bladeren worden geel. Die geeft hij als eerste op.' },
+      thirst3: { label: 'Bruine droge randen', kiki: 'De randen zijn bruin en hard geworden. Geef snel water!' },
     },
   },
   {
@@ -60,6 +81,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Een palm heeft geen takken: alle bladeren groeien uit één punt bovenaan de stam.',
     kikiTip: 'Een palm vindt natte voeten niet fijn. Giet het water weg dat in de schotel blijft staan.',
     waterDays: 7,
+    symptoms: {
+      thirst1: { label: 'Bruine puntjes', kiki: 'Kijk naar de puntjes van de bladeren. Een palm begint daar altijd.' },
+      thirst2: { label: 'Onderste veren bruin', kiki: 'De onderste bladveren zijn bruin en de bovenste beginnen te hangen.' },
+      thirst3: { label: 'Droge opgekrulde veren', kiki: 'De bladveren krullen naar binnen en voelen als papier. Water!' },
+    },
   },
   {
     id: 'palm-clay-pot',
@@ -73,6 +99,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Een kleipot ademt: er verdampt water door de wand, waardoor de aarde sneller droogt.',
     kikiTip: 'In een kleipot droogt de aarde sneller. Voel dus iets vaker of hij water wil.',
     waterDays: 6,
+    symptoms: {
+      thirst1: { label: 'Bruine puntjes', kiki: 'De puntjes worden droog. In een kleipot gaat dat sneller dan je denkt.' },
+      thirst2: { label: 'Onderste veren bruin', kiki: 'De onderste bladveren geven het op. Tijd voor water.' },
+      thirst3: { label: 'Witte rand op de pot', kiki: 'Zie je die witte rand op de pot? Die blijft achter als water verdampt.' },
+    },
   },
   {
     id: 'snake-plant',
@@ -86,6 +117,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Deze plant heette vroeger Sansevieria, maar onderzoekers ontdekten dat hij bij Dracaena hoort.',
     kikiTip: 'Dit is de makkelijkste plant die er is. Vergeet je water te geven? Hij vindt het prima.',
     waterDays: 21,
+    symptoms: {
+      thirst1: { label: 'Rimpels in het blad', kiki: 'Fijne rimpeltjes in de lengte. Hij blijft stevig, maar hij wil water.' },
+      thirst2: { label: 'Bladeren buigen opzij', kiki: 'De toppen buigen opzij. Deze plant wordt nooit slap zoals andere.' },
+      thirst3: { label: 'Bladeren vallen open', kiki: 'Hij valt naar buiten open. Dat doet hij pas als het echt lang duurt.' },
+    },
   },
   {
     id: 'hanging-fern',
@@ -99,6 +135,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Varens maken geen zaadjes maar sporen: piepkleine stipjes aan de onderkant van het blad.',
     kikiTip: 'Varens houden van vochtige lucht. In de badkamer voelen ze zich thuis.',
     waterDays: 3,
+    symptoms: {
+      thirst1: { label: 'Bruine puntjes', kiki: 'De puntjes kleuren bruin. Een varen heeft het snelst dorst van allemaal.' },
+      thirst2: { label: 'Opgekrulde bruine blaadjes', kiki: 'De blaadjes krullen op en worden bruin. Hij wordt niet geel, maar bruin.' },
+      thirst3: { label: 'Bros en kaal', kiki: 'De blaadjes verkruimelen als je ze aanraakt. Water, snel!' },
+    },
   },
   {
     id: 'hanging-vine',
@@ -112,6 +153,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Hangplanten gebruiken luchtworteltjes om zich aan bomen en muren vast te houden.',
     kikiTip: 'Hang deze hoog op, dan kunnen de ranken lekker naar beneden groeien.',
     waterDays: 7,
+    symptoms: {
+      thirst1: { label: 'Slappe ranken', kiki: 'De ranken hangen slapper dan anders en de blaadjes krullen een beetje.' },
+      thirst2: { label: 'Gele blaadjes vallen', kiki: 'Langs de ranken worden blaadjes geel en vallen eraf.' },
+      thirst3: { label: 'Kale ranken', kiki: 'Alleen bovenaan zitten nog blaadjes. De rest is kaal.' },
+    },
   },
   {
     id: 'white-flower',
@@ -125,6 +171,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Het witte "bloemblad" is geen bloem maar een schutblad; de echte bloemetjes zitten op de kolf in het midden.',
     kikiTip: 'Laat hij zijn blad hangen? Geef water, dan staat hij een paar uur later weer rechtop.',
     waterDays: 5,
+    symptoms: {
+      thirst1: { label: 'Alles hangt over de rand', kiki: 'Hij hangt helemaal over de pot. Dit is zijn manier van roepen.' },
+      thirst2: { label: 'Helemaal in elkaar gezakt', kiki: 'Schrik niet. Geef water en over een paar uur staat hij weer rechtop.' },
+      thirst3: { label: 'Bruine randen en bloem', kiki: 'Nu wordt het blad bruin aan de rand. Dat gaat niet meer weg.' },
+    },
   },
   {
     id: 'pink-flower',
@@ -138,6 +189,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Net als bij de lepelplant is het gekleurde deel een schutblad en geen echte bloem.',
     kikiTip: 'Zie je dat staafje in het midden? Daar zitten de echte bloemetjes op.',
     waterDays: 6,
+    symptoms: {
+      thirst1: { label: 'De glans is weg', kiki: 'De bladeren glimmen niet meer en hangen een beetje.' },
+      thirst2: { label: 'Gele vlekken', kiki: 'Op de oudste bladeren komen gele vlekken en het roze verbleekt.' },
+      thirst3: { label: 'Bruine punt aan het roze', kiki: 'Zelfs het roze schutblad wordt bruin. Geef snel water.' },
+    },
   },
   {
     id: 'orange-tree',
@@ -151,6 +207,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Citrusbomen kunnen bloeien en vruchten dragen op hetzelfde moment.',
     kikiTip: 'Wrijf eens zachtjes over een blaadje en ruik aan je vingers. Citrus!',
     waterDays: 5,
+    symptoms: {
+      thirst1: { label: 'Blaadjes krullen omhoog', kiki: 'De blaadjes vouwen omhoog als bootjes. Zo verdampt er minder water.' },
+      thirst2: { label: 'Blaadjes vallen af', kiki: 'Een citrus laat gewoon zijn blad vallen als hij dorst heeft.' },
+      thirst3: { label: 'Kale takjes', kiki: 'De takjes worden kaal en de sinaasappeltjes blijven klein.' },
+    },
   },
   {
     id: 'orchid',
@@ -164,6 +225,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Orchideeën groeien niet in gewone aarde maar in boomschors, want hun wortels willen lucht.',
     kikiTip: 'Dikke grijsgroene wortels boven de pot zijn normaal. Laat ze gewoon zitten.',
     waterDays: 7,
+    symptoms: {
+      thirst1: { label: 'Zilvergrijze wortels', kiki: 'Kijk naar de wortels: groen is nat, zilvergrijs betekent dorst.' },
+      thirst2: { label: 'Rimpels als een oude appel', kiki: 'De bladeren rimpelen, net als een appel die te lang ligt.' },
+      thirst3: { label: 'Bloemen vallen af', kiki: 'De bloemen laten los. Die komen pas volgend jaar terug.' },
+    },
   },
   {
     id: 'succulent',
@@ -177,6 +243,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Vetplanten bewaren water in hun dikke blaadjes; daarom voelen die zo stevig aan.',
     kikiTip: 'Te veel water is voor een vetplant erger dan te weinig. Echt waar.',
     waterDays: 21,
+    symptoms: {
+      thirst1: { label: 'Minder bolle blaadjes', kiki: 'De blaadjes zijn minder dik. Daar bewaarde hij zijn water in.' },
+      thirst2: { label: 'Rimpelige blaadjes', kiki: 'De blaadjes rimpelen en worden dunner.' },
+      thirst3: { label: 'Papierachtige blaadjes', kiki: 'De onderste blaadjes zijn opgedroogd. Een klein scheutje is genoeg.' },
+    },
   },
   {
     id: 'small-cactus',
@@ -190,6 +261,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'De stekels van een cactus zijn omgebouwde bladeren; zo verdampt er bijna geen water.',
     kikiTip: 'Een cactus drinkt bijna niets. Eén keer per maand een scheutje is al genoeg.',
     waterDays: 30,
+    symptoms: {
+      thirst1: { label: 'Iets smaller geworden', kiki: 'Hij is een beetje dunner. Zijn water is op.' },
+      thirst2: { label: 'Rimpels in de lengte', kiki: 'Je ziet groeven in de lengte, net als bij een harmonica.' },
+      thirst3: { label: 'Geschrompeld en grijzig', kiki: 'Nu heeft hij echt dorst. Maar niet te veel geven, hoor!' },
+    },
   },
   {
     id: 'tall-cactus',
@@ -203,6 +279,11 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     funFact: 'Een cactus zet zijn stam uit als een harmonica wanneer hij water opslaat.',
     kikiTip: 'Pak hem voorzichtig vast bij de pot, niet bij de cactus zelf.',
     waterDays: 30,
+    symptoms: {
+      thirst1: { label: 'Iets smaller geworden', kiki: 'De stam is wat dunner. Daar zat zijn watervoorraad.' },
+      thirst2: { label: 'Rimpels in de lengte', kiki: 'De groeven worden dieper, zoals een harmonica die dichtgaat.' },
+      thirst3: { label: 'De top buigt opzij', kiki: 'Hij kan zichzelf niet meer rechthouden. Geef hem een scheutje.' },
+    },
   },
 ];
 
@@ -213,4 +294,14 @@ export const PLANT_SPECIES_BY_ID = Object.fromEntries(
 /** Het winkelplaatje en de prijs komen uit de bestaande plantencatalogus. */
 export function plantProduct(speciesId: string) {
   return DECOR_PRODUCTS_BY_ID[speciesId];
+}
+
+/**
+ * Het plaatje bij een dorstige plant. Zonder eigen tekenwerk komt er niets
+ * terug en blijft het winkelplaatje staan; de tekst klopt dan nog steeds.
+ */
+export function plantStageImage(species: PlantSpecies, stage: PlantStage): string | null {
+  if (stage === 'fresh' || !species.stageArt) return null;
+  const nummer = { thirst1: 1, thirst2: 2, thirst3: 3 }[stage];
+  return `/assets/library/plants/${species.id}/thirst-${nummer}.png`;
 }

@@ -1248,12 +1248,6 @@
 .plant-card__nickname { display: block; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
 .plant-card__hero h2 { margin: 0; font-size: var(--font-size-lg); }
 .plant-card__hero em { color: var(--color-text-muted); font-size: var(--font-size-sm); }
-.plant-card__facts { display: grid; gap: var(--space-2); margin: var(--space-4) 0 0; }
-.plant-card__facts > div { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: start; gap: 10px; padding: 9px 11px; border-radius: var(--radius-control); background: var(--color-background-soft); }
-.plant-card__facts span { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--color-success-soft); color: var(--color-primary); }
-.plant-card__facts svg { width: 17px; }
-.plant-card__facts dt { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
-.plant-card__facts dd { margin: 2px 0 0; color: var(--color-text); font-size: var(--font-size-sm); line-height: var(--line-height-default); }
 .plant-card__kiki { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: var(--space-3); margin-top: var(--space-4); padding: 10px 14px 10px 6px; border-radius: var(--radius-card); background: var(--color-background-calm); }
 .plant-card__kiki img { width: 72px; object-fit: contain; }
 .plant-card__kiki p { margin: 0; font-size: var(--font-size-sm); line-height: var(--line-height-default); }
@@ -1314,13 +1308,6 @@
 .plant-card__nickname { letter-spacing: .04em; }
 
 /* De feiten staan niet meer elk in een eigen bak, maar in een rustige lijst. */
-.plant-card__facts { gap: 0; margin-top: var(--space-2); }
-.plant-card__facts > div { align-items: start; gap: var(--space-3); padding: var(--space-3) 0; border-radius: 0; border-bottom: 1px solid #efe9e1; background: transparent; }
-.plant-card__facts > div:last-child { border-bottom: 0; }
-.plant-card__facts span { width: 28px; height: 28px; background: transparent; color: var(--color-sage); }
-.plant-card__facts svg { width: 20px; stroke-width: 1.6; }
-.plant-card__facts dt { color: var(--color-text-subtle); font-size: .72rem; font-weight: var(--font-weight-bold); letter-spacing: .02em; text-transform: none; }
-.plant-card__facts dd { margin-top: 1px; font-size: var(--font-size-md); line-height: 1.45; }
 
 /* Kiki's tip is een los zinnetje, geen tweede blok met een kop erboven. */
 .plant-card__kiki { grid-template-columns: 62px minmax(0, 1fr); gap: var(--space-2); margin-top: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) 0; border-radius: var(--radius-card); background: #f4f7f2; }
@@ -1355,10 +1342,10 @@
 .plant-family__stage { width: 86px; height: 86px; object-fit: contain; }
 .plant-family__stage-label { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--color-primary); font-size: .68rem; font-weight: var(--font-weight-bold); }
 .plant-family__stage-label svg { width: 13px; }
-.plant-family__stage-label.is-droopy { color: #8a6d2f; }
-.plant-family__stage-label.is-yellow { color: #96682a; }
-.plant-family__stage-label.is-crispy { color: var(--color-error); }
-.plant-family__card.is-crispy { border-color: #e0c3bd; }
+.plant-family__stage-label.is-thirst1 { color: #8a6d2f; }
+.plant-family__stage-label.is-thirst2 { color: #96682a; }
+.plant-family__stage-label.is-thirst3 { color: var(--color-error); }
+.plant-family__card.is-thirst3 { border-color: #e0c3bd; }
 .plant-family__water { background: var(--color-sky) !important; border-color: #9cc8e3 !important; color: #2c5a76 !important; }
 .plant-family__water:hover { border-color: #6ea9cd !important; }
 
@@ -1370,10 +1357,10 @@
 /* Een druppel op de plant in de kamer, ook zonder hem te selecteren. */
 .room-placed-object__thirst { position: absolute; z-index: 2; top: -6px; right: -6px; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-sky); color: #2c5a76; box-shadow: var(--shadow-soft); }
 .room-placed-object__thirst svg { width: 15px; }
-.room-placed-object__thirst.is-yellow { background: var(--color-honey); color: #6b5120; }
-.room-placed-object__thirst.is-crispy { background: var(--color-peach); color: #7a3b33; animation: thirst-pulse 1.8s ease-in-out infinite; }
+.room-placed-object__thirst.is-thirst2 { background: var(--color-honey); color: #6b5120; }
+.room-placed-object__thirst.is-thirst3 { background: var(--color-peach); color: #7a3b33; animation: thirst-pulse 1.8s ease-in-out infinite; }
 @keyframes thirst-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
-@media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-crispy { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-thirst3 { animation: none; } }
 
 /* Mijn Planten: vaste ingang in de boomhut, met het aantal dorstige planten. */
 .treehouse-overview__plants {
@@ -1404,3 +1391,33 @@
 
 /* De vaste bovenbalk mag de kop van een plantenkaart niet afsnijden. */
 .plant-card-backdrop { padding-top: max(var(--space-4), 84px); }
+
+/* EHBO-kaart: twee tabbladen en een lijst met klachten. */
+.plant-card__tabs { display: flex; gap: 4px; margin-top: var(--space-3); padding: 4px; border-radius: var(--radius-pill); background: var(--color-surface-soft); }
+.plant-card__tabs button { flex: 1; padding: 9px 12px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.plant-card__tabs button.is-active { background: var(--color-surface); color: var(--color-text); box-shadow: 0 2px 8px #2f201a1f; }
+.plant-card__tabs button:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 1px; }
+
+.plant-card__intro { margin: var(--space-3) 0 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.plant-card__fix { margin: 7px 0 0; display: flex; align-items: flex-start; gap: 7px; color: var(--color-text); font-size: var(--font-size-md); }
+.plant-card__fix svg { width: 17px; height: 17px; flex: none; margin-top: 2px; color: var(--color-primary); stroke-width: 2; }
+
+/* Eén opbouw voor beide tabbladen van de plantenkaart. */
+.plant-card__rows { margin: var(--space-2) 0 0; padding: 0; list-style: none; display: grid; }
+.plant-card__row { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: start; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid #efe9e1; }
+.plant-card__row:last-child { border-bottom: 0; }
+.plant-card__row > div { min-width: 0; }
+.plant-card__row strong { display: block; color: var(--color-text); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.plant-card__row p { margin: 3px 0 0; color: var(--color-text-soft); font-size: var(--font-size-md); line-height: 1.45; }
+.plant-card__row-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-text-soft); }
+.plant-card__row-icon svg { width: 18px; height: 18px; stroke-width: 1.8; }
+
+.plant-card__row.is-herkomst .plant-card__row-icon,
+.plant-card__row.is-groei .plant-card__row-icon,
+.plant-card__row.is-weetje .plant-card__row-icon { background: var(--color-success-soft); color: var(--color-primary); }
+.plant-card__row.is-te-veel-water .plant-card__row-icon { background: #dcebf6; color: #2f6386; }
+.plant-card__row.is-te-weinig-water .plant-card__row-icon { background: #f6ecd9; color: #8a6d2f; }
+.plant-card__row.is-te-veel-zon .plant-card__row-icon { background: #fbe7cf; color: #a8601f; }
+.plant-card__row.is-te-weinig-licht .plant-card__row-icon { background: #e6e3ef; color: #5b5076; }
+.plant-card__row.is-droge-lucht .plant-card__row-icon { background: #e4eee8; color: #3c6b52; }
+.plant-card__row.is-te-koud .plant-card__row-icon { background: #e2edf3; color: #3f6478; }

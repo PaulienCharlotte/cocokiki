@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Droplet, Info, Pencil, Sprout, X } from 'lucide-react';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
-import { PLANT_SPECIES_BY_ID, plantProduct } from '../../data/plants/species';
+import { PLANT_SPECIES_BY_ID, plantProduct, plantStageImage } from '../../data/plants/species';
 import {
   loadPlantFamily,
   MAX_NICKNAME_LENGTH,
@@ -10,8 +10,8 @@ import {
   plantThirst,
   renamePlant,
   savePlantFamily,
-  STAGE_LABEL,
-  stageImage,
+  stageKiki,
+  stageLabel,
   waterPlant,
   type PlantFamilyState,
 } from '../../services/plantFamily';
@@ -46,6 +46,18 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
     if (savePlantFamily(next)) setFamily(next);
   };
 
+  // Kiki noemt de plant die er het ergst aan toe is, met het symptoom van díé soort.
+  const dorstigste = family.plants
+    .map(plant => {
+      const species = PLANT_SPECIES_BY_ID[plant.speciesId];
+      if (!species) return null;
+      const thirst = plantThirst(plant, species.waterDays, nu);
+      const kiki = stageKiki(species, thirst.stage);
+      return kiki ? { nickname: plant.nickname, kiki, ratio: thirst.ratio } : null;
+    })
+    .filter((item): item is { nickname: string; kiki: string; ratio: number } => item !== null)
+    .sort((a, b) => b.ratio - a.ratio)[0];
+
   return <div className="plant-card-backdrop" role="presentation" onMouseDown={event => {
     if (event.target === event.currentTarget) onClose();
   }}>
@@ -55,9 +67,9 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
         <button type="button" onClick={onClose} aria-label="Sluiten"><X /></button>
       </header>
 
-      {family.plants.some(plant => plantThirst(plant, PLANT_SPECIES_BY_ID[plant.speciesId]?.waterDays ?? 7, nu).stage !== 'fresh') && <aside className="plant-family__alert">
+      {dorstigste && <aside className="plant-family__alert">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.worried} alt="" />
-        <p><strong>Kiki zegt</strong>Er staat een plant droog. Geef hem een slokje water met het druppeltje.</p>
+        <p><strong>Kiki zegt</strong>{dorstigste.nickname}: {dorstigste.kiki}</p>
       </aside>}
       {family.plants.length === 0 ? <div className="plant-family__empty">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.explore} alt="" />
@@ -70,7 +82,7 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
           if (!species || !product) return null;
           const bezig = renaming === plant.id;
           const thirst = plantThirst(plant, species.waterDays, nu);
-          const ziek = stageImage(species.stages, thirst.stage);
+          const ziek = plantStageImage(species, thirst.stage);
           return <article key={plant.id} className={`plant-family__card is-${thirst.stage}`}>
             {ziek
               ? <img className="decor-asset plant-family__stage" src={ziek} alt={`${plant.nickname} heeft dorst`} />
@@ -92,7 +104,7 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
               <button type="button" aria-label="Naam wijzigen afbreken" onClick={() => setRenaming(null)}><X /></button>
             </form> : <strong className="plant-family__nickname">{plant.nickname}</strong>}
             <small className="plant-family__species">{species.commonName}</small>
-            <small className={`plant-family__stage-label is-${thirst.stage}`}><Droplet aria-hidden="true" />{STAGE_LABEL[thirst.stage]}</small>
+            <small className={`plant-family__stage-label is-${thirst.stage}`}><Droplet aria-hidden="true" />{stageLabel(species, thirst.stage)}</small>
             <small className="plant-family__date"><Sprout aria-hidden="true" />Sinds {adoptieDatum(plant.adoptedAt)}</small>
             <div className="plant-family__actions">
               <button type="button" className="plant-family__water" aria-label={`${plant.nickname} water geven`} title="Water geven" onClick={() => bewaar(waterPlant(family, plant.id))}><Droplet /></button>

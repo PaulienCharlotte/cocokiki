@@ -1,4 +1,4 @@
-import { PLANT_SPECIES_BY_ID } from '../data/plants/species';
+import { PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage } from '../data/plants/species';
 import { commitLocalState, readDocument } from './localState';
 
 export const PLANT_FAMILY_KEY = 'cocokiki:plant-family:v1';
@@ -119,15 +119,13 @@ export function renamePlant(state: PlantFamilyState, id: string, nickname: strin
  * uit, maar hij gaat nooit dood: water geven brengt hem altijd helemaal terug.
  * Een kind dat een week niet speelt vindt dus geen dode planten.
  */
-export type PlantStage = 'fresh' | 'droopy' | 'yellow' | 'crispy';
-
 const DAG = 24 * 60 * 60 * 1000;
 
 /** Vanaf welk veelvoud van de waterbeurt een stadium begint. */
 const STAGE_FROM: Array<[PlantStage, number]> = [
-  ['crispy', 3.5],
-  ['yellow', 2],
-  ['droopy', 1],
+  ['thirst3', 3.5],
+  ['thirst2', 2],
+  ['thirst1', 1],
 ];
 
 export interface PlantThirst {
@@ -153,15 +151,15 @@ export function waterPlant(state: PlantFamilyState, id: string, now = new Date()
   return { ...state, plants: state.plants.map(plant => plant.id === id ? { ...plant, lastWateredAt: now } : plant) };
 }
 
-export const STAGE_LABEL: Record<PlantStage, string> = {
-  fresh: 'Lekker fris',
-  droopy: 'Heeft dorst',
-  yellow: 'Veel dorst',
-  crispy: 'Snel water!',
-};
+/**
+ * Wat er op de kaart staat. Bij dorst is dat het symptoom van die soort, want
+ * een varen laat iets heel anders zien dan een cactus.
+ */
+export function stageLabel(species: PlantSpecies, stage: PlantStage): string {
+  return stage === 'fresh' ? 'Lekker fris' : species.symptoms[stage].label;
+}
 
-/** Het plaatje bij een stadium; zonder eigen tekening blijft het winkelplaatje staan. */
-export function stageImage(stages: { droopy: string; yellow: string; crispy: string } | undefined, stage: PlantStage): string | null {
-  if (!stages || stage === 'fresh') return null;
-  return stages[stage];
+/** Wat Kiki over dit symptoom zegt. */
+export function stageKiki(species: PlantSpecies, stage: PlantStage): string | null {
+  return stage === 'fresh' ? null : species.symptoms[stage].kiki;
 }

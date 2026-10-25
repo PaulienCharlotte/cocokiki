@@ -25,6 +25,9 @@ public/assets/library/plants/<plant-id>/thirst-3.png
 
 De `<plant-id>` staat hieronder bij elke plant.
 
+Zodra de drie bestanden er staan, hoeft er in `data/plants/species.ts` maar
+één regel bij die plant bij: `stageArt: true`. De teksten staan er al in.
+
 ---
 
 ## 1. Monstera in mand — `monstera-basket` ✅ AL KLAAR
