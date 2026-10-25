@@ -34,30 +34,31 @@ export default function PlantAdoptionDialog({ plants, onName, onDone }: PlantAdo
 
   return <div className="plant-card-backdrop" role="presentation">
     <section className="plant-adopt" role="dialog" aria-modal="true" aria-labelledby="plant-adopt-title">
-      <img className="plant-adopt__kiki" src={ASSET_LIBRARY.avatars.kikiPoses.plant} alt="" />
-      <h2 id="plant-adopt-title">Jeeee! Een nieuwe plant!</h2>
-      <p>Hoe zullen we hem noemen?</p>
+      <header className="plant-adopt__intro">
+        <img src={ASSET_LIBRARY.avatars.kikiPoses.plant} alt="" />
+        <div>
+          <h2 id="plant-adopt-title">Jeeee! Een nieuwe plant!</h2>
+          <p>Hoe zullen we hem noemen?</p>
+        </div>
+      </header>
 
       <div className="plant-adopt__plant">
         <DecorAsset product={product} />
-        <small>{species.commonName}</small>
+        <span>{species.commonName}</span>
       </div>
 
       <form onSubmit={event => { event.preventDefault(); verder(); }}>
-        <label className="plant-adopt__field">
-          <span>Naam van je plant</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={name}
-            maxLength={MAX_NICKNAME_LENGTH}
-            placeholder="Bijvoorbeeld Henk"
-            onChange={event => setName(event.target.value)}
-          />
-        </label>
-        <div className="plant-adopt__actions">
-          <button type="submit" className="plant-adopt__confirm"><Check aria-hidden="true" />{name.trim() ? 'Zo gaat hij heten' : 'Later een naam kiezen'}</button>
-        </div>
+        <label className="plant-adopt__field" htmlFor="plant-nickname">Naam van je plant</label>
+        <input
+          id="plant-nickname"
+          ref={inputRef}
+          type="text"
+          value={name}
+          maxLength={MAX_NICKNAME_LENGTH}
+          placeholder="Bijvoorbeeld Henk"
+          onChange={event => setName(event.target.value)}
+        />
+        <button type="submit" className="plant-adopt__confirm"><Check aria-hidden="true" />{name.trim() ? 'Zo gaat hij heten' : 'Later een naam kiezen'}</button>
       </form>
 
       {plants.length > 1 && <small className="plant-adopt__counter">Plant {index + 1} van {plants.length}</small>}

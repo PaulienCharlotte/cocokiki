@@ -1305,3 +1305,46 @@
   .plant-card__art { width: 76px; height: 76px; }
   .plant-family__grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
 }
+
+/* --- Lichter: minder gevulde vlakken, rustiger labels, meer witruimte --- */
+.plant-card { background: #fffefb; }
+.plant-card__hero { gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); }
+.plant-card__hero h2 { font-size: clamp(1.35rem, 4vw, 1.6rem); letter-spacing: -.01em; }
+.plant-card__hero em { font-size: var(--font-size-sm); font-style: italic; }
+.plant-card__nickname { letter-spacing: .04em; }
+
+/* De feiten staan niet meer elk in een eigen bak, maar in een rustige lijst. */
+.plant-card__facts { gap: 0; margin-top: var(--space-2); }
+.plant-card__facts > div { align-items: start; gap: var(--space-3); padding: var(--space-3) 0; border-radius: 0; border-bottom: 1px solid #efe9e1; background: transparent; }
+.plant-card__facts > div:last-child { border-bottom: 0; }
+.plant-card__facts span { width: 28px; height: 28px; background: transparent; color: var(--color-sage); }
+.plant-card__facts svg { width: 20px; stroke-width: 1.6; }
+.plant-card__facts dt { color: var(--color-text-subtle); font-size: .72rem; font-weight: var(--font-weight-bold); letter-spacing: .02em; text-transform: none; }
+.plant-card__facts dd { margin-top: 1px; font-size: var(--font-size-md); line-height: 1.45; }
+
+/* Kiki's tip is een los zinnetje, geen tweede blok met een kop erboven. */
+.plant-card__kiki { grid-template-columns: 62px minmax(0, 1fr); gap: var(--space-2); margin-top: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) 0; border-radius: var(--radius-card); background: #f4f7f2; }
+.plant-card__kiki img { width: 62px; }
+.plant-card__kiki strong { margin-bottom: 1px; font-size: .72rem; font-weight: var(--font-weight-bold); letter-spacing: .02em; text-transform: none; }
+
+/* Naamgeven: drie duidelijke blokken in plaats van zes losse regels. */
+.plant-adopt { width: min(380px, 100%); padding: clamp(20px, 3.4vh, 28px); background: #fffefb; text-align: left; }
+.plant-adopt__intro { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: var(--space-3); }
+.plant-adopt__intro img { width: 84px; display: block; }
+.plant-adopt__intro h2 { margin: 0; font-size: var(--font-size-lg); line-height: var(--line-height-tight); }
+.plant-adopt__intro p { margin: 3px 0 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.plant-adopt__plant { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; padding: var(--space-3); border-radius: var(--radius-card); background: var(--color-background-soft); }
+.plant-adopt__plant img { width: 64px; height: 64px; object-fit: contain; }
+.plant-adopt__plant span { color: var(--color-text); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); }
+.plant-adopt form { display: grid; gap: var(--space-2); }
+.plant-adopt__field { color: var(--color-text-subtle); font-size: .72rem; font-weight: var(--font-weight-bold); text-transform: none; }
+.plant-adopt form input { min-height: 50px; padding: 12px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--font-size-md); }
+.plant-adopt form input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.plant-adopt__confirm { margin-top: var(--space-2); }
+.plant-adopt__counter { display: block; margin-top: var(--space-3); color: var(--color-text-subtle); font-size: var(--font-size-xs); text-align: center; }
+
+/* Naambordje en infoknop bij een plant in de kamer. */
+.room-placed-object__label { position: absolute; left: 50%; top: calc(100% + 6px); padding: 3px 10px; border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); white-space: nowrap; box-shadow: var(--shadow-soft); translate: -50% 0; }
+.room-inventory-drawer__actions { display: flex; align-items: center; gap: 6px; }
+.room-inventory-drawer__actions button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-primary); }
+.room-inventory-drawer__actions svg { width: 19px; }

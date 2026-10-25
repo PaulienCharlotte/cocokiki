@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, Sprout, X } from 'lucide-react';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
+import { PLANT_SPECIES_BY_ID } from '../../data/plants/species';
+import { loadPlantFamily } from '../../services/plantFamily';
+import PlantFlashcard from '../plants/PlantFlashcard';
+import PlantFamilyPanel from '../plants/PlantFamilyPanel';
 import InventorySellButton from './InventorySellButton';
 import { subscribeLocalState } from '../../services/localState';
 
@@ -29,6 +33,8 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   const [ghost, setGhost] = useState<{ product: DecorProduct; x: number; y: number; returnable: boolean } | null>(null);
   const [overReturn, setOverReturn] = useState(false);
   const [notice, setNotice] = useState('');
+  const [plantCard, setPlantCard] = useState<{ speciesId: string; nickname?: string } | null>(null);
+  const [familyOpen, setFamilyOpen] = useState(false);
   const drag = useRef<DragState | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const returnRef = useRef<HTMLDivElement>(null);
@@ -53,7 +59,13 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     const point = coordinates(x, y);
     if (!point) return;
     const id = crypto.randomUUID();
-    commit(current => placeRoomItem(current, { id, productId: product.id, room, view: 0, scale: 1, ...point }));
+    commit(current => {
+      const plantId = PLANT_SPECIES_BY_ID[product.id]
+        ? loadPlantFamily().plants.find(plant => plant.speciesId === product.id
+            && !current.placements.some(entry => entry.plantId === plant.id))?.id
+        : undefined;
+      return placeRoomItem(current, { id, productId: product.id, room, view: 0, scale: 1, plantId, ...point });
+    });
     setSelected(id);
   }, [commit, coordinates, room]);
 
@@ -150,11 +162,14 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     if (placementId) setSelected(placementId);
   };
 
+  const family = loadPlantFamily();
+  /** De geadopteerde plant achter een plaatsing; alleen planten hebben er een. */
+  const plantOf = (item: { plantId?: string }) => item.plantId ? family.plants.find(plant => plant.id === item.plantId) : undefined;
   const currentPlacements = inventory.placements.filter(item => item.room === room);
   const overlay = <>
     {open && <div className="room-inventory-backdrop room-decor-backdrop" onMouseDown={() => setOpen(false)}>
       <aside className="room-inventory-drawer" role="dialog" aria-modal="true" aria-labelledby="room-inventory-title" onMouseDown={event => event.stopPropagation()}>
-        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Voorraad</h2></div><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></header>
+        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Voorraad</h2></div><div className="room-inventory-drawer__actions"><button type="button" aria-label="Mijn Plantenfamilie openen" title="Mijn Plantenfamilie" onClick={() => { setOpen(false); setFamilyOpen(true); }}><Sprout /></button><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></div></header>
         {products.length > 0 ? <div className="room-inventory-grid">
           {products.map(({ product, amount }) => <article key={product.id}>
             <button className="room-inventory-place" type="button" aria-label={`${product.name} in kamer plaatsen`} onPointerDown={event => begin(event, product)} onClick={event => { if (event.detail === 0) { place(product, window.innerWidth / 2, window.innerHeight * .72); setOpen(false); } }}><DecorAsset product={product} /></button>
@@ -164,6 +179,8 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
         </div> : <div className="room-inventory-empty"><PackageOpen /><p>{Object.keys(inventory.owned).length ? 'Alles staat in je boomhut.' : 'Nog geen kameritems.'}</p></div>}
       </aside>
     </div>}
+    {plantCard && <PlantFlashcard speciesId={plantCard.speciesId} nickname={plantCard.nickname} onClose={() => setPlantCard(null)} />}
+    {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
     {ghost && <>
       <div className="room-decor-ghost" style={{ left: ghost.x, top: ghost.y }}><DecorAsset product={ghost.product} /></div>
       {ghost.returnable && <div ref={returnRef} className={`room-return-target${overReturn ? ' is-over' : ''}`}><PackageOpen /><span>Terug in voorraad</span></div>}
@@ -183,7 +200,9 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
             if (directions[event.key]) { event.preventDefault(); const [x, y] = directions[event.key]; commit(current => moveRoomItem(current, item.id, item.x + x, item.y + y)); }
           }}><DecorAsset product={product} view={item.view} /></button>
 
+          {isSelected && plantOf(item) && <span className="room-placed-object__label">{plantOf(item)!.nickname}</span>}
           {isSelected && <div className="room-placed-object__tools" aria-label={`${product.name} aanpassen`}>
+            {PLANT_SPECIES_BY_ID[product.id] && <button type="button" title="Meer over deze plant" aria-label={`Meer weten over ${plantOf(item)?.nickname ?? product.name}`} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })}><Info /></button>}
             {product.views > 1 && <>
               <button type="button" title="Draai naar links" aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}><RotateCcw /></button>
               <button type="button" title="Draai naar rechts" aria-label={`${product.name} naar rechts draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, 1))}><RotateCw /></button>
