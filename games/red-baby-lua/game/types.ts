@@ -1,6 +1,6 @@
 export type TableChoice = number | 'mix';
 export type LuaGameMode = 'calm' | 'adventure' | 'challenge';
-export type QuestionType = 'classic' | 'missing' | 'check' | 'bigger' | 'factor';
+export type QuestionType = 'classic' | 'division' | 'missing' | 'check' | 'bigger' | 'factor';
 export type GamePhase = 'menu' | 'tutorial' | 'active' | 'resolving' | 'results';
 
 export interface Question {

@@ -1,0 +1,56 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Lightbulb, Star } from 'lucide-react';
+import { createQuestionDeck, validAnswer } from './engine';
+import ChoiceChallenge from './ChoiceChallenge';
+import DistributionChallenge from './DistributionChallenge';
+import PuzzleChallenge from './PuzzleChallenge';
+import BalanceChallenge from './BalanceChallenge';
+import { WinterScene } from './AdventureScenes';
+import { mathAssets } from './assets';
+import { QUESTION_TRANSITION_MS } from './config';
+import type { MathGameId, MathLevel, MathResult } from './types';
+
+export default function MathSession({ game, level, onFinish, onSound = () => undefined }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void }) {
+  const [questions] = useState(() => createQuestionDeck(game, level));
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState<number>();
+  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [hint, setHint] = useState(false);
+  const stats = useRef({ correct: 0, total: 10, score: 0, mistakes: 0 });
+  const hadMistake = useRef(false), answered = useRef(false), finished = useRef(false);
+  const finishRef = useRef(onFinish); finishRef.current = onFinish;
+  const workspace = useRef<HTMLElement>(null), keyboard = useRef(false);
+  const question = questions[index];
+  useEffect(() => { if (index && keyboard.current) workspace.current?.querySelector<HTMLButtonElement>('.math-challenge button:not(:disabled)')?.focus(); }, [index]);
+  useEffect(() => {
+    if (feedback !== 'correct') return;
+    const timer = window.setTimeout(() => {
+      if (index === 9) { if (!finished.current) { finished.current = true; finishRef.current({ ...stats.current }); } return; }
+      answered.current = false; hadMistake.current = false;
+      setIndex(current => current + 1); setSelected(undefined); setFeedback(null); setHint(false);
+    }, QUESTION_TRANSITION_MS);
+    return () => window.clearTimeout(timer);
+  }, [feedback, index]);
+  const answer = (value: number, distributionValid?: boolean) => {
+    if (answered.current || finished.current) return;
+    setSelected(value);
+    const valid = distributionValid ?? validAnswer(question, value);
+    onSound(valid);
+    if (valid) {
+      answered.current = true; setFeedback('correct');
+      if (!hadMistake.current) { stats.current.correct++; stats.current.score++; }
+    } else { hadMistake.current = true; stats.current.mistakes++; setFeedback('wrong'); setHint(true); }
+  };
+  return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }} className={`math-session adventure-session${feedback ? ` is-${feedback}` : ''}`} aria-label="Rekenavontuur">
+    <div className="math-progress-dots" role="img" aria-label={`Opdracht ${index + 1} van 10, ${index + (feedback === 'correct' ? 1 : 0)} klaar`}>{Array.from({ length: 10 }, (_, i) => <Star size={16} key={i} fill={i < index + (feedback === 'correct' ? 1 : 0) ? 'currentColor' : 'none'} />)}</div>
+    <h2 className="math-prompt">{question.prompt}</h2>
+    <div className={`math-challenge math-challenge--${question.kind}`} key={question.id}>
+      {game === 'divide' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
+        : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
+        : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
+        : <>{game === 'add-subtract' && <WinterScene question={question} success={feedback === 'correct'} completed={index + (feedback === 'correct' ? 1 : 0)} />}<ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} /></>}
+    </div>
+    <div className="adventure-feedback" role="status">{feedback === 'correct' ? game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld!` : 'Goed zo!' : feedback === 'wrong' ? game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : 'Bijna! Probeer nog eens.' : ''}</div>
+    <div className="math-hint-row"><button className="math-icon-tool" type="button" title="Hint" aria-label="Hint" aria-expanded={hint} onClick={() => setHint(value => !value)}><Lightbulb size={20} /></button>{hint && feedback !== 'correct' && <p className="math-hint">{question.hint}</p>}</div>
+  </section>;
+}

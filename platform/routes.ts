@@ -9,6 +9,7 @@ export type AppRoute =
   | { page: 'treehouse-section'; path: `/treehouse/${TreehouseSectionId}`; section: TreehouseSectionId }
   | { page: 'challenges'; path: '/challenges' }
   | { page: 'clock'; path: '/school/clock' }
+  | { page: 'math'; path: '/school/math' }
   | { page: 'design-system'; path: '/design-system' }
   | { page: 'game'; path: string; gameId: 'topo' | 'red-baby-lua' };
 
@@ -56,6 +57,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   else if (DESTINATION_ROUTES[canonical]) route = DESTINATION_ROUTES[canonical];
   else if (canonical === '/challenges') route = { page: 'challenges', path: '/challenges' };
   else if (canonical === '/school/clock') route = { page: 'clock', path: '/school/clock' };
+  else if (canonical === '/school/math') route = { page: 'math', path: '/school/math' };
   else if (canonical === '/design-system') route = { page: 'design-system', path: '/design-system' };
   else route = GAME_ROUTES[canonical] ?? { page: 'home', path: '/' };
   return { route, redirect: normalized !== route.path };

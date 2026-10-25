@@ -1,6 +1,6 @@
 import { Question, QuestionType, TableChoice } from '../types';
 
-const TYPES: QuestionType[] = ['classic', 'missing', 'check', 'bigger', 'factor'];
+const TYPES: QuestionType[] = ['classic', 'division', 'missing', 'check', 'bigger', 'factor'];
 
 function pick<T>(items: T[], random: () => number): T {
   return items[Math.min(items.length - 1, Math.floor(random() * items.length))];
@@ -38,7 +38,7 @@ function comparisonFactors(left: number, right: number, random: () => number): [
 }
 
 export function nextQuestionType(round: number, difficulty: number): QuestionType {
-  const unlocked = difficulty <= 1 ? TYPES.slice(0, 2) : difficulty === 2 ? TYPES.slice(0, 4) : TYPES;
+  const unlocked = difficulty <= 1 ? TYPES.slice(0, 3) : difficulty === 2 ? TYPES.slice(0, 5) : TYPES;
   return unlocked[(round - 1) % unlocked.length];
 }
 
@@ -63,6 +63,10 @@ export function createQuestion(
   const product = left * right;
   const base = { id, left, right, type: requestedType, difficulty, tables: [left] };
 
+  if (requestedType === 'division') {
+    return { ...base, answer: right, choices: numericChoices(right, random), choiceLabels: [], prompt: `${product} ÷ ${left} = ?`, explanation: `${product} ÷ ${left} = ${right}, want ${left} × ${right} = ${product}` };
+  }
+
   if (requestedType === 'missing') {
     const hideLeft = random() < .5;
     const answer = hideLeft ? left : right;
@@ -85,7 +89,7 @@ export function createQuestion(
 
   if (requestedType === 'factor') {
     const correct = `${left} × ${right}`;
-    const labels = shuffled([correct, `${Math.max(1, left - 1)} × ${right}`, `${left} × ${Math.max(1, right - 1)}`], random);
+    const labels = shuffled([correct, `${left + 1} × ${right}`, `${left} × ${right + 1}`], random);
     const answer = labels.indexOf(correct);
     return { ...base, answer, choices: [0, 1, 2], choiceLabels: labels, prompt: `Welke som is ${product}?`, explanation: `${correct} = ${product}` };
   }

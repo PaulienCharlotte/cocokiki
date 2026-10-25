@@ -35,7 +35,7 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
   { topic: 'countries', label: 'Land', ariaLabel: 'Toon alle landen', className: 'legend-country' },
 ];
 
-export default function Game({ onHome }: Partial<GameModuleProps>) {
+export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   const [selection, setSelection] = useState<Selection>(initialSelection);
   const [timer, setTimer] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -206,7 +206,7 @@ export default function Game({ onHome }: Partial<GameModuleProps>) {
   </div>;
 
   return <div className={'topo-app view-discover' + (session ? ' in-session' : '')}>
-    <PlatformHeader onHome={onHome} coins={score} />
+    <PlatformHeader onHome={onHome} onBack={onBack} coins={score} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
       {session ? <main className="session-page">

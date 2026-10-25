@@ -54,18 +54,39 @@ test('Baby Lua creates valid, unique multiplication choices for every table', ()
 });
 
 test('Baby Lua supports varied question forms and adaptive difficulty', () => {
-  const types: QuestionType[] = ['classic', 'missing', 'check', 'bigger', 'factor'];
+  const types: QuestionType[] = ['classic', 'division', 'missing', 'check', 'bigger', 'factor'];
   for (const type of types) {
     const question = createQuestion(6, '', () => .42, 3, type);
     assert.equal(question.type, type);
     assert.ok(questionIsValid(question));
   }
   assert.equal(nextQuestionType(1, 1), 'classic');
-  assert.equal(nextQuestionType(2, 1), 'missing');
-  assert.equal(nextQuestionType(5, 3), 'factor');
+  assert.equal(nextQuestionType(2, 1), 'division');
+  assert.equal(nextQuestionType(3, 1), 'missing');
+  assert.equal(nextQuestionType(6, 3), 'factor');
   assert.equal(nextDifficulty(1, 3, false), 2);
   assert.equal(nextDifficulty(3, 0, true), 2);
   assert.equal(nextDifficulty(1, 0, true), 1);
+});
+
+test('Baby Lua mixes exact divisions into every difficulty and keeps the chosen table', () => {
+  for (const difficulty of [1, 2, 3]) {
+    const types = Array.from({ length: 12 }, (_, index) => nextQuestionType(index + 1, difficulty));
+    assert.ok(types.includes('classic') && types.includes('division'));
+    for (let table = 1; table <= 12; table++) for (let index = 0; index < 10; index++) {
+      const question = createQuestion(table, '', () => index / 10, difficulty, 'division');
+      assert.ok(questionIsValid(question));
+      assert.equal(question.answer, question.right);
+      assert.deepEqual(question.tables, [table]);
+      assert.equal(question.left, table);
+      assert.equal(question.prompt, `${question.left * question.right} ÷ ${table} = ?`);
+      assert.equal((question.left * question.right) % table, 0);
+      assert.equal(question.choices.filter(choice => choice * table === question.left * question.right).length, 1);
+      assert.ok(question.explanation.includes(`= ${question.answer}`));
+      const next = createQuestion(table, question.id, () => index / 10, difficulty, 'division');
+      assert.notEqual(next.id, question.id);
+    }
+  }
 });
 
 test('Baby Lua comparison questions never compare equal products', () => {

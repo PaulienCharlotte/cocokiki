@@ -1,0 +1,17 @@
+.school-room .school-room__activities { position: absolute; inset: 150px 8px 8px; pointer-events: none; display: block; padding: 0; min-height: 0; container-type: size; }
+.school-room .school-room__activity { --icon-size: min(clamp(120px, 23cqw, 320px), calc((100cqh - 8px) * 1.4)); --icon-height: calc(var(--icon-size) / 1.4); position: absolute; inset: auto; left: clamp(calc(var(--icon-size) / 2 + 4px), var(--icon-x), calc(100% - var(--icon-size) / 2 - 4px)); top: clamp(calc(var(--icon-height) / 2 + 4px), var(--icon-y), calc(100% - var(--icon-height) / 2 - 4px)); width: var(--icon-size); aspect-ratio: 1.4; translate: -50% -50%; transform: none; touch-action: none; user-select: none; -webkit-touch-callout: none; transition: filter 160ms; }
+.school-room .school-room__activity:hover, .school-room .school-room__activity:active { transform: none; }
+.school-room .school-room__activity--clock img { transform: scale(1.1); }
+.school-room .school-room__activities.is-editing .school-room__activity { cursor: grab; border: 1px dashed #fffaf28c; background: #fffaf21a; animation: school-wiggle 280ms ease-in-out infinite alternate; }
+.school-room .school-room__activities.is-editing .school-room__activity:nth-child(even) { animation-delay: -140ms; }
+.school-room .school-room__activities.is-editing .school-room__activity.is-moving { z-index: 5; cursor: grabbing; animation: none; transform: scale(1.04); filter: drop-shadow(0 10px 12px #302b3340); }
+.school-layout-tools { position: absolute; top: 104px; right: 20px; z-index: 8; display: flex; gap: 8px; }
+.school-layout-tools button { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border: 1px solid #d7d2c5; border-radius: 8px; background: #faf8f2; color: #526b4f; font: inherit; font-weight: 800; cursor: pointer; }
+.school-layout-error { position: absolute; top: 104px; left: 20px; max-width: 55%; padding: 8px; background: #faf8f2; color: #875b4c; z-index: 9; }
+@keyframes school-wiggle { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+@media (max-width: 760px) {
+  .school-room .school-room__activity { --icon-size: min(44cqw, 28cqh); --icon-height: var(--icon-size); aspect-ratio: 1; }
+  .school-layout-tools { top: 82px; right: 12px; }
+  .school-room .school-room__activities { top: 136px; }
+}
+@media (prefers-reduced-motion: reduce) { .school-room .school-room__activities.is-editing .school-room__activity { animation: none; outline: 2px solid #faf8f2; } }

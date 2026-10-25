@@ -4,6 +4,7 @@ export type GameId = 'topo' | 'red-baby-lua';
 
 export interface GameModuleProps {
   onHome: () => void;
+  onBack?: () => void;
 }
 
 export interface GameDefinition {

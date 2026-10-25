@@ -16,6 +16,7 @@ const TreehouseInterior = lazy(() => import('./pages/TreehouseInterior'));
 const ShopScreen = lazy(() => import('./pages/ShopScreen'));
 const DesignSystemPreview = lazy(() => import('./pages/DesignSystemPreview'));
 const ClockModule = lazy(() => import('./games/clock/ClockModule'));
+const MathModule = lazy(() => import('./games/math/MathModule'));
 
 const App: React.FC = () => {
   const [current, setCurrent] = useState(() => resolveRoute(window.location.pathname));
@@ -54,6 +55,8 @@ const App: React.FC = () => {
     <WorldHub coins={coins} onNavigate={navigate} />
   </Suspense>;
 
+  if (current.route.page === 'math') return <Suspense fallback={<LoadingScreen />}><MathModule onBack={() => navigate('/challenges')} /></Suspense>;
+
   const worldContent = current.route.page === 'destination'
       ? current.route.destinationId === 'treehouse'
         ? <TreehouseRoom onNavigate={navigate} />
@@ -81,7 +84,7 @@ const App: React.FC = () => {
   </Suspense>;
   if (!GameModule) return null;
   return <Suspense fallback={<div className="platform-loading" role="status"><img src="/images/cocokiki-logo.png" alt="" />Spel laden...</div>}>
-    <GameModule onHome={() => navigate('/')} />
+    <GameModule onHome={() => navigate('/')} onBack={() => navigate('/challenges')} />
   </Suspense>;
 };
 

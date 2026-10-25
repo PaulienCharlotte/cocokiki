@@ -10,12 +10,14 @@ import { currencyReward, EMPTY_STATS, recordSuccess, recordTimeout, roundDuratio
 import { loadBest, loadCoins, loadPreferences, saveBest, savePreferences } from './game/systems/storage';
 import { LuaAudio } from './game/systems/audio';
 import { GamePhase, LuaGameMode, Preferences, Question, SessionStats, TableChoice } from './game/types';
+import type { MathLevel, MathResult } from '../math/types';
+import { luaMathResult, luaTableForLevel } from '../math/luaBridge';
 
 interface Props {
   onHome: () => void;
   onCoinsChange?: (coins: number) => void;
+  mathAdventure?: { level: MathLevel; onComplete: (result: MathResult) => void; sound: boolean };
 }
-const ROUND_COUNT = 8;
 const FEEDBACK = ['Goed gered!', 'Knap gedaan!', 'Super snel!', 'Lua is veilig!'];
 const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
   { id: 'calm', label: 'Rustig', detail: 'Zonder tijdsdruk' },
@@ -23,7 +25,8 @@ const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
   { id: 'challenge', label: 'Uitdaging', detail: 'Sneller en gemixt' },
 ];
 
-export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
+export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure }: Props) {
+  const ROUND_COUNT = mathAdventure ? 10 : 8;
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const sceneRef = useRef<PlayScene | null>(null);
@@ -34,7 +37,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
   const transitionRef = useRef<number | null>(null);
   const missedRef = useRef<Array<{ question: Question; availableRound: number }>>([]);
   const difficultyRef = useRef(1);
-  const [preferences, setPreferences] = useState<Preferences>(loadPreferences);
+  const [preferences, setPreferences] = useState<Preferences>(() => mathAdventure ? { ...loadPreferences(), mode: 'adventure', tutorialSeen: true, sound: mathAdventure.sound } : loadPreferences());
   const [phase, setPhase] = useState<GamePhase>('menu');
   const [question, setQuestion] = useState<Question | null>(null);
   const [round, setRound] = useState(0);
@@ -60,21 +63,23 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     const stars = starsFor(finalStats, playedRounds);
     const nextBest = { score: Math.max(best.score, finalStats.score), stars: Math.max(best.stars, stars) };
     setBest(nextBest); saveBest(nextBest); setGamePhase('results'); audioRef.current.play('results');
-  }, [best]);
+    mathAdventure?.onComplete(luaMathResult(finalStats));
+  }, [best, mathAdventure]);
 
   const beginRound = useCallback((nextRound: number, sourceStats: SessionStats, previousId = '') => {
     clearTransition();
     const retryIndex = missedRef.current.findIndex(item => item.availableRound <= nextRound);
     const type = nextQuestionType(nextRound, preferences.mode === 'challenge' ? 3 : difficultyRef.current);
+    const selectedTable = mathAdventure ? luaTableForLevel(mathAdventure.level) : preferences.table;
     const nextQuestion = retryIndex >= 0
       ? missedRef.current.splice(retryIndex, 1)[0].question
-      : createQuestion(preferences.mode === 'challenge' ? 'mix' : preferences.table, previousId, Math.random, difficultyRef.current, type);
+      : createQuestion(preferences.mode === 'challenge' ? 'mix' : selectedTable, previousId, Math.random, difficultyRef.current, type);
     questionRef.current = nextQuestion;
     setQuestion(nextQuestion); setRound(nextRound); setWrongChoices([]); setFeedback(''); setRemaining(1); setPaused(false);
     setGamePhase('active');
     const duration = roundDuration(preferences.mode === 'challenge' ? 4200 : 5000, sourceStats);
     sceneRef.current?.beginRound(duration, preferences.mode === 'calm');
-  }, [preferences.mode, preferences.table]);
+  }, [preferences.mode, preferences.table, mathAdventure?.level]);
 
   const timeout = useCallback(() => {
     if (phaseRef.current !== 'active' || calm) return;
@@ -83,8 +88,8 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     difficultyRef.current = nextDifficulty(difficultyRef.current, 0, true);
     if (questionRef.current) missedRef.current.push({ question: questionRef.current, availableRound: round + 2 });
     setStats(nextStats); setHearts(nextHearts); setFeedback(`Oeps! ${questionRef.current?.explanation}`);
-    transitionRef.current = window.setTimeout(() => nextHearts <= 0 ? finish(nextStats, round) : beginRound(round + 1, nextStats, questionRef.current?.id), 2200);
-  }, [beginRound, calm, finish, hearts, round, stats]);
+    transitionRef.current = window.setTimeout(() => nextHearts <= 0 || mathAdventure && round >= ROUND_COUNT ? finish(nextStats, round) : beginRound(round + 1, nextStats, questionRef.current?.id), 2200);
+  }, [beginRound, calm, finish, hearts, round, stats, mathAdventure]);
 
   useEffect(() => {
     if (!mountRef.current || gameRef.current) return;
@@ -93,7 +98,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     return () => { clearTransition(); setSceneReady(false); game.destroy(true); gameRef.current = null; sceneRef.current = null; audioRef.current.destroy(); };
   }, [reducedMotion]);
   useEffect(() => { timeoutRef.current = timeout; }, [timeout]);
-  useEffect(() => { savePreferences(preferences); audioRef.current.enabled = preferences.sound; }, [preferences]);
+  useEffect(() => { if (!mathAdventure) savePreferences(preferences); audioRef.current.enabled = mathAdventure ? mathAdventure.sound : preferences.sound; }, [preferences, mathAdventure?.sound]);
   useEffect(() => { questionRef.current = question; }, [question]);
   useEffect(() => { phaseRef.current = phase; }, [phase]);
   useEffect(() => { onCoinsChange?.(coins); }, [coins, onCoinsChange]);
@@ -129,12 +134,12 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     difficultyRef.current = nextDifficulty(difficultyRef.current, nextStats.streak, !firstTry);
     const comboBonus = firstTry && nextStats.streak >= 5 ? 2 : firstTry && nextStats.streak >= 3 ? 1 : 0;
     const earned = currencyReward(preferences.mode === 'challenge' ? 'mix' : preferences.table, firstTry) + comboBonus;
-    setCoins(awardCurrencyOnce(`lua:${coinSessionId.current}:${round}:${activeQuestion.id}`, earned).balance);
-    setSessionCoins(previous => previous + earned); setStats(nextStats);
+    if (!mathAdventure) { setCoins(awardCurrencyOnce(`lua:${coinSessionId.current}:${round}:${activeQuestion.id}`, earned).balance); setSessionCoins(previous => previous + earned); }
+    setStats(nextStats);
     setFeedback(`${FEEDBACK[round % FEEDBACK.length]} ${activeQuestion.explanation}${comboBonus ? ` · Combo +${comboBonus}` : ''}`);
-    const calmFinished = preferences.mode === 'calm' && round >= ROUND_COUNT;
-    transitionRef.current = window.setTimeout(() => calmFinished ? finish(nextStats, round) : beginRound(round + 1, nextStats, activeQuestion.id), 1350);
-  }, [beginRound, finish, preferences.mode, preferences.table, round, stats, wrongChoices]);
+    const calmFinished = (mathAdventure || preferences.mode === 'calm') && round >= ROUND_COUNT;
+    transitionRef.current = window.setTimeout(() => calmFinished ? finish(nextStats, round) : beginRound(round + 1, nextStats, activeQuestion.id), mathAdventure ? 750 : 1350);
+  }, [beginRound, finish, preferences.mode, preferences.table, round, stats, wrongChoices, mathAdventure]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -153,17 +158,17 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange }: Props) {
     <div className="lua-overlay">
       {phase === 'menu' && <section className="lua-menu" aria-labelledby="lua-title">
         <p className="lua-kicker">Jungle-avontuur</p><h1 id="lua-title">Red Baby Lua!</h1>
-        <p>Oefen de tafels, ontwijk de rotsen en help Lua veilig door de jungle.</p>
-        <fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong><small>{mode.detail}</small></button>)}</div></fieldset>
-        <fieldset className="lua-tables"><legend>Kies je tafel</legend><div>{[1,2,3,4,5,6,7,8,9,10,'mix'].map(value => <button key={value} type="button" aria-pressed={preferences.table === value} onClick={() => updatePreference('table', value as TableChoice)}>{value === 'mix' ? 'Mix' : value}</button>)}</div></fieldset>
+        <p>Oefen keer- en deelsommen, ontwijk de rotsen en help Lua veilig door de jungle.</p>
+        {!mathAdventure && <><fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong><small>{mode.detail}</small></button>)}</div></fieldset>
+        <fieldset className="lua-tables"><legend>Kies je tafel</legend><div>{[1,2,3,4,5,6,7,8,9,10,'mix'].map(value => <button key={value} type="button" aria-pressed={preferences.table === value} onClick={() => updatePreference('table', value as TableChoice)}>{value === 'mix' ? 'Mix' : value}</button>)}</div></fieldset></>}
         <div className="lua-menu-balance"><CocoCoin size={20} /><strong>{coins}</strong><span>CocoCoins</span></div>
-        <div className="lua-menu-actions"><button className="lua-play" disabled={!sceneReady} onClick={startSession}><Play size={21} />{sceneReady ? 'Start avontuur' : 'Even laden...'}</button><button className="lua-icon-button" aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 /> : <VolumeX />}</button></div>
+        <div className="lua-menu-actions"><button className="lua-play" disabled={!sceneReady} onClick={startSession}><Play size={21} />{sceneReady ? 'Start avontuur' : 'Even laden...'}</button>{!mathAdventure && <button className="lua-icon-button" aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 /> : <VolumeX />}</button>}</div>
       </section>}
       {phase === 'tutorial' && <section className="lua-dialog"><h2>Help Lua!</h2><p>Kies het goede antwoord. Je krijgt verschillende soorten tafelvragen en mag na een fout nog eens proberen.</p><button className="lua-play" onClick={() => { updatePreference('tutorialSeen', true); beginRound(1, EMPTY_STATS); }}>Op avontuur</button></section>}
       {(phase === 'active' || phase === 'resolving') && question && <>
         <div className="lua-hud">{!calm && <span className="lua-hearts">{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={21} fill={index < hearts ? 'currentColor' : 'none'} />)}</span>}<strong>{calm ? `${round}/${ROUND_COUNT}` : `Som ${round}`}</strong><span className="lua-stage">{stage}</span>{stats.streak >= 2 && <span className="lua-combo">Combo {stats.streak}×</span>}<span className="lua-coins" aria-label={`${coins} CocoCoins`}><CocoCoin size={18} />{coins}</span>{!calm && <button aria-label={paused ? 'Doorgaan' : 'Pauzeren'} onClick={() => setPaused(value => !value)}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>}</div>
         {!calm && <div className="lua-timer" aria-label={`${Math.ceil(remaining * 100)} procent tijd over`}><span style={{ width: `${remaining * 100}%` }} /></div>}
-        <section className="lua-question" aria-live="polite"><span className="lua-question-kind">{question.type === 'classic' ? 'Reken uit' : question.type === 'missing' ? 'Vul aan' : question.type === 'check' ? 'Klopt het?' : question.type === 'bigger' ? 'Vergelijk' : 'Vind de som'}</span><h2>{question.prompt}</h2><div className={`lua-answers ${question.choices.length === 2 ? 'two' : ''}`}>{question.choices.map((choice, index) => <button key={`${question.id}-${choice}`} disabled={phase !== 'active' || wrongChoices.includes(choice)} className={wrongChoices.includes(choice) ? 'wrong' : ''} onClick={() => answer(choice)}>{question.choiceLabels[index] ?? choice}</button>)}</div><p>{feedback}</p></section>
+        <section className="lua-question" aria-live="polite"><span className="lua-question-kind">{question.type === 'classic' || question.type === 'division' ? 'Reken uit' : question.type === 'missing' ? 'Vul aan' : question.type === 'check' ? 'Klopt het?' : question.type === 'bigger' ? 'Vergelijk' : 'Vind de som'}</span><h2>{question.prompt}</h2><div className={`lua-answers ${question.choices.length === 2 ? 'two' : ''}`}>{question.choices.map((choice, index) => <button key={`${question.id}-${choice}`} disabled={phase !== 'active' || wrongChoices.includes(choice)} className={wrongChoices.includes(choice) ? 'wrong' : ''} onClick={() => answer(choice)}>{question.choiceLabels[index] ?? choice}</button>)}</div><p>{feedback}</p></section>
       </>}
       {paused && phase !== 'menu' && <section className="lua-dialog"><Pause size={30} /><h2>Even pauze</h2><button className="lua-play" onClick={() => setPaused(false)}><Play size={18} />Doorgaan</button></section>}
       {phase === 'results' && <section className="lua-results"><p className="lua-kicker">Avontuur voltooid</p><h1>Lua is veilig!</h1><div className="lua-stars" aria-label={`${stars} sterren`}>{[0,1,2].map(index => <Star key={index} size={40} fill={index < stars ? 'currentColor' : 'none'} />)}</div><div className="lua-result-metrics"><span><strong>{accuracy}%</strong> meteen goed</span><span><strong>{stats.bestStreak}×</strong> beste combo</span></div><p className="lua-earned"><CocoCoin size={20} />+{sessionCoins} CocoCoins · totaal {coins}</p><div><button className="lua-play" onClick={startSession}><RotateCcw size={19} />Nog een avontuur</button><button onClick={onHome}><Home size={19} />Naar de wereld</button><button className="lua-settings-link" onClick={() => setGamePhase('menu')}><Settings2 size={17} />Instellingen</button></div></section>}
