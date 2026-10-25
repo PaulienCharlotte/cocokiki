@@ -7,3 +7,4 @@ import './fruitYogurt.test';
 import './cookingFoundation.test';
 import './clock.test';
 import './inventorySales.test';
+import './plantFamily.test';

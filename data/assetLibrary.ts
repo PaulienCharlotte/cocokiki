@@ -7,6 +7,13 @@ export const ASSET_LIBRARY = {
   avatars: {
     coco: '/images/avatars/coco.webp',
     kiki: '/images/avatars/kiki.webp',
+    /** Kiki als plantengids. Coco is een ander meisje; niet verwisselen. */
+    kikiPoses: {
+      plant: '/images/avatars/kiki/kiki-plant.png',
+      tip: '/images/avatars/kiki/kiki-tip.png',
+      cheer: '/images/avatars/kiki/kiki-cheer.png',
+      explore: '/images/avatars/kiki/kiki-explore.png',
+    },
     lua: '/images/avatars/lua.webp',
     together: '/images/avatars/samen.webp',
     sloth: '/images/avatars/luiaard.webp',
