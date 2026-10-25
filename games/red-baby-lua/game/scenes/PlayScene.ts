@@ -8,14 +8,19 @@ export interface SceneCallbacks {
 
 const POSE = { idle: 0, swing: 1, ready: 2, sleep: 3, jump: 4, alert: 5, celebrate: 6, sad: 7 } as const;
 
+/**
+ * Waar Lua staat. De y is het ankerpunt van de sprite (op .88 van de hoogte),
+ * afgestemd op de rotspunt in de achtergrond zodat hij er met zijn voeten op
+ * staat in plaats van erboven te zweven.
+ */
 function luaAnchor(width: number, height: number) {
   const narrow = width < 640;
   return {
     narrow,
-    x: width * (narrow ? .37 : .47),
-    y: height * (narrow ? .69 : .735),
+    x: width * (narrow ? .47 : .52),
+    y: height * (narrow ? .70 : .745),
     scale: narrow ? .35 : .43,
-    shadowY: height * (narrow ? .73 : .765),
+    shadowY: height * (narrow ? .735 : .775),
   };
 }
 
@@ -72,6 +77,18 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   private setPose(frame: number) { this.lua.setFrame(frame); }
+
+  /**
+   * De hoogte waarop de steen Lua raakt: zijn hoofd min de halve steen. Zo valt
+   * de steen niet langs hem heen, ook niet bij een ander schermformaat.
+   */
+  private rockContactY(scale: number) {
+    const luaBounds = this.lua.getBounds();
+    const rockHeight = this.rockArt.height * this.rockArt.scaleY * scale;
+    // De sprite heeft wat lege ruimte boven de vacht; die tellen we mee.
+    const headTop = luaBounds.top + luaBounds.height * .08;
+    return headTop - rockHeight / 2;
+  }
   private setRock(index: number) { this.rockArt.setFrame(index); }
 
   private layout(gameSize: Phaser.Structs.Size) {
@@ -110,12 +127,13 @@ export default class PlayScene extends Phaser.Scene {
     this.activeRound = false; this.rock.setVisible(true);
     const delay = this.reducedMotion ? 150 : 360;
     const narrow = this.scale.width < 640;
-    const contactY = this.scale.height * (narrow ? .43 : .51);
+    const contactY = this.rockContactY(narrow ? .76 : 1);
     this.tweens.add({ targets: this.rock, y: contactY, duration: delay, ease: 'Quad.in' });
     this.time.delayedCall(delay, () => {
-      this.burst(0xe8c99a); this.makeImpactCloud(this.lua.x, this.scale.height * (narrow ? .55 : .7)); this.setPose(POSE.sad);
       const anchor = luaAnchor(this.scale.width, this.scale.height);
-      this.lua.setPosition(anchor.x, this.scale.height * (narrow ? .64 : .82)).setScale(narrow ? .39 : .48, narrow ? .15 : .18);
+      this.burst(0xe8c99a); this.makeImpactCloud(anchor.x, anchor.shadowY); this.setPose(POSE.sad);
+      // Platgedrukt ligt hij op dezelfde grondlijn als waar hij stond.
+      this.lua.setPosition(anchor.x, anchor.shadowY).setScale(narrow ? .39 : .48, narrow ? .15 : .18);
       this.cameras.main.shake(this.reducedMotion ? 0 : 110, .004);
       this.time.delayedCall(this.reducedMotion ? 120 : 520, () => {
         this.tweens.add({ targets: this.rock, x: this.scale.width * .32, y: this.scale.height * .7, angle: -22, duration: this.reducedMotion ? 120 : 340, ease: 'Back.out' });
@@ -142,8 +160,9 @@ export default class PlayScene extends Phaser.Scene {
     this.elapsed = Math.min(this.duration, this.elapsed + delta);
     const remaining = 1 - this.elapsed / this.duration;
     const narrow = this.scale.width < 640;
-    this.rock.y = Phaser.Math.Linear(narrow ? 68 : 90, this.scale.height * (narrow ? .43 : .51), 1 - remaining);
-    this.rock.setScale(Phaser.Math.Linear(narrow ? .58 : .76, narrow ? .76 : 1, 1 - remaining));
+    const progress = 1 - remaining;
+    this.rock.setScale(Phaser.Math.Linear(narrow ? .58 : .76, narrow ? .76 : 1, progress));
+    this.rock.y = Phaser.Math.Linear(narrow ? 68 : 90, this.rockContactY(narrow ? .76 : 1), progress);
     this.rock.angle += delta * .018;
     this.callbacks.onTick(remaining);
     if (remaining <= 0) this.callbacks.onTimeout();
