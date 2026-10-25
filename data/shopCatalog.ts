@@ -29,7 +29,7 @@ const PRODUCT_PACKAGES: Record<string, [number, ProductUnit, string]> = {
   potato: [1, 'piece', 'per stuk'], onion: [1, 'piece', 'per stuk'], garlic: [1, 'piece', 'per bol'], broccoli: [1, 'piece', 'per stuk'],
   strawberry: [250, 'gram', '250 g'], blueberry: [125, 'gram', '125 g'], banana: [1, 'piece', 'per stuk'], apple: [1, 'piece', 'per stuk'],
   pear: [1, 'piece', 'per stuk'], orange: [1, 'piece', 'per stuk'], lemon: [1, 'piece', 'per stuk'], raspberry: [125, 'gram', '125 g'],
-  eggs: [1, 'piece', 'per ei'], milk: [1000, 'milliliter', '1 liter'], cheese: [300, 'gram', '300 g'], yogurt: [500, 'gram', '500 g'], butter: [250, 'gram', '250 g'],
+  eggs: [1, 'piece', 'per ei'], milk: [1000, 'milliliter', '1 liter'], cheese: [300, 'gram', '300 g'], yogurt: [500, 'milliliter', '500 ml'], butter: [250, 'gram', '250 g'],
   flour: [1000, 'gram', '1 kg'], sugar: [1000, 'gram', '1 kg'], honey: [350, 'gram', '350 g'], bread: [1, 'piece', '1 brood'],
   spaghetti: [500, 'gram', '500 g'], pasta: [500, 'gram', '500 g'], rice: [1000, 'gram', '1 kg'], oats: [40, 'gram', '40 g'],
   'tomato-sauce': [500, 'milliliter', '500 ml'], 'canned-tomatoes': [400, 'gram', '400 g'], 'olive-oil': [500, 'milliliter', '500 ml'],
@@ -96,3 +96,5 @@ export const SHOP_PRODUCTS: ShopProduct[] = [
 ];
 
 export const SHOP_PRODUCTS_BY_ID = Object.fromEntries(SHOP_PRODUCTS.map(item => [item.id, item])) as Record<string, ShopProduct>;
+// Historical gram-based stock is visible in inventory, but is never counted as ml.
+SHOP_PRODUCTS_BY_ID['yogurt-grams'] = { ...SHOP_PRODUCTS_BY_ID.yogurt, id: 'yogurt-grams', name: 'Yoghurt (oude voorraad, g)', unit: 'gram', packageLabel: '500 g' };

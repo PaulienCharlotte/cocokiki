@@ -6,6 +6,7 @@ import { commitLocalState, readDocument, readLocalState } from './localState';
 import { ingredientRequirements } from './recipeInventory';
 import { createCookingSession, migrateCookingSession, migrateLegacyCookingSession } from '../data/cooking/session';
 import { COOKING_SESSION_KEY } from '../data/cooking/bananaPancakeCooking';
+import { memoryConfigIssues } from '../data/cooking/nutrientMemory';
 import type {
   CookingProgressState,
   IngredientDiscoveryState,
@@ -21,7 +22,7 @@ import type {
 
 export const COOKING_PROGRESS_KEY = 'cocokiki:cooking:v1';
 export const COOKING_PROGRESS_VERSION = 1 as const;
-export const JOURNEY_STAGES: JourneyStage[] = ['overview', 'discovery', 'challenges', 'shopping', 'cooking', 'complete'];
+export const JOURNEY_STAGES: JourneyStage[] = ['overview', 'discovery', 'nutrient-memory', 'challenges', 'shopping', 'cooking', 'complete'];
 
 export function createEmptyDiscoveryState(): IngredientDiscoveryState {
   return {
@@ -54,7 +55,7 @@ export function createEmptyCookingProgress(): CookingProgressState {
     activeRecipeId: null,
     journeys: {},
     discoveredIngredientIds: [],
-    inventory: { consumables: {}, equipmentIds: [], acquisitions: [] },
+    inventory: { quantitySchemaVersion: 2, consumables: {}, equipmentIds: [], acquisitions: [] },
     shoppingTransactions: {},
     completions: {},
     preparationSessions: {},
@@ -71,6 +72,33 @@ function isRecipeId(value: unknown): value is RecipeId {
 
 function isStage(value: unknown): value is JourneyStage {
   return typeof value === 'string' && JOURNEY_STAGES.includes(value as JourneyStage);
+}
+
+function migrateMemory(journey: JourneyProgress, recipe: RecipeConfig): JourneyProgress['nutrientMemory'] {
+  const config = recipe.education?.nutrientMemory;
+  if (!config?.enabled) return undefined;
+  const saved = journey.nutrientMemory;
+  if (saved?.activityId === config.activityId && ['pending', 'completed', 'skipped'].includes(saved.status)) return saved;
+  const laterStage = ['challenges', 'shopping', 'cooking', 'complete'].includes(journey.stage);
+  return { activityId: config.activityId, status: laterStage ? 'skipped' : 'pending' };
+}
+
+export function completeNutrientMemory(progress: CookingProgressState, recipeId: string, activityId: string): CookingProgressState {
+  const journey = progress.journeys[recipeId];
+  const config = RECIPES_BY_ID[recipeId]?.education?.nutrientMemory;
+  if (!journey || journey.stage !== 'nutrient-memory' || !config?.enabled || config.activityId !== activityId || memoryConfigIssues(config).length) return progress;
+  const next = clone(progress);
+  next.journeys[recipeId]!.nutrientMemory = { activityId, status: 'completed' };
+  return advanceJourney(next, recipeId, 'challenges');
+}
+
+export function createMemoryReplay(progress: CookingProgressState, recipeId: string): CookingProgressState {
+  const config = RECIPES_BY_ID[recipeId]?.education?.nutrientMemory;
+  const journey = progress.journeys[recipeId];
+  if (!config?.enabled || !journey || (!progress.completions[recipeId] && journey.nutrientMemory?.status !== 'completed' && journey.nutrientMemory?.status !== 'skipped')) return progress;
+  const next = clone(progress);
+  next.journeys[recipeId]!.stage = 'nutrient-memory';
+  return next;
 }
 
 function migrateDiscoveryState(value: unknown): IngredientDiscoveryState {
@@ -140,7 +168,12 @@ export function migrateCookingProgress(value: unknown): CookingProgressState {
           }];
         })
       : [];
-    result.inventory = { consumables, equipmentIds: uniqueStrings(source.inventory.equipmentIds), acquisitions };
+    if (source.inventory.quantitySchemaVersion !== 2 && consumables.yogurt !== undefined) {
+      // Preserve old mass stock without pretending grams and milliliters are interchangeable.
+      consumables['yogurt-grams'] = (consumables['yogurt-grams'] ?? 0) + consumables.yogurt;
+      delete consumables.yogurt;
+    }
+    result.inventory = { quantitySchemaVersion: 2, consumables, equipmentIds: uniqueStrings(source.inventory.equipmentIds), acquisitions };
   }
 
   if (source.shoppingTransactions && typeof source.shoppingTransactions === 'object') {
@@ -158,9 +191,10 @@ export function migrateCookingProgress(value: unknown): CookingProgressState {
       const journey = candidate as JourneyProgress;
       if (!isStage(journey.stage)) continue;
       result.journeys[id] = {
+        nutrientMemory: migrateMemory(journey, RECIPES_BY_ID[id]),
         recipeId: id,
         status: journey.status === 'completed' ? 'completed' : 'active',
-        stage: journey.stage,
+        stage: journey.stage === 'nutrient-memory' && !RECIPES_BY_ID[id].education?.nutrientMemory?.enabled ? 'challenges' : journey.stage,
         completedStages: uniqueStrings(journey.completedStages).filter(isStage),
         discoveredIngredientIds: uniqueStrings(journey.discoveredIngredientIds),
         consumedIngredientIds: uniqueStrings(journey.consumedIngredientIds),
@@ -213,7 +247,7 @@ export function loadCookingProgress(): CookingProgressState {
   }
 }
 
-export function saveCookingProgress(progress: CookingProgressState, spend?: { id: string; amount: number }): boolean {
+export function saveCookingProgress(progress: CookingProgressState, spend?: { id: string; amount: number }, options?: { rewards?: boolean }): boolean {
   let revision: number;
   let ledger: Record<string, number>;
   try {
@@ -240,7 +274,7 @@ export function saveCookingProgress(progress: CookingProgressState, spend?: { id
     if (completion?.rewardClaimed && reward) operations.push({ id: `cooking-complete:${recipeId}`, amount: reward });
   }
   for (let index = operations.length - 1; index >= 0; index--) {
-    if (ledger[operations[index].id] !== undefined) operations.splice(index, 1);
+    if (options?.rewards === false || ledger[operations[index].id] !== undefined) operations.splice(index, 1);
   }
   if (spend) {
     if (ledger[spend.id] !== undefined) return false;
@@ -263,6 +297,7 @@ export function startJourney(progress: CookingProgressState, recipe: RecipeConfi
   const next = clone(progress);
   next.activeRecipeId = recipe.id;
   next.journeys[recipe.id] = {
+    nutrientMemory: recipe.education?.nutrientMemory?.enabled ? { activityId: recipe.education.nutrientMemory.activityId, status: 'pending' } : undefined,
     recipeId: recipe.id, status: 'active', stage: 'overview', completedStages: [],
     discoveredIngredientIds: [], consumedIngredientIds: [], rewardClaimed: false,
     discovery: createEmptyDiscoveryState(),
@@ -279,6 +314,7 @@ export function restartJourney(progress: CookingProgressState, recipe: RecipeCon
   if (recipe.preparation) next.preparationSessions[recipe.id] = createCookingSession(recipe);
   next.activeRecipeId = recipe.id;
   next.journeys[recipe.id] = {
+    nutrientMemory: recipe.education?.nutrientMemory?.enabled ? { activityId: recipe.education.nutrientMemory.activityId, status: 'pending' } : undefined,
     recipeId: recipe.id,
     status: 'active',
     stage: 'overview',
@@ -321,8 +357,10 @@ export function nextRequiredStage(progress: CookingProgressState, recipeId: Reci
   }
   if (journey.stage === 'discovery') {
     const allFound = required.every(id => journey.discoveredIngredientIds.includes(id) || progress.discoveredIngredientIds.includes(id));
-    return allFound ? 'challenges' : null;
+    const memory = RECIPES_BY_ID[recipeId].education?.nutrientMemory;
+    return allFound ? memory?.enabled && journey.nutrientMemory?.status !== 'completed' && journey.nutrientMemory?.status !== 'skipped' ? 'nutrient-memory' : 'challenges' : null;
   }
+  if (journey.stage === 'nutrient-memory') return journey.nutrientMemory?.status === 'completed' || journey.nutrientMemory?.status === 'skipped' ? 'challenges' : null;
   if (journey.stage === 'challenges') return journey.math.step === 'complete' ? 'shopping' : null;
   if (journey.stage === 'shopping') return recipeRequirementsSatisfied(progress, recipeId) ? 'cooking' : null;
   return JOURNEY_STAGES[JOURNEY_STAGES.indexOf(journey.stage) + 1] ?? null;

@@ -3,4 +3,7 @@ import './designSystem.test';
 import './worldArchitecture.test';
 import './cookingJourney.test';
 import './cookingEngine.test';
+import './fruitYogurt.test';
+import './cookingFoundation.test';
 import './clock.test';
+import './inventorySales.test';

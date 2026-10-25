@@ -3,12 +3,13 @@ import { createPortal } from 'react-dom';
 import { ArrowLeft, BookOpen, ShoppingBasket, X } from 'lucide-react';
 import { motion, type PanInfo } from 'framer-motion';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
-import { EQUIPMENT, RECIPES_BY_ID } from '../../data/cooking/catalog';
+import { EQUIPMENT, RECIPES, RECIPES_BY_ID } from '../../data/cooking/catalog';
 import { getRecipeIssues } from '../../data/cooking/validation';
 import type { CookingProgressState } from '../../data/cooking/types';
 import { SHOP_PRODUCTS_BY_ID } from '../../data/shopCatalog';
 import CookingExperience from '../cooking/CookingExperience';
-import { COOKING_PROGRESS_KEY, loadCookingProgress } from '../../services/cookingProgress';
+import InventorySellButton from './InventorySellButton';
+import { COOKING_PROGRESS_KEY, loadCookingProgress, saveCookingProgress, startJourney } from '../../services/cookingProgress';
 import { subscribeLocalState } from '../../services/localState';
 
 type StationId = 'worktop' | 'cooktop';
@@ -40,7 +41,7 @@ export function buildKitchenInventory(progress: CookingProgressState, tab: Inven
     .filter(([, amount]) => amount > 0)
     .map(([id, amount]) => ({ product: SHOP_PRODUCTS_BY_ID[id], amount }))
     .filter(({ product }) => Boolean(product))
-    .map(({ product, amount }) => ({ id: product.id, label: product.name, image: product.image, quantityLabel: `${amount} in voorraad`, kind: 'ingredient' }));
+    .map(({ product, amount }) => ({ id: product.id, label: product.name, image: product.image, quantityLabel: `${amount}${product.unit === 'gram' ? ' g' : product.unit === 'milliliter' ? ' ml' : ''} in voorraad`, kind: 'ingredient' }));
 }
 
 export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: { progress: CookingProgressState; sceneRef: RefObject<HTMLDivElement | null>; onNavigate?: (path: string) => void }) {
@@ -50,12 +51,11 @@ export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: {
   const [activeStation, setActiveStation] = useState<StationId | null>(null);
   const [worktopItems, setWorktopItems] = useState<WorktopItem[]>([]);
   const [cookingProgress, setCookingProgress] = useState(progress);
-  const [openRecipeId, setOpenRecipeId] = useState<string | null>(null);
+  const [openRecipeId, setOpenRecipeId] = useState<string | null>(() => typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('recipe'));
   useEffect(() => subscribeLocalState(() => setCookingProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
-  const activeJourney = cookingProgress.activeRecipeId ? cookingProgress.journeys[cookingProgress.activeRecipeId] : undefined;
-  const recipe = cookingProgress.activeRecipeId ? RECIPES_BY_ID[cookingProgress.activeRecipeId] : undefined;
+  const readyRecipes = RECIPES.filter(recipe => cookingProgress.journeys[recipe.id]?.stage === 'cooking' && cookingProgress.journeys[recipe.id]?.status === 'active' && getRecipeIssues(recipe).length === 0);
   const openRecipe = openRecipeId ? RECIPES_BY_ID[openRecipeId] : undefined;
-  const canCook = recipe && getRecipeIssues(recipe).length === 0 && activeJourney?.stage === 'cooking';
+  const [openError, setOpenError] = useState('');
   const inventory = buildKitchenInventory(cookingProgress, tab);
 
   const placeOnWorktop = useCallback((item: KitchenItem) => {
@@ -91,11 +91,17 @@ export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: {
     <button className="kitchen-groceries-trigger" type="button" aria-label="Mijn boodschappen openen" title="Boodschappen" aria-expanded={inventoryOpen} aria-controls="kitchen-inventory" onClick={() => setInventoryOpen(true)}>
       <ShoppingBasket aria-hidden="true" />
     </button>
-    {canCook && <button type="button" className="treehouse-recipe-cta" onClick={() => setOpenRecipeId(recipe.id)} aria-label={`Verder met ${recipe.name.toLowerCase()}`}>
+    {readyRecipes.length > 0 && <nav className="kitchen-ready-recipes" aria-label="Recepten voor bereiding">{readyRecipes.map(recipe => <button key={recipe.id} type="button" className="treehouse-recipe-cta" onClick={() => {
+      const current = loadCookingProgress();
+      const next = startJourney(current, recipe);
+      if (next !== current && !saveCookingProgress(next)) { setOpenError('Opslaan lukt even niet. Probeer opnieuw.'); return; }
+      setCookingProgress(next); setOpenRecipeId(recipe.id); setOpenError('');
+    }} aria-label={`Verder met ${recipe.name.toLowerCase()}`}>
       <img src={recipe.image} alt="" draggable={false} />
-      <span><small>Alles staat klaar</small><strong>{recipe.name}</strong></span>
+      <span><small>Verder koken</small><strong>{recipe.name}</strong></span>
       <i aria-hidden="true"><BookOpen /></i>
-    </button>}
+    </button>)}</nav>}
+    {openError && <p className="kitchen-ready-recipes" role="alert">{openError}</p>}
     <div className="kitchen-fixed-stations">
       {(['worktop', 'cooktop'] as StationId[]).map(station => <button key={station} type="button" className={`kitchen-fixed-station kitchen-fixed-station--${station}`} data-kitchen-station={station} aria-label={`${station === 'worktop' ? 'Kookeiland' : 'Kookplaat'} openen`} onClick={() => setActiveStation(station)} />)}
     </div>
@@ -110,9 +116,9 @@ export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: {
         <header><div><small>Mijn voorraad</small><h2 id="kitchen-inventory-title">Boodschappen</h2></div><button autoFocus type="button" aria-label="Sluiten" onClick={() => setInventoryOpen(false)}><X /></button></header>
         <nav className="recipe-categories" aria-label="Keukenvoorraad"><button type="button" aria-pressed={tab === 'groceries'} onClick={() => setTab('groceries')}>Boodschappen</button><button type="button" aria-pressed={tab === 'equipment'} onClick={() => setTab('equipment')}>Keukengerei</button></nav>
         <div className="treehouse-kitchen-inventory__items">
-          {inventory.map(item => <motion.button key={item.id} type="button" className="treehouse-kitchen-inventory__item" drag dragSnapToOrigin dragMomentum={false} whileDrag={{ scale: 1.08, zIndex: 10 }} onDragEnd={() => placeOnWorktop(item)} onClick={() => placeOnWorktop(item)} aria-label={`${item.label} op het werkblad zetten`}>
+          {inventory.map(item => <div key={item.id}><motion.button type="button" className="treehouse-kitchen-inventory__item" drag dragSnapToOrigin dragMomentum={false} whileDrag={{ scale: 1.08, zIndex: 10 }} onDragEnd={() => placeOnWorktop(item)} onClick={() => placeOnWorktop(item)} aria-label={`${item.label} op het werkblad zetten`}>
             <img src={item.image} alt="" draggable={false} /><span><strong>{item.label}</strong><small>{item.quantityLabel}{worktopItems.some(entry => entry.id === item.id) ? ' · Op werkblad' : ''}</small></span>
-          </motion.button>)}
+          </motion.button>{item.kind === 'ingredient' && item.id !== 'yogurt-grams' && (cookingProgress.inventory.consumables[item.id] ?? 0) >= SHOP_PRODUCTS_BY_ID[item.id].unitAmount && <InventorySellButton kind="groceries" productId={item.id} name={item.label} price={SHOP_PRODUCTS_BY_ID[item.id].price} quantityLabel={SHOP_PRODUCTS_BY_ID[item.id].packageLabel} onSold={() => setWorktopItems(current => current.filter(entry => entry.id !== item.id))} />}</div>)}
           {inventory.length === 0 && <p className="room-inventory-empty">Nog geen boodschappen.</p>}
         </div>
       </aside>

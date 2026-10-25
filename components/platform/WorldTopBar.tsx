@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, BarChart3, ChevronDown, LogOut, Settings, UserRound, UsersRound } from 'lucide-react';
+import { ArrowLeft, ChevronDown, UserRound } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -75,11 +75,6 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               setProfileOpen(false);
               setAvatarDialogOpen(true);
             }}><UserRound size={21} />Mijn profiel</button>
-            <button type="button" role="menuitem" aria-disabled="true"><BarChart3 size={21} />Mijn voortgang</button>
-            <button type="button" role="menuitem" aria-disabled="true"><Settings size={21} />Instellingen</button>
-            <button type="button" role="menuitem" aria-disabled="true"><UsersRound size={21} />Account beheren</button>
-            <hr />
-            <button type="button" role="menuitem" aria-disabled="true"><LogOut size={21} />Uitloggen</button>
           </div>}
         </div>
       </div>

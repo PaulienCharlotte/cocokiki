@@ -1,10 +1,13 @@
 import type { CookingSession, PreparationConfig } from './preparation';
+import type { NutrientMemoryConfig } from './nutrients';
+import type { CookingTip } from './tips';
 export type RecipeId = string;
 export type RecipeCategory = 'breakfast' | 'snack' | 'baking';
 export type RecipeAvailability = 'playable' | 'preview' | 'locked';
 export type ContentStatus = 'ready' | 'pending';
 
 export interface IngredientEntry {
+  nutrientIds?: string[];
   id: string;
   name: string;
   image: string;
@@ -104,6 +107,8 @@ export interface QuantitySelectionChallenge extends MathChallengeBase {
   correctQuantity: number;
   minimum: number;
   maximum: number;
+  step?: number;
+  unit?: string;
 }
 
 export interface RecipeScalingChallenge extends MathChallengeBase {
@@ -176,13 +181,16 @@ export interface RecipeConfig {
   rewardCoins: number | null;
   contentStatus: ContentStatus;
   preparation?: PreparationConfig;
-  education?: { math: MathChallengeConfig[] };
+  education?: { math: MathChallengeConfig[]; nutrientMemory?: NutrientMemoryConfig };
+  cookingTips?: CookingTip[];
+  homeRecipe?: { introduction: string; steps: string[]; safety: string; servingTip: string; allergens: string[]; optionalIngredients?: string[]; extraEquipment?: string[] };
 }
 
-export type JourneyStage = 'overview' | 'discovery' | 'challenges' | 'shopping' | 'cooking' | 'complete';
+export type JourneyStage = 'overview' | 'discovery' | 'nutrient-memory' | 'challenges' | 'shopping' | 'cooking' | 'complete';
 export type JourneyStatus = 'active' | 'completed';
 
 export interface JourneyProgress {
+  nutrientMemory?: { activityId: string; status: 'pending' | 'completed' | 'skipped' };
   recipeId: RecipeId;
   status: JourneyStatus;
   stage: JourneyStage;
@@ -204,6 +212,7 @@ export interface CompletionRecord {
 }
 
 export interface CookingInventory {
+  quantitySchemaVersion?: 2;
   consumables: Record<string, number>;
   equipmentIds: string[];
   acquisitions: InventoryAcquisition[];

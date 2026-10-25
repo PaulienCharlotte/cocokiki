@@ -13,6 +13,9 @@ import { missingIngredientMessage } from '../../services/recipeInventory';
 import Confetti from './Confetti';
 import CookingAssetImage from './CookingAssetImage';
 import CookingInteraction from './CookingInteraction';
+import CookingTipCard from './CookingTipCard';
+import HomeRecipe from './HomeRecipe';
+import { dismissCookingTip, eligibleCookingTip, presentCookingTip, type CookingTip } from '../../data/cooking/tips';
 
 interface Props {
   recipe: RecipeConfig;
@@ -29,6 +32,7 @@ export default function CookingExperience(props: Props) {
   const [bookOpen, setBookOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const [visibleTip, setVisibleTip] = useState<CookingTip | null>(null);
   const issues = getRecipeIssues(recipe);
   const initial = useRef(recipe.preparation?.steps.length ? createCookingSession(recipe) : null);
   const session = progress.preparationSessions[recipe.id] ?? initial.current;
@@ -36,16 +40,21 @@ export default function CookingExperience(props: Props) {
   sessionRef.current = session;
 
   const accept = (next: CookingProgressState) => { sessionRef.current = next.preparationSessions[recipe.id]; setProgress(next); onProgressChange(next); };
-  const persist = (next: CookingProgressState) => {
-    if (!saveCookingProgress(next)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
+  const persist = (next: CookingProgressState, presentationOnly = false) => {
+    const nextSession = next.preparationSessions[recipe.id];
+    const nextStep = recipe.preparation?.steps.find(item => item.id === nextSession?.stepId);
+    const tip = nextSession && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
+    if (tip) next = { ...next, preparationSessions: { ...next.preparationSessions, [recipe.id]: presentCookingTip(nextSession, tip) } };
+    if (!saveCookingProgress(next, undefined, presentationOnly ? { rewards: false } : undefined)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
     accept(next);
+    if (tip) setVisibleTip(tip);
     return true;
   };
   useEffect(() => {
-    if (issues.length) return;
+    if (issues.length) { if (import.meta.env.DEV) console.warn(`Receptconfiguratie ${recipe.id}:`, issues); return; }
     const current = loadCookingProgress();
     const next = beginCookingAttempt(current, recipe);
-    if (next !== current) persist(next); else accept(current);
+    if (next !== current || (next.preparationSessions[recipe.id] && eligibleCookingTip(recipe.cookingTips ?? [], next.preparationSessions[recipe.id]))) persist(next, true); else accept(current);
   }, [recipe.id]);
 
   if (issues.length || !session) return <section className="cooking-stage"><div className="cooking-stage__shell"><article className="cooking-card">
@@ -77,7 +86,14 @@ export default function CookingExperience(props: Props) {
   const replay = () => {
     const current = loadCookingProgress();
     const next = beginCookingAttempt(current, recipe, true);
+    setVisibleTip(null);
     if (persist(next)) { setBookOpen(false); setMessage(null); }
+  };
+  const closeTip = () => {
+    if (!visibleTip) return;
+    const current = loadCookingProgress();
+    const saved = current.preparationSessions[recipe.id];
+    if (saved?.attemptId === session.attemptId && persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: dismissCookingTip(saved, visibleTip) } }, true)) setVisibleTip(null);
   };
   const stockMessage = missingIngredientMessage(recipe, progress, progress.journeys[recipe.id]?.consumedIngredientIds);
 
@@ -89,7 +105,7 @@ export default function CookingExperience(props: Props) {
       </motion.div></div><h1>Klaar, chef!</h1>
       {message && <p role="alert">{message}</p>}
       <div className="cooking-card__actions"><button type="button" className="cooking-button" onClick={onClose}>Terug naar de keuken</button><button type="button" className="cooking-button is-quiet" onClick={replay}>Opnieuw</button></div>
-    </article></div>
+    </article>{visibleTip && <CookingTipCard tip={visibleTip} onDismiss={closeTip} />}</div>
   </section>;
 
   return <section className="cooking-stage" aria-labelledby="cooking-step-title">
@@ -101,7 +117,9 @@ export default function CookingExperience(props: Props) {
     </header>
       {bookOpen && <aside className="cooking-recipe-card" aria-label="Het recept"><header><div><small>Recept</small><h2>{recipe.name}</h2></div><button onClick={() => setBookOpen(false)} aria-label="Recept sluiten"><X /></button></header>
         <p><strong>Nodig:</strong> {recipe.ingredients.map(item => item.displayAmount).join(' · ')}</p><p><strong>Spullen:</strong> {recipe.equipmentIds.map(id => EQUIPMENT_BY_ID[id]?.name ?? id).join(' · ')}</p>
+        {recipe.homeRecipe && <details><summary>Complete recept voor thuis</summary><HomeRecipe recipe={recipe} /></details>}
       </aside>}
+      {visibleTip && <CookingTipCard tip={visibleTip} onDismiss={closeTip} />}
       <article className="cooking-card"><small className="cooking-card__station">{STATION_LABELS[step.station]}</small><h1 id="cooking-step-title">{step.title}</h1><p className="cooking-card__instruction">{step.instruction}</p>
         {(message || stockMessage) && <div className="cooking-card__hint is-nudge" role="alert"><p>{message ?? stockMessage}</p>{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</div>}
         <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${step.station === 'kitchen' ? '' : ' has-surface'}`} style={step.station === 'kitchen' ? undefined : { backgroundImage: `url(${background})` }}>

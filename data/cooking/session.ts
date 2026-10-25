@@ -2,7 +2,7 @@ import type { RecipeConfig } from './types';
 import { emptyStepState, type CookingSession, type CookingStepConfig, type CookingStepState } from './preparation';
 
 export function createCookingSession(recipe: RecipeConfig, attemptId: string = crypto.randomUUID(), now = new Date().toISOString()): CookingSession {
-  return { version: 2, recipeId: recipe.id, recipeVersion: recipe.preparation!.version, attemptId, stepId: recipe.preparation!.steps[0].id, completedStepIds: [], steps: {}, completed: false, updatedAt: now };
+  return { version: 2, recipeId: recipe.id, recipeVersion: recipe.preparation!.version, attemptId, stepId: recipe.preparation!.steps[0].id, completedStepIds: [], steps: {}, seenTipIds: [], dismissedTipIds: [], completed: false, updatedAt: now };
 }
 const integer = (value: unknown, max = 100000) => typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(max, Math.floor(value))) : 0;
 export function migrateCookingSession(value: unknown, recipe: RecipeConfig): CookingSession {
@@ -26,6 +26,8 @@ export function migrateCookingSession(value: unknown, recipe: RecipeConfig): Coo
   return { ...empty, attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
     stepId: steps.find(step => !completedStepIds.includes(step.id))?.id ?? steps[steps.length - 1].id,
     completedStepIds, steps: states, completed: source.completed === true && steps.every(step => completedStepIds.includes(step.id)),
+    seenTipIds: Array.isArray(source.seenTipIds) ? [...new Set(source.seenTipIds.filter(id => typeof id === 'string'))] : [],
+    dismissedTipIds: Array.isArray(source.dismissedTipIds) ? [...new Set(source.dismissedTipIds.filter(id => typeof id === 'string'))] : [],
     updatedAt: typeof source.updatedAt === 'string' ? source.updatedAt : empty.updatedAt };
 }
 

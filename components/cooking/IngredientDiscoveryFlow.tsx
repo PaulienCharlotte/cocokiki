@@ -18,6 +18,8 @@ import IngredientDiscoveryCard from './IngredientDiscoveryCard';
 import JourneyStageProgress from './JourneyStageProgress';
 import RecipeOverviewDialog from './RecipeOverviewDialog';
 import RewardToast from './RewardToast';
+import { discoveryOptions } from '../../data/cooking/discoveryOptions';
+import { nextRequiredStage } from '../../services/cookingProgress';
 
 interface IngredientDiscoveryFlowProps {
   recipe: RecipeConfig;
@@ -84,7 +86,8 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   if (journey.stage !== 'discovery' || !discovery) return null;
 
   if (discovery.step === 'complete') {
-    const goToNext = () => replay ? onExit() : commit(advanceJourney(progress, recipe.id, 'challenges'));
+    const nextStage = nextRequiredStage(progress, recipe.id);
+    const goToNext = () => replay ? onExit() : nextStage && commit(advanceJourney(progress, recipe.id, nextStage));
     return <main className="discovery-stage">
       <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
       <section className="discovery-card discovery-card--completion" aria-labelledby="discovery-complete-title">
@@ -97,7 +100,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
         </div>
         <p className="stage-completion-status"><Check size={17} />Toegevoegd aan je encyclopedie</p>
         {replay && <small className="stage-completion-note"><Check size={15} />Beloning al ontvangen</small>}
-        <Button size="large" onClick={goToNext}>{replay ? 'Klaar' : 'Verder met rekenen'}</Button>
+        <Button size="large" onClick={goToNext}>{replay ? 'Klaar' : nextStage === 'nutrient-memory' ? 'Voedingsstoffenmemory' : 'Verder met rekenen'}</Button>
         <div className="discovery-secondary-actions">
           <a className="discovery-skip" href="/treehouse/encyclopedia"><BookOpen size={16} />Bekijk encyclopedie</a>
         </div>
@@ -148,7 +151,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
           <p className="discovery-card__eyebrow">{ingredient.name} · vraag {completedCount + 1} van {recipeIngredientIds.length}</p>
           <h1 id="discovery-title">{question.prompt}</h1>
           <div className="discovery-options" aria-busy={discovery.step === 'correct'}>
-            {question.options.map((option, index) => <button
+            {discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map((option, index) => <button
               type="button"
               key={option.id}
               disabled={discovery.step === 'correct'}

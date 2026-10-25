@@ -5,6 +5,7 @@ import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
+import InventorySellButton from './InventorySellButton';
 import { subscribeLocalState } from '../../services/localState';
 
 interface Props {
@@ -147,6 +148,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
           {products.map(({ product, amount }) => <article key={product.id}>
             <button className="room-inventory-place" type="button" aria-label={`${product.name} in kamer plaatsen`} onPointerDown={event => begin(event, product)} onClick={event => { if (event.detail === 0) { place(product, window.innerWidth / 2, window.innerHeight * .72); setOpen(false); } }}><DecorAsset product={product} /></button>
             <strong>{product.name}</strong><small>{amount} beschikbaar</small>
+            <InventorySellButton kind="decor" productId={product.id} name={product.name} price={product.price} />
           </article>)}
         </div> : <div className="room-inventory-empty"><PackageOpen /><p>{Object.keys(inventory.owned).length ? 'Alles staat in je boomhut.' : 'Nog geen kameritems.'}</p></div>}
       </aside>

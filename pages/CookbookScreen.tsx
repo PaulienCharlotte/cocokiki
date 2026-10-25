@@ -6,15 +6,17 @@ import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
 import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFlow';
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
+import NutrientMemoryFlow from '../components/cooking/NutrientMemoryFlow';
 import JourneyStageProgress from '../components/cooking/JourneyStageProgress';
 import ShopScreen from './ShopScreen';
 import { RECIPES, RECIPE_CATEGORIES } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeCategory, RecipeConfig } from '../data/cooking/types';
-import { beginDiscoveryStage, createDiscoveryReplay, createMathReplay, loadCookingProgress, restartJourney, saveCookingProgress, startJourney } from '../services/cookingProgress';
+import { beginDiscoveryStage, createDiscoveryReplay, createMathReplay, createMemoryReplay, loadCookingProgress, restartJourney, saveCookingProgress, startJourney } from '../services/cookingProgress';
 import { getRecipeAccess } from '../data/cooking/availability';
+import { getRecipeIssues } from '../data/cooking/validation';
 
-type ActiveCategory = 'all' | 'completed' | RecipeCategory;
-type ReplayKind = 'discovery' | 'math';
+type ActiveCategory = 'all' | 'completed' | 'preparing' | RecipeCategory;
+type ReplayKind = 'discovery' | 'math' | 'memory';
 
 interface CookbookScreenProps {
   onNavigate?: (path: string) => void;
@@ -33,7 +35,14 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const [replayKind, setReplayKind] = useState<ReplayKind | null>(null);
   const [notice, setNotice] = useState('');
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
-  const recipes = useMemo(() => category === 'all' ? RECIPES : RECIPES.filter(recipe => category === 'completed' ? Boolean(progress.completions[recipe.id]) : recipe.category === category), [category, progress]);
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    for (const recipe of RECIPES.filter(item => item.contentStatus === 'ready')) {
+      const issues = getRecipeIssues(recipe);
+      if (issues.length) console.warn(`Receptconfiguratie ${recipe.id}:`, issues);
+    }
+  }, []);
+  const recipes = useMemo(() => category === 'all' ? RECIPES : RECIPES.filter(recipe => category === 'completed' ? Boolean(progress.completions[recipe.id]) : category === 'preparing' ? progress.journeys[recipe.id]?.stage === 'cooking' : recipe.category === category), [category, progress]);
 
   const handleStart = (recipe: RecipeConfig) => {
     if (!getRecipeAccess(recipe, progress).playable) return;
@@ -48,6 +57,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     setReplayProgress(null);
     setReplayKind(null);
     setPlayingRecipeId(recipe.id);
+    if (next.journeys[recipe.id]?.stage === 'cooking') onNavigate?.(`/treehouse/kitchen?recipe=${encodeURIComponent(recipe.id)}`);
   };
 
   const handleDiscoveryReplay = (recipe: RecipeConfig) => {
@@ -84,10 +94,16 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     setReplayProgress(null);
     setReplayKind(null);
   };
+  const handleMemoryReplay = (recipe: RecipeConfig) => {
+    const replay = createMemoryReplay(progress, recipe.id);
+    if (replay === progress) return;
+    setSelected(null); setReplayProgress(replay); setReplayKind('memory'); setPlayingRecipeId(recipe.id);
+  };
 
   const playingRecipe = playingRecipeId ? RECIPES.find(recipe => recipe.id === playingRecipeId) : undefined;
   const activeProgress = replayProgress ?? progress;
   const playingJourney = playingRecipe ? activeProgress.journeys[playingRecipe.id] : undefined;
+  if (playingRecipe && playingJourney?.stage === 'nutrient-memory') return <NutrientMemoryFlow recipe={playingRecipe} progress={activeProgress} onProgressChange={setProgress} onExit={exitJourney} replay={replayKind === 'memory'} />;
   if (playingRecipe && playingJourney?.stage === 'discovery') return <IngredientDiscoveryFlow
       recipe={playingRecipe}
       progress={activeProgress}
@@ -136,6 +152,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
         <nav className="recipe-categories" aria-label="Receptcategorieën">
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>
+          <button type="button" aria-pressed={category === 'preparing'} onClick={() => setCategory('preparing')}>Bereiden</button>
         </nav>
       </div>
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
@@ -144,6 +161,6 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
         {recipes.length === 0 && <p className="cookbook-filter-empty">Nog geen recepten gemaakt.</p>}
       </div>
     </section>
-    <RecipeOverviewDialog recipe={selected} progress={progress} journey={selected ? progress.journeys[selected.id] : undefined} onClose={() => setSelected(null)} onStart={handleStart} onReplay={handleDiscoveryReplay} onRestart={handleRestart} />
+    <RecipeOverviewDialog recipe={selected} progress={progress} journey={selected ? progress.journeys[selected.id] : undefined} onClose={() => setSelected(null)} onStart={handleStart} onReplay={handleDiscoveryReplay} onRestart={handleRestart} onMemoryReplay={selected && createMemoryReplay(progress, selected.id) !== progress ? handleMemoryReplay : undefined} />
   </main>;
 }

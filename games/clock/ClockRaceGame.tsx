@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
 import AnalogClock from './AnalogClock';
 import { loadClockRaceMode, saveClockRaceMode } from './clockProgress';
@@ -10,7 +10,7 @@ interface ClockRaceGameProps {
   initialLevel: ClockLevel;
   completedLevels: ClockLevel[];
   onBack: () => void;
-  onComplete: (level: ClockLevel) => number;
+  onComplete: (level: ClockLevel, roundId: string) => number;
 }
 
 const ROUND_COUNT = 5;
@@ -28,8 +28,10 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
   const [correctSelection, setCorrectSelection] = useState<string | null>(null);
   const [wrongSelections, setWrongSelections] = useState<string[]>([]);
   const [reward, setReward] = useState<number | null>(null);
+  const roundId = useRef(crypto.randomUUID());
 
   const reset = (nextLevel = level) => {
+    roundId.current = crypto.randomUUID();
     setLevel(nextLevel);
     setRound(createRaceRound(nextLevel));
     setRoundIndex(0);
@@ -40,7 +42,7 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
 
   const next = useCallback(() => {
     if (roundIndex + 1 >= ROUND_COUNT) {
-      setReward(onComplete(level));
+      setReward(onComplete(level, roundId.current));
       return;
     }
     setRoundIndex(current => current + 1);
@@ -50,10 +52,10 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
   }, [level, onComplete, roundIndex]);
 
   useEffect(() => {
-    if (!correctSelection) return;
+    if (!correctSelection || reward !== null) return;
     const timeout = window.setTimeout(next, 950);
     return () => window.clearTimeout(timeout);
-  }, [correctSelection, next]);
+  }, [correctSelection, next, reward]);
 
   const chooseMode = (nextMode: ClockRaceMode) => {
     setMode(nextMode);

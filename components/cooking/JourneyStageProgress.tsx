@@ -5,6 +5,7 @@ import type { JourneyProgress, JourneyStage } from '../../data/cooking/types';
 const STAGES: Array<{ id: JourneyStage; label: string; icon: React.ReactNode }> = [
   { id: 'overview', label: 'Recept', icon: <BookOpen /> },
   { id: 'discovery', label: 'Ontdekken', icon: <Sprout /> },
+  { id: 'nutrient-memory', label: 'Voedingsstoffen', icon: <Sprout /> },
   { id: 'challenges', label: 'Rekenen', icon: <Calculator /> },
   { id: 'shopping', label: 'Winkelen', icon: <ShoppingBasket /> },
   { id: 'cooking', label: 'Koken', icon: <CookingPot /> },

@@ -20,6 +20,8 @@ export interface CookingStepState {
   choice: string | null;
 }
 export interface CookingSession {
+  seenTipIds?: string[];
+  dismissedTipIds?: string[];
   version: 2;
   recipeId: string;
   recipeVersion: number;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Check, Lightbulb, Minus, Plus } from 'lucide-react';
 import { Button } from '../../design-system';
 import AnalogClock from './AnalogClock';
@@ -10,7 +10,7 @@ interface SetClockGameProps {
   initialLevel: ClockLevel;
   completedLevels: ClockLevel[];
   onBack: () => void;
-  onComplete: (level: ClockLevel) => number;
+  onComplete: (level: ClockLevel, roundId: string) => number;
 }
 
 const ROUND_COUNT = 5;
@@ -23,8 +23,10 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [hint, setHint] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
+  const roundId = useRef(crypto.randomUUID());
 
   const reset = (nextLevel = level) => {
+    roundId.current = crypto.randomUUID();
     setLevel(nextLevel);
     setTarget(generateTime(nextLevel));
     setAnswer({ hours: 12, minutes: 0 });
@@ -47,7 +49,7 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
     const nextScore = score + 1;
     if (nextScore >= ROUND_COUNT) {
       setScore(nextScore);
-      setReward(onComplete(level));
+      setReward(onComplete(level, roundId.current));
       return;
     }
     setScore(nextScore);
@@ -58,10 +60,10 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
   }, [level, onComplete, score]);
 
   useEffect(() => {
-    if (feedback !== 'correct') return;
+    if (feedback !== 'correct' || reward !== null) return;
     const timeout = window.setTimeout(next, 950);
     return () => window.clearTimeout(timeout);
-  }, [feedback, next]);
+  }, [feedback, next, reward]);
 
   const step = minuteStepForLevel(level);
 

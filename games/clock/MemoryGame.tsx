@@ -8,7 +8,7 @@ interface MemoryGameProps {
   initialLevel: ClockLevel;
   completedLevels: ClockLevel[];
   onBack: () => void;
-  onComplete: (level: ClockLevel) => number;
+  onComplete: (level: ClockLevel, roundId: string) => number;
 }
 
 export default function MemoryGame({ initialLevel, completedLevels, onBack, onComplete }: MemoryGameProps) {
@@ -19,8 +19,10 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
   const [locked, setLocked] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
   const completionClaimed = useRef(false);
+  const roundId = useRef(crypto.randomUUID());
 
   const reset = (nextLevel = level) => {
+    roundId.current = crypto.randomUUID();
     setLevel(nextLevel);
     setDeck(createMemoryDeck(nextLevel));
     setOpen([]);
@@ -39,7 +41,7 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
       setOpen([]);
       if (nextMatched.length === deck.length / 2 && !completionClaimed.current) {
         completionClaimed.current = true;
-        setReward(onComplete(level));
+        setReward(onComplete(level, roundId.current));
       }
       return;
     }

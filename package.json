@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "assets:inventory": "node scripts/generateAssetInventory.mjs",
+    "recipes:export": "node scripts/exportHomeRecipes.mjs",
+    "prebuild": "npm run recipes:export",
     "dev": "vite",
     "build": "vite build",
     "test": "node scripts/test.mjs",

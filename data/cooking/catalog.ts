@@ -1,5 +1,6 @@
 import { BANANA_PREPARATION } from './bananaPancakeCooking';
 import { BANANA_PANCAKE_MATH_CHALLENGES } from './mathChallenges';
+import { FRUIT_YOGURT_MATH, FRUIT_YOGURT_PREPARATION } from './fruitYogurt';
 import type {
   CookingProgressState,
   CookingAssetRegistry,
@@ -27,37 +28,39 @@ export const COOKING_ASSETS: CookingAssetRegistry = {
     fork: '/games/cooking/equipment/fork.png',
     pan: '/games/cooking/equipment/frying-pan.png',
     spatula: '/games/cooking/equipment/spatula.png',
-    spoon: '/games/cooking/equipment/spoon.png',
+    spoon: '/assets/library/cooking/kit/spoon.png',
   },
 };
 
 export const INGREDIENTS: IngredientEntry[] = [
   {
-    id: 'banana', name: 'Banaan', image: COOKING_ASSETS.ingredients.banana, contentStatus: 'ready',
+    id: 'banana', name: 'Banaan', image: COOKING_ASSETS.ingredients.banana, contentStatus: 'ready', nutrientIds: ['carbohydrates', 'fiber'],
     origin: 'Bananen groeien aan grote kruidenplanten in warme gebieden.',
     productionRegions: ['Midden-Amerika', 'Zuid-Amerika', 'Zuidoost-Azië'],
-    season: 'Het hele jaar', nutrients: ['Vezels', 'Kalium', 'Vitamine B6'],
+    season: 'Het hele jaar', nutrients: ['Koolhydraten', 'Vezels', 'Kalium', 'Vitamine B6'],
     facts: ['Een bananenplant is officieel geen boom, maar een groot kruid.'],
   },
   {
-    id: 'eggs', name: 'Eieren', image: COOKING_ASSETS.ingredients.eggs, contentStatus: 'ready',
+    id: 'eggs', name: 'Eieren', image: COOKING_ASSETS.ingredients.eggs, contentStatus: 'ready', nutrientIds: ['protein', 'vitamin-d', 'fats'],
     origin: 'Eieren in de keuken komen meestal van kippen.', productionRegions: ['Wereldwijd'],
     season: 'Het hele jaar', nutrients: ['Eiwitten', 'Vitamine B12'],
     facts: ['Een ei helpt de ingrediënten van het beslag bij elkaar te houden.'],
   },
   {
-    id: 'oats', name: 'Havermout', image: COOKING_ASSETS.ingredients.oats, contentStatus: 'ready',
+    id: 'oats', name: 'Havermout', image: COOKING_ASSETS.ingredients.oats, contentStatus: 'ready', nutrientIds: ['iron', 'fiber', 'carbohydrates'],
     origin: 'Havermout wordt gemaakt van haverkorrels.', productionRegions: ['Europa', 'Noord-Amerika'],
     season: 'Na de graanoogst', nutrients: ['Vezels', 'IJzer'],
     facts: ['Fijne havermout kan in beslag een deel van bloem vervangen.'],
   },
   {
-    id: 'yogurt', name: 'Yoghurt', image: COOKING_ASSETS.ingredients.yogurt, contentStatus: 'pending',
-    origin: null, productionRegions: [], season: null, nutrients: [], facts: [],
+    id: 'yogurt', name: 'Yoghurt', image: COOKING_ASSETS.ingredients.yogurt, contentStatus: 'ready', nutrientIds: ['calcium', 'protein'],
+    origin: 'Speciale bacteriën veranderen melk in yoghurt.', productionRegions: ['Nederland', 'Europa'],
+    season: 'Het hele jaar', nutrients: ['Eiwitten', 'Calcium'], facts: ['Calcium helpt botten en tanden gezond te houden.'],
   },
   {
-    id: 'strawberry', name: 'Aardbei', image: COOKING_ASSETS.ingredients.strawberry, contentStatus: 'pending',
-    origin: null, productionRegions: [], season: null, nutrients: [], facts: [],
+    id: 'strawberry', name: 'Aardbei', image: COOKING_ASSETS.ingredients.strawberry, contentStatus: 'ready', nutrientIds: ['vitamin-c', 'fiber'],
+    origin: 'Aardbeien groeien aan lage planten, ook in Nederland.', productionRegions: ['Nederland', 'Europa'],
+    season: 'Vooral lente en zomer', nutrients: ['Vitamine C', 'Vezels'], facts: ['Vitamine C helpt je afweersysteem normaal werken.'],
   },
 ];
 
@@ -66,7 +69,7 @@ export const EQUIPMENT: EquipmentItem[] = [
   { id: 'fork', name: 'Vork', image: COOKING_ASSETS.equipment.fork, contentStatus: 'ready', permanent: true },
   { id: 'pan', name: 'Koekenpan', image: COOKING_ASSETS.equipment.pan, contentStatus: 'ready', permanent: true },
   { id: 'spatula', name: 'Spatel', image: COOKING_ASSETS.equipment.spatula, contentStatus: 'ready', permanent: true },
-  { id: 'spoon', name: 'Lepel', image: COOKING_ASSETS.equipment.spoon, contentStatus: 'pending', permanent: true },
+  { id: 'spoon', name: 'Lepel', image: COOKING_ASSETS.equipment.spoon, contentStatus: 'ready', permanent: true },
 ];
 
 const bananaPancakeActions = [
@@ -113,18 +116,34 @@ export const RECIPES: RecipeConfig[] = [
     ],
     actions: bananaPancakeActions,
     preparation: BANANA_PREPARATION,
-    education: { math: BANANA_PANCAKE_MATH_CHALLENGES },
+    education: { math: BANANA_PANCAKE_MATH_CHALLENGES, nutrientMemory: { enabled: true, activityId: 'banana-nutrients-v1', nutrientIds: ['iron', 'protein', 'fiber', 'carbohydrates'], pairCount: 4 } },
+    cookingTips: [{ id: 'soft-pancakes', character: 'coco', triggerStepId: 'cook', displayMode: 'contextual', title: 'Extra zachte pannenkoeken!', text: 'Stapel je warme pannenkoeken op een bord en leg er een tweede bord overheen. Zo blijven ze lekker warm en drogen ze minder snel uit!' }],
+    homeRecipe: {
+      introduction: 'Zachte bananenpannenkoekjes voor twee porties.',
+      optionalIngredients: ['Een klein beetje bakvet, alleen als de pan dat nodig heeft'],
+      steps: ['Zet een kom, vork, koekenpan en spatel klaar. Was je handen.', 'Pel de banaan. Doe hem in de kom en prak hem fijn met een vork.', 'Breek de twee eieren boven de kom. Verwijder eventuele stukjes schaal en was je handen na contact met rauw ei.', 'Voeg 40 g havermout toe en meng alles tot een gelijkmatig beslag.', 'Laat een volwassene een pan op middelhoog vuur verwarmen. Gebruik een goede antiaanbakpan; zo nodig kan een klein beetje bakvet worden gebruikt.', 'Schep kleine rondjes beslag in de pan. Bak rustig tot de onderkant goudbruin is en de rand stevig wordt.', 'Draai de pannenkoekjes voorzichtig om. Bak de andere kant goudbruin, tot de pannenkoekjes ook vanbinnen stevig en gaar zijn.', 'Leg de pannenkoekjes op een bord en serveer warm.'],
+      safety: 'Vraag hulp van een volwassene bij de hete pan. Proef geen rauw beslag met ei.', servingTip: 'Dek de stapel kort af met een tweede bord om de pannenkoekjes warm en zacht te houden.', allergens: ['Ei', 'Haver: controleer de verpakking op gluten'],
+    },
   },
   {
-    id: 'fruit-yogurt', name: 'Yoghurt met fruit', category: 'snack', availability: 'preview', requiredCompletedRecipes: 1, level: 1,
-    shortDescription: 'Een frisse kom yoghurt met banaan en aardbeien.', preparationMinutes: null, servings: null,
-    image: COOKING_ASSETS.recipes['fruit-yogurt'], contentStatus: 'pending', rewardCoins: null,
+    id: 'fruit-yogurt', name: 'Fruityoghurt met aardbei en banaan', category: 'snack', availability: 'playable', requiredCompletedRecipes: 1, level: 1,
+    shortDescription: 'Een frisse kom yoghurt met banaan en aardbeien.', preparationMinutes: 5, servings: 1,
+    image: COOKING_ASSETS.recipes['fruit-yogurt'], contentStatus: 'ready', rewardCoins: 10,
     ingredients: [
-      { ingredientId: 'yogurt', amount: 150, unit: 'gram', displayAmount: '150 g yoghurt' },
-      { ingredientId: 'banana', amount: 1, unit: 'piece', displayAmount: '1 banaan' },
+      { ingredientId: 'yogurt', amount: 150, unit: 'milliliter', displayAmount: '150 ml yoghurt' },
       { ingredientId: 'strawberry', amount: 75, unit: 'gram', displayAmount: '75 g aardbeien' },
+      { ingredientId: 'banana', amount: 1, unit: 'piece', displayAmount: '1 banaan' },
     ],
     equipmentIds: ['bowl', 'spoon'], challenges: [], shoppingRequirements: [], actions: [],
+    preparation: FRUIT_YOGURT_PREPARATION,
+    education: { math: FRUIT_YOGURT_MATH, nutrientMemory: { enabled: true, activityId: 'yogurt-nutrients-v1', nutrientIds: ['calcium', 'protein', 'vitamin-c', 'fiber'], pairCount: 4 } },
+    cookingTips: [{ id: 'sweet-banana', character: 'coco', triggerStepId: 'mix-fruit', displayMode: 'contextual', title: 'Lekker met puur fruit!', text: 'Banaan en aardbeien geven je yoghurt hun eigen smaak. Kies naturel yoghurt en ontdek hoe lekker deze eenvoudige ingrediënten samen zijn!' }],
+    homeRecipe: {
+      introduction: 'Een frisse kom fruityoghurt voor één portie.',
+      extraEquipment: ['Mes', 'Snijplank'],
+      steps: ['Zet een mengkom, lepel en maatbeker klaar. Was je handen.', 'Meet 150 ml naturel yoghurt af en schenk die in de kom.', 'Was de aardbeien, haal de kroontjes eraf en weeg 75 g af. Vraag hulp bij het in stukjes snijden.', 'Pel één hele banaan en snijd die voorzichtig in plakjes.', 'Voeg de aardbeien en banaan toe aan de yoghurt. Roer rustig met de lepel.', 'Schep in een kom en eet meteen, of zet afgedekt in de koelkast.'],
+      safety: 'Vraag hulp bij het snijden. Houd yoghurt koel en gebruik schoon keukengerei.', servingTip: 'Een rijpe banaan maakt het gerecht vanzelf zoet. Extra suiker is niet nodig.', allergens: ['Melk'],
+    },
   },
   {
     id: 'oat-muffins', name: 'Havermoutmuffins', category: 'baking', availability: 'locked', requiredCompletedRecipes: 2, level: 2,

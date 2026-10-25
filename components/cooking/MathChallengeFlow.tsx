@@ -200,12 +200,12 @@ function ChallengeInteraction(props: InteractionProps) {
   const { challenge } = props;
   if (challenge.type === 'quantity-selection') return <div className="math-quantity">
     <CookingAssetImage src={assetFor(challenge.ingredientId)} alt={INGREDIENTS_BY_ID[challenge.ingredientId]?.name ?? challenge.ingredientId} />
-    <Stepper value={props.quantity} step={1} maximum={challenge.maximum} minimum={challenge.minimum} onStep={props.setQuantity} label={`Aantal ${INGREDIENTS_BY_ID[challenge.ingredientId]?.name.toLowerCase() ?? challenge.ingredientId}`} />
+    <Stepper value={props.quantity} step={challenge.step ?? 1} unit={challenge.unit} maximum={challenge.maximum} minimum={challenge.minimum} onStep={props.setQuantity} label={`Aantal ${INGREDIENTS_BY_ID[challenge.ingredientId]?.name.toLowerCase() ?? challenge.ingredientId}`} />
     <span>{INGREDIENTS_BY_ID[challenge.ingredientId]?.name.toLowerCase()}</span>
   </div>;
 
   if (challenge.type === 'recipe-scaling') return <div className="math-scaling">
-    <div className="math-scaling__reference"><span>{challenge.baseServings} porties</span><strong>→</strong><span>{challenge.targetServings} porties</span></div>
+    <div className="math-scaling__reference"><span>{challenge.baseServings} {challenge.baseServings === 1 ? 'portie' : 'porties'}</span><strong>→</strong><span>{challenge.targetServings} {challenge.targetServings === 1 ? 'portie' : 'porties'}</span></div>
     {challenge.quantities.map(item => <div className="math-scaling__row" key={item.ingredientId}>
       <CookingAssetImage src={assetFor(item.ingredientId)} alt={INGREDIENTS_BY_ID[item.ingredientId]?.name ?? item.ingredientId} />
       <span className="math-scaling__name">

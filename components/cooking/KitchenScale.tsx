@@ -1,31 +1,21 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
-import CookingAssetImage from './CookingAssetImage';
 
 interface KitchenScaleProps {
   /** Het gewogen aantal gram. */
   value: number;
-  /** Hoeveel gram een volle kom is; bepaalt hoe hard het ingrediënt meegroeit. */
   full: number;
   ingredientImage: string;
   unit?: string;
 }
 
 /**
- * De weegschaal uit de keukenset. Het ingrediënt groeit mee met het gewicht en
- * de waarde staat op het schermpje van de weegschaal zelf.
+ * Alleen het scherm verandert mee; de kom blijft leeg tot geschikte vul-assets beschikbaar zijn.
  */
-export default function KitchenScale({ value, full, ingredientImage, unit = 'g' }: KitchenScaleProps) {
+export default function KitchenScale({ value, unit = 'g' }: KitchenScaleProps) {
   return <div className="cooking-scale">
     <img className="cooking-scale__body" src={ASSET_LIBRARY.cooking.kit.scale} alt="" />
-    {value > 0 && <motion.span
-      className="cooking-scale__load"
-      animate={{ scale: .45 + Math.min(1, value / Math.max(1, full)) * .55 }}
-      transition={{ type: 'spring', stiffness: 240, damping: 20 }}
-    >
-      <CookingAssetImage src={ingredientImage} />
-    </motion.span>}
+    <img className="cooking-scale__front" src={ASSET_LIBRARY.cooking.kit.scale} alt="" />
     <span className="cooking-scale__display" aria-live="polite" aria-label={`${value} ${unit === 'g' ? 'gram' : 'milliliter'}`}>
       <b>{value}</b><em>{unit}</em>
     </span>

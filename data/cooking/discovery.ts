@@ -10,6 +10,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
     heroFact: 'Een bananenplant is een groot kruid, geen boom.',
     origin: { label: 'Oorsprong', text: 'Bananen komen oorspronkelijk uit tropisch Azië en groeien nu in veel warme gebieden.' },
     nutrition: [
+      { nutrient: 'Koolhydraten', role: 'Leveren energie voor bewegen en leren.' },
       { nutrient: 'Kalium', role: 'Helpt spieren en zenuwen normaal werken.' },
       { nutrient: 'Vitamine B6', role: 'Helpt het lichaam energie uit voeding vrijmaken.' },
       { nutrient: 'Vezels', role: 'Ondersteunen een normale spijsvertering.' },
@@ -88,6 +89,48 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       learningGoal: 'source',
     }],
   },
+  {
+    ingredientId: 'yogurt', title: 'Ontdek yoghurt!', collectionLabel: 'Yoghurt',
+    educationalText: 'Yoghurt wordt gemaakt van melk. Speciale bacteriën veranderen de melk in yoghurt.',
+    heroFact: 'Kleine bacteriën helpen melk veranderen in yoghurt.',
+    origin: { label: 'Van melk naar yoghurt', text: 'Aan melk worden speciale bacteriën toegevoegd. Die maken de melk dikker en een beetje zuur: yoghurt!' },
+    nutrition: [
+      { nutrient: 'Eiwitten', role: 'Zijn bouwstoffen voor je lichaam.' },
+      { nutrient: 'Calcium', role: 'Helpt botten en tanden gezond te houden.' },
+    ],
+    foodKnowledge: { label: 'Koel bewaren', text: 'Bewaar yoghurt in de koelkast en gebruik een schone lepel.' },
+    rewardCoins: 5, encyclopediaEntryId: 'yogurt', difficulty: 1,
+    questions: [{
+      id: 'yogurt-from-milk', type: 'single-choice', prompt: 'Hoe wordt melk yoghurt?',
+      options: [
+        { id: 'bacteria', label: 'Speciale bacteriën veranderen de melk.' },
+        { id: 'freeze', label: 'Door de melk alleen te bevriezen.' },
+        { id: 'fruit', label: 'Door alleen fruit in melk te leggen.' },
+      ],
+      correctOptionId: 'bacteria', feedbackExplanation: 'Speciale bacteriën veranderen melk in yoghurt.', learningGoal: 'source',
+    }],
+  },
+  {
+    ingredientId: 'strawberry', title: 'Ontdek de aardbei!', collectionLabel: 'Aardbei',
+    educationalText: 'Aardbeien groeien aan planten. Ook in Nederland worden veel aardbeien geteeld.',
+    heroFact: 'Aardbeien groeien aan lage planten, niet aan bomen.',
+    origin: { label: 'Op het veld', text: 'Aardbeienplanten groeien buiten op het land en in kassen. Nederlandse telers kweken ze vooral voor de lente en zomer.' },
+    nutrition: [
+      { nutrient: 'Vitamine C', role: 'Helpt je afweersysteem normaal werken.' },
+      { nutrient: 'Vezels', role: 'Ondersteunen een normale spijsvertering.' },
+    ],
+    foodKnowledge: { label: 'Voorbereiden', text: 'Was aardbeien en haal het groene kroontje eraf. Vraag hulp bij het snijden.' },
+    rewardCoins: 5, encyclopediaEntryId: 'strawberry', difficulty: 1,
+    questions: [{
+      id: 'strawberry-growing', type: 'single-choice', prompt: 'Waar groeien aardbeien?',
+      options: [
+        { id: 'plant', label: 'Aan lage planten, ook in Nederland.' },
+        { id: 'tree', label: 'Hoog aan grote bomen.' },
+        { id: 'underground', label: 'Onder de grond, net als aardappels.' },
+      ],
+      correctOptionId: 'plant', feedbackExplanation: 'Aardbeien groeien aan lage planten. Veel telers in Nederland kweken ze ook.', learningGoal: 'source',
+    }],
+  },
 ];
 
 export const INGREDIENT_DISCOVERIES_BY_ID = Object.fromEntries(
@@ -98,4 +141,6 @@ export const DISCOVERY_ASSETS = {
   banana: COOKING_ASSETS.ingredients.banana,
   eggs: COOKING_ASSETS.ingredients.eggs,
   oats: COOKING_ASSETS.ingredients.oats,
+  yogurt: COOKING_ASSETS.ingredients.yogurt,
+  strawberry: COOKING_ASSETS.ingredients.strawberry,
 } as const;

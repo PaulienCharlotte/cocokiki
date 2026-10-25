@@ -5,6 +5,7 @@ import { DESTINATIONS_BY_ID } from './platform/destinationRegistry';
 import { GAMES_BY_ID } from './platform/gameRegistry';
 import { resolveRoute } from './platform/routes';
 import { CURRENCY_CHANGE_EVENT, loadCurrency } from './services/currency';
+import './components/cooking/foundation.css';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
@@ -72,8 +73,8 @@ const App: React.FC = () => {
   if (worldContent) return <AppShell
     coins={coins}
     onHome={() => navigate('/')}
-    onBack={() => navigate(current.route.page === 'treehouse-section' && current.route.section === 'cookbook' ? '/treehouse/kitchen' : current.route.page === 'treehouse-section' || current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : '/')}
-    backLabel={current.route.page === 'treehouse-section' && current.route.section === 'cookbook' ? 'Terug naar de keuken' : current.route.page === 'treehouse-section' || current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : 'Terug naar de wereld'}
+    onBack={() => navigate(current.route.page === 'treehouse-section' ? '/treehouse/kitchen' : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : '/')}
+    backLabel={current.route.page === 'treehouse-section' ? 'Terug naar de keuken' : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : 'Terug naar de wereld'}
   ><Suspense fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />

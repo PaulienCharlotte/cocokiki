@@ -4,6 +4,8 @@ import CookingAssetImage from '../components/cooking/CookingAssetImage';
 import { Button } from '../design-system';
 import { INGREDIENTS } from '../data/cooking/catalog';
 import { loadCookingProgress } from '../services/cookingProgress';
+import { INGREDIENT_DISCOVERIES_BY_ID } from '../data/cooking/discovery';
+import { NUTRIENTS, NUTRIENTS_BY_ID } from '../data/cooking/nutrients';
 
 interface EncyclopediaScreenProps {
   onNavigate: (path: string) => void;
@@ -27,6 +29,16 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
             <h2>{item.name}</h2>
             <p>{item.origin ?? 'Meer informatie volgt later.'}</p>
             {item.nutrients.length > 0 && <span><Leaf size={15} />{item.nutrients.join(' · ')}</span>}
+            <details><summary>Alles over {item.name.toLowerCase()}</summary>
+              <p>{INGREDIENT_DISCOVERIES_BY_ID[item.id]?.heroFact}</p>
+              <p>{INGREDIENT_DISCOVERIES_BY_ID[item.id]?.origin.text}</p>
+              {item.season && <p><strong>Seizoen:</strong> {item.season}</p>}
+              {item.productionRegions.length > 0 && <p><strong>Groeit of wordt gemaakt in:</strong> {item.productionRegions.join(', ')}</p>}
+              <ul>{INGREDIENT_DISCOVERIES_BY_ID[item.id]?.nutrition.map(fact => <li key={fact.nutrient}>{NUTRIENTS.find(nutrient => nutrient.name === fact.nutrient)?.bodyFunction ?? <><strong>{fact.nutrient}:</strong> {fact.role}</>}</li>)}
+                {item.nutrientIds?.filter(id => !INGREDIENT_DISCOVERIES_BY_ID[item.id]?.nutrition.some(fact => fact.nutrient === NUTRIENTS_BY_ID[id]?.name)).map(id => NUTRIENTS_BY_ID[id] && <li key={id}>{NUTRIENTS_BY_ID[id].bodyFunction}</li>)}
+              </ul>
+              <p>{INGREDIENT_DISCOVERIES_BY_ID[item.id]?.foodKnowledge.text}</p>
+            </details>
           </div>
         </article>)}
       </div> : <div className="encyclopedia-empty">

@@ -5,6 +5,7 @@ import { EQUIPMENT_BY_ID, INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import type { CookingProgressState, JourneyProgress, RecipeConfig } from '../../data/cooking/types';
 import { getRecipeAccess } from '../../data/cooking/availability';
 import CookingAssetImage from './CookingAssetImage';
+import HomeRecipe from './HomeRecipe';
 
 interface RecipeOverviewDialogProps {
   recipe: RecipeConfig | null;
@@ -14,9 +15,10 @@ interface RecipeOverviewDialogProps {
   onStart: (recipe: RecipeConfig) => void;
   onReplay?: (recipe: RecipeConfig) => void;
   onRestart?: (recipe: RecipeConfig) => void;
+  onMemoryReplay?: (recipe: RecipeConfig) => void;
 }
 
-export default function RecipeOverviewDialog({ recipe, journey, progress, onClose, onStart, onReplay, onRestart }: RecipeOverviewDialogProps) {
+export default function RecipeOverviewDialog({ recipe, journey, progress, onClose, onStart, onReplay, onRestart, onMemoryReplay }: RecipeOverviewDialogProps) {
   if (!recipe) return null;
   const access = getRecipeAccess(recipe, progress);
   const playable = access.playable;
@@ -46,7 +48,7 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
     {access.locked && <p className="recipe-overview__requirement"><LockKeyhole size={17} /> {access.requirement}</p>}
     <div className="recipe-overview__facts" aria-label="Receptinformatie">
       {recipe.preparationMinutes !== null && <span><Clock3 size={19} /><strong>{recipe.preparationMinutes} min</strong></span>}
-      {recipe.servings !== null && <span><Users size={19} /><strong>{recipe.servings} porties</strong></span>}
+      {recipe.servings !== null && <span><Users size={19} /><strong>{recipe.servings} {recipe.servings === 1 ? 'portie' : 'porties'}</strong></span>}
       <span><Star size={19} /><small>Niveau</small><strong>{recipe.level}</strong></span>
     </div>
 
@@ -77,9 +79,11 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
         </ul>
       </section>}
     </div>}
-    {(canReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
+    {playable && recipe.homeRecipe && <details className="home-recipe-preview"><summary>Complete recept voor thuis</summary><HomeRecipe recipe={recipe} /></details>}
+    {(canReplay || onMemoryReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
       <summary aria-label="Meer opties"><MoreHorizontal /></summary>
       {canReplay && <button type="button" onClick={() => onReplay?.(recipe)}><RotateCcw size={17} />Ontdekken oefenen</button>}
+      {onMemoryReplay && <button type="button" onClick={() => onMemoryReplay(recipe)}><RotateCcw size={17} />Voedingsstoffenmemory oefenen</button>}
       {playable && active && onRestart && <button type="button" onClick={() => onRestart(recipe)}><RotateCcw size={17} />Opnieuw beginnen</button>}
     </details>}
   </Dialog>;

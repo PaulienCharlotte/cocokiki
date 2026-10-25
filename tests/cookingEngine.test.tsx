@@ -177,7 +177,7 @@ test('replay gets a fresh attempt, preserves achievements, and never rewards a r
   assert.equal(loadCurrency(), 10);
 }));
 test('two data-defined recipes use the same engine and keep sessions independent', () => {
-  const second: RecipeConfig = { ...recipe, id: 'test-only-second-recipe', name: 'Testrecept', preparation: { ...recipe.preparation!, steps: [{ id: 'transfer', title: 'Verplaats', instruction: 'Naar de kom', station: 'worktop', mechanic: 'drag', asset: recipe.image, hint: 'Sleep', target: 1, dropTarget: { sourceLabel: 'Ingrediënt', label: 'Kom' } }] } };
+  const second: RecipeConfig = { ...recipe, cookingTips: [], id: 'test-only-second-recipe', name: 'Testrecept', preparation: { ...recipe.preparation!, steps: [{ id: 'transfer', title: 'Verplaats', instruction: 'Naar de kom', station: 'worktop', mechanic: 'drag', asset: recipe.image, hint: 'Sleep', target: 1, dropTarget: { sourceLabel: 'Ingrediënt', label: 'Kom' } }] } };
   RECIPES_BY_ID[second.id] = second;
   try {
     let state = ready();
@@ -200,7 +200,7 @@ test('readiness requires real gameplay, education and existing visual assets', (
   assert.ok(getRecipeIssues({ ...recipe, preparation: undefined }).includes('preparation-missing'));
   assert.ok(getRecipeIssues({ ...recipe, education: { math: [] } }).includes('math-missing'));
   assert.ok(getRecipeIssues({ ...recipe, image: '/missing-image.png' }).includes('asset-missing'));
-  assert.ok(getRecipeIssues(RECIPES_BY_ID['fruit-yogurt']).length > 0);
+  assert.ok(getRecipeIssues(RECIPES_BY_ID['oat-muffins']).length > 0);
 });
 test('decoration checkout is atomic and cannot spend coins without ownership', () => memoryStorage((memory, fail) => {
   memory.set(CURRENCY_KEY, '100');

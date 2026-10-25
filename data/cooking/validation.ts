@@ -4,6 +4,7 @@ import { INGREDIENT_DISCOVERIES_BY_ID } from './discovery';
 import { SHOP_PRODUCTS_BY_ID } from '../shopCatalog';
 import type { RecipeConfig } from './types';
 import { canonicalQuantity } from './quantities';
+import { memoryConfigIssues } from './nutrientMemory';
 
 const knownAssets = new Set(inventory.assets.map(item => item.path));
 export function hasCookingAsset(path: string): boolean { return typeof path === 'string' && knownAssets.has(path.split('?')[0]); }
@@ -30,6 +31,15 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
 export function getRecipeIssues(recipe: RecipeConfig): string[] {
   const issues: string[] = [];
   const preparation = recipe.preparation;
+  if (recipe.education?.nutrientMemory?.enabled) issues.push(...memoryConfigIssues(recipe.education.nutrientMemory));
+  const tips = recipe.cookingTips ?? [];
+  if (new Set(tips.map(tip => tip.id)).size !== tips.length) issues.push('tips:duplicate-id');
+  for (const tip of tips) {
+    if (!tip.id || !tip.title || !tip.text || tip.character !== 'coco') issues.push(`tips:invalid:${tip.id}`);
+    if (tip.displayMode && !['contextual', 'completion'].includes(tip.displayMode)) issues.push(`tips:display-mode:${tip.id}`);
+    if (tip.triggerStepId && !preparation?.steps.some(step => step.id === tip.triggerStepId)) issues.push(`tips:unknown-step:${tip.triggerStepId}`);
+    if (tip.displayMode !== 'completion' && !tip.triggerStepId) issues.push(`tips:trigger-missing:${tip.id}`);
+  }
   if (recipe.contentStatus !== 'ready') issues.push('content-pending');
   if (!preparation || preparation.version < 1 || !preparation.steps.length || preparation.consumption !== 'on-completion') issues.push('preparation-missing');
   const steps = preparation?.steps ?? [];
@@ -58,7 +68,7 @@ export function getRecipeIssues(recipe: RecipeConfig): string[] {
   for (const challenge of math) {
     if (!challenge.id || !challenge.instruction || !Number.isSafeInteger(challenge.rewardCoins) || challenge.rewardCoins < 0
       || !['quantity-selection', 'recipe-scaling', 'interactive-weighing', 'sequence-ordering'].includes(challenge.type)) issues.push(`math-invalid:${challenge.id}`);
-    if (challenge.type === 'quantity-selection' && (!Number.isFinite(challenge.correctQuantity) || challenge.correctQuantity < challenge.minimum || challenge.correctQuantity > challenge.maximum)) issues.push(`math-range:${challenge.id}`);
+    if (challenge.type === 'quantity-selection' && (!Number.isFinite(challenge.correctQuantity) || challenge.correctQuantity < challenge.minimum || challenge.correctQuantity > challenge.maximum || !Number.isFinite(challenge.step ?? 1) || (challenge.step ?? 1) <= 0)) issues.push(`math-range:${challenge.id}`);
     if (challenge.type === 'recipe-scaling' && (!challenge.quantities.length || challenge.quantities.some(item => !Number.isFinite(item.target) || item.target < 0 || !Number.isFinite(item.step) || item.step <= 0))) issues.push(`math-scaling:${challenge.id}`);
     if (challenge.type === 'interactive-weighing' && (!Number.isFinite(challenge.targetGrams) || challenge.targetGrams <= 0 || !challenge.increments.length || challenge.increments.some(value => !Number.isFinite(value) || value <= 0))) issues.push(`math-weight:${challenge.id}`);
     if (challenge.type === 'sequence-ordering' && (!challenge.actions.length || new Set(challenge.actions.map(item => item.id)).size !== challenge.actions.length || challenge.initialOrder.length !== challenge.actions.length || new Set(challenge.initialOrder).size !== challenge.actions.length || challenge.initialOrder.some(id => !challenge.actions.some(item => item.id === id)))) issues.push(`math-sequence:${challenge.id}`);

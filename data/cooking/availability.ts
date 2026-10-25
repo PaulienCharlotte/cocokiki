@@ -11,7 +11,7 @@ export function getRecipeAccess(recipe: RecipeConfig, progress?: CookingProgress
   const issues = getRecipeIssues(recipe);
   const ready = issues.length === 0;
   const playable = !locked && ready;
-  const status = active ? 'Ga verder' : completed ? 'Gemaakt' : locked ? 'Vergrendeld' : ready ? 'Nieuw' : 'Binnenkort';
+  const status = active ? journey.stage === 'cooking' ? 'Klaar om te koken' : 'Ga verder' : completed ? 'Gemaakt' : locked ? 'Vergrendeld' : ready ? 'Nieuw' : 'Binnenkort';
   const requirement = `Maak eerst ${recipe.requiredCompletedRecipes} ${recipe.requiredCompletedRecipes === 1 ? 'verschillend recept' : 'verschillende recepten'}.`;
   return { active, completed, locked, playable, status, requirement, remaining, issues };
 }

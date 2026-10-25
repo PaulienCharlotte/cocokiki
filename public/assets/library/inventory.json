@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-24T18:46:49.673Z",
-  "count": 257,
+  "generatedAt": "2026-10-25T09:25:21.599Z",
+  "count": 260,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -101,6 +101,24 @@
     {
       "id": "assets:library:cooking:banana-pancakes:whisk",
       "path": "/assets/library/cooking/banana-pancakes/whisk.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:fruit-yogurt:banana-slices",
+      "path": "/assets/library/cooking/fruit-yogurt/banana-slices.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:fruit-yogurt:strawberries",
+      "path": "/assets/library/cooking/fruit-yogurt/strawberries.png",
+      "category": "cooking",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:cooking:fruit-yogurt:yogurt-bowl",
+      "path": "/assets/library/cooking/fruit-yogurt/yogurt-bowl.png",
       "category": "cooking",
       "format": "png"
     },

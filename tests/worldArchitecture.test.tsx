@@ -239,11 +239,12 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(room, /aria-label="Terras openen"/);
   assert.match(room, /assets\/library\/treehouse\/overview\/treehouse-overview\.png/);
   const livingRoom = renderToStaticMarkup(<TreehouseInterior room="living-room" onNavigate={() => undefined} />);
-  assert.match(livingRoom, /aria-label="Mijn Encyclopedie openen"/);
+  assert.doesNotMatch(livingRoom, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(livingRoom, /aria-label="Mijn Kookboek openen"/);
   assert.match(livingRoom, /aria-label="Mijn kameritems openen"/);
   const kitchen = renderToStaticMarkup(<TreehouseInterior room="kitchen" onNavigate={() => undefined} />);
   assert.match(kitchen, /aria-label="Mijn Kookboek openen"/);
+  assert.match(kitchen, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(kitchen, /Mijn keuken/);
   assert.doesNotMatch(kitchen, /Naar Kookstudio/);
   assert.doesNotMatch(kitchen, /treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/);
@@ -281,6 +282,8 @@ test('interactive kitchen separates groceries and keeps standard equipment avail
   const progress = createEmptyCookingProgress();
   progress.inventory.consumables = { banana: 2, eggs: 3, oats: 40 };
   assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.id), ['banana', 'eggs', 'oats']);
-  assert.deepEqual(buildKitchenInventory(progress, 'equipment').map(item => item.id), ['bowl', 'fork', 'pan', 'spatula']);
+  assert.deepEqual(buildKitchenInventory(progress, 'equipment').map(item => item.id), ['bowl', 'fork', 'pan', 'spatula', 'spoon']);
   assert.deepEqual(buildKitchenInventory(createEmptyCookingProgress(), 'groceries'), []);
+  progress.inventory.consumables = { yogurt: 350, strawberry: 175 };
+  assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.quantityLabel), ['350 ml in voorraad', '175 g in voorraad']);
 });

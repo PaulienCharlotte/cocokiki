@@ -21,6 +21,7 @@ import {
   collectCurrentIngredient,
   completeJourney,
   continueMathChallenges,
+  completeNutrientMemory,
   createDiscoveryReplay,
   createMathReplay,
   consumeIngredient,
@@ -45,7 +46,8 @@ function mathReadyProgress(recipe: RecipeConfig = RECIPES_BY_ID['banana-pancakes
   let state = startJourney(createEmptyCookingProgress(), recipe);
   state = advanceJourney(state, recipe.id, 'discovery');
   state = recipe.ingredients.reduce((next, item) => discoverIngredient(next, recipe.id, item.ingredientId), state);
-  return advanceJourney(state, recipe.id, 'challenges');
+  state = advanceJourney(state, recipe.id, 'nutrient-memory');
+  return completeNutrientMemory(state, recipe.id, recipe.education!.nutrientMemory!.activityId);
 }
 
 function correctMathAnswer(challenge: MathChallengeConfig) {
@@ -125,8 +127,10 @@ test('journey stages are sequential and known ingredients can be skipped explici
   assert.equal(nextRequiredStage(discovery, recipe.id), null);
 
   const found = recipe.ingredients.reduce((state, ingredient) => discoverIngredient(state, recipe.id, ingredient.ingredientId), discovery);
-  assert.equal(nextRequiredStage(found, recipe.id), 'challenges');
-  assert.equal(advanceJourney(found, recipe.id, 'challenges').journeys[recipe.id]?.stage, 'challenges');
+  assert.equal(nextRequiredStage(found, recipe.id), 'nutrient-memory');
+  assert.equal(advanceJourney(found, recipe.id, 'challenges'), found);
+  const memory = advanceJourney(found, recipe.id, 'nutrient-memory');
+  assert.equal(completeNutrientMemory(memory, recipe.id, recipe.education!.nutrientMemory!.activityId).journeys[recipe.id]?.stage, 'challenges');
 
   const known = { ...createEmptyCookingProgress(), discoveredIngredientIds: recipe.ingredients.map(item => item.ingredientId) };
   const knownStart = startJourney(known, recipe);
@@ -134,12 +138,12 @@ test('journey stages are sequential and known ingredients can be skipped explici
   let reviewing = beginDiscoveryStage(knownStart, recipe.id);
   for (const ingredient of recipe.ingredients) reviewing = skipKnownIngredient(reviewing, recipe.id);
   assert.equal(reviewing.journeys[recipe.id]?.discovery.step, 'complete');
-  assert.equal(nextRequiredStage(reviewing, recipe.id), 'challenges');
+  assert.equal(nextRequiredStage(reviewing, recipe.id), 'nutrient-memory');
 });
 
 test('ingredient discovery content defines the three requested questions and rewards', () => {
-  assert.deepEqual(INGREDIENT_DISCOVERIES.map(item => item.ingredientId), ['banana', 'eggs', 'oats']);
-  assert.deepEqual(INGREDIENT_DISCOVERIES.map(item => item.rewardCoins), [5, 5, 5]);
+  assert.deepEqual(INGREDIENT_DISCOVERIES.map(item => item.ingredientId), ['banana', 'eggs', 'oats', 'yogurt', 'strawberry']);
+  assert.deepEqual(INGREDIENT_DISCOVERIES.map(item => item.rewardCoins), [5, 5, 5, 5, 5]);
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.banana.questions[0].correctOptionId, 'tropical');
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.eggs.questions[0].correctOptionId, 'chicken');
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.oats.questions[0].correctOptionId, 'oats');
@@ -188,7 +192,7 @@ test('all ingredient discoveries earn fifteen coins and advance to the math stag
   }
   assert.equal(state.journeys[recipe.id]?.discovery.step, 'complete');
   assert.equal(state.journeys[recipe.id]?.discovery.coinsEarned, 15);
-  const next = advanceJourney(state, recipe.id, 'challenges');
+  const next = completeNutrientMemory(advanceJourney(state, recipe.id, 'nutrient-memory'), recipe.id, recipe.education!.nutrientMemory!.activityId);
   assert.equal(next.journeys[recipe.id]?.stage, 'challenges');
   assert.ok(next.journeys[recipe.id]?.completedStages.includes('discovery'));
 });
@@ -212,7 +216,7 @@ test('completed discovery can be replayed without changing saved achievements or
     const result = answerDiscoveryQuestion(saved, recipe.id, INGREDIENT_DISCOVERIES_BY_ID[ingredientId].questions[0].correctOptionId);
     saved = collectCurrentIngredient(showIngredientCollection(result.progress, recipe.id), recipe.id);
   }
-  saved = advanceJourney(saved, recipe.id, 'challenges');
+  saved = completeNutrientMemory(advanceJourney(saved, recipe.id, 'nutrient-memory'), recipe.id, recipe.education!.nutrientMemory!.activityId);
 
   const replay = createDiscoveryReplay(saved, recipe.id, '2026-01-03T00:00:00.000Z');
   assert.equal(saved.journeys[recipe.id]?.stage, 'challenges');
@@ -389,8 +393,8 @@ test('recipe unlocks count distinct completed recipes and keep pending content u
   assert.equal(getRecipeAccess(yogurt, progress).locked, true);
   assert.equal(startJourney(progress, yogurt), progress);
   progress.completions[banana.id] = { recipeId: banana.id, completedAt: '2026-10-24', rewardClaimed: false };
-  assert.equal(getRecipeAccess(yogurt, progress).status, 'Binnenkort');
-  assert.equal(getRecipeAccess(yogurt, progress).playable, false);
+  assert.equal(getRecipeAccess(yogurt, progress).status, 'Nieuw');
+  assert.equal(getRecipeAccess(yogurt, progress).playable, true);
   assert.equal(getRecipeAccess(muffins, progress).remaining, 1);
   progress.completions[banana.id] = { ...progress.completions[banana.id]!, completedAt: '2026-10-25' };
   assert.equal(getRecipeAccess(muffins, progress).remaining, 1);
