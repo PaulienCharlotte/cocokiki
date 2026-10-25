@@ -10,7 +10,9 @@ import {
   createEmptyPlantFamily,
   MAX_NICKNAME_LENGTH,
   migratePlantFamily,
+  plantCondition,
   plantThirst,
+  soggyNow,
   renamePlant,
   stageKiki,
   stageLabel,
@@ -196,4 +198,66 @@ test('de naam in de winkel en de naam op de kaart gaan over dezelfde plant', () 
     // maar een kind moet er dezelfde plant in herkennen.
     assert.ok(winkel.includes(kaart) || kaart.includes(winkel), `${species.id}: winkel zegt "${winkel}", kaart zegt "${kaart}"`);
   }
+});
+
+test('te vroeg blijven gieten maakt de aarde te nat', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  assert.equal(cactus.overwaterAfter, 1);
+
+  let family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:nat', { 'small-cactus': 1 }, new Date(start).toISOString(), () => 'c');
+  assert.equal(plantCondition(family.plants[0], cactus, start).kind, 'fresh');
+
+  // Eén keer gieten terwijl hij nog geen dorst heeft is bij een cactus al te veel.
+  family = waterPlant(family, 'c', new Date(start + dag).toISOString());
+  const nat = plantCondition(family.plants[0], cactus, start + dag);
+  assert.equal(nat.kind, 'wet');
+  assert.equal(nat.stage, 'wet1');
+
+  // Nog eens gieten maakt het erger.
+  family = waterPlant(family, 'c', new Date(start + 2 * dag).toISOString());
+  assert.equal(plantCondition(family.plants[0], cactus, start + 2 * dag).stage, 'wet2');
+
+  // Een varen vindt dezelfde behandeling juist prima.
+  const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
+  assert.ok(varen.overwaterAfter > cactus.overwaterAfter);
+  let varens = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:varen', { 'hanging-fern': 1 }, new Date(start).toISOString(), () => 'v');
+  varens = waterPlant(varens, 'v', new Date(start + 3600000).toISOString());
+  assert.equal(plantCondition(varens.plants[0], varen, start + 3600000).kind, 'fresh');
+});
+
+test('niets doen laat de aarde opdrogen en de plant gaat nooit dood', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  let family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:droog', { 'small-cactus': 1 }, new Date(start).toISOString(), () => 'c');
+  family = waterPlant(family, 'c', new Date(start + dag).toISOString());
+  family = waterPlant(family, 'c', new Date(start + 2 * dag).toISOString());
+  assert.equal(plantCondition(family.plants[0], cactus, start + 2 * dag).stage, 'wet2');
+
+  // Na een maand niets doen is de aarde een punt opgedroogd, na twee maanden helemaal.
+  assert.equal(soggyNow(family.plants[0], cactus, start + 32 * dag), 1);
+  assert.equal(soggyNow(family.plants[0], cactus, start + 65 * dag), 0);
+  // En daarna is hij gewoon weer dorstig, niet dood.
+  assert.equal(plantCondition(family.plants[0], cactus, start + 95 * dag).kind, 'thirst');
+
+  // Water geven als hij wél dorst heeft wist de nattigheid helemaal uit.
+  const begoten = waterPlant(family, 'c', new Date(start + 95 * dag).toISOString());
+  assert.equal(begoten.plants[0].soggy, undefined);
+  assert.equal(plantCondition(begoten.plants[0], cactus, start + 95 * dag).kind, 'fresh');
+  // En het overleeft een herstart.
+  assert.deepEqual(migratePlantFamily(JSON.parse(JSON.stringify(family))), family);
+});
+
+test('Kiki legt bij natte aarde uit wat er met deze soort gebeurt', () => {
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  assert.equal(stageLabel(cactus, 'wet1'), 'De aarde is te nat');
+  assert.match(stageKiki(cactus, 'wet1') ?? '', /wacht/i);
+  // Bij het ergste stadium komt de tekst uit de EHBO-kaart van die plant.
+  assert.match(stageKiki(cactus, 'wet2') ?? '', /zachte/i);
+  assert.notEqual(stageKiki(PLANT_SPECIES_BY_ID['orchid'], 'wet2'), stageKiki(cactus, 'wet2'));
+  // Natte aarde heeft nog geen tekenwerk; het winkelplaatje blijft staan.
+  assert.equal(plantStageImage(PLANT_SPECIES_BY_ID['monstera-basket'], 'wet2'), null);
+  for (const species of PLANT_SPECIES) assert.ok(species.overwaterAfter >= 1, `${species.id} mist overwaterAfter`);
 });

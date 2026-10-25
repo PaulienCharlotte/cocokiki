@@ -206,7 +206,19 @@ drie plantjes waar dat het meest oplevert:
 | Vetplantje | `succulent` | Doorschijnende, geelbruine slappe blaadjes die eraf vallen |
 | Vrouwentong | `snake-plant` | Gele slappe voet, het blad knikt om bij de aarde |
 
-Bestandsnaam hiervoor: `wet-1.png` in hetzelfde mapje.
+Dit zit inmiddels **in het spel**: giet je een plant terwijl hij nog geen dorst
+heeft, dan blijft het water in de aarde staan. Bij een cactus is één keer al te
+veel, een varen verdraagt er vijf. Niets doen laat de aarde vanzelf opdrogen.
+
+Er zijn twee natte toestanden, met deze bestandsnamen in hetzelfde mapje:
+
+```
+wet-1.png   natte donkere aarde, de plant zelf nog gewoon goed
+wet-2.png   het symptoom uit de tabel hierboven
+```
+
+Zonder die plaatjes blijft het winkelplaatje staan; de tekst en de waarschuwing
+van Kiki werken wel al.
 
 ---
 

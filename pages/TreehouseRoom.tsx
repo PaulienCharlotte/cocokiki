@@ -7,7 +7,7 @@ import {
   loadPlantFamily,
   PLANT_FAMILY_CHANGE_EVENT,
   PLANT_FAMILY_KEY,
-  plantThirst,
+  plantCondition,
 } from '../services/plantFamily';
 import { subscribeLocalState } from '../services/localState';
 import PlantFamilyPanel from '../components/plants/PlantFamilyPanel';
@@ -33,10 +33,11 @@ export default function TreehouseRoom({ onNavigate }: TreehouseRoomProps) {
     };
   }, []);
 
-  // Hoeveel planten staan er droog? Dat getal is de reden om hier te kijken.
-  const dorstig = family.plants.filter(plant =>
-    plantThirst(plant, PLANT_SPECIES_BY_ID[plant.speciesId]?.waterDays ?? 7, nu).stage !== 'fresh',
-  ).length;
+  // Hoeveel planten willen aandacht? Te droog of te nat telt allebei mee.
+  const dorstig = family.plants.filter(plant => {
+    const species = PLANT_SPECIES_BY_ID[plant.speciesId];
+    return species ? plantCondition(plant, species, nu).kind !== 'fresh' : false;
+  }).length;
 
   return <main className="treehouse-overview" aria-labelledby="treehouse-room-title">
     <h1 id="treehouse-room-title" className="treehouse-room__title">Mijn boomhut</h1>
@@ -54,7 +55,7 @@ export default function TreehouseRoom({ onNavigate }: TreehouseRoomProps) {
     <button
       type="button"
       className={`treehouse-overview__plants${dorstig > 0 ? ' is-thirsty' : ''}`}
-      aria-label={dorstig > 0 ? `Mijn Planten openen, ${dorstig} ${dorstig === 1 ? 'plant heeft' : 'planten hebben'} dorst` : 'Mijn Planten openen'}
+      aria-label={dorstig > 0 ? `Mijn Planten openen, ${dorstig} ${dorstig === 1 ? 'plant wil' : 'planten willen'} aandacht` : 'Mijn Planten openen'}
       onClick={() => setPlantsOpen(true)}
     >
       <Leaf aria-hidden="true" />

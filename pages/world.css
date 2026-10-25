@@ -1421,3 +1421,11 @@
 .plant-card__row.is-te-weinig-licht .plant-card__row-icon { background: #e6e3ef; color: #5b5076; }
 .plant-card__row.is-droge-lucht .plant-card__row-icon { background: #e4eee8; color: #3c6b52; }
 .plant-card__row.is-te-koud .plant-card__row-icon { background: #e2edf3; color: #3f6478; }
+
+/* Te natte aarde: blauw in plaats van bruin, want dit is het omgekeerde probleem. */
+.plant-family__stage-label.is-wet1 { color: #2f6386; }
+.plant-family__stage-label.is-wet2 { color: #1f4f6e; }
+.plant-family__card.is-wet2 { border-color: #b9d4e6; }
+.room-placed-object__thirst.is-wet1 { background: #cfe3f0; color: #2f6386; }
+.room-placed-object__thirst.is-wet2 { background: #a9cde4; color: #1f4f6e; animation: thirst-pulse 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-wet2 { animation: none; } }

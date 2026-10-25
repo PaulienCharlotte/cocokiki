@@ -7,7 +7,7 @@ import {
   MAX_NICKNAME_LENGTH,
   PLANT_FAMILY_CHANGE_EVENT,
   PLANT_FAMILY_KEY,
-  plantThirst,
+  plantCondition,
   renamePlant,
   savePlantFamily,
   stageKiki,
@@ -41,8 +41,14 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
     return () => { unsubscribe(); window.removeEventListener(PLANT_FAMILY_CHANGE_EVENT, update); };
   }, []);
 
-  const bewaar = (next: PlantFamilyState) => {
-    if (next === family) return;
+  /**
+   * Werk altijd vanaf wat er nú is opgeslagen. Twee snelle tikken achter elkaar
+   * zouden anders allebei van dezelfde oude stand uitgaan en elkaar wissen.
+   */
+  const bewaar = (verander: (huidig: PlantFamilyState) => PlantFamilyState) => {
+    const huidig = loadPlantFamily();
+    const next = verander(huidig);
+    if (next === huidig) return;
     if (savePlantFamily(next)) setFamily(next);
   };
 
@@ -51,9 +57,9 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
     .map(plant => {
       const species = PLANT_SPECIES_BY_ID[plant.speciesId];
       if (!species) return null;
-      const thirst = plantThirst(plant, species.waterDays, nu);
-      const kiki = stageKiki(species, thirst.stage);
-      return kiki ? { nickname: plant.nickname, kiki, ratio: thirst.ratio } : null;
+      const toestand = plantCondition(plant, species, nu);
+      const kiki = stageKiki(species, toestand.stage);
+      return kiki ? { nickname: plant.nickname, kiki, ratio: toestand.urgency } : null;
     })
     .filter((item): item is { nickname: string; kiki: string; ratio: number } => item !== null)
     .sort((a, b) => b.ratio - a.ratio)[0];
@@ -81,15 +87,15 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
           const product = plantProduct(plant.speciesId);
           if (!species || !product) return null;
           const bezig = renaming === plant.id;
-          const thirst = plantThirst(plant, species.waterDays, nu);
-          const ziek = plantStageImage(species, thirst.stage);
-          return <article key={plant.id} className={`plant-family__card is-${thirst.stage}`}>
+          const toestand = plantCondition(plant, species, nu);
+          const ziek = plantStageImage(species, toestand.stage);
+          return <article key={plant.id} className={`plant-family__card is-${toestand.stage}`}>
             {ziek
-              ? <img className="decor-asset plant-family__stage" src={ziek} alt={`${plant.nickname} heeft dorst`} />
+              ? <img className="decor-asset plant-family__stage" src={ziek} alt={`${plant.nickname}: ${stageLabel(species, toestand.stage)}`} />
               : <DecorAsset product={product} />}
             {bezig ? <form className="plant-family__rename" onSubmit={event => {
               event.preventDefault();
-              bewaar(renamePlant(family, plant.id, draft));
+              bewaar(huidig => renamePlant(huidig, plant.id, draft));
               setRenaming(null);
             }}>
               <input
@@ -104,10 +110,10 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
               <button type="button" aria-label="Naam wijzigen afbreken" onClick={() => setRenaming(null)}><X /></button>
             </form> : <strong className="plant-family__nickname">{plant.nickname}</strong>}
             <small className="plant-family__species">{species.commonName}</small>
-            <small className={`plant-family__stage-label is-${thirst.stage}`}><Droplet aria-hidden="true" />{stageLabel(species, thirst.stage)}</small>
+            <small className={`plant-family__stage-label is-${toestand.stage}`}><Droplet aria-hidden="true" />{stageLabel(species, toestand.stage)}</small>
             <small className="plant-family__date"><Sprout aria-hidden="true" />Sinds {adoptieDatum(plant.adoptedAt)}</small>
             <div className="plant-family__actions">
-              <button type="button" className="plant-family__water" aria-label={`${plant.nickname} water geven`} title="Water geven" onClick={() => bewaar(waterPlant(family, plant.id))}><Droplet /></button>
+              <button type="button" className="plant-family__water" aria-label={`${plant.nickname} water geven`} title="Water geven" onClick={() => bewaar(huidig => waterPlant(huidig, plant.id))}><Droplet /></button>
               <button type="button" aria-label={`Meer weten over ${species.commonName}`} onClick={() => setInfo({ speciesId: plant.speciesId, nickname: plant.nickname })}><Info /></button>
               {!bezig && <button type="button" aria-label={`${plant.nickname} een andere naam geven`} onClick={() => { setDraft(plant.nickname); setRenaming(plant.id); }}><Pencil /></button>}
             </div>

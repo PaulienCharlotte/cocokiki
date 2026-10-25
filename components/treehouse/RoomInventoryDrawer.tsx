@@ -6,7 +6,7 @@ import type { TreehouseRoomId } from '../../data/treehouse';
 import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
 import { PLANT_SPECIES_BY_ID, plantStageImage } from '../../data/plants/species';
-import { loadPlantFamily, plantThirst, savePlantFamily, stageLabel, waterPlant } from '../../services/plantFamily';
+import { loadPlantFamily, plantCondition, savePlantFamily, stageLabel, waterPlant } from '../../services/plantFamily';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import InventorySellButton from './InventorySellButton';
 import { subscribeLocalState } from '../../services/localState';
@@ -198,7 +198,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
           }}>{(() => {
             const plant = plantOf(item);
             const soort = plant && PLANT_SPECIES_BY_ID[plant.speciesId];
-            const ziek = plant && soort ? plantStageImage(soort, plantThirst(plant, soort.waterDays).stage) : null;
+            const ziek = plant && soort ? plantStageImage(soort, plantCondition(plant, soort).stage) : null;
             return ziek
               ? <img className="decor-asset" src={ziek} alt={`${plant!.nickname} heeft dorst`} draggable={false} />
               : <DecorAsset product={product} view={item.view} />;
@@ -208,7 +208,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
             const plant = plantOf(item);
             const soort = plant && PLANT_SPECIES_BY_ID[plant.speciesId];
             if (!plant || !soort) return null;
-            const dorst = plantThirst(plant, soort.waterDays);
+            const dorst = plantCondition(plant, soort);
             return <>
               {dorst.stage !== 'fresh' && <span className={`room-placed-object__thirst is-${dorst.stage}`} title={stageLabel(soort, dorst.stage)}><Droplet aria-hidden="true" /><span className="sr-only">{plant.nickname}: {stageLabel(soort, dorst.stage)}</span></span>}
               {isSelected && <span className="room-placed-object__label">{plant.nickname}</span>}

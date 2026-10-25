@@ -1,4 +1,5 @@
-import { PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage } from '../data/plants/species';
+import { PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage, type ThirstStage, type WetStage } from '../data/plants/species';
+import { plantFirstAid } from '../data/plants/firstAid';
 import { commitLocalState, readDocument } from './localState';
 
 export const PLANT_FAMILY_KEY = 'cocokiki:plant-family:v1';
@@ -14,6 +15,10 @@ export interface AdoptedPlant {
   adoptedAt: string;
   /** Wanneer er voor het laatst water is gegeven; leeg betekent sinds de adoptie. */
   lastWateredAt?: string;
+  /** Hoe vaak er te vroeg gegoten is; de aarde droogt daarna vanzelf weer op. */
+  soggy?: number;
+  /** Wanneer dat voor het laatst gebeurde, zodat de aarde kan opdrogen. */
+  soggyAt?: string;
 }
 
 export interface PlantFamilyState {
@@ -49,6 +54,8 @@ export function migratePlantFamily(value: unknown): PlantFamilyState {
     ...plant,
     nickname: cleanNickname(plant.nickname, plant.speciesId),
     ...(typeof plant.lastWateredAt === 'string' ? { lastWateredAt: plant.lastWateredAt } : {}),
+    ...(typeof plant.soggy === 'number' && plant.soggy > 0 ? { soggy: plant.soggy } : {}),
+    ...(typeof plant.soggyAt === 'string' ? { soggyAt: plant.soggyAt } : {}),
   })) : [];
   // Dubbele id's zouden hernoemen onvoorspelbaar maken.
   const seen = new Set<string>();
@@ -115,14 +122,16 @@ export function renamePlant(state: PlantFamilyState, id: string, nickname: strin
 }
 
 /**
- * Dorst. Een plant wordt na verloop van tijd dorstig en ziet er dan slechter
- * uit, maar hij gaat nooit dood: water geven brengt hem altijd helemaal terug.
- * Een kind dat een week niet speelt vindt dus geen dode planten.
+ * De toestand van een plant.
+ *
+ * Te weinig water maakt hem dorstig, te veel water maakt de aarde drassig.
+ * Allebei zijn ze lelijk en allebei gaan ze weer over: een plant gaat nooit
+ * dood. Een kind mag de fout dus maken en hem daarna herstellen.
  */
 const DAG = 24 * 60 * 60 * 1000;
 
-/** Vanaf welk veelvoud van de waterbeurt een stadium begint. */
-const STAGE_FROM: Array<[PlantStage, number]> = [
+/** Vanaf welk veelvoud van de waterbeurt een dorststadium begint. */
+const STAGE_FROM: Array<[ThirstStage, number]> = [
   ['thirst3', 3.5],
   ['thirst2', 2],
   ['thirst1', 1],
@@ -145,21 +154,89 @@ export function plantThirst(plant: AdoptedPlant, waterDays: number, now = Date.n
   return { stage, ratio, daysSinceWater: dagen };
 }
 
-/** Water geven zet de teller terug; dat kan altijd, ook als hij geen dorst heeft. */
-export function waterPlant(state: PlantFamilyState, id: string, now = new Date().toISOString()): PlantFamilyState {
-  if (!state.plants.some(plant => plant.id === id)) return state;
-  return { ...state, plants: state.plants.map(plant => plant.id === id ? { ...plant, lastWateredAt: now } : plant) };
+/**
+ * Hoe nat de aarde nu nog is. Elke keer te vroeg gieten telt op, en de aarde
+ * droogt daarna vanzelf weer op in het tempo van die soort. Niets doen is dus
+ * altijd de oplossing.
+ */
+export function soggyNow(plant: AdoptedPlant, species: PlantSpecies, now = Date.now()): number {
+  const punten = plant.soggy ?? 0;
+  if (punten <= 0) return 0;
+  const sinds = Date.parse(plant.soggyAt ?? plant.adoptedAt);
+  if (!Number.isFinite(sinds)) return punten;
+  const perioden = Math.floor(Math.max(0, now - sinds) / DAG / Math.max(1, species.waterDays));
+  return Math.max(0, punten - perioden);
 }
+
+export interface PlantCondition {
+  /** Wat er aan de hand is: niets, dorst, of te natte aarde. */
+  kind: 'fresh' | 'thirst' | 'wet';
+  stage: PlantStage;
+  ratio: number;
+  soggy: number;
+  /** Hoe erg het is, zodat we de plant kunnen kiezen die de meeste aandacht wil. */
+  urgency: number;
+}
+
+export function plantCondition(plant: AdoptedPlant, species: PlantSpecies, now = Date.now()): PlantCondition {
+  const nat = soggyNow(plant, species, now);
+  const grens = Math.max(1, species.overwaterAfter);
+  const { ratio } = plantThirst(plant, species.waterDays, now);
+  // Te nat weegt zwaarder dan dorst: de wortels kunnen dan niets opnemen.
+  if (nat >= grens) {
+    const stage: WetStage = nat >= grens * 2 ? 'wet2' : 'wet1';
+    return { kind: 'wet', stage, ratio, soggy: nat, urgency: 10 + nat / grens };
+  }
+  const stage = STAGE_FROM.find(([, vanaf]) => ratio >= vanaf)?.[0];
+  if (!stage) return { kind: 'fresh', stage: 'fresh', ratio, soggy: nat, urgency: 0 };
+  return { kind: 'thirst', stage, ratio, soggy: nat, urgency: ratio };
+}
+
+/**
+ * Water geven. Was de plant toe aan een beurt, dan is alles weer goed. Was hij
+ * dat nog niet, dan blijft het water in de aarde staan en telt dat op.
+ */
+export function waterPlant(state: PlantFamilyState, id: string, now = new Date().toISOString()): PlantFamilyState {
+  const plant = state.plants.find(item => item.id === id);
+  if (!plant) return state;
+  const species = PLANT_SPECIES_BY_ID[plant.speciesId];
+  const moment = Date.parse(now);
+  const nu = Number.isFinite(moment) ? moment : Date.now();
+  const hadDorst = species ? plantThirst(plant, species.waterDays, nu).ratio >= 1 : true;
+  const nat = species && !hadDorst ? soggyNow(plant, species, nu) + 1 : 0;
+  const bijgewerkt: AdoptedPlant = { ...plant, lastWateredAt: now };
+  if (nat > 0) {
+    bijgewerkt.soggy = nat;
+    bijgewerkt.soggyAt = now;
+  } else {
+    delete bijgewerkt.soggy;
+    delete bijgewerkt.soggyAt;
+  }
+  return { ...state, plants: state.plants.map(item => item.id === id ? bijgewerkt : item) };
+}
+
+const WET_LABEL: Record<WetStage, string> = {
+  wet1: 'De aarde is te nat',
+  wet2: 'Veel te nat',
+};
 
 /**
  * Wat er op de kaart staat. Bij dorst is dat het symptoom van die soort, want
  * een varen laat iets heel anders zien dan een cactus.
  */
 export function stageLabel(species: PlantSpecies, stage: PlantStage): string {
-  return stage === 'fresh' ? 'Lekker fris' : species.symptoms[stage].label;
+  if (stage === 'fresh') return 'Lekker fris';
+  if (stage === 'wet1' || stage === 'wet2') return WET_LABEL[stage];
+  return species.symptoms[stage].label;
 }
 
-/** Wat Kiki over dit symptoom zegt. */
+/** Wat Kiki over dit symptoom zegt. Bij natte aarde komt dat uit de EHBO-kaart. */
 export function stageKiki(species: PlantSpecies, stage: PlantStage): string | null {
-  return stage === 'fresh' ? null : species.symptoms[stage].kiki;
+  if (stage === 'fresh') return null;
+  if (stage === 'wet1') return 'De aarde is nog nat van de vorige keer. Wacht even met gieten.';
+  if (stage === 'wet2') {
+    const teNat = plantFirstAid(species.id).find(problem => problem.cause === 'te-veel-water');
+    return teNat ? `${teNat.signs} ${teNat.fix}` : 'Geef een tijd geen water meer.';
+  }
+  return species.symptoms[stage].kiki;
 }
