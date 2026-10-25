@@ -27,7 +27,7 @@ export const checkoutProducts: readonly CheckoutProduct[] = [
   food('butter', 'Pakje boter (250 g)', 3, ['pakje', 'pakjes']), food('cheese', 'Stuk kaas (300 g)', 4),
   food('honey', 'Pot honing (350 g)', 5, ['pot', 'potten']), food('olive-oil', 'Fles olijfolie (500 ml)', 8, ['fles', 'flessen']),
   furniture('rose-pouf', 75), furniture('terrazzo-table', 120),
-  furniture('rose-armchair', 250), furniture('cream-two-seater', 600),
+  furniture('daisy-armchair', 250), furniture('cream-two-seater', 600),
   furniture('cream-corner-sofa', 900),
 ];
 

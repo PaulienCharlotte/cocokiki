@@ -11,6 +11,7 @@ import ShopStreet from '../components/shop/ShopStreet';
 import DecorShop from '../components/shop/DecorShop';
 import { subscribeLocalState } from '../services/localState';
 import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
+import CocoCoin from '../components/platform/CocoCoin';
 
 type ActiveCategory = 'all' | ShopCategory;
 
@@ -156,7 +157,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
         {products.map(item => <article className="shop-product" role="listitem" key={item.id}>
           {item.id === 'strawberry' && <span className="shop-product__badge">{seasonLabel}</span>}
           <img className="shop-product__art" src={item.image} alt="" /><strong>{item.name}</strong><small>{item.packageLabel}</small>
-          <div className="shop-product__buy"><span><i aria-hidden="true">★</i>{session.priceSnapshot.prices[item.id]}</span><button type="button" onClick={() => updateSession(adjustBasket(session, item.id, 1))} aria-label={`Voeg ${item.name} toe`}><Plus /></button></div>
+          <div className="shop-product__buy"><span><CocoCoin size={18} />{session.priceSnapshot.prices[item.id]}</span><button type="button" onClick={() => updateSession(adjustBasket(session, item.id, 1))} aria-label={`Voeg ${item.name} toe`}><Plus /></button></div>
         </article>)}
       </div>
     </section>
@@ -172,7 +173,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
             <b>{packages * session.priceSnapshot.prices[id]}</b><button className="shop-remove" type="button" onClick={() => updateSession(adjustBasket(session, id, -packages))} aria-label={`Verwijder ${item.name}`}><Trash2 /></button>
           </div>; })}
         </div>
-        <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>
+        <footer><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
           {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
           {notice.includes('tekort') && <button className="shop-earn-link" type="button" onClick={() => onNavigate ? onNavigate('/challenges') : window.location.assign('/challenges')}>Oefen en verdien CocoCoins</button>}
         </footer>

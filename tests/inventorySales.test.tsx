@@ -23,15 +23,15 @@ function stored(run: () => void) {
 
 test('decor sales pay seventy percent exactly once and preserve placed items', () => stored(() => {
   const state = createEmptyRoomInventory();
-  state.owned['soft-sofa'] = 2;
-  state.placements = [{ id: 'placed', productId: 'soft-sofa', room: 'living-room', x: 50, y: 70, view: 0, scale: 1 }];
+  state.owned['green-chair'] = 2;
+  state.placements = [{ id: 'placed', productId: 'green-chair', room: 'living-room', x: 50, y: 70, view: 0, scale: 1 }];
   commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify(state) });
-  assert.equal(sellInventoryItem('decor', 'soft-sofa', 'one'), true);
-  assert.equal(loadCurrency(), resalePrice(DECOR_PRODUCTS_BY_ID['soft-sofa'].price));
-  assert.equal(sellInventoryItem('decor', 'soft-sofa', 'one'), false);
-  assert.equal(sellInventoryItem('decor', 'soft-sofa', 'two'), false);
+  assert.equal(sellInventoryItem('decor', 'green-chair', 'one'), true);
+  assert.equal(loadCurrency(), resalePrice(DECOR_PRODUCTS_BY_ID['green-chair'].price));
+  assert.equal(sellInventoryItem('decor', 'green-chair', 'one'), false);
+  assert.equal(sellInventoryItem('decor', 'green-chair', 'two'), false);
   assert.equal(loadRoomInventory().placements.length, 1);
-  assert.equal(loadRoomInventory().owned['soft-sofa'], 1);
+  assert.equal(loadRoomInventory().owned['green-chair'], 1);
   assert.equal(resalePrice(85), 59);
 }));
 

@@ -1,9 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { Armchair, Check, ChevronRight, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
+import { Armchair, Check, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
 import DecorAsset from './DecorAsset';
+import { PLANT_SPECIES_BY_ID } from '../../data/plants/species';
+import { adoptPurchaseOnce, loadPlantFamily, renamePlant, savePlantFamily, type AdoptedPlant } from '../../services/plantFamily';
+import PlantAdoptionDialog from '../plants/PlantAdoptionDialog';
+import PlantFamilyPanel from '../plants/PlantFamilyPanel';
+import PlantFlashcard from '../plants/PlantFlashcard';
+import CocoCoin from '../platform/CocoCoin';
 
 interface DecorShopProps {
   store: DecorStoreId;
@@ -23,6 +29,9 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
   const [success, setSuccess] = useState(false);
   const [notice, setNotice] = useState('');
   const [coins, setCoins] = useState(loadCurrency);
+  const [infoSpecies, setInfoSpecies] = useState<string | null>(null);
+  const [familyOpen, setFamilyOpen] = useState(false);
+  const [adopted, setAdopted] = useState<AdoptedPlant[]>([]);
   const definition = DECOR_STORES[store];
   const products = useMemo(() => DECOR_PRODUCTS.filter(product => product.store === store && (category === 'all' || product.category === category)), [category, store]);
   const count = Object.values(basket).reduce<number>((total, amount) => total + Number(amount), 0);
@@ -54,9 +63,21 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
       return;
     }
     setCoins(spend.balance);
+    // Planten komen in de plantenfamilie, zodat een kind ze een naam kan geven.
+    const family = loadPlantFamily();
+    const grown = adoptPurchaseOnce(family, transactionId, basket);
     setBasket({});
     setBasketOpen(false);
+    if (grown !== family && savePlantFamily(grown)) {
+      setAdopted(grown.plants.slice(family.plants.length));
+      return;
+    }
     setSuccess(true);
+  };
+
+  const nameAdopted = (id: string, nickname: string) => {
+    const next = renamePlant(loadPlantFamily(), id, nickname);
+    savePlantFamily(next);
   };
 
   return <main className={`shop-room decor-shop decor-shop--${store}`}>
@@ -66,16 +87,20 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
       <header className="shop-catalog__header">
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
         <div><small>{definition.eyebrow}</small><h1 id="decor-shop-title">{definition.label}</h1></div>
-        <div className="shop-catalog__actions"><button className="shop-basket-button" type="button" onClick={() => setBasketOpen(true)} aria-label={`Open mandje met ${count} producten`}><ShoppingBasket /><span>{count}</span><strong>{total}</strong></button></div>
+        <div className="shop-catalog__actions">
+          {store === 'plants' && <button className="shop-icon-button" type="button" onClick={() => setFamilyOpen(true)} aria-label="Mijn Plantenfamilie openen" title="Mijn Plantenfamilie"><Sprout /></button>}
+          <button className="shop-basket-button" type="button" onClick={() => setBasketOpen(true)} aria-label={`Open mandje met ${count} producten`}><ShoppingBasket /><span>{count}</span><strong>{total}</strong></button>
+        </div>
       </header>
       <nav className="shop-categories" aria-label={`${definition.label} categorieën`}>
         {DECOR_CATEGORIES[store].map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
       </nav>
       <div className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
         {products.map(product => <article className="shop-product decor-product" role="listitem" key={product.id}>
+          {/* Het plaatje spreekt voor zich; de naam blijft in de alt-tekst staan. */}
           <DecorAsset product={product} className="shop-product__art" />
-          <strong>{product.name}</strong><small>{store === 'furniture' ? 'Meubel' : 'Plant'}</small>
-          <div className="shop-product__buy"><span><i aria-hidden="true">★</i>{product.price}</span><button type="button" onClick={() => adjust(product.id, 1)} aria-label={`Voeg ${product.name} toe`}><Plus /></button></div>
+          {PLANT_SPECIES_BY_ID[product.id] && <button className="decor-product__info" type="button" onClick={() => setInfoSpecies(product.id)} aria-label={`Meer weten over ${product.name}`}><Info /></button>}
+          <div className="shop-product__buy"><span><CocoCoin size={18} />{product.price}</span><button type="button" onClick={() => adjust(product.id, 1)} aria-label={`Voeg ${product.name} toe`}><Plus /></button></div>
         </article>)}
       </div>
     </section>
@@ -91,11 +116,15 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
             <b>{Number(amount) * product.price}</b><button className="shop-remove" type="button" onClick={() => adjust(id, -Number(amount))} aria-label={`Verwijder ${product.name}`}><Trash2 /></button>
           </div>; })}
         </div>
-        <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>
+        <footer><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
           {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
         </footer>
       </aside>
     </div>}
+
+    {infoSpecies && <PlantFlashcard speciesId={infoSpecies} onClose={() => setInfoSpecies(null)} />}
+    {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
+    {adopted.length > 0 && <PlantAdoptionDialog plants={adopted} onName={nameAdopted} onDone={() => { setAdopted([]); setSuccess(true); }} />}
 
     {success && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="decor-success-title"><div><span aria-hidden="true"><Check /></span><h2 id="decor-success-title">Toegevoegd aan je voorraad</h2><p>Je nieuwe {store === 'furniture' ? 'meubels' : 'planten'} vind je via de voorraadknop in iedere kamer.</p><button type="button" onClick={() => setSuccess(false)}>Verder winkelen</button></div></div>}
   </main>;

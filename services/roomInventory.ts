@@ -22,6 +22,8 @@ export interface RoomPlacement {
   view: number;
   /** Vergroting ten opzichte van de standaardmaat. */
   scale: number;
+  /** Bij een plant: welke geadopteerde plant hier staat, zodat zijn naam meereist. */
+  plantId?: string;
 }
 
 export const MIN_PLACEMENT_SCALE = .6;
@@ -55,6 +57,7 @@ export function placeRoomItem(state: RoomInventoryState, item: RoomPlacement): R
     y: Math.max(12, Math.min(95, item.y)),
     view: clampView(item.view, product.views),
     scale: clampScale(item.scale),
+    ...(typeof item.plantId === 'string' && item.plantId ? { plantId: item.plantId } : {}),
   }] };
 }
 

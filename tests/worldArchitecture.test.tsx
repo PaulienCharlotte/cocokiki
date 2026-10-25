@@ -137,7 +137,7 @@ test('furniture and plant shops expose filters, scrollable products and local as
   const plants = renderToStaticMarkup(<DecorShop store="plants" onBack={() => undefined} />);
   assert.match(furniture, /Meubelwinkel/);
   assert.match(furniture, /Meubels en planten|Meubel/);
-  assert.match(furniture, /assets\/library\/shop\/decor\/products\/single-bed-v4\.png/);
+  assert.match(furniture, /assets\/library\/shop\/decor\/products\/double-bed-v4\.png/);
   assert.match(plants, /Plantenwinkel/);
   assert.match(plants, /Grote planten/);
 });
@@ -153,21 +153,21 @@ test('decor products have individual local PNG assets with transparency', () => 
 
 test('room inventory applies decor purchases only once', () => {
   const initial = createEmptyRoomInventory();
-  const bought = addRoomPurchasesOnce(initial, 'decor:test', { 'soft-sofa': 1, monstera: 2, unknown: 4 });
-  assert.equal(bought.owned['soft-sofa'], 1);
+  const bought = addRoomPurchasesOnce(initial, 'decor:test', { 'green-chair': 1, monstera: 2, unknown: 4 });
+  assert.equal(bought.owned['green-chair'], 1);
   assert.equal(bought.owned.monstera, undefined);
-  assert.equal(addRoomPurchasesOnce(bought, 'decor:test', { 'soft-sofa': 1 }), bought);
+  assert.equal(addRoomPurchasesOnce(bought, 'decor:test', { 'green-chair': 1 }), bought);
 });
 
 test('room decoration conserves purchases across rooms, moving and returning', () => {
-  const bought = addRoomPurchasesOnce(createEmptyRoomInventory(), 'placement:test', { 'soft-sofa': 1 });
-  const item = { id: 'sofa:1', productId: 'soft-sofa', room: 'living-room' as const, x: 50, y: 70, view: 0, scale: 1 };
+  const bought = addRoomPurchasesOnce(createEmptyRoomInventory(), 'placement:test', { 'green-chair': 1 });
+  const item = { id: 'chair:1', productId: 'green-chair', room: 'living-room' as const, x: 50, y: 70, view: 0, scale: 1 };
   const placed = placeRoomItem(bought, item);
   assert.equal(availableRoomQuantity(placed, item.productId), 0);
-  assert.equal(placeRoomItem(placed, { ...item, id: 'sofa:2', room: 'bedroom' }), placed);
+  assert.equal(placeRoomItem(placed, { ...item, id: 'chair:2', room: 'bedroom' }), placed);
   const moved = moveRoomItem(placed, item.id, 60, 80);
   assert.deepEqual(moved.placements[0], { ...item, x: 60, y: 80 });
-  assert.equal(moved.owned['soft-sofa'], 1);
+  assert.equal(moved.owned['green-chair'], 1);
   assert.deepEqual(migrateRoomInventory(JSON.parse(JSON.stringify(moved))), moved);
   const returned = returnRoomItem(moved, item.id);
   assert.equal(availableRoomQuantity(returned, item.productId), 1);
@@ -181,7 +181,7 @@ test('turnable furniture keeps its view and size within bounds and survives a re
   assert.equal(decorViewImage(sofa, 0), '/assets/library/shop/decor/products/cream-corner-sofa/view-1.png');
   assert.equal(decorViewImage(sofa, 8), decorViewImage(sofa, 0));
   assert.equal(decorViewImage(sofa, -1), decorViewImage(sofa, 7));
-  assert.equal(decorViewImage(DECOR_PRODUCTS_BY_ID['soft-sofa'], 3), DECOR_PRODUCTS_BY_ID['soft-sofa'].image);
+  assert.equal(decorViewImage(DECOR_PRODUCTS_BY_ID['green-chair'], 3), DECOR_PRODUCTS_BY_ID['green-chair'].image);
 
   const owned = addRoomPurchasesOnce(createEmptyRoomInventory(), 'turn:test', { 'cream-corner-sofa': 1 });
   const placed = placeRoomItem(owned, { id: 'turn:1', productId: 'cream-corner-sofa', room: 'living-room', x: 50, y: 70, view: 0, scale: 1 });
@@ -199,21 +199,21 @@ test('turnable furniture keeps its view and size within bounds and survives a re
   assert.deepEqual(migrateRoomInventory(JSON.parse(JSON.stringify(turned))), turned);
 
   // Meubels zonder extra aanzichten blijven staan waar ze staan.
-  const plain = placeRoomItem(addRoomPurchasesOnce(createEmptyRoomInventory(), 'plain:test', { 'soft-sofa': 1 }), { id: 'plain:1', productId: 'soft-sofa', room: 'bedroom', x: 40, y: 60, view: 0, scale: 1 });
+  const plain = placeRoomItem(addRoomPurchasesOnce(createEmptyRoomInventory(), 'plain:test', { 'green-chair': 1 }), { id: 'plain:1', productId: 'green-chair', room: 'bedroom', x: 40, y: 60, view: 0, scale: 1 });
   assert.equal(turnRoomItem(plain, 'plain:1', 1), plain);
 });
 
 test('room inventory migrates existing purchases and rejects invalid or excess placements', () => {
-  const legacy = { version: 1, owned: { 'soft-sofa': 1, unknown: 4 }, appliedTransactions: ['old'] };
+  const legacy = { version: 1, owned: { 'green-chair': 1, unknown: 4 }, appliedTransactions: ['old'] };
   const migrated = migrateRoomInventory(legacy);
   assert.deepEqual(migrated.placements, []);
-  assert.equal(availableRoomQuantity(migrated, 'soft-sofa'), 1);
+  assert.equal(availableRoomQuantity(migrated, 'green-chair'), 1);
   assert.deepEqual(migrated.appliedTransactions, ['old']);
-  const item = { id: 'one', productId: 'soft-sofa', room: 'kitchen', x: 50, y: 70 };
+  const item = { id: 'one', productId: 'green-chair', room: 'kitchen', x: 50, y: 70 };
   const recovered = migrateRoomInventory({ ...legacy, placements: [null, { ...item, room: 'missing' }, { ...item, x: NaN }, item, item, { ...item, id: 'extra' }] });
   assert.equal(recovered.placements.length, 1);
-  assert.equal(availableRoomQuantity(recovered, 'soft-sofa'), 0);
-  assert.equal(addRoomPurchasesOnce(recovered, 'old', { 'soft-sofa': 1 }), recovered);
+  assert.equal(availableRoomQuantity(recovered, 'green-chair'), 0);
+  assert.equal(addRoomPurchasesOnce(recovered, 'old', { 'green-chair': 1 }), recovered);
 });
 
 test('shop catalog has configurable package prices and enables purchases', () => {
