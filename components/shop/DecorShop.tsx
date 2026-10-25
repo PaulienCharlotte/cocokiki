@@ -4,6 +4,7 @@ import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, t
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
 import DecorAsset from './DecorAsset';
+import CocoCoin from '../platform/CocoCoin';
 
 interface DecorShopProps {
   store: DecorStoreId;
@@ -73,9 +74,9 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
       </nav>
       <div className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
         {products.map(product => <article className="shop-product decor-product" role="listitem" key={product.id}>
+          {/* Het plaatje spreekt voor zich; de naam blijft in de alt-tekst staan. */}
           <DecorAsset product={product} className="shop-product__art" />
-          <strong>{product.name}</strong><small>{store === 'furniture' ? 'Meubel' : 'Plant'}</small>
-          <div className="shop-product__buy"><span><i aria-hidden="true">★</i>{product.price}</span><button type="button" onClick={() => adjust(product.id, 1)} aria-label={`Voeg ${product.name} toe`}><Plus /></button></div>
+          <div className="shop-product__buy"><span><CocoCoin size={18} />{product.price}</span><button type="button" onClick={() => adjust(product.id, 1)} aria-label={`Voeg ${product.name} toe`}><Plus /></button></div>
         </article>)}
       </div>
     </section>
@@ -91,7 +92,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
             <b>{Number(amount) * product.price}</b><button className="shop-remove" type="button" onClick={() => adjust(id, -Number(amount))} aria-label={`Verwijder ${product.name}`}><Trash2 /></button>
           </div>; })}
         </div>
-        <footer><div><span>Totaal</span><strong>★ {total}</strong></div><div><span>Beschikbaar</span><b>★ {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}>★ {coins - total}</b></div>
+        <footer><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
           {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
         </footer>
       </aside>

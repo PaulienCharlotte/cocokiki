@@ -79,6 +79,17 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     return () => { unsubscribe(); window.removeEventListener(ROOM_INVENTORY_CHANGE_EVENT, update); window.removeEventListener('storage', sync); };
   }, []);
 
+  // Ergens anders in de kamer tikken laat het gereedschap weer verdwijnen.
+  useEffect(() => {
+    const dismiss = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.room-placed-object') || target?.closest('.room-inventory-drawer')) return;
+      setSelected(null);
+    };
+    window.addEventListener('pointerdown', dismiss);
+    return () => window.removeEventListener('pointerdown', dismiss);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     closeRef.current?.focus();

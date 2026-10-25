@@ -1206,3 +1206,29 @@
   .room-placed-object__tools button { width: 40px; height: 40px; }
   .room-placed-object__tools svg { width: 18px; }
 }
+
+/* Winkelkaartje zonder tekst: het plaatje en de prijs zijn genoeg. */
+/* Hoog genoeg voor het plaatje én de koopregel; anders knipt de kaart ze af. */
+.decor-product { grid-template-rows: 1fr auto; min-height: 184px; row-gap: 4px; }
+.decor-product .decor-asset.shop-product__art { height: 120px; }
+
+/* Verkopen is één icoon met de opbrengst ernaast. */
+.inventory-sell { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.inventory-sell__action { min-height: var(--touch-target); display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-weight: var(--font-weight-bold); }
+.inventory-sell__action:hover { border-color: var(--color-primary); }
+.inventory-sell__action svg { width: 19px; color: var(--color-reward-strong); }
+.inventory-sell__amount { font-size: .82rem; font-variant-numeric: tabular-nums; }
+.inventory-sell.is-confirming .inventory-sell__action { border-color: var(--color-primary); background: var(--color-success-soft); color: var(--color-primary); }
+.inventory-sell.is-confirming .inventory-sell__action svg { color: var(--color-primary); }
+.inventory-sell__cancel { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-text-muted); }
+.inventory-sell__cancel svg { width: 18px; }
+.inventory-sell__error { flex-basis: 100%; margin: 4px 0 0; color: var(--color-error); font-size: var(--font-size-xs); text-align: center; }
+.room-inventory-grid .inventory-sell { justify-self: center; margin-top: 4px; }
+
+/* Scrollen laat geen half meubel meer achter: rijen klikken vast en de rand
+   van het scrollvak vervaagt in plaats van af te snijden. */
+/* Het scrollvak stopt altijd op een hele rij, zodat er nooit een halve plant
+   of een half meubel in beeld blijft staan. */
+.shop-products { scroll-snap-type: y mandatory; scroll-padding-block: 0; padding-block: 0; }
+.shop-product { scroll-snap-align: start; }
+.shop-product__buy span { display: inline-flex; align-items: center; gap: 5px; }
