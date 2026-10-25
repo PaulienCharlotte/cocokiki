@@ -187,3 +187,13 @@ test('de leerkaart heeft een tabblad met eerste hulp', () => {
   assert.match(kaart, /Wist je dat/);
   assert.doesNotMatch(kaart, /zachte, glimmende plek/);
 });
+
+test('de naam in de winkel en de naam op de kaart gaan over dezelfde plant', () => {
+  for (const species of PLANT_SPECIES) {
+    const winkel = DECOR_PRODUCTS_BY_ID[species.id].name.toLowerCase();
+    const kaart = species.commonName.toLowerCase();
+    // De een mag uitgebreider zijn ("Monstera in mand", "Vlinderorchidee"),
+    // maar een kind moet er dezelfde plant in herkennen.
+    assert.ok(winkel.includes(kaart) || kaart.includes(winkel), `${species.id}: winkel zegt "${winkel}", kaart zegt "${kaart}"`);
+  }
+});
