@@ -87,19 +87,14 @@ const decor = (
 
 // Source-sheet crops are retained for reference; the shop renders isolated PNGs.
 const EXISTING_DECOR_PRODUCTS: DecorProduct[] = [
-  decor('single-bed', 'Eenpersoonsbed', 'furniture', 'sleeping', 85, { x: 0, y: 0, width: 13, height: 25 }),
   decor('double-bed', 'Tweepersoonsbed', 'furniture', 'sleeping', 120, { x: 13, y: 0, width: 17.5, height: 27 }),
-  decor('bunk-bed', 'Hoogslaper', 'furniture', 'sleeping', 135, { x: 31, y: 0, width: 17, height: 28 }),
-  decor('soft-sofa', 'Zachte bank', 'furniture', 'seating', 95, { x: 48.5, y: 2, width: 17.5, height: 23 }),
   decor('green-chair', 'Groene fauteuil', 'furniture', 'seating', 55, { x: 66.5, y: 2, width: 12.5, height: 23 }),
   decor('rattan-chair', 'Rotan stoel', 'furniture', 'seating', 60, { x: 78.5, y: 1, width: 11.5, height: 24 }),
   decor('hanging-chair', 'Hangstoel', 'furniture', 'seating', 75, { x: 89.5, y: 0, width: 10.5, height: 27 }),
   decor('cream-wardrobe', 'Crème kledingkast', 'furniture', 'storage', 90, { x: 0, y: 24, width: 12, height: 23 }),
   decor('green-wardrobe', 'Groene kledingkast', 'furniture', 'storage', 90, { x: 11, y: 25, width: 10, height: 22 }),
   decor('drawer-chest', 'Ladekast', 'furniture', 'storage', 60, { x: 20, y: 28, width: 13, height: 17 }),
-  decor('media-cabinet', 'Lage kast', 'furniture', 'storage', 75, { x: 39, y: 29, width: 23, height: 14 }),
   decor('round-table', 'Ronde tafel', 'furniture', 'tables', 70, { x: 61, y: 25, width: 17, height: 18 }),
-  decor('coffee-table', 'Salontafel', 'furniture', 'tables', 55, { x: 80, y: 25, width: 20, height: 16 }),
   decor('flower-rug', 'Bloemenkleed', 'furniture', 'rugs', 35, { x: 0, y: 45, width: 16, height: 14 }),
   decor('jute-rug', 'Juten kleed', 'furniture', 'rugs', 35, { x: 16, y: 43, width: 18, height: 16 }),
   decor('leaf-rug', 'Bladkleed', 'furniture', 'rugs', 45, { x: 46, y: 43, width: 17, height: 16 }),
@@ -145,6 +140,11 @@ const turnable = (id: string, name: string, category: DecorCategory, price: numb
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  turnable('plant-shelf', 'Plantenplank', 'storage', 55, 20),
+  turnable('cloud-shelf', 'Wolkenplank', 'storage', 45, 20),
+  furniture('pumpkin-pouf', 'Pompoenpoef', 'seating', 35),
+  turnable('daisy-sofa', 'Bloemenbank', 'seating', 95, 25),
+  turnable('daisy-armchair', 'Bloemfauteuil', 'seating', 60, 15),
   turnable('cream-corner-sofa', 'Crème hoekbank', 'seating', 115, 30),
   turnable('cream-two-seater', 'Crème tweezitsbank', 'seating', 90, 25),
   turnable('swivel-armchair', 'Draaifauteuil', 'seating', 65, 15),
@@ -154,11 +154,8 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
   turnable('ribbed-tv-cabinet', 'Tv-dressoir', 'storage', 70, 22),
   turnable('low-coffee-table', 'Lage salontafel', 'tables', 50, 19),
 
-  furniture('corner-sofa', 'Zachte hoekbank', 'seating', 110),
   furniture('dining-set', 'Ronde eethoek', 'tables', 95),
-  furniture('ribbed-sideboard', 'Geribbeld dressoir', 'storage', 75),
   furniture('arched-cabinet', 'Boogkast', 'storage', 85),
-  furniture('rose-armchair', 'Roze fauteuil', 'seating', 55),
   furniture('rose-pouf', 'Roze poef', 'seating', 30),
   furniture('terrazzo-table', 'Terrazzo bijzettafel', 'tables', 45),
   furniture('arched-floor-lamp', 'Booglamp', 'lighting', 35),
