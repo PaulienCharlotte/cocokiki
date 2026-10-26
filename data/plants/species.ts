@@ -52,7 +52,7 @@ export interface PlantSpecies {
   /**
    * Welk tekenwerk er per oorzaak klaarstaat, in
    * /assets/library/plants/<id>/. Een getal zegt hoeveel stappen er zijn:
-   * `dry: 3` betekent dry-1.png tot dry-3.png. Is er maar één plaatje, dan
+   * `dry: 3` betekent dry-1.webp tot dry-3.webp. Is er maar één plaatje, dan
    * dient dat voor elk stadium. Zonder tekenwerk blijft het winkelplaatje
    * staan; de tekst en Kiki kloppen dan nog steeds.
    */
@@ -339,5 +339,5 @@ export function plantStageImage(species: PlantSpecies, stage: PlantStage): strin
   const beschikbaar = species.art[soort] ?? 0;
   if (beschikbaar < 1) return null;
   // Zijn er minder plaatjes dan stadia, dan blijft het laatste staan.
-  return `/assets/library/plants/${species.id}/${soort}-${Math.min(stap, beschikbaar)}.png`;
+  return `/assets/library/plants/${species.id}/${soort}-${Math.min(stap, beschikbaar)}.webp`;
 }

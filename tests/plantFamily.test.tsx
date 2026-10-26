@@ -134,16 +134,16 @@ test('elke soort heeft eigen symptomen, en het plaatje volgt het tekenwerk dat e
   const monstera = PLANT_SPECIES_BY_ID['monstera-basket'];
   assert.equal(monstera.art?.dry, 3);
   assert.equal(plantStageImage(monstera, 'fresh'), null);
-  assert.equal(plantStageImage(monstera, 'thirst1'), '/assets/library/plants/monstera-basket/dry-1.png');
-  assert.equal(plantStageImage(monstera, 'thirst3'), '/assets/library/plants/monstera-basket/dry-3.png');
+  assert.equal(plantStageImage(monstera, 'thirst1'), '/assets/library/plants/monstera-basket/dry-1.webp');
+  assert.equal(plantStageImage(monstera, 'thirst3'), '/assets/library/plants/monstera-basket/dry-3.webp');
   // De monstera heeft nog geen plaatje voor natte aarde.
   assert.equal(plantStageImage(monstera, 'wet1'), null);
 
   // Met één plaatje per oorzaak blijft dat ene plaatje bij elk stadium staan.
   const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
-  assert.equal(plantStageImage(varen, 'thirst1'), '/assets/library/plants/hanging-fern/dry-1.png');
-  assert.equal(plantStageImage(varen, 'thirst3'), '/assets/library/plants/hanging-fern/dry-1.png');
-  assert.equal(plantStageImage(varen, 'wet2'), '/assets/library/plants/hanging-fern/wet-1.png');
+  assert.equal(plantStageImage(varen, 'thirst1'), '/assets/library/plants/hanging-fern/dry-1.webp');
+  assert.equal(plantStageImage(varen, 'thirst3'), '/assets/library/plants/hanging-fern/dry-1.webp');
+  assert.equal(plantStageImage(varen, 'wet2'), '/assets/library/plants/hanging-fern/wet-1.webp');
   // Een plant zonder tekenwerk houdt het winkelplaatje, maar de tekst klopt wel.
   const hogeCactus = PLANT_SPECIES_BY_ID['tall-cactus'];
   assert.equal(hogeCactus.art, undefined);
@@ -278,10 +278,10 @@ test('elk aangekondigd plantenplaatje staat er ook echt', () => {
     if (!art) continue;
     const bestanden: string[] = [];
     for (const soort of ['dry', 'wet'] as const) {
-      for (let stap = 1; stap <= (art[soort] ?? 0); stap += 1) bestanden.push(`${soort}-${stap}.png`);
+      for (let stap = 1; stap <= (art[soort] ?? 0); stap += 1) bestanden.push(`${soort}-${stap}.webp`);
     }
-    if (art.sun) bestanden.push('sun-1.png');
-    if (art.dark) bestanden.push('dark-1.png');
+    if (art.sun) bestanden.push('sun-1.webp');
+    if (art.dark) bestanden.push('dark-1.webp');
     for (const bestand of bestanden) {
       const pad = `public/assets/library/plants/${species.id}/${bestand}`;
       assert.ok(existsSync(pad), `${species.id} mist ${bestand}`);

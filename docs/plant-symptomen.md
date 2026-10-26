@@ -8,7 +8,8 @@ dan een cactus. Juist dat verschil is wat kinderen hier leren.
 
 - **Zelfde pot, zelfde hoek, zelfde formaat** als het winkelplaatje. Alleen de
   plant verandert, de pot nooit.
-- Doorzichtige achtergrond (PNG).
+- Doorzichtige achtergrond. Lever gerust PNG aan; ik zet ze om naar WebP,
+  dat is een vijfde van de bestandsgrootte zonder zichtbaar verschil.
 - Zelfde tekenstijl en belichting als de winkel.
 - De plant blijft op dezelfde plek staan in het kader, zodat hij niet
   verspringt als hij van toestand wisselt.
@@ -18,10 +19,10 @@ dan een cactus. Juist dat verschil is wat kinderen hier leren.
 Per plant een mapje, met een bestand per oorzaak:
 
 ```
-public/assets/library/plants/<plant-id>/dry-1.png     te weinig water
-public/assets/library/plants/<plant-id>/wet-1.png     te veel water
-public/assets/library/plants/<plant-id>/sun-1.png     verbrand door de zon
-public/assets/library/plants/<plant-id>/dark-1.png    te weinig licht
+public/assets/library/plants/<plant-id>/dry-1.webp     te weinig water
+public/assets/library/plants/<plant-id>/wet-1.webp     te veel water
+public/assets/library/plants/<plant-id>/sun-1.webp     verbrand door de zon
+public/assets/library/plants/<plant-id>/dark-1.webp    te weinig licht
 ```
 
 Eén plaatje per oorzaak is genoeg. Wil je het verloop laten zien, dan mag je
@@ -219,8 +220,8 @@ veel, een varen verdraagt er vijf. Niets doen laat de aarde vanzelf opdrogen.
 Er zijn twee natte toestanden, met deze bestandsnamen in hetzelfde mapje:
 
 ```
-wet-1.png   natte donkere aarde, de plant zelf nog gewoon goed
-wet-2.png   het symptoom uit de tabel hierboven
+wet-1.webp   natte donkere aarde, de plant zelf nog gewoon goed
+wet-2.webp   het symptoom uit de tabel hierboven
 ```
 
 Zonder die plaatjes blijft het winkelplaatje staan; de tekst en de waarschuwing
