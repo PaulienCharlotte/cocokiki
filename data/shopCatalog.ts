@@ -43,7 +43,7 @@ const product = (id: string, name: string, category: ShopCategory): ShopProduct 
   id,
   name,
   category,
-  image: `/games/shop/products/${id}.png?v=2`,
+  image: `/games/shop/products/${id}.webp?v=2`,
   unitAmount,
   unit,
   packageLabel,

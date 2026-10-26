@@ -10,7 +10,7 @@ export default function CookingTipCard({ tip, onDismiss }: { tip: CookingTip; on
     return () => { dialog.current?.close(); previous?.focus(); };
   }, []);
   const content = <dialog ref={dialog} className="cooking-tip" aria-label="Tip van Coco" onCancel={event => { event.preventDefault(); onDismiss(); }}>
-    <img src="/assets/library/cooking/coco-chef-tip.png" alt="Coco" />
+    <img src="/assets/library/cooking/coco-chef-tip.webp" alt="Coco" />
     <div><small>Coco’s kooktip</small><h2>{tip.title}</h2><p>{tip.text}</p><button className="cooking-tip__continue" type="button" onClick={onDismiss}>Verder koken</button></div>
     <button type="button" title="Tip sluiten" aria-label="Tip sluiten" onClick={onDismiss}><X /></button>
   </dialog>;

@@ -45,9 +45,9 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/jungle.png');
-    this.load.spritesheet('lua-new', '/assets/baby-lua/characters/lua-poses.png', { frameWidth: 384, frameHeight: 512 });
-    this.load.spritesheet('lua-rocks', '/games/red-baby-lua/rocks.png', { frameWidth: 512, frameHeight: 512 });
+    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/jungle.webp');
+    this.load.spritesheet('lua-new', '/assets/baby-lua/characters/lua-poses.webp', { frameWidth: 384, frameHeight: 512 });
+    this.load.spritesheet('lua-rocks', '/games/red-baby-lua/rocks.webp', { frameWidth: 512, frameHeight: 512 });
   }
 
   create() {

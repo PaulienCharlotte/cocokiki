@@ -25,7 +25,7 @@ export default function DestinationScreen({ destination, onNavigate }: Destinati
     {isTravel ? <section className="travel-entry" aria-labelledby="destination-title">
       <h1 id="destination-title" className="destination-page__sr-title">Topo</h1>
       <button className="travel-entry__cta" type="button" aria-label="Open Topo" onClick={() => onNavigate('/games/topo')}>
-        <img src="/games/destinations/topo-entry.png" alt="" />
+        <img src="/games/destinations/topo-entry.webp" alt="" />
       </button>
     </section> : <section className="destination-page__layout" aria-labelledby="destination-title">
       {!immersive && <div className="destination-page__visual" aria-hidden="true">

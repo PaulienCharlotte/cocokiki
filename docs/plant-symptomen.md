@@ -8,26 +8,36 @@ dan een cactus. Juist dat verschil is wat kinderen hier leren.
 
 - **Zelfde pot, zelfde hoek, zelfde formaat** als het winkelplaatje. Alleen de
   plant verandert, de pot nooit.
-- Doorzichtige achtergrond (PNG).
+- Doorzichtige achtergrond. Lever gerust PNG aan; ik zet ze om naar WebP,
+  dat is een vijfde van de bestandsgrootte zonder zichtbaar verschil.
 - Zelfde tekenstijl en belichting als de winkel.
 - De plant blijft op dezelfde plek staan in het kader, zodat hij niet
   verspringt als hij van toestand wisselt.
 
 ## Bestandsnamen
 
-Per plant een mapje met drie bestanden:
+Per plant een mapje, met een bestand per oorzaak:
 
 ```
-public/assets/library/plants/<plant-id>/thirst-1.png
-public/assets/library/plants/<plant-id>/thirst-2.png
-public/assets/library/plants/<plant-id>/thirst-3.png
+public/assets/library/plants/<plant-id>/dry-1.webp     te weinig water
+public/assets/library/plants/<plant-id>/wet-1.webp     te veel water
+public/assets/library/plants/<plant-id>/sun-1.webp     verbrand door de zon
+public/assets/library/plants/<plant-id>/dark-1.webp    te weinig licht
 ```
+
+Eén plaatje per oorzaak is genoeg. Wil je het verloop laten zien, dan mag je
+voor water meerdere stappen maken: `dry-1` tot `dry-3` en `wet-1` tot `wet-2`,
+van licht naar erg. De monstera heeft die drie dorststappen.
 
 De `<plant-id>` staat hieronder bij elke plant.
 
+Zodra de bestanden er staan, hoeft er in `data/plants/species.ts` maar één
+regel bij die plant bij, bijvoorbeeld `art: { dry: 1, wet: 1, sun: true }`.
+De teksten staan er al in.
+
 ---
 
-## 1. Monstera in mand — `monstera-basket` ✅ AL KLAAR
+## 1. Monstera in mand — `monstera-basket` ✅ drie dorststappen klaar
 
 Water om de 7 dagen.
 
@@ -62,7 +72,7 @@ Extra detail: in toestand 3 een witte kalkrand op de kleipot.
 
 ---
 
-## 4. Vrouwentong — `snake-plant`
+## 4. Vrouwentong — `snake-plant` ✅ dorst, nat en zon klaar
 
 Water om de 21 dagen. Dit is de taaiste plant van de hele winkel.
 
@@ -77,7 +87,7 @@ Water om de 21 dagen. Dit is de taaiste plant van de hele winkel.
 
 ---
 
-## 5. Hangvaren — `hanging-fern`
+## 5. Hangvaren — `hanging-fern` ✅ dorst, nat en zon klaar
 
 Water om de 3 dagen. De snelste van allemaal.
 
@@ -91,7 +101,7 @@ Water om de 3 dagen. De snelste van allemaal.
 
 ---
 
-## 6. Hangende klimop — `hanging-vine`
+## 6. Hangende klimop — `hanging-vine` ✅ dorst, nat en te weinig licht klaar
 
 Water om de 7 dagen.
 
@@ -103,7 +113,7 @@ Water om de 7 dagen.
 
 ---
 
-## 7. Lepelplant — `white-flower`
+## 7. Lepelplant — `white-flower` ✅ dorst, nat en zon klaar
 
 Water om de 5 dagen. Dit is de dramaqueen.
 
@@ -119,7 +129,7 @@ Water om de 5 dagen. Dit is de dramaqueen.
 
 ---
 
-## 8. Flamingoplant — `pink-flower`
+## 8. Flamingoplant — `pink-flower` ✅ dorst, nat en zon klaar
 
 Water om de 6 dagen.
 
@@ -131,7 +141,7 @@ Water om de 6 dagen.
 
 ---
 
-## 9. Sinaasappelboompje — `orange-tree`
+## 9. Sinaasappelboompje — `orange-tree` ✅ dorst, nat en zon klaar
 
 Water om de 5 dagen.
 
@@ -145,7 +155,7 @@ Water om de 5 dagen.
 
 ---
 
-## 10. Vlinderorchidee — `orchid`
+## 10. Vlinderorchidee — `orchid` ✅ dorst, nat en zon klaar
 
 Water om de 7 dagen.
 
@@ -160,7 +170,7 @@ Water om de 7 dagen.
 
 ---
 
-## 11. Vetplantje — `succulent`
+## 11. Vetplantje — `succulent` ✅ dorst, nat en te weinig licht klaar
 
 Water om de 21 dagen.
 
@@ -172,7 +182,7 @@ Water om de 21 dagen.
 
 ---
 
-## 12. Kleine cactus — `small-cactus`
+## 12. Kleine cactus — `small-cactus` ✅ dorst, nat en te weinig licht klaar
 
 Water om de 30 dagen. Terracotta pot.
 
@@ -203,7 +213,19 @@ drie plantjes waar dat het meest oplevert:
 | Vetplantje | `succulent` | Doorschijnende, geelbruine slappe blaadjes die eraf vallen |
 | Vrouwentong | `snake-plant` | Gele slappe voet, het blad knikt om bij de aarde |
 
-Bestandsnaam hiervoor: `wet-1.png` in hetzelfde mapje.
+Dit zit inmiddels **in het spel**: giet je een plant terwijl hij nog geen dorst
+heeft, dan blijft het water in de aarde staan. Bij een cactus is één keer al te
+veel, een varen verdraagt er vijf. Niets doen laat de aarde vanzelf opdrogen.
+
+Er zijn twee natte toestanden, met deze bestandsnamen in hetzelfde mapje:
+
+```
+wet-1.webp   natte donkere aarde, de plant zelf nog gewoon goed
+wet-2.webp   het symptoom uit de tabel hierboven
+```
+
+Zonder die plaatjes blijft het winkelplaatje staan; de tekst en de waarschuwing
+van Kiki werken wel al.
 
 ---
 
@@ -219,3 +241,41 @@ Deze vijf verschillen het duidelijkst van elkaar en leren samen het meeste:
 
 Samen met de monstera die er al is, dekt dat zes heel verschillende manieren
 waarop een plant laat zien dat hij dorst heeft.
+
+
+---
+
+# Stand van zaken
+
+| Plant | dry | wet | sun | dark |
+|---|---|---|---|---|
+| Monstera | ✅ 3 stappen | — | — | — |
+| Vrouwentong | ✅ | ✅ | ✅ | — |
+| Hangvaren | ✅ | ✅ | ✅ | — |
+| Hangende klimop | ✅ | ✅ | — | ✅ |
+| Lepelplant | ✅ | ✅ | ✅ | — |
+| Flamingoplant | ✅ | ✅ | ✅ | — |
+| Sinaasappelboompje | ✅ | ✅ | ✅ | — |
+| Vlinderorchidee | ✅ | ✅ | ✅ | — |
+| Vetplantje | ✅ | ✅ | — | ✅ |
+| Kleine cactus | ✅ | ✅ | — | ✅ |
+| Palm in witte pot | — | — | — | — |
+| Palm in kleipot | — | — | — | — |
+| Hoge cactus | — | — | — | — |
+
+**Let op:** `sun` en `dark` worden nog nergens getoond. Daarvoor moet eerst de
+plek in de kamer gaan meetellen: op het terras veel zon, in de slaapkamer juist
+weinig licht. De plaatjes staan klaar voor zodra dat er is.
+
+## Zon of juist te weinig licht?
+
+Twee dingen die op elkaar lijken maar tegenovergesteld zijn:
+
+- **Verbranding door zon** geeft lichte, droge plekken midden op een blad, vaak
+  aan één kant: de kant waar de zon op staat. Het blad blijft verder stevig.
+- **Uitrekken (etiolatie)** gebeurt bij te wéínig licht. De plant maakt lange
+  dunne stengels met ver uit elkaar staande, bleke blaadjes en groeit naar het
+  raam toe. Bij een cactus zie je bovenop een dunne bleke punt.
+
+Dat uitgerekte stuk wordt nooit meer kort. Daarom is het een mooie les: je ziet
+aan de plant terug waar hij gestaan heeft.

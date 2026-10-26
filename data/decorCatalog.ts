@@ -41,10 +41,10 @@ function defaultRoomWidth(id: string, category: DecorCategory): number {
 export function decorViewImage(product: DecorProduct, view: number): string {
   if (product.views < 2) return product.image;
   const index = ((Math.round(view) % product.views) + product.views) % product.views;
-  return `/assets/library/shop/decor/products/${product.id}/view-${index + 1}.png`;
+  return `/assets/library/shop/decor/products/${product.id}/view-${index + 1}.webp`;
 }
 
-export const DECOR_SHEET = '/assets/library/shop/decor/furniture-plants-sheet.png';
+export const DECOR_SHEET = '/assets/library/shop/decor/furniture-plants-sheet.webp';
 
 export const DECOR_STORES: Record<DecorStoreId, { label: string; eyebrow: string }> = {
   furniture: { label: 'Meubelwinkel', eyebrow: 'Maak je boomhut eigen' },
@@ -79,7 +79,7 @@ const decor = (
   crop: SpriteCrop,
 ): DecorProduct => ({
   id, name, store, category, price,
-  image: `/assets/library/shop/decor/products/${id}.png?v=2`,
+  image: `/assets/library/shop/decor/products/${id}.webp?v=2`,
   crop,
   roomWidth: defaultRoomWidth(id, category),
   views: 1,
@@ -109,8 +109,8 @@ const EXISTING_DECOR_PRODUCTS: DecorProduct[] = [
   decor('snake-plant', 'Vrouwentong', 'plants', 'large-plants', 35, { x: 31, y: 69.5, width: 7.5, height: 21 }),
   decor('hanging-fern', 'Hangvaren', 'plants', 'hanging-plants', 30, { x: 37.3, y: 67, width: 8.5, height: 23 }),
   decor('hanging-vine', 'Hangende klimop', 'plants', 'hanging-plants', 30, { x: 43.8, y: 66.5, width: 8.5, height: 24 }),
-  decor('white-flower', 'Witte bloem', 'plants', 'flowering-plants', 32, { x: 51, y: 69.5, width: 9.5, height: 21 }),
-  decor('pink-flower', 'Roze bloem', 'plants', 'flowering-plants', 32, { x: 58.7, y: 69.5, width: 9.5, height: 21 }),
+  decor('white-flower', 'Lepelplant', 'plants', 'flowering-plants', 32, { x: 51, y: 69.5, width: 9.5, height: 21 }),
+  decor('pink-flower', 'Flamingoplant', 'plants', 'flowering-plants', 32, { x: 58.7, y: 69.5, width: 9.5, height: 21 }),
   decor('orange-tree', 'Sinaasappelboompje', 'plants', 'flowering-plants', 45, { x: 66, y: 69, width: 9.5, height: 21.5 }),
   decor('orchid', 'Orchidee', 'plants', 'flowering-plants', 36, { x: 73.2, y: 69, width: 9.5, height: 21.5 }),
   decor('succulent', 'Vetplantje', 'plants', 'small-plants', 18, { x: 82, y: 80, width: 8, height: 11 }),
@@ -121,7 +121,7 @@ const EXISTING_DECOR_PRODUCTS: DecorProduct[] = [
 const cleanPlants = new Set(['monstera-basket', 'orange-tree', 'pink-flower', 'hanging-vine', 'white-flower', 'hanging-fern', 'snake-plant']);
 const furniture = (id: string, name: string, category: DecorCategory, price: number): DecorProduct => ({
   id, name, store: 'furniture', category, price,
-  image: `/assets/library/shop/decor/products/${id}.png?v=3`,
+  image: `/assets/library/shop/decor/products/${id}.webp?v=3`,
   crop: { x: 0, y: 0, width: 100, height: 100 },
   roomWidth: defaultRoomWidth(id, category),
   views: 1,
@@ -133,7 +133,7 @@ const furniture = (id: string, name: string, category: DecorCategory, price: num
  */
 const turnable = (id: string, name: string, category: DecorCategory, price: number, roomWidth: number): DecorProduct => ({
   id, name, store: 'furniture', category, price,
-  image: `/assets/library/shop/decor/products/${id}/view-1.png`,
+  image: `/assets/library/shop/decor/products/${id}/view-1.webp`,
   crop: { x: 0, y: 0, width: 100, height: 100 },
   roomWidth,
   views: 8,
@@ -160,8 +160,8 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
   furniture('terrazzo-table', 'Terrazzo bijzettafel', 'tables', 45),
   furniture('arched-floor-lamp', 'Booglamp', 'lighting', 35),
   ...EXISTING_DECOR_PRODUCTS.map(product => cleanPlants.has(product.id)
-    ? { ...product, image: `/assets/library/shop/decor/products/${product.id}-v3.png` }
-    : { ...product, image: `/assets/library/shop/decor/products/${product.id}-v4.png` }),
+    ? { ...product, image: `/assets/library/shop/decor/products/${product.id}-v3.webp` }
+    : { ...product, image: `/assets/library/shop/decor/products/${product.id}-v4.webp` }),
 ];
 
 export const DECOR_PRODUCTS_BY_ID = Object.fromEntries(

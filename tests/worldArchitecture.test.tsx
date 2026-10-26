@@ -76,15 +76,15 @@ test('world hub renders three accessible canvas hotspots and compact tools', () 
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
-  assert.match(html, /games\/world-hub\/v2\/world-background-desktop\.jpg/);
-  assert.match(html, /games\/world-hub\/v2\/world-background-mobile\.jpg/);
+  assert.match(html, /games\/world-hub\/v2\/world-background-desktop\.webp/);
+  assert.match(html, /games\/world-hub\/v2\/world-background-mobile\.webp/);
   assert.match(html, /games\/world-hub\/v2\/treehouse-island\.webp/);
   assert.match(html, /games\/world-hub\/v2\/school-island\.webp/);
   assert.match(html, /games\/world-hub\/v2\/shop-island\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.png/);
   assert.match(html, /images\/avatars\/coco\.webp/);
-  assert.doesNotMatch(html, /games\/world-hub\/(coins|settings)-control\.png/);
+  assert.doesNotMatch(html, /games\/world-hub\/(coins|settings)-control\.webp/);
 });
 
 test('profile avatar catalog contains stable, unique local options', () => {
@@ -99,27 +99,27 @@ test('travel and challenges remain gateways to existing games', () => {
   const travel = renderToStaticMarkup(<DestinationScreen destination={DESTINATIONS_BY_ID.travel} onNavigate={() => undefined} />);
   const challenges = renderToStaticMarkup(<ChallengesScreen onNavigate={() => undefined} />);
   assert.match(travel, /class="travel-entry__cta"[^>]*aria-label="Open Topo"/);
-  assert.match(travel, /games\/destinations\/topo-entry\.png/);
+  assert.match(travel, /games\/destinations\/topo-entry\.webp/);
   assert.doesNotMatch(travel, /Aardrijkskunde/);
-  assert.match(travel, /games\/destinations\/travel-room\.png/);
+  assert.match(travel, /games\/destinations\/travel-room\.webp/);
   assert.match(challenges, /aria-label="Topo openen"/);
   assert.match(challenges, /aria-label="Tafels oefenen openen"/);
   assert.match(challenges, /aria-label="Klokkijken openen"/);
-  assert.match(challenges, /games\/school\/school-interior\.jpg/);
-  assert.match(challenges, /games\/school\/topo-cta\.png/);
-  assert.match(challenges, /games\/school\/tables-cta\.png/);
-  assert.match(challenges, /games\/school\/clock\/clock-school-navigation-v2\.png/);
+  assert.match(challenges, /games\/school\/school-interior\.webp/);
+  assert.match(challenges, /games\/school\/topo-cta\.webp/);
+  assert.match(challenges, /games\/school\/tables-cta\.webp/);
+  assert.match(challenges, /games\/school\/clock\/clock-school-navigation-v2\.webp/);
 });
 
 test('destination rooms use their dedicated illustrated backgrounds', () => {
   const cookbook = renderToStaticMarkup(<CookbookScreen />);
   const shop = renderToStaticMarkup(<ShopScreen />);
-  assert.match(cookbook, /assets\/library\/treehouse\/rooms\/kitchen-furnished\.png/);
+  assert.match(cookbook, /assets\/library\/treehouse\/rooms\/kitchen-furnished\.webp/);
   assert.match(cookbook, /Mijn Kookboek/);
   assert.match(cookbook, /Receptcategorieën/);
   assert.match(cookbook, /Bananenpannenkoekjes/);
   assert.match(cookbook, /Gemaakt/);
-  assert.match(shop, /games\/shop\/shop-street\.png/);
+  assert.match(shop, /games\/shop\/shop-street\.webp/);
   assert.match(shop, /aria-label="Supermarkt openen"/);
   assert.match(shop, /aria-label="Meubelwinkel openen"/);
   assert.match(shop, /aria-label="Plantenwinkel openen"/);
@@ -139,7 +139,7 @@ test('furniture and plant shops expose filters, scrollable products and local as
   const plants = renderToStaticMarkup(<DecorShop store="plants" onBack={() => undefined} />);
   assert.match(furniture, /Meubelwinkel/);
   assert.match(furniture, /Meubels en planten|Meubel/);
-  assert.match(furniture, /assets\/library\/shop\/decor\/products\/double-bed-v4\.png/);
+  assert.match(furniture, /assets\/library\/shop\/decor\/products\/double-bed-v4\.webp/);
   assert.match(plants, /Plantenwinkel/);
   assert.match(plants, /Grote planten/);
   assert.match(furniture, /aria-label="Terug naar winkeloverzicht"/);
@@ -157,12 +157,13 @@ test('purchase confirmation offers an overview exit alongside continued shopping
   for (const label of ['Naar de keuken', 'Terug naar het kookboek', 'Verder winkelen']) assert.ok(recipe.includes(label));
 });
 
-test('decor products have individual local PNG assets with transparency', () => {
+test('decor products have individual local WebP assets with transparency', () => {
   for (const product of DECOR_PRODUCTS) {
     const filename = `public${product.image.split('?')[0]}`;
-    const png = readFileSync(filename);
-    assert.equal(png.subarray(1, 4).toString(), 'PNG', product.id);
-    assert.equal(png[25], 6, `${product.id} needs RGBA transparency`);
+    const afbeelding = readFileSync(filename);
+    assert.equal(afbeelding.subarray(8, 12).toString(), 'WEBP', product.id);
+    // VP8X met een ALPH-blok betekent dat de doorzichtigheid bewaard is.
+    assert.ok(afbeelding.subarray(0, 200).includes('ALPH'), `${product.id} mist doorzichtigheid`);
   }
 });
 
@@ -193,7 +194,7 @@ test('room decoration conserves purchases across rooms, moving and returning', (
 test('turnable furniture keeps its view and size within bounds and survives a reload', () => {
   const sofa = DECOR_PRODUCTS_BY_ID['cream-corner-sofa'];
   assert.equal(sofa.views, 8);
-  assert.equal(decorViewImage(sofa, 0), '/assets/library/shop/decor/products/cream-corner-sofa/view-1.png');
+  assert.equal(decorViewImage(sofa, 0), '/assets/library/shop/decor/products/cream-corner-sofa/view-1.webp');
   assert.equal(decorViewImage(sofa, 8), decorViewImage(sofa, 0));
   assert.equal(decorViewImage(sofa, -1), decorViewImage(sofa, 7));
   assert.equal(decorViewImage(DECOR_PRODUCTS_BY_ID['green-chair'], 3), DECOR_PRODUCTS_BY_ID['green-chair'].image);
@@ -235,7 +236,7 @@ test('shop catalog has configurable package prices and enables purchases', () =>
   assert.equal(SHOP_CATEGORIES[0].id, 'all');
   assert.equal(SHOP_PRODUCTS.length, 40);
   assert.ok(SHOP_PRODUCTS.every(product => Number.isInteger(product.price) && product.price > 0 && product.purchasable));
-  assert.ok(SHOP_PRODUCTS.every(product => product.image === `/games/shop/products/${product.id}.png?v=2`));
+  assert.ok(SHOP_PRODUCTS.every(product => product.image === `/games/shop/products/${product.id}.webp?v=2`));
   assert.ok(new Set(SHOP_PRODUCTS.map(product => product.id)).size === SHOP_PRODUCTS.length);
   assert.equal(new Set(SHOP_PRODUCTS.map(product => product.image)).size, SHOP_PRODUCTS.length);
 });
@@ -252,7 +253,7 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(room, /aria-label="Keuken openen"/);
   assert.match(room, /aria-label="Slaapkamer openen"/);
   assert.match(room, /aria-label="Terras openen"/);
-  assert.match(room, /assets\/library\/treehouse\/overview\/treehouse-overview\.png/);
+  assert.match(room, /assets\/library\/treehouse\/overview\/treehouse-overview\.webp/);
   const livingRoom = renderToStaticMarkup(<TreehouseInterior room="living-room" onNavigate={() => undefined} />);
   assert.doesNotMatch(livingRoom, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(livingRoom, /aria-label="Mijn Kookboek openen"/);
@@ -289,8 +290,8 @@ test('asset library exposes stable treehouse rooms and all extracted icons', () 
     'bedroom', 'garden', 'livingRoom', 'kitchen', 'home', 'add', 'arrowLeft', 'arrowRight',
   ]);
   assert.ok(Object.values(ASSET_LIBRARY.treehouse.icons).every(path => path.startsWith('/assets/library/treehouse/icons/')));
-  assert.equal(ASSET_LIBRARY.shop.street, '/games/shop/shop-street.png');
-  assert.equal(ASSET_LIBRARY.shop.decorSheet, '/assets/library/shop/decor/furniture-plants-sheet.png');
+  assert.equal(ASSET_LIBRARY.shop.street, '/games/shop/shop-street.webp');
+  assert.equal(ASSET_LIBRARY.shop.decorSheet, '/assets/library/shop/decor/furniture-plants-sheet.webp');
 });
 
 test('interactive kitchen separates groceries and keeps standard equipment available', () => {

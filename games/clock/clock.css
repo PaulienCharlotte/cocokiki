@@ -4,7 +4,7 @@
   color: var(--color-text);
   background:
     linear-gradient(#6b47263d, #6b47263d),
-    url('/games/school/school-interior.jpg') center / cover fixed;
+    url('/games/school/school-interior.webp') center / cover fixed;
 }
 
 .clock-module button { font-family: inherit; }

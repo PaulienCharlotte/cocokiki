@@ -9,7 +9,7 @@ export const MATH_GAMES: Array<{ id: MathGameId; title: string; subtitle: string
   { id: 'race', title: 'Winkelgekte', subtitle: 'Help zoveel mogelijk klanten', image: 'race', accent: 'lavender', objectives: ['Plus en min tot 20', 'Vermenigvuldigen', 'Eerlijk delen', 'Alle bewerkingen', 'Prijzen en wisselgeld'] },
 ];
 export const MATH_GAMES_BY_ID = Object.fromEntries(MATH_GAMES.map(game => [game.id, game])) as Record<MathGameId, typeof MATH_GAMES[number]>;
-export const mathIcon = (id: MathGameId) => `/games/school/math/${id}.png`;
+export const mathIcon = (id: MathGameId) => `/games/school/math/${id}.webp`;
 export const RACE_SECONDS = 60;
 export const RACE_TARGETS = [8, 8, 7, 7, 6];
 export const RACE_DAILY_COIN_CAP = 50;

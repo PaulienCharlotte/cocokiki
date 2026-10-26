@@ -74,11 +74,12 @@ test('fruit yogurt is ready, uses real assets, and unlocks after one distinct re
   for (const id of recipe.equipmentIds) assert.ok(EQUIPMENT_BY_ID[id]);
   for (const asset of getRecipeAssetPaths(recipe)) assert.ok(existsSync(`public${asset.split('?')[0]}`), asset);
   for (const name of ['banana-slices', 'strawberries', 'yogurt-bowl']) {
-    const bytes = readFileSync(`public/assets/library/cooking/fruit-yogurt/${name}.png`);
+    const bytes = readFileSync(`public/assets/library/cooking/fruit-yogurt/${name}.webp`);
     assert.ok(bytes.readUInt32BE(16) > 1000);
-    assert.equal(bytes[25], 6, 'Supplied PNG keeps its RGBA transparency');
+    assert.equal(bytes.subarray(8, 12).toString(), 'WEBP', name);
+    assert.ok(bytes.subarray(0, 200).includes('ALPH'), `${name} keeps its transparency`);
   }
-  const missing = { ...recipe, preparation: { ...recipe.preparation!, finishedAsset: '/missing.png' } };
+  const missing = { ...recipe, preparation: { ...recipe.preparation!, finishedAsset: '/missing.webp' } };
   assert.equal(getRecipeAccess(missing, unlocked()).playable, false);
 });
 

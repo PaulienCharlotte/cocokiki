@@ -1,7 +1,8 @@
-import React from 'react';
-import { Droplets, Globe2, Sparkles, Sprout, Sun, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { CircleCheck, CloudMoon, Droplets, Globe2, Snowflake, Sparkles, Sprout, Sun, Wind, X } from 'lucide-react';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../../data/plants/species';
+import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../../data/plants/firstAid';
 import DecorAsset from '../shop/DecorAsset';
 
 interface PlantFlashcardProps {
@@ -11,11 +12,51 @@ interface PlantFlashcardProps {
   onClose: () => void;
 }
 
-/** De leerkaart bij een plant: waar hij vandaan komt en wat hij nodig heeft. */
+/** Een eigen tekentje per oorzaak, zodat je het probleem al aan het plaatje ziet. */
+const PROBLEM_ICON: Record<PlantProblemCause, React.ReactNode> = {
+  'te-weinig-water': <Droplets />,
+  'te-veel-water': <Droplets />,
+  'te-veel-zon': <Sun />,
+  'te-weinig-licht': <CloudMoon />,
+  'droge-lucht': <Wind />,
+  'te-koud': <Snowflake />,
+};
+
+/**
+ * Eén regel op de kaart. Beide tabbladen gebruiken dezelfde opbouw, zodat de
+ * kaart hetzelfde aanvoelt en alleen de inhoud verandert.
+ */
+interface CardRowProps {
+  key?: React.Key;
+  icon: React.ReactNode;
+  tone?: string;
+  title: string;
+  children: React.ReactNode;
+}
+
+function CardRow({ icon, tone, title, children }: CardRowProps) {
+  return <li className={`plant-card__row${tone ? ` is-${tone}` : ''}`}>
+    <span className="plant-card__row-icon" aria-hidden="true">{icon}</span>
+    <div><strong>{title}</strong>{children}</div>
+  </li>;
+}
+
+/** Kiki hoort op elk tabblad; zij is de gids van de plantenwereld. */
+function KikiSays({ pose, children }: { pose: string; children: React.ReactNode }) {
+  return <aside className="plant-card__kiki">
+    <img src={pose} alt="" />
+    <p><strong>Kiki zegt</strong>{children}</p>
+  </aside>;
+}
+
+/** De leerkaart bij een plant: waar hij vandaan komt, en wat je doet als het misgaat. */
 export default function PlantFlashcard({ speciesId, nickname, onClose }: PlantFlashcardProps) {
+  const [tab, setTab] = useState<'over' | 'ehbo'>('over');
   const species = speciesId ? PLANT_SPECIES_BY_ID[speciesId] : undefined;
   const product = speciesId ? plantProduct(speciesId) : undefined;
   if (!species || !product) return null;
+  const problems = plantFirstAid(species.id);
+  const grootste = problems[0];
 
   return <div className="plant-card-backdrop" role="presentation" onMouseDown={event => {
     if (event.target === event.currentTarget) onClose();
@@ -32,33 +73,38 @@ export default function PlantFlashcard({ speciesId, nickname, onClose }: PlantFl
         </div>
       </header>
 
-      <dl className="plant-card__facts">
-        <div>
-          <span aria-hidden="true"><Globe2 /></span>
-          <div><dt>Waar vandaan</dt><dd>{species.origin}</dd></div>
-        </div>
-        <div>
-          <span aria-hidden="true"><Sprout /></span>
-          <div><dt>Hoe hij groeit</dt><dd>{species.habitat}</dd></div>
-        </div>
-        <div>
-          <span aria-hidden="true"><Sun /></span>
-          <div><dt>Licht</dt><dd>{species.light}</dd></div>
-        </div>
-        <div>
-          <span aria-hidden="true"><Droplets /></span>
-          <div><dt>Water</dt><dd>{species.water}</dd></div>
-        </div>
-        <div>
-          <span aria-hidden="true"><Sparkles /></span>
-          <div><dt>Wist je dat?</dt><dd>{species.funFact}</dd></div>
-        </div>
-      </dl>
+      {problems.length > 0 && <div className="plant-card__tabs" role="tablist" aria-label="Wat wil je weten?">
+        <button type="button" role="tab" id="plant-tab-over" aria-selected={tab === 'over'} aria-controls="plant-panel-over" className={tab === 'over' ? 'is-active' : undefined} onClick={() => setTab('over')}>Over deze plant</button>
+        <button type="button" role="tab" id="plant-tab-ehbo" aria-selected={tab === 'ehbo'} aria-controls="plant-panel-ehbo" className={tab === 'ehbo' ? 'is-active' : undefined} onClick={() => setTab('ehbo')}>Help, wat is er?</button>
+      </div>}
 
-      <aside className="plant-card__kiki">
-        <img src={ASSET_LIBRARY.avatars.kikiPoses.tip} alt="" />
-        <p><strong>Kiki zegt</strong>{species.kikiTip}</p>
-      </aside>
+      {tab === 'over' ? <div id="plant-panel-over" role="tabpanel" aria-labelledby="plant-tab-over">
+        <p className="plant-card__intro">Waar deze plant vandaan komt en wat hij nodig heeft om zich thuis te voelen.</p>
+        <ul className="plant-card__rows">
+          <CardRow icon={<Globe2 />} tone="herkomst" title="Waar vandaan"><p>{species.origin}</p></CardRow>
+          <CardRow icon={<Sprout />} tone="groei" title="Hoe hij groeit"><p>{species.habitat}</p></CardRow>
+          <CardRow icon={<Sun />} tone="te-veel-zon" title="Licht"><p>{species.light}</p></CardRow>
+          <CardRow icon={<Droplets />} tone="te-weinig-water" title="Water"><p>{species.water}</p></CardRow>
+          <CardRow icon={<Sparkles />} tone="weetje" title="Wist je dat?"><p>{species.funFact}</p></CardRow>
+        </ul>
+        <KikiSays pose={ASSET_LIBRARY.avatars.kikiPoses.tip}>{species.kikiTip}</KikiSays>
+      </div> : <div id="plant-panel-ehbo" role="tabpanel" aria-labelledby="plant-tab-ehbo">
+        <p className="plant-card__intro">Gaat het niet goed met je plant? Zoek op wat je ziet. Bovenaan staat wat bij deze soort het vaakst misgaat.</p>
+        <ul className="plant-card__rows">
+          {problems.map(problem => <CardRow
+            key={problem.cause}
+            icon={PROBLEM_ICON[problem.cause]}
+            tone={problem.cause}
+            title={PLANT_PROBLEM_LABEL[problem.cause]}
+          >
+            <p>{problem.signs}</p>
+            <p className="plant-card__fix"><CircleCheck aria-hidden="true" /><span className="sr-only">Doen: </span>{problem.fix}</p>
+          </CardRow>)}
+        </ul>
+        {grootste && <KikiSays pose={ASSET_LIBRARY.avatars.kikiPoses.worried}>
+          Bij een {species.commonName.toLowerCase()} gaat het meestal mis door {PLANT_PROBLEM_LABEL[grootste.cause].toLowerCase()}. Dat staat bovenaan: kijk daar als eerste.
+        </KikiSays>}
+      </div>}
     </section>
   </div>;
 }

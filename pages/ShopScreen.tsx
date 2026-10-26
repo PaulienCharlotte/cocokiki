@@ -114,7 +114,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   if (activeStore !== 'groceries') return <DecorShop store={activeStore} onBack={() => setActiveStore(null)} />;
 
   return <main className="shop-room">
-    <img className="shop-room__background" src="/games/destinations/shop-interior.png" alt="Een gezellige winkel vol ingrediënten" />
+    <img className="shop-room__background" src="/games/destinations/shop-interior.webp" alt="Een gezellige winkel vol ingrediënten" />
     <button className="shop-dismiss" type="button" onClick={() => recipeId ? onExit?.() : setActiveStore(null)} aria-label={recipeId ? 'Terug naar het kookboek' : 'Terug naar het winkelplein'} />
     <section className={`shop-catalog${recipeId && recipeRequirementsSatisfied(progress, recipeId) ? ' has-recipe-ready' : ''}`} aria-labelledby="shop-title">
       <header className="shop-catalog__header">

@@ -8,6 +8,7 @@ export type AppRoute =
   | { page: 'treehouse-room'; path: `/treehouse/${TreehouseRoomId}`; room: TreehouseRoomId }
   | { page: 'treehouse-section'; path: `/treehouse/${TreehouseSectionId}`; section: TreehouseSectionId }
   | { page: 'challenges'; path: '/challenges' }
+  | { page: 'plant-clinic'; path: '/plantendokter' }
   | { page: 'clock'; path: '/school/clock' }
   | { page: 'math'; path: '/school/math' }
   | { page: 'design-system'; path: '/design-system' }
@@ -28,12 +29,18 @@ const TREEHOUSE_ROUTES: Record<string, AppRoute> = {
   '/treehouse/cookbook': { page: 'treehouse-section', path: '/treehouse/cookbook', section: 'cookbook' },
 };
 
+const CLINIC_ROUTES: Record<string, AppRoute> = {
+  '/plantendokter': { page: 'plant-clinic', path: '/plantendokter' },
+};
+
 const GAME_ROUTES: Record<string, AppRoute> = {
   '/games/topo': { page: 'game', path: '/games/topo', gameId: 'topo' },
   '/games/red-baby-lua': { page: 'game', path: '/games/red-baby-lua', gameId: 'red-baby-lua' },
 };
 
 const LEGACY_ROUTES: Record<string, string> = {
+  '/plantdokter': '/plantendokter',
+  '/kliniek': '/plantendokter',
   '/cooking': '/treehouse/cookbook',
   '/topo': '/games/topo',
   '/topo-coco': '/games/topo',
@@ -56,6 +63,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   else if (canonical.startsWith('/treehouse/') && isExtraRoom(canonical.slice('/treehouse/'.length))) route = { page: 'treehouse-room', path: canonical as `/treehouse/${TreehouseRoomId}`, room: canonical.slice('/treehouse/'.length) as TreehouseRoomId };
   else if (TREEHOUSE_ROUTES[canonical]) route = TREEHOUSE_ROUTES[canonical];
   else if (DESTINATION_ROUTES[canonical]) route = DESTINATION_ROUTES[canonical];
+  else if (CLINIC_ROUTES[canonical]) route = CLINIC_ROUTES[canonical];
   else if (canonical === '/challenges') route = { page: 'challenges', path: '/challenges' };
   else if (canonical === '/school/clock') route = { page: 'clock', path: '/school/clock' };
   else if (canonical === '/school/math') route = { page: 'math', path: '/school/math' };

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, LibraryBig } from 'lucide-react';
+import { BookOpen, Leaf, LibraryBig, Stethoscope } from 'lucide-react';
 import { type TreehouseRoomId } from '../data/treehouse';
 import { createEmptyCookingProgress, loadCookingProgress, startJourney } from '../services/cookingProgress';
 import { RECIPES_BY_ID } from '../data/cooking/catalog';
@@ -9,6 +9,7 @@ import { ownedRooms, loadRoomExpansions, ROOM_EXPANSIONS_KEY } from '../services
 import { subscribeLocalState } from '../services/localState';
 import '../components/treehouse/expansion.css';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import PlantFamilyPanel from '../components/plants/PlantFamilyPanel';
 
 interface TreehouseInteriorProps {
   room: TreehouseRoomId;
@@ -16,6 +17,7 @@ interface TreehouseInteriorProps {
 }
 
 export default function TreehouseInterior({ room, onNavigate }: TreehouseInteriorProps) {
+  const [plantsOpen, setPlantsOpen] = useState(false);
   const viewportRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const [scrollEdges, setScrollEdges] = useState({ left: true, right: false });
@@ -97,6 +99,15 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
       <BookOpen aria-hidden="true" /><span>Kookboek</span>
     </button>}
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/treehouse/encyclopedia')} aria-label="Mijn Encyclopedie openen" title="Mijn Encyclopedie"><LibraryBig aria-hidden="true" /><span>Encyclopedie</span></button>}
+
+    {/* Planten horen bij het terras, net zoals koken bij de keuken hoort. */}
+    {room === 'terrace' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => setPlantsOpen(true)} aria-label="Mijn Planten openen" title="Mijn Planten">
+      <Leaf aria-hidden="true" /><span>Mijn Planten</span>
+    </button>}
+    {room === 'terrace' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/plantendokter')} aria-label="Plantendokter openen" title="Plantendokter">
+      <Stethoscope aria-hidden="true" /><span>Plantendokter</span>
+    </button>}
+    {plantsOpen && <PlantFamilyPanel onClose={() => setPlantsOpen(false)} />}
 
     <div className="treehouse-interior__pan-controls" aria-label="Kijk rond en ga naar de kamer ernaast">
       <button type="button" title={scrollEdges.left ? rooms[roomIndex - 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar links'} aria-label={scrollEdges.left && rooms[roomIndex - 1] ? `Naar ${rooms[roomIndex - 1].label}` : 'Kijk naar links'} disabled={scrollEdges.left && !rooms[roomIndex - 1]} onClick={() => panRoom(-1)}>

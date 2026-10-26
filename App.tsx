@@ -14,6 +14,7 @@ const TreehouseRoom = lazy(() => import('./pages/TreehouseRoom'));
 const TreehouseSection = lazy(() => import('./pages/TreehouseSection'));
 const TreehouseInterior = lazy(() => import('./pages/TreehouseInterior'));
 const ShopScreen = lazy(() => import('./pages/ShopScreen'));
+const PlantClinicScreen = lazy(() => import('./pages/PlantClinicScreen'));
 const DesignSystemPreview = lazy(() => import('./pages/DesignSystemPreview'));
 const ClockModule = lazy(() => import('./games/clock/ClockModule'));
 const MathModule = lazy(() => import('./games/math/MathModule'));
@@ -67,6 +68,8 @@ const App: React.FC = () => {
         ? <TreehouseSection section={current.route.section} onNavigate={navigate} />
       : current.route.page === 'treehouse-room'
         ? <TreehouseInterior room={current.route.room} onNavigate={navigate} />
+      : current.route.page === 'plant-clinic'
+        ? <PlantClinicScreen />
       : current.route.page === 'challenges'
         ? <ChallengesScreen onNavigate={navigate} />
       : current.route.page === 'clock'
@@ -76,8 +79,8 @@ const App: React.FC = () => {
   if (worldContent) return <AppShell
     coins={coins}
     onHome={() => navigate('/')}
-    onBack={() => navigate(current.route.page === 'treehouse-section' ? '/treehouse/kitchen' : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : '/')}
-    backLabel={current.route.page === 'treehouse-section' ? 'Terug naar de keuken' : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : 'Terug naar de wereld'}
+    onBack={() => navigate(current.route.page === 'treehouse-section' ? '/treehouse/kitchen' : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : current.route.page === 'plant-clinic' ? '/treehouse' : '/')}
+    backLabel={current.route.page === 'treehouse-section' ? 'Terug naar de keuken' : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : current.route.page === 'plant-clinic' ? 'Terug naar de boomhut' : 'Terug naar de wereld'}
   ><Suspense fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />

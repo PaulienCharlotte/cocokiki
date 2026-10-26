@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Check, Droplet, Info, Pencil, Sprout, X } from 'lucide-react';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
-import { PLANT_SPECIES_BY_ID, plantProduct } from '../../data/plants/species';
+import { PLANT_SPECIES_BY_ID, plantProduct, plantStageImage } from '../../data/plants/species';
 import {
   loadPlantFamily,
   MAX_NICKNAME_LENGTH,
   PLANT_FAMILY_CHANGE_EVENT,
   PLANT_FAMILY_KEY,
-  plantThirst,
+  plantCondition,
   renamePlant,
   savePlantFamily,
-  STAGE_LABEL,
-  stageImage,
+  stageKiki,
+  stageLabel,
   waterPlant,
   type PlantFamilyState,
 } from '../../services/plantFamily';
@@ -41,10 +41,28 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
     return () => { unsubscribe(); window.removeEventListener(PLANT_FAMILY_CHANGE_EVENT, update); };
   }, []);
 
-  const bewaar = (next: PlantFamilyState) => {
-    if (next === family) return;
+  /**
+   * Werk altijd vanaf wat er nú is opgeslagen. Twee snelle tikken achter elkaar
+   * zouden anders allebei van dezelfde oude stand uitgaan en elkaar wissen.
+   */
+  const bewaar = (verander: (huidig: PlantFamilyState) => PlantFamilyState) => {
+    const huidig = loadPlantFamily();
+    const next = verander(huidig);
+    if (next === huidig) return;
     if (savePlantFamily(next)) setFamily(next);
   };
+
+  // Kiki noemt de plant die er het ergst aan toe is, met het symptoom van díé soort.
+  const dorstigste = family.plants
+    .map(plant => {
+      const species = PLANT_SPECIES_BY_ID[plant.speciesId];
+      if (!species) return null;
+      const toestand = plantCondition(plant, species, nu);
+      const kiki = stageKiki(species, toestand.stage);
+      return kiki ? { nickname: plant.nickname, kiki, ratio: toestand.urgency } : null;
+    })
+    .filter((item): item is { nickname: string; kiki: string; ratio: number } => item !== null)
+    .sort((a, b) => b.ratio - a.ratio)[0];
 
   return <div className="plant-card-backdrop" role="presentation" onMouseDown={event => {
     if (event.target === event.currentTarget) onClose();
@@ -55,9 +73,9 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
         <button type="button" onClick={onClose} aria-label="Sluiten"><X /></button>
       </header>
 
-      {family.plants.some(plant => plantThirst(plant, PLANT_SPECIES_BY_ID[plant.speciesId]?.waterDays ?? 7, nu).stage !== 'fresh') && <aside className="plant-family__alert">
+      {dorstigste && <aside className="plant-family__alert">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.worried} alt="" />
-        <p><strong>Kiki zegt</strong>Er staat een plant droog. Geef hem een slokje water met het druppeltje.</p>
+        <p><strong>Kiki zegt</strong>{dorstigste.nickname}: {dorstigste.kiki}</p>
       </aside>}
       {family.plants.length === 0 ? <div className="plant-family__empty">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.explore} alt="" />
@@ -69,15 +87,15 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
           const product = plantProduct(plant.speciesId);
           if (!species || !product) return null;
           const bezig = renaming === plant.id;
-          const thirst = plantThirst(plant, species.waterDays, nu);
-          const ziek = stageImage(species.stages, thirst.stage);
-          return <article key={plant.id} className={`plant-family__card is-${thirst.stage}`}>
+          const toestand = plantCondition(plant, species, nu);
+          const ziek = plantStageImage(species, toestand.stage);
+          return <article key={plant.id} className={`plant-family__card is-${toestand.stage}`}>
             {ziek
-              ? <img className="decor-asset plant-family__stage" src={ziek} alt={`${plant.nickname} heeft dorst`} />
+              ? <img className="decor-asset plant-family__stage" src={ziek} alt={`${plant.nickname}: ${stageLabel(species, toestand.stage)}`} />
               : <DecorAsset product={product} />}
             {bezig ? <form className="plant-family__rename" onSubmit={event => {
               event.preventDefault();
-              bewaar(renamePlant(family, plant.id, draft));
+              bewaar(huidig => renamePlant(huidig, plant.id, draft));
               setRenaming(null);
             }}>
               <input
@@ -92,10 +110,10 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
               <button type="button" aria-label="Naam wijzigen afbreken" onClick={() => setRenaming(null)}><X /></button>
             </form> : <strong className="plant-family__nickname">{plant.nickname}</strong>}
             <small className="plant-family__species">{species.commonName}</small>
-            <small className={`plant-family__stage-label is-${thirst.stage}`}><Droplet aria-hidden="true" />{STAGE_LABEL[thirst.stage]}</small>
+            <small className={`plant-family__stage-label is-${toestand.stage}`}><Droplet aria-hidden="true" />{stageLabel(species, toestand.stage)}</small>
             <small className="plant-family__date"><Sprout aria-hidden="true" />Sinds {adoptieDatum(plant.adoptedAt)}</small>
             <div className="plant-family__actions">
-              <button type="button" className="plant-family__water" aria-label={`${plant.nickname} water geven`} title="Water geven" onClick={() => bewaar(waterPlant(family, plant.id))}><Droplet /></button>
+              <button type="button" className="plant-family__water" aria-label={`${plant.nickname} water geven`} title="Water geven" onClick={() => bewaar(huidig => waterPlant(huidig, plant.id))}><Droplet /></button>
               <button type="button" aria-label={`Meer weten over ${species.commonName}`} onClick={() => setInfo({ speciesId: plant.speciesId, nickname: plant.nickname })}><Info /></button>
               {!bezig && <button type="button" aria-label={`${plant.nickname} een andere naam geven`} onClick={() => { setDraft(plant.nickname); setRenaming(plant.id); }}><Pencil /></button>}
             </div>

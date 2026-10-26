@@ -13,17 +13,17 @@ export default function ChallengesScreen({ onNavigate }: ChallengesScreenProps) 
   const tables = GAMES_BY_ID['red-baby-lua'];
   const layout = useSchoolLayout();
   const icons = [
-    { id: 'topo' as const, label: 'Topo', path: topo.path, image: '/games/school/topo-cta.png', alt: 'Topo' },
-    { id: 'clock' as const, label: 'Klokkijken', path: '/school/clock', image: '/games/school/clock/clock-school-navigation-v2.png', alt: '' },
-    { id: 'tables' as const, label: 'Tafels oefenen', path: tables.path, image: '/games/school/tables-cta.png', alt: 'Tafels oefenen' },
-    { id: 'math' as const, label: 'Rekenen', path: '/school/math', image: '/games/school/math/add-subtract.png', alt: '' },
+    { id: 'topo' as const, label: 'Topo', path: topo.path, image: '/games/school/topo-cta.webp', alt: 'Topo' },
+    { id: 'clock' as const, label: 'Klokkijken', path: '/school/clock', image: '/games/school/clock/clock-school-navigation-v2.webp', alt: '' },
+    { id: 'tables' as const, label: 'Tafels oefenen', path: tables.path, image: '/games/school/tables-cta.webp', alt: 'Tafels oefenen' },
+    { id: 'math' as const, label: 'Rekenen', path: '/school/math', image: '/games/school/math/add-subtract.webp', alt: '' },
   ];
 
   return <main className="school-room" aria-labelledby="school-title">
     <h1 className="school-room__title" id="school-title">School</h1>
     <img
       className="school-room__background"
-      src="/games/school/school-interior.jpg"
+      src="/games/school/school-interior.webp"
       alt="Een lichte, gezellige school met klaslokalen, boeken en planten"
     />
     <div className="school-layout-tools">

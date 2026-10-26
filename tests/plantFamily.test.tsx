@@ -1,20 +1,25 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
-import { PLANT_SPECIES, PLANT_SPECIES_BY_ID } from '../data/plants/species';
+import { PLANT_SPECIES, PLANT_SPECIES_BY_ID, plantStageImage } from '../data/plants/species';
 import {
   adoptPurchaseOnce,
   cleanNickname,
   createEmptyPlantFamily,
   MAX_NICKNAME_LENGTH,
   migratePlantFamily,
+  plantCondition,
   plantThirst,
+  soggyNow,
   renamePlant,
-  stageImage,
+  stageKiki,
+  stageLabel,
   waterPlant,
 } from '../services/plantFamily';
+import { PLANT_PROBLEM_LABEL, PLANTS_WITHOUT_FIRST_AID, plantFirstAid } from '../data/plants/firstAid';
 import PlantFlashcard from '../components/plants/PlantFlashcard';
 
 test('elke plantensoort hoort bij een plant uit de winkel en heeft complete lesstof', () => {
@@ -80,7 +85,7 @@ test('de leerkaart toont naam, soortnaam, verzorging en een tip van Kiki', () =>
   assert.match(kaart, /Licht/);
   assert.match(kaart, /Water/);
   assert.match(kaart, /Kiki zegt/);
-  assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.png/);
+  assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.webp/);
   assert.equal(renderToStaticMarkup(<PlantFlashcard speciesId="bestaat-niet" onClose={() => undefined} />), '');
 });
 
@@ -93,9 +98,9 @@ test('dorst loopt op volgens de waterbehoefte van de soort', () => {
 
   assert.equal(plantThirst(plant, monstera.waterDays, start).stage, 'fresh');
   assert.equal(plantThirst(plant, monstera.waterDays, start + 6 * dag).stage, 'fresh');
-  assert.equal(plantThirst(plant, monstera.waterDays, start + 8 * dag).stage, 'droopy');
-  assert.equal(plantThirst(plant, monstera.waterDays, start + 15 * dag).stage, 'yellow');
-  assert.equal(plantThirst(plant, monstera.waterDays, start + 30 * dag).stage, 'crispy');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 8 * dag).stage, 'thirst1');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 15 * dag).stage, 'thirst2');
+  assert.equal(plantThirst(plant, monstera.waterDays, start + 30 * dag).stage, 'thirst3');
 
   // Een cactus mag veel langer wachten dan een varen.
   assert.ok(PLANT_SPECIES_BY_ID['tall-cactus'].waterDays > PLANT_SPECIES_BY_ID['hanging-fern'].waterDays * 5);
@@ -109,9 +114,9 @@ test('water geven brengt elke plant helemaal terug; hij gaat nooit dood', () => 
   const family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:9', { 'monstera-basket': 1 }, new Date(start).toISOString(), () => 'p1');
   const soort = PLANT_SPECIES_BY_ID['monstera-basket'];
 
-  // Ook na ruim een jaar is het ergste stadium 'crispy', niet dood.
+  // Ook na ruim een jaar is het ergste stadium thirst3, niet dood.
   const verwaarloosd = plantThirst(family.plants[0], soort.waterDays, veelLater);
-  assert.equal(verwaarloosd.stage, 'crispy');
+  assert.equal(verwaarloosd.stage, 'thirst3');
   assert.ok(verwaarloosd.ratio > 50);
 
   const begoten = waterPlant(family, 'p1', new Date(veelLater).toISOString());
@@ -125,12 +130,161 @@ test('water geven brengt elke plant helemaal terug; hij gaat nooit dood', () => 
   assert.deepEqual(migratePlantFamily(JSON.parse(JSON.stringify(begoten))), begoten);
 });
 
-test('alleen de monstera heeft eigen dorstplaatjes; de rest valt terug op het winkelplaatje', () => {
+test('elke soort heeft eigen symptomen, en het plaatje volgt het tekenwerk dat er is', () => {
   const monstera = PLANT_SPECIES_BY_ID['monstera-basket'];
-  assert.ok(monstera.stages);
-  assert.equal(stageImage(monstera.stages, 'fresh'), null);
-  assert.match(stageImage(monstera.stages, 'droopy') ?? '', /monstera-basket\/droopy\.png/);
-  assert.match(stageImage(monstera.stages, 'crispy') ?? '', /monstera-basket\/crispy\.png/);
-  assert.equal(stageImage(undefined, 'crispy'), null);
-  for (const species of PLANT_SPECIES) assert.ok(species.waterDays >= 1, `${species.id} mist waterDays`);
+  assert.equal(monstera.art?.dry, 3);
+  assert.equal(plantStageImage(monstera, 'fresh'), null);
+  assert.equal(plantStageImage(monstera, 'thirst1'), '/assets/library/plants/monstera-basket/dry-1.webp');
+  assert.equal(plantStageImage(monstera, 'thirst3'), '/assets/library/plants/monstera-basket/dry-3.webp');
+  // De monstera heeft nog geen plaatje voor natte aarde.
+  assert.equal(plantStageImage(monstera, 'wet1'), null);
+
+  // Met één plaatje per oorzaak blijft dat ene plaatje bij elk stadium staan.
+  const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
+  assert.equal(plantStageImage(varen, 'thirst1'), '/assets/library/plants/hanging-fern/dry-1.webp');
+  assert.equal(plantStageImage(varen, 'thirst3'), '/assets/library/plants/hanging-fern/dry-1.webp');
+  assert.equal(plantStageImage(varen, 'wet2'), '/assets/library/plants/hanging-fern/wet-1.webp');
+  // Een plant zonder tekenwerk houdt het winkelplaatje, maar de tekst klopt wel.
+  const hogeCactus = PLANT_SPECIES_BY_ID['tall-cactus'];
+  assert.equal(hogeCactus.art, undefined);
+  assert.equal(plantStageImage(hogeCactus, 'thirst3'), null);
+  assert.ok(stageLabel(hogeCactus, 'thirst3').length > 0);
+
+  // De symptomen verschillen echt per soort: dat is de les.
+  assert.notEqual(stageLabel(varen, 'thirst1'), stageLabel(monstera, 'thirst1'));
+  assert.match(stageLabel(PLANT_SPECIES_BY_ID['orange-tree'], 'thirst2'), /vallen af/i);
+  assert.match(stageKiki(PLANT_SPECIES_BY_ID['orchid'], 'thirst1') ?? '', /wortels/i);
+
+  for (const species of PLANT_SPECIES) {
+    assert.ok(species.waterDays >= 1, `${species.id} mist waterDays`);
+    assert.equal(stageLabel(species, 'fresh'), 'Lekker fris');
+    assert.equal(stageKiki(species, 'fresh'), null);
+    for (const stage of ['thirst1', 'thirst2', 'thirst3'] as const) {
+      assert.ok(species.symptoms[stage].label.trim().length > 0, `${species.id} mist label ${stage}`);
+      assert.ok(species.symptoms[stage].kiki.trim().length > 0, `${species.id} mist kiki ${stage}`);
+    }
+    // Drie keer hetzelfde opschrijven zou niets toevoegen.
+    const labels = new Set(['thirst1', 'thirst2', 'thirst3'].map(stage => species.symptoms[stage as 'thirst1'].label));
+    assert.equal(labels.size, 3, `${species.id} herhaalt een symptoom`);
+  }
+});
+
+test('elke plant heeft een EHBO-kaart die verder gaat dan water', () => {
+  assert.deepEqual(PLANTS_WITHOUT_FIRST_AID, []);
+  for (const species of PLANT_SPECIES) {
+    const problems = plantFirstAid(species.id);
+    assert.ok(problems.length >= 3, `${species.id} heeft te weinig klachten`);
+    // Geen dubbele oorzaken, en elke klacht zegt wat je ziet en wat je doet.
+    assert.equal(new Set(problems.map(problem => problem.cause)).size, problems.length, `${species.id} herhaalt een oorzaak`);
+    for (const problem of problems) {
+      assert.ok(PLANT_PROBLEM_LABEL[problem.cause], `${species.id} kent oorzaak ${problem.cause} niet`);
+      assert.ok(problem.signs.trim().length > 0 && problem.fix.trim().length > 0, `${species.id} mist tekst bij ${problem.cause}`);
+    }
+    // Het gaat niet alleen over water: er staat altijd ook licht, lucht of kou bij.
+    assert.ok(problems.some(problem => !problem.cause.includes('water')), `${species.id} gaat alleen over water`);
+  }
+
+  // Bij een cactus is verzuipen het eerste dat je moet weten, niet dorst.
+  assert.equal(plantFirstAid('small-cactus')[0].cause, 'te-veel-water');
+  assert.equal(plantFirstAid('snake-plant')[0].cause, 'te-veel-water');
+  // Bij een varen is het juist de droge lucht.
+  assert.equal(plantFirstAid('hanging-fern')[0].cause, 'droge-lucht');
+});
+
+test('de leerkaart heeft een tabblad met eerste hulp', () => {
+  const kaart = renderToStaticMarkup(<PlantFlashcard speciesId="small-cactus" onClose={() => undefined} />);
+  assert.match(kaart, /Help, wat is er\?/);
+  assert.match(kaart, /Over deze plant/);
+  // Het tabblad Over staat open; de EHBO-tekst komt pas na een klik.
+  assert.match(kaart, /Wist je dat/);
+  assert.doesNotMatch(kaart, /zachte, glimmende plek/);
+});
+
+test('de naam in de winkel en de naam op de kaart gaan over dezelfde plant', () => {
+  for (const species of PLANT_SPECIES) {
+    const winkel = DECOR_PRODUCTS_BY_ID[species.id].name.toLowerCase();
+    const kaart = species.commonName.toLowerCase();
+    // De een mag uitgebreider zijn ("Monstera in mand", "Vlinderorchidee"),
+    // maar een kind moet er dezelfde plant in herkennen.
+    assert.ok(winkel.includes(kaart) || kaart.includes(winkel), `${species.id}: winkel zegt "${winkel}", kaart zegt "${kaart}"`);
+  }
+});
+
+test('te vroeg blijven gieten maakt de aarde te nat', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  assert.equal(cactus.overwaterAfter, 1);
+
+  let family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:nat', { 'small-cactus': 1 }, new Date(start).toISOString(), () => 'c');
+  assert.equal(plantCondition(family.plants[0], cactus, start).kind, 'fresh');
+
+  // Eén keer gieten terwijl hij nog geen dorst heeft is bij een cactus al te veel.
+  family = waterPlant(family, 'c', new Date(start + dag).toISOString());
+  const nat = plantCondition(family.plants[0], cactus, start + dag);
+  assert.equal(nat.kind, 'wet');
+  assert.equal(nat.stage, 'wet1');
+
+  // Nog eens gieten maakt het erger.
+  family = waterPlant(family, 'c', new Date(start + 2 * dag).toISOString());
+  assert.equal(plantCondition(family.plants[0], cactus, start + 2 * dag).stage, 'wet2');
+
+  // Een varen vindt dezelfde behandeling juist prima.
+  const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
+  assert.ok(varen.overwaterAfter > cactus.overwaterAfter);
+  let varens = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:varen', { 'hanging-fern': 1 }, new Date(start).toISOString(), () => 'v');
+  varens = waterPlant(varens, 'v', new Date(start + 3600000).toISOString());
+  assert.equal(plantCondition(varens.plants[0], varen, start + 3600000).kind, 'fresh');
+});
+
+test('niets doen laat de aarde opdrogen en de plant gaat nooit dood', () => {
+  const dag = 24 * 60 * 60 * 1000;
+  const start = Date.parse('2026-10-01T12:00:00.000Z');
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  let family = adoptPurchaseOnce(createEmptyPlantFamily(), 'koop:droog', { 'small-cactus': 1 }, new Date(start).toISOString(), () => 'c');
+  family = waterPlant(family, 'c', new Date(start + dag).toISOString());
+  family = waterPlant(family, 'c', new Date(start + 2 * dag).toISOString());
+  assert.equal(plantCondition(family.plants[0], cactus, start + 2 * dag).stage, 'wet2');
+
+  // Na een maand niets doen is de aarde een punt opgedroogd, na twee maanden helemaal.
+  assert.equal(soggyNow(family.plants[0], cactus, start + 32 * dag), 1);
+  assert.equal(soggyNow(family.plants[0], cactus, start + 65 * dag), 0);
+  // En daarna is hij gewoon weer dorstig, niet dood.
+  assert.equal(plantCondition(family.plants[0], cactus, start + 95 * dag).kind, 'thirst');
+
+  // Water geven als hij wél dorst heeft wist de nattigheid helemaal uit.
+  const begoten = waterPlant(family, 'c', new Date(start + 95 * dag).toISOString());
+  assert.equal(begoten.plants[0].soggy, undefined);
+  assert.equal(plantCondition(begoten.plants[0], cactus, start + 95 * dag).kind, 'fresh');
+  // En het overleeft een herstart.
+  assert.deepEqual(migratePlantFamily(JSON.parse(JSON.stringify(family))), family);
+});
+
+test('Kiki legt bij natte aarde uit wat er met deze soort gebeurt', () => {
+  const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
+  assert.equal(stageLabel(cactus, 'wet1'), 'De aarde is te nat');
+  assert.match(stageKiki(cactus, 'wet1') ?? '', /wacht/i);
+  // Bij het ergste stadium komt de tekst uit de EHBO-kaart van die plant.
+  assert.match(stageKiki(cactus, 'wet2') ?? '', /zachte/i);
+  assert.notEqual(stageKiki(PLANT_SPECIES_BY_ID['orchid'], 'wet2'), stageKiki(cactus, 'wet2'));
+  // Natte aarde heeft nog geen tekenwerk; het winkelplaatje blijft staan.
+  assert.equal(plantStageImage(PLANT_SPECIES_BY_ID['monstera-basket'], 'wet2'), null);
+  for (const species of PLANT_SPECIES) assert.ok(species.overwaterAfter >= 1, `${species.id} mist overwaterAfter`);
+});
+
+test('elk aangekondigd plantenplaatje staat er ook echt', () => {
+  for (const species of PLANT_SPECIES) {
+    const art = species.art;
+    if (!art) continue;
+    const bestanden: string[] = [];
+    for (const soort of ['dry', 'wet'] as const) {
+      for (let stap = 1; stap <= (art[soort] ?? 0); stap += 1) bestanden.push(`${soort}-${stap}.webp`);
+    }
+    if (art.sun) bestanden.push('sun-1.webp');
+    if (art.dark) bestanden.push('dark-1.webp');
+    for (const bestand of bestanden) {
+      const pad = `public/assets/library/plants/${species.id}/${bestand}`;
+      assert.ok(existsSync(pad), `${species.id} mist ${bestand}`);
+    }
+  }
 });

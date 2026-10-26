@@ -84,7 +84,7 @@ test('Coco tip uses chef illustration and positive ingredient copy; menu has no 
   const tip = RECIPES_BY_ID['fruit-yogurt'].cookingTips![0];
   assert.doesNotMatch(tip.title + tip.text, /suiker/);
   const html = renderToStaticMarkup(<CookingTipCard tip={tip} onDismiss={() => undefined} />);
-  assert.match(html, /<dialog|coco-chef-tip.png/);
+  assert.match(html, /<dialog|coco-chef-tip.webp/);
   assert.match(html, /Verder koken/);
   assert.doesNotMatch(renderToStaticMarkup(<WorldTopBar coins={0} onHome={() => undefined} />), /aria-disabled="true"/);
 });
