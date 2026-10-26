@@ -77,8 +77,11 @@ main.nutrient-memory-screen::after { display: none; }
   main.nutrient-memory-screen { padding: 90px 14px 20px; }
   .nutrient-memory-shell h1 { font-size: 22px; }
   .nutrient-memory__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .nutrient-memory__card { padding: 12px; }
-  .nutrient-memory__card span { font-size: 15px; }
+  .nutrient-memory__card { padding: 8px; height: 128px; min-height: 128px; gap: 4px; }
+  .nutrient-memory__card span { font-size: 13px; line-height: 1.3; }
+  .nutrient-memory__card small { font-size: 10px; }
+  .nutrient-memory-shell .journey-stages { display: none; }
+  .nutrient-memory__score { min-height: 36px; font-size: 13px; }
   .kitchen-encyclopedia-trigger.kitchen-encyclopedia-trigger { top: 140px; }
   .kitchen-ready-recipes { bottom: 16px; }
 }

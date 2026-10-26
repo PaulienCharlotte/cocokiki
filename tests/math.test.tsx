@@ -109,9 +109,9 @@ test('math routes and six supplied icons are integrated without replacing clock 
   assert.equal(MATH_GAMES.length, 6);
   for (const game of MATH_GAMES) assert.ok(existsSync(`public${mathIcon(game.id)}`));
   const hub = renderToStaticMarkup(<MathHub progress={emptyMathProgress()} onPlay={() => undefined} />);
-  for (const game of MATH_GAMES.filter(game => game.id !== 'multiply')) { assert.ok(hub.includes(game.title.replace('&', '&amp;'))); assert.ok(hub.includes(mathIcon(game.id))); }
+  for (const game of MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide')) { assert.ok(hub.includes(game.title.replace('&', '&amp;'))); assert.ok(hub.includes(mathIcon(game.id))); }
   assert.ok(!hub.includes('Red Baby Lua'));
-  assert.equal((hub.match(/0\/5 niveaus/g) ?? []).length, 5);
+  assert.equal((hub.match(/0\/5 niveaus/g) ?? []).length, 4);
   assert.match(renderToStaticMarkup(<ChallengesScreen onNavigate={() => undefined} />), /Rekenen openen/);
 });
 

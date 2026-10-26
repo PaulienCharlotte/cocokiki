@@ -3,6 +3,8 @@ import { ArrowRight, Check } from 'lucide-react';
 import { MemoryPair } from '../data/learning';
 import { shuffle } from '../services/localProgress';
 import RoundResult from './RoundResult';
+import './memory-mobile.css';
+import { memoryBoardIds } from '../services/memoryBoards';
 
 interface Props {
   mode: 'memory' | 'quiz';
@@ -57,6 +59,10 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }:
   const [feedback, setFeedback] = useState('');
   const locked = useRef(false);
   const seenErrors = useRef(new Set<string>());
+  const batchSize = pairs[0]?.kind === 'fact' ? 2 : 3;
+  const batch = Math.floor(matched.length / batchSize);
+  const activePairs = new Set(memoryBoardIds(pairs.map(pair => pair.id), matched.length, batchSize));
+  const activeCards = cards.filter(card => activePairs.has(card.pair.id));
 
   useEffect(() => {
     if (flipped.length !== 2) return;
@@ -81,9 +87,9 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }:
 
   if (matched.length === pairs.length) return <RoundResult memory total={pairs.length} correct={pairs.length - missed.length} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={missed.length ? () => onRetry(missed) : undefined} />;
   return <section className="memory-game content-width">
-    <div className="memory-heading"><h1>Vind de setjes</h1><span>{matched.length} / {pairs.length} gevonden<span className="muted"> · {moves} beurten</span></span></div>
+    <div className="memory-heading"><h1>Vind de setjes</h1><span>{matched.length} / {pairs.length} gevonden<span className="muted"> · {moves} beurten · Bord {batch + 1}/{Math.ceil(pairs.length / batchSize)}</span></span></div>
     <progress value={matched.length} max={pairs.length} aria-label="Gevonden setjes" />
-    <div className="memory-board" data-kind={pairs[0]?.kind}>{cards.map((card, index) => {
+    <div className="memory-board" data-kind={pairs[0]?.kind}>{activeCards.map((card, index) => {
       const isMatched = matched.includes(card.pair.id);
       const visible = isMatched || flipped.includes(card.id);
       const flag = card.side === 'right' && card.pair.kind === 'flag';

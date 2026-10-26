@@ -126,3 +126,16 @@
   .math-lua .lua-game-shell { min-height: 0; height: max(540px,calc(100dvh - 160px)); border-radius: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .honey-meter__fill { transition: none; } }
+.story-challenge { width: 100%; text-align: center; }
+.story-scene { display: flex; align-items: end; justify-content: center; gap: 24px; height: 220px; margin: 12px auto 20px; }
+.story-scene > img { width: 25%; max-width: 180px; height: 100%; object-fit: contain; }
+.story-scene__harvest { position: relative; width: 28%; max-width: 190px; }
+.story-scene__harvest > img { width: 100%; display: block; }
+.story-scene__harvest > .story-scene__fruit { position: absolute; width: 24%; left: 38%; top: 18%; }
+.story-unit { display: block; margin-bottom: 12px; color: #52694c; font-size: 15px; font-weight: 700; }
+.story-explanation { margin-top: 18px; font-size: 18px; font-weight: 700; color: #52694c; }
+@media (max-width: 600px) {
+  .math-adventure--add-subtract .math-prompt { font-size: 18px; line-height: 1.45; }
+  .story-scene { height: 145px; gap: 12px; margin: 8px 0 16px; }
+  .story-explanation { font-size: 16px; }
+}

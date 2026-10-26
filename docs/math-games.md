@@ -29,6 +29,21 @@ Route: `/school/math`, bereikbaar vanuit School. De bestaande spel-ID's en
 
 ## Spellen
 
+### Bosavontuur: redactiesommen
+
+De zichtbare spelkeuzes Bessenplukkers en Wintervoorraad zijn samengevoegd als
+Het Bosavontuur. De bestaande add-subtract-ID, voortgang en beloningsbewijzen
+blijven behouden. De oude divide-voortgang blijft bewaard maar is geen tweede
+spelkeuze meer. De onderstaande oude telmodellen blijven alleen beschikbaar
+als interne compatibiliteitscomponenten, niet als het nieuwe bosavontuur.
+
+Vijf niveaus voor circa 9-12 jaar: twee stappen, voorraad en eerlijk verdelen,
+breuken, percentages en gecombineerde bewerkingen. Elke ronde heeft tien unieke
+verhalen. De vraag toont geen kant-en-klare som vooraf: kinderen bepalen zelf
+de bewerkingen. Na een juist antwoord verschijnt de berekening; hints geven
+een aanpak. Bestaande bessen-, mand-, boomholte- en eekhoornillustraties worden
+als rustige scene gebruikt, niet als letterlijk te tellen antwoord.
+
 ### Red Baby Lua!
 
 De bestaande `games/red-baby-lua/RedBabyLuaGame` en Phaser-scene worden lazy geladen.

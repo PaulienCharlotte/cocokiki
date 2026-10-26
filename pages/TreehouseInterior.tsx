@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BookOpen, LibraryBig } from 'lucide-react';
-import { ASSET_LIBRARY } from '../data/assetLibrary';
-import { TREEHOUSE_ROOMS_BY_ID, type TreehouseRoomId } from '../data/treehouse';
+import { type TreehouseRoomId } from '../data/treehouse';
 import { createEmptyCookingProgress, loadCookingProgress, startJourney } from '../services/cookingProgress';
 import { RECIPES_BY_ID } from '../data/cooking/catalog';
 import InteractiveKitchen from '../components/treehouse/InteractiveKitchen';
 import RoomInventoryDrawer from '../components/treehouse/RoomInventoryDrawer';
+import { ownedRooms, loadRoomExpansions, ROOM_EXPANSIONS_KEY } from '../services/roomExpansions';
+import { subscribeLocalState } from '../services/localState';
+import '../components/treehouse/expansion.css';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface TreehouseInteriorProps {
   room: TreehouseRoomId;
@@ -16,7 +19,11 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
   const viewportRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const [scrollEdges, setScrollEdges] = useState({ left: true, right: false });
-  const definition = TREEHOUSE_ROOMS_BY_ID[room];
+  const [expansions, setExpansions] = useState(loadRoomExpansions);
+  useEffect(() => subscribeLocalState(() => setExpansions(loadRoomExpansions()), ROOM_EXPANSIONS_KEY), []);
+  const rooms = ownedRooms(expansions);
+  const roomIndex = rooms.findIndex(item => item.id === room);
+  const definition = rooms[roomIndex];
   const progress = useMemo(() => {
     if (import.meta.env.DEV && room === 'kitchen' && new URLSearchParams(window.location.search).get('cookingDemo') === '1') {
       const demo = startJourney(createEmptyCookingProgress(), RECIPES_BY_ID['banana-pancakes']);
@@ -33,7 +40,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     const viewport = viewportRef.current;
     if (!viewport) return;
     const maximum = viewport.scrollWidth - viewport.clientWidth;
-    if (maximum <= 48) {
+    if (maximum <= 2) {
       setScrollEdges({ left: true, right: true });
       return;
     }
@@ -44,18 +51,23 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
   }, []);
 
   const panRoom = useCallback((direction: -1 | 1) => {
+    const edge = direction === -1 ? scrollEdges.left : scrollEdges.right;
+    const adjacent = rooms[roomIndex + direction];
+    if (edge && adjacent) { onNavigate(`${adjacent.path}?entry=${direction === 1 ? 'left' : 'right'}`); return; }
     viewportRef.current?.scrollBy({
       left: direction * Math.max(220, window.innerWidth * 0.7),
-      behavior: 'smooth',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     });
-  }, []);
+  }, [scrollEdges, rooms, roomIndex, onNavigate]);
 
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
 
     const centerRoom = () => {
-      viewport.scrollLeft = Math.max(0, (viewport.scrollWidth - viewport.clientWidth) / 2);
+      const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      const entry = new URLSearchParams(window.location.search).get('entry');
+      viewport.scrollLeft = entry === 'left' ? 0 : entry === 'right' ? maximum : maximum / 2;
       updateScrollEdges();
     };
     const frame = window.requestAnimationFrame(centerRoom);
@@ -66,6 +78,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     };
   }, [room, updateScrollEdges]);
 
+  if (!definition) return <main className="treehouse-room-unavailable"><h1>Deze kamer is nog niet gebouwd</h1><button onClick={() => onNavigate('/treehouse')}>Naar mijn boomhut</button></main>;
   return <main
     ref={viewportRef}
     className={`treehouse-interior treehouse-interior--${room}`}
@@ -85,12 +98,12 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     </button>}
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/treehouse/encyclopedia')} aria-label="Mijn Encyclopedie openen" title="Mijn Encyclopedie"><LibraryBig aria-hidden="true" /><span>Encyclopedie</span></button>}
 
-    <div className="treehouse-interior__pan-controls" aria-label="Kijk rond in de kamer" style={scrollEdges.left && scrollEdges.right ? { display: 'none' } : undefined}>
-      <button type="button" aria-label="Kijk naar links" disabled={scrollEdges.left} onClick={() => panRoom(-1)}>
-        <img src={ASSET_LIBRARY.treehouse.icons.arrowLeft} alt="" />
+    <div className="treehouse-interior__pan-controls" aria-label="Kijk rond en ga naar de kamer ernaast">
+      <button type="button" title={scrollEdges.left ? rooms[roomIndex - 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar links'} aria-label={scrollEdges.left && rooms[roomIndex - 1] ? `Naar ${rooms[roomIndex - 1].label}` : 'Kijk naar links'} disabled={scrollEdges.left && !rooms[roomIndex - 1]} onClick={() => panRoom(-1)}>
+        <ArrowLeft /><span className="sr-only">Links</span>
       </button>
-      <button type="button" aria-label="Kijk naar rechts" disabled={scrollEdges.right} onClick={() => panRoom(1)}>
-        <img src={ASSET_LIBRARY.treehouse.icons.arrowRight} alt="" />
+      <button type="button" title={scrollEdges.right ? rooms[roomIndex + 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar rechts'} aria-label={scrollEdges.right && rooms[roomIndex + 1] ? `Naar ${rooms[roomIndex + 1].label}` : 'Kijk naar rechts'} disabled={scrollEdges.right && !rooms[roomIndex + 1]} onClick={() => panRoom(1)}>
+        <ArrowRight /><span className="sr-only">Rechts</span>
       </button>
     </div>
 

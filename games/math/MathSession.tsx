@@ -5,13 +5,14 @@ import ChoiceChallenge from './ChoiceChallenge';
 import DistributionChallenge from './DistributionChallenge';
 import PuzzleChallenge from './PuzzleChallenge';
 import BalanceChallenge from './BalanceChallenge';
-import { WinterScene } from './AdventureScenes';
 import { mathAssets } from './assets';
 import { QUESTION_TRANSITION_MS } from './config';
 import type { MathGameId, MathLevel, MathResult } from './types';
+import { createStoryDeck, type StoryQuestion } from './storyProblems';
+import StoryChallenge from './StoryChallenge';
 
 export default function MathSession({ game, level, onFinish, onSound = () => undefined }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void }) {
-  const [questions] = useState(() => createQuestionDeck(game, level));
+  const [questions] = useState(() => game === 'add-subtract' ? createStoryDeck(level) : createQuestionDeck(game, level));
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number>();
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -28,9 +29,9 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
       if (index === 9) { if (!finished.current) { finished.current = true; finishRef.current({ ...stats.current }); } return; }
       answered.current = false; hadMistake.current = false;
       setIndex(current => current + 1); setSelected(undefined); setFeedback(null); setHint(false);
-    }, QUESTION_TRANSITION_MS);
+    }, game === 'add-subtract' ? 2000 : QUESTION_TRANSITION_MS);
     return () => window.clearTimeout(timer);
-  }, [feedback, index]);
+  }, [feedback, index, game]);
   const answer = (value: number, distributionValid?: boolean) => {
     if (answered.current || finished.current) return;
     setSelected(value);
@@ -46,9 +47,10 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
     <h2 className="math-prompt">{question.prompt}</h2>
     <div className={`math-challenge math-challenge--${question.kind}`} key={question.id}>
       {game === 'divide' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
+        : game === 'add-subtract' ? <StoryChallenge question={question as StoryQuestion} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />
         : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
         : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
-        : <>{game === 'add-subtract' && <WinterScene question={question} success={feedback === 'correct'} completed={index + (feedback === 'correct' ? 1 : 0)} />}<ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} /></>}
+        : <ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />}
     </div>
     <div className="adventure-feedback" role="status">{feedback === 'correct' ? game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld!` : 'Goed zo!' : feedback === 'wrong' ? game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : 'Bijna! Probeer nog eens.' : ''}</div>
     <div className="math-hint-row"><button className="math-icon-tool" type="button" title="Hint" aria-label="Hint" aria-expanded={hint} onClick={() => setHint(value => !value)}><Lightbulb size={20} /></button>{hint && feedback !== 'correct' && <p className="math-hint">{question.hint}</p>}</div>

@@ -1,0 +1,12 @@
+@media (max-width: 600px) {
+  .memory-game { padding: 10px 0; }
+  .memory-heading { gap: 4px; margin-bottom: 8px; }
+  .memory-heading h1 { font-size: 20px; }
+  .memory-board { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 10px; }
+  .memory-card { aspect-ratio: auto; height: 116px; min-height: 44px; }
+  .memory-board[data-kind=fact] .memory-card { min-height: 170px; height: auto; }
+  .memory-board[data-kind=fact] .memory-text { font-size: 13px; line-height: 1.35; }
+  .card-front { gap: 4px; padding: 10px 8px; }
+  .card-back img { width: 36px; height: 36px; }
+  .memory-feedback { min-height: 34px; padding: 8px 0; font-size: 13px; }
+}

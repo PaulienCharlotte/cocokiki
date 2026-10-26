@@ -1,5 +1,5 @@
 import type { DestinationId } from './destinationRegistry';
-import type { TreehouseRoomId } from '../data/treehouse';
+import { isExtraRoom, type TreehouseRoomId } from '../data/treehouse';
 export type TreehouseSectionId = 'encyclopedia' | 'cookbook';
 
 export type AppRoute =
@@ -53,6 +53,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   const canonical = LEGACY_ROUTES[normalized] ?? normalized;
   let route: AppRoute;
   if (canonical === '/') route = { page: 'home', path: '/' };
+  else if (canonical.startsWith('/treehouse/') && isExtraRoom(canonical.slice('/treehouse/'.length))) route = { page: 'treehouse-room', path: canonical as `/treehouse/${TreehouseRoomId}`, room: canonical.slice('/treehouse/'.length) as TreehouseRoomId };
   else if (TREEHOUSE_ROUTES[canonical]) route = TREEHOUSE_ROUTES[canonical];
   else if (DESTINATION_ROUTES[canonical]) route = DESTINATION_ROUTES[canonical];
   else if (canonical === '/challenges') route = { page: 'challenges', path: '/challenges' };

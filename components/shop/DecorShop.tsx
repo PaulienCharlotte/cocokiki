@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Armchair, Check, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
+import { Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
@@ -10,6 +10,7 @@ import PlantAdoptionDialog from '../plants/PlantAdoptionDialog';
 import PlantFamilyPanel from '../plants/PlantFamilyPanel';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import CocoCoin from '../platform/CocoCoin';
+import PurchaseSuccess from './PurchaseSuccess';
 
 interface DecorShopProps {
   store: DecorStoreId;
@@ -85,6 +86,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
     <button className="shop-dismiss" type="button" onClick={onBack} aria-label="Terug naar het winkelplein" />
     <section className="shop-catalog decor-shop__catalog" aria-labelledby="decor-shop-title">
       <header className="shop-catalog__header">
+        <button className="shop-icon-button" type="button" onClick={onBack} aria-label="Terug naar winkeloverzicht" title="Terug naar winkeloverzicht"><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
         <div><small>{definition.eyebrow}</small><h1 id="decor-shop-title">{definition.label}</h1></div>
         <div className="shop-catalog__actions">
@@ -126,7 +128,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
     {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
     {adopted.length > 0 && <PlantAdoptionDialog plants={adopted} onName={nameAdopted} onDone={() => { setAdopted([]); setSuccess(true); }} />}
 
-    {success && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="decor-success-title"><div><span aria-hidden="true"><Check /></span><h2 id="decor-success-title">Toegevoegd aan je voorraad</h2><p>Je nieuwe {store === 'furniture' ? 'meubels' : 'planten'} vind je via de voorraadknop in iedere kamer.</p><button type="button" onClick={() => setSuccess(false)}>Verder winkelen</button></div></div>}
+    {success && <PurchaseSuccess title="Toegevoegd aan je voorraad" description={store === 'furniture' ? 'Je meubels staan klaar in je boomhut.' : 'Je planten staan klaar in je voorraad.'} onContinue={() => setSuccess(false)} onOverview={onBack} />}
   </main>;
 }
 

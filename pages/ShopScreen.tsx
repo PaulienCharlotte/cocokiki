@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId } from '../data/cooking/types';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID, type ShopCategory } from '../data/shopCatalog';
@@ -12,6 +12,8 @@ import DecorShop from '../components/shop/DecorShop';
 import { subscribeLocalState } from '../services/localState';
 import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 import CocoCoin from '../components/platform/CocoCoin';
+import PurchaseSuccess from '../components/shop/PurchaseSuccess';
+import { Button } from '../design-system';
 
 type ActiveCategory = 'all' | ShopCategory;
 
@@ -102,6 +104,11 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
     else window.location.assign('/treehouse/kitchen');
   };
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
+  const backToOverview = () => {
+    setCheckoutComplete(false);
+    if (recipeId && onExit) onExit();
+    else setActiveStore(null);
+  };
 
   if (!activeStore) return <ShopStreet onOpenGroceries={() => setActiveStore('groceries')} onOpenDecor={setActiveStore} />;
   if (activeStore !== 'groceries') return <DecorShop store={activeStore} onBack={() => setActiveStore(null)} />;
@@ -111,6 +118,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
     <button className="shop-dismiss" type="button" onClick={() => recipeId ? onExit?.() : setActiveStore(null)} aria-label={recipeId ? 'Terug naar het kookboek' : 'Terug naar het winkelplein'} />
     <section className={`shop-catalog${recipeId && recipeRequirementsSatisfied(progress, recipeId) ? ' has-recipe-ready' : ''}`} aria-labelledby="shop-title">
       <header className="shop-catalog__header">
+        <button className="shop-icon-button" type="button" onClick={backToOverview} aria-label={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'} title={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'}><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><ShoppingBasket size={20} /></span>
         <div><small>{recipeId ? 'Receptboodschappen' : 'Vrij winkelen'}</small><h1 id="shop-title">Winkel</h1></div>
         <div className="shop-catalog__actions">
@@ -180,15 +188,13 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
       </aside>
     </div>}
 
-    {checkoutComplete && <div className="shop-success" role="dialog" aria-modal="true" aria-labelledby="shop-success-title"><div>
-      <span aria-hidden="true"><Check /></span>
-      {journeyRecipeId && journey && journeyReady ? <>
-        <h2 id="shop-success-title">Goed gewinkeld!</h2>
-        <p>Alles voor {RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.</p>
-        <button type="button" onClick={returnToJourney}>Ga naar de keuken <ChevronRight /></button>
-        <button className="shop-success__secondary" type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
-      </> : recipeId && missingRequirements.length > 0 ? <>
-        <h2 id="shop-success-title">Je hebt al wat in huis!</h2>
+    {checkoutComplete && <PurchaseSuccess
+      title={recipeId && missingRequirements.length > 0 ? 'Je hebt al wat in huis!' : 'Goed gewinkeld!'}
+      description={journeyRecipeId && journey && journeyReady ? `Alles voor ${RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.` : 'Je boodschappen staan in je voorraad.'}
+      onContinue={() => setCheckoutComplete(false)} onOverview={backToOverview}
+      overviewLabel={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'}
+      primaryAction={journeyRecipeId && journey && journeyReady ? <Button endIcon={<ChevronRight size={18} />} onClick={returnToJourney}>Naar de keuken</Button> : undefined}>
+      {recipeId && missingRequirements.length > 0 && <>
         <p>Dit heb je nog nodig:</p>
         <ul className="shop-success__missing">
           {missingRequirements.map(item => <li key={item.ingredientId}>
@@ -197,13 +203,8 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
             <small>{missingLabel(item.amount - item.inventory - item.basket, item.unit)}</small>
           </li>)}
         </ul>
-        <button type="button" onClick={() => setCheckoutComplete(false)}>Dit ga ik halen <ChevronRight /></button>
-      </> : <>
-        <h2 id="shop-success-title">Goed gewinkeld!</h2>
-        <p>Je boodschappen staan in je voorraad.</p>
-        <button type="button" onClick={() => setCheckoutComplete(false)}>Verder winkelen</button>
       </>}
-    </div></div>}
+    </PurchaseSuccess>}
     {recipeId && <button className="shop-exit" type="button" onClick={onExit}>Stoppen</button>}
   </main>;
 }

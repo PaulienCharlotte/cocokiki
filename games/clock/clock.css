@@ -125,7 +125,7 @@
   .clock-level-picker { grid-column: 1 / -1; grid-template-columns: minmax(105px, auto) auto; justify-content: center; }
   .clock-level-picker__label { text-align: left; }
   .clock-levels { justify-content: center; }
-  .clock-memory__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .clock-memory__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .clock-memory-card__front { padding: 4px; }
   .clock-set__workspace { grid-template-columns: 1fr; gap: 2px; }
   .clock-set__workspace > .analog-clock { width: min(70vw, 270px); }

@@ -15,7 +15,7 @@ export const ASSET_LIBRARY = {
       explore: '/images/avatars/kiki/kiki-explore.png',
       worried: '/images/avatars/kiki/kiki-worried.png',
     },
-    lua: '/images/avatars/lua.webp',
+    lua: '/images/avatars/luiaard.webp',
     together: '/images/avatars/samen.webp',
     sloth: '/images/avatars/luiaard.webp',
     adventurer: '/images/avatars/avonturier.webp',

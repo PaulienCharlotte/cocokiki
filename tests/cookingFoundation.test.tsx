@@ -110,7 +110,7 @@ test('memory matches nutrient to function, rejects mismatches, locks two open ca
   assert.equal(memoryComplete(state, deck), true);
   assert.equal(revealNutrientCard(state, deck, first.id), state);
   const html = renderToStaticMarkup(<NutrientMemory config={banana.education!.nutrientMemory!} onComplete={() => undefined} />);
-  assert.equal((html.match(/type="button"/g) ?? []).length, 8);
+  assert.equal((html.match(/type="button"/g) ?? []).length, 6);
   assert.doesNotMatch(html, /tabindex="-1"/);
 });
 

@@ -13,6 +13,7 @@ import TreehouseInterior from '../pages/TreehouseInterior';
 import TreehouseSection from '../pages/TreehouseSection';
 import ShopScreen from '../pages/ShopScreen';
 import DecorShop from '../components/shop/DecorShop';
+import PurchaseSuccess from '../components/shop/PurchaseSuccess';
 import CookbookScreen from '../pages/CookbookScreen';
 import { buildKitchenInventory } from '../components/treehouse/InteractiveKitchen';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS } from '../data/shopCatalog';
@@ -88,9 +89,10 @@ test('world hub renders three accessible canvas hotspots and compact tools', () 
 
 test('profile avatar catalog contains stable, unique local options', () => {
   assert.equal(PROFILE_AVATAR_KEY, 'cocokiki:profile-avatar:v1');
-  assert.deepEqual(PROFILE_AVATARS.map(avatar => avatar.id), ['coco', 'kiki', 'lua', 'samen', 'luiaard', 'avonturier']);
+  assert.deepEqual(PROFILE_AVATARS.map(avatar => avatar.id), ['coco', 'kiki', 'lua', 'samen', 'stokstaartje', 'avonturier']);
   assert.equal(new Set(PROFILE_AVATARS.map(avatar => avatar.image)).size, PROFILE_AVATARS.length);
   assert.ok(PROFILE_AVATARS.every(avatar => avatar.image.startsWith('/images/avatars/')));
+  assert.equal(PROFILE_AVATARS.find(avatar => avatar.id === 'lua')?.image, ASSET_LIBRARY.avatars.sloth);
 });
 
 test('travel and challenges remain gateways to existing games', () => {
@@ -140,6 +142,19 @@ test('furniture and plant shops expose filters, scrollable products and local as
   assert.match(furniture, /assets\/library\/shop\/decor\/products\/double-bed-v4\.png/);
   assert.match(plants, /Plantenwinkel/);
   assert.match(plants, /Grote planten/);
+  assert.match(furniture, /aria-label="Terug naar winkeloverzicht"/);
+  assert.match(plants, /aria-label="Terug naar winkeloverzicht"/);
+});
+
+test('purchase confirmation offers an overview exit alongside continued shopping', () => {
+  const confirmation = renderToStaticMarkup(<PurchaseSuccess title="Gekocht" description="In je voorraad" onContinue={() => undefined} onOverview={() => undefined} />);
+  assert.match(confirmation, /role="dialog"/);
+  assert.match(confirmation, /aria-modal="true"/);
+  assert.match(confirmation, /Terug naar winkeloverzicht/);
+  assert.match(confirmation, /Verder winkelen/);
+  assert.match(confirmation, /Sluiten en verder winkelen/);
+  const recipe = renderToStaticMarkup(<PurchaseSuccess title="Gekocht" description="In je voorraad" onContinue={() => undefined} onOverview={() => undefined} overviewLabel="Terug naar het kookboek" primaryAction={<button>Naar de keuken</button>} />);
+  for (const label of ['Naar de keuken', 'Terug naar het kookboek', 'Verder winkelen']) assert.ok(recipe.includes(label));
 });
 
 test('decor products have individual local PNG assets with transparency', () => {
@@ -253,7 +268,7 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(kitchen, /aria-label="Mijn boodschappen openen"/);
   assert.match(kitchen, /data-kitchen-station="worktop"/);
   assert.match(kitchen, /data-kitchen-station="cooktop"/);
-  assert.match(kitchen, /aria-label="Kijk naar links"/);
+  assert.match(kitchen, /aria-label="Naar Woonkamer"/);
   assert.match(kitchen, /aria-label="Kijk naar rechts"/);
   assert.match(kitchen, /aria-label="Mijn kameritems openen"/);
   assert.match(renderToStaticMarkup(<TreehouseSection section="encyclopedia" onNavigate={() => undefined} />), /Mijn Encyclopedie/);

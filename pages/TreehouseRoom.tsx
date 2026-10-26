@@ -11,6 +11,7 @@ import {
 } from '../services/plantFamily';
 import { subscribeLocalState } from '../services/localState';
 import PlantFamilyPanel from '../components/plants/PlantFamilyPanel';
+import RoomNavigation from '../components/treehouse/RoomNavigation';
 
 interface TreehouseRoomProps {
   onNavigate: (path: string) => void;
@@ -40,6 +41,7 @@ export default function TreehouseRoom({ onNavigate }: TreehouseRoomProps) {
 
   return <main className="treehouse-overview" aria-labelledby="treehouse-room-title">
     <h1 id="treehouse-room-title" className="treehouse-room__title">Mijn boomhut</h1>
+    <RoomNavigation onNavigate={onNavigate} />
     <img className="treehouse-overview__background" src={ASSET_LIBRARY.treehouse.overview} alt="Doorsnede van de CocoKiki-boomhut met vier kamers" />
     <nav className="treehouse-overview__rooms" aria-label="Kamers in mijn boomhut">
       {TREEHOUSE_ROOMS.map(room => <button

@@ -1,5 +1,6 @@
 import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
-import { TREEHOUSE_ROOMS_BY_ID, type TreehouseRoomId } from '../data/treehouse';
+import { isExtraRoom, type TreehouseRoomId } from '../data/treehouse';
+import { ownsRoom } from './roomExpansions';
 import { commitLocalState, readDocument } from './localState';
 
 export const ROOM_INVENTORY_KEY = 'cocokiki:room-inventory:v1';
@@ -22,6 +23,8 @@ export interface RoomPlacement {
   view: number;
   /** Vergroting ten opzichte van de standaardmaat. */
   scale: number;
+  /** Extra dieptelaag; oude plaatsingen blijven automatisch op hun vloerdiepte. */
+  layer?: number;
   /** Bij een plant: welke geadopteerde plant hier staat, zodat zijn naam meereist. */
   plantId?: string;
 }
@@ -48,15 +51,16 @@ export function availableRoomQuantity(state: RoomInventoryState, productId: stri
   return Math.max(0, (state.owned[productId] ?? 0) - state.placements.filter(item => item.productId === productId).length);
 }
 
-export function placeRoomItem(state: RoomInventoryState, item: RoomPlacement): RoomInventoryState {
+export function placeRoomItem(state: RoomInventoryState, item: RoomPlacement, restoring = false): RoomInventoryState {
   const product = DECOR_PRODUCTS_BY_ID[item.productId];
-  if (!product || !TREEHOUSE_ROOMS_BY_ID[item.room] || !item.id || state.placements.some(entry => entry.id === item.id) || availableRoomQuantity(state, item.productId) < 1 || !Number.isFinite(item.x) || !Number.isFinite(item.y)) return state;
+  if (!product || !((restoring && isExtraRoom(item.room)) || ownsRoom(item.room)) || !item.id || state.placements.some(entry => entry.id === item.id) || availableRoomQuantity(state, item.productId) < 1 || !Number.isFinite(item.x) || !Number.isFinite(item.y)) return state;
   return { ...state, placements: [...state.placements, {
     ...item,
     x: Math.max(3, Math.min(97, item.x)),
     y: Math.max(12, Math.min(95, item.y)),
     view: clampView(item.view, product.views),
     scale: clampScale(item.scale),
+    ...(item.layer !== undefined ? { layer: Number.isSafeInteger(item.layer) ? Math.max(-10000, Math.min(10000, item.layer!)) : 0 } : {}),
     ...(typeof item.plantId === 'string' && item.plantId ? { plantId: item.plantId } : {}),
   }] };
 }
@@ -89,6 +93,24 @@ export function returnRoomItem(state: RoomInventoryState, id: string): RoomInven
   return { ...state, placements: state.placements.filter(item => item.id !== id) };
 }
 
+export function roomItemDepth(item: RoomPlacement): number {
+  return 1000000 + (item.layer ?? 0) * 100 + (DECOR_PRODUCTS_BY_ID[item.productId]?.category === 'rugs' ? 0 : Math.round(item.y));
+}
+
+export function layerRoomItem(state: RoomInventoryState, id: string, direction: -1 | 1): RoomInventoryState {
+  const target = state.placements.find(item => item.id === id);
+  if (!target) return state;
+  const others = state.placements.filter(item => item.room === target.room && item.id !== id);
+  const layers = [target.layer ?? 0, ...others.map(item => item.layer ?? 0)];
+  const layer = direction === 1 ? Math.max(...layers) + 1 : Math.min(...layers) - 1;
+  if (Math.abs(layer) <= 10000) return { ...state, placements: state.placements.map(item => item.id === id ? { ...item, layer } : item) };
+  // Normalize a long editing session while preserving the visible order.
+  const ordered = others.sort((a, b) => roomItemDepth(a) - roomItemDepth(b));
+  if (direction === 1) ordered.push(target); else ordered.unshift(target);
+  const ranks = new Map(ordered.map((item, index) => [item.id, index - Math.floor(ordered.length / 2)]));
+  return { ...state, placements: state.placements.map(item => ranks.has(item.id) ? { ...item, layer: ranks.get(item.id)! } : item) };
+}
+
 export function migrateRoomInventory(value: unknown): RoomInventoryState {
   const empty = createEmptyRoomInventory();
   if (!value || typeof value !== 'object') return empty;
@@ -98,7 +120,7 @@ export function migrateRoomInventory(value: unknown): RoomInventoryState {
   let state: RoomInventoryState = { ...empty, owned, appliedTransactions: Array.isArray(parsed.appliedTransactions) ? [...new Set(parsed.appliedTransactions.filter(id => typeof id === 'string'))] : [] };
   if (Array.isArray(parsed.placements)) for (const item of parsed.placements) {
     if (!item || typeof item !== 'object' || typeof item.id !== 'string') continue;
-    state = placeRoomItem(state, item);
+    state = placeRoomItem(state, item, true);
   }
   return state;
 }

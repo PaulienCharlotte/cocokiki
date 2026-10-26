@@ -10,3 +10,5 @@ import './inventorySales.test';
 import './math.test';
 import './schoolLayout.test';
 import './plantFamily.test';
+import './storyAndMemory.test';
+import './roomExpansions.test';

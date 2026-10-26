@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { BringToFront, SendToBack, Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
-import { availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
+import { layerRoomItem, roomItemDepth, availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
 import DecorAsset from '../shop/DecorAsset';
 import { PLANT_SPECIES_BY_ID } from '../../data/plants/species';
 import { loadPlantFamily, plantThirst, savePlantFamily, STAGE_LABEL, stageImage, waterPlant } from '../../services/plantFamily';
@@ -22,6 +22,8 @@ interface DragState {
   startX: number;
   startY: number;
   active: boolean;
+  offsetX: number;
+  offsetY: number;
 }
 
 
@@ -32,6 +34,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   const [ghost, setGhost] = useState<{ product: DecorProduct; x: number; y: number; returnable: boolean } | null>(null);
   const [overReturn, setOverReturn] = useState(false);
   const [notice, setNotice] = useState('');
+  const [preview, setPreview] = useState<{ id: string; x: number; y: number } | null>(null);
   const [plantCard, setPlantCard] = useState<{ speciesId: string; nickname?: string } | null>(null);
   const drag = useRef<DragState | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -78,6 +81,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
     setOpen(false);
     drag.current = null;
     setGhost(null);
+    setPreview(null);
   }, [room]);
 
   useEffect(() => {
@@ -93,12 +97,29 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.room-placed-object') || target?.closest('.room-inventory-drawer')) return;
+      if (target?.closest('.room-placed-object') || target?.closest('.room-placed-object__tools') || target?.closest('.room-inventory-drawer')) return;
       setSelected(null);
     };
     window.addEventListener('pointerdown', dismiss);
     return () => window.removeEventListener('pointerdown', dismiss);
   }, []);
+
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if (!selected || open || plantCard || event.metaKey || event.ctrlKey || drag.current?.active || (event.target as HTMLElement)?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return;
+      if (event.key === 'Escape') { setSelected(null); return; }
+      const delta = event.altKey ? .1 : event.shiftKey ? 2 : .5;
+      const directions: Record<string, [number, number]> = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
+      const direction = directions[event.key];
+      if (!direction) return;
+      const target = event.target as HTMLElement | null;
+      if (target !== document.body && !target?.closest('.room-placed-object, .room-placement-toolbar')) return;
+      event.preventDefault();
+      commit(current => { const item = current.placements.find(entry => entry.id === selected && entry.room === room); return item ? moveRoomItem(current, selected, item.x + direction[0], item.y + direction[1]) : current; });
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, [selected, room, open, plantCard, commit]);
 
   useEffect(() => {
     if (!open) return;
@@ -116,24 +137,31 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
       if (!active || event.pointerId !== active.pointerId) return;
       if (!active.active && Math.hypot(event.clientX - active.startX, event.clientY - active.startY) < 6) return;
       event.preventDefault();
+      const viewport = sceneRef.current?.parentElement;
+      if (viewport && event.clientX < 45) viewport.scrollLeft -= 14;
+      else if (viewport && event.clientX > window.innerWidth - 45) viewport.scrollLeft += 14;
       if (!active.active) {
         active.active = true;
         sceneRef.current?.setPointerCapture(event.pointerId);
         setOpen(false);
       }
-      setGhost({ product: active.product, x: event.clientX, y: event.clientY, returnable: Boolean(active.placementId) });
+      if (active.placementId) {
+        const point = coordinates(event.clientX, event.clientY);
+        if (point) setPreview({ id: active.placementId, x: Math.max(3, Math.min(97, point.x - active.offsetX)), y: Math.max(12, Math.min(95, point.y - active.offsetY)) });
+      } else setGhost({ product: active.product, x: event.clientX, y: event.clientY, returnable: false });
       setOverReturn(Boolean(active.placementId) && isReturnTarget(event.clientX, event.clientY));
     };
     const end = (event: PointerEvent) => {
       const active = drag.current;
       if (!active || event.pointerId !== active.pointerId) return;
+      if (event.type === 'lostpointercapture' && event.target !== sceneRef.current) return;
       drag.current = null;
-      if (event.type !== 'pointercancel') {
+      if (event.type === 'pointerup') {
         if (active.placementId) {
           if (active.active && isReturnTarget(event.clientX, event.clientY)) commit(current => returnRoomItem(current, active.placementId!));
           else if (active.active) {
             const point = coordinates(event.clientX, event.clientY);
-            if (point) commit(current => moveRoomItem(current, active.placementId!, point.x, point.y));
+            if (point) commit(current => moveRoomItem(current, active.placementId!, point.x - active.offsetX, point.y - active.offsetY));
           }
           setSelected(active.placementId);
         } else {
@@ -144,19 +172,25 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
       }
       if (sceneRef.current?.hasPointerCapture(event.pointerId)) sceneRef.current.releasePointerCapture(event.pointerId);
       setGhost(null);
+      setPreview(null);
       setOverReturn(false);
     };
     window.addEventListener('pointermove', move, { passive: false });
     window.addEventListener('pointerup', end);
     window.addEventListener('pointercancel', end);
-    return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end); };
+    window.addEventListener('lostpointercapture', end);
+    return () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end); window.removeEventListener('lostpointercapture', end); };
   }, [commit, coordinates, isReturnTarget, place, sceneRef]);
 
   const begin = (event: React.PointerEvent<HTMLButtonElement>, product: DecorProduct, placementId?: string) => {
     if (event.button !== 0) return;
     event.preventDefault();
     event.stopPropagation();
-    drag.current = { product, placementId, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, active: false };
+    const point = coordinates(event.clientX, event.clientY);
+    const item = inventory.placements.find(entry => entry.id === placementId);
+    drag.current = { product, placementId, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, active: false, offsetX: item && point ? point.x - item.x : 0, offsetY: item && point ? point.y - item.y : 0 };
+    // Pointer selection must also enable keyboard movement.
+    event.currentTarget.focus({ preventScroll: true });
     if (placementId) setSelected(placementId);
   };
 
@@ -182,6 +216,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
       <div className="room-decor-ghost" style={{ left: ghost.x, top: ghost.y }}><DecorAsset product={ghost.product} /></div>
       {ghost.returnable && <div ref={returnRef} className={`room-return-target${overReturn ? ' is-over' : ''}`}><PackageOpen /><span>Terug in voorraad</span></div>}
     </>}
+    {preview && <div ref={returnRef} className={`room-return-target${overReturn ? ' is-over' : ''}`}><PackageOpen /><span>Terug in voorraad</span></div>}
   </>;
 
   return <>
@@ -189,12 +224,10 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
       {currentPlacements.map(item => {
         const product = DECOR_PRODUCTS_BY_ID[item.productId];
         const isSelected = selected === item.id;
-        return <div key={item.id} className={`room-placed-object${isSelected ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, width: `${product.roomWidth * item.scale}%`, zIndex: isSelected ? 110 : product.category === 'rugs' ? 1 : 2 + Math.round(item.y) }}>
+        const point = preview?.id === item.id ? preview : item;
+        return <div key={item.id} className={`room-placed-object${isSelected ? ' is-selected' : ''}`} style={{ left: `${point.x}%`, top: `${point.y}%`, width: `${product.roomWidth * item.scale}%`, zIndex: roomItemDepth({ ...item, y: point.y }) }}>
           <button type="button" className="room-placed-object__move" aria-label={`${product.name} verplaatsen`} title={product.name} onPointerDown={event => begin(event, product, item.id)} onFocus={() => setSelected(item.id)} onKeyDown={event => {
             if (event.key === 'Delete' || event.key === 'Backspace') { event.preventDefault(); commit(current => returnRoomItem(current, item.id)); }
-            const delta = event.shiftKey ? 5 : 1;
-            const directions: Record<string, [number, number]> = { ArrowLeft: [-delta, 0], ArrowRight: [delta, 0], ArrowUp: [0, -delta], ArrowDown: [0, delta] };
-            if (directions[event.key]) { event.preventDefault(); const [x, y] = directions[event.key]; commit(current => moveRoomItem(current, item.id, item.x + x, item.y + y)); }
           }}>{(() => {
             const plant = plantOf(item);
             const soort = plant && PLANT_SPECIES_BY_ID[plant.speciesId];
@@ -214,7 +247,9 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
               {isSelected && <span className="room-placed-object__label">{plant.nickname}</span>}
             </>;
           })()}
-          {isSelected && <div className="room-placed-object__tools" aria-label={`${product.name} aanpassen`}>
+          {isSelected && !preview && !open && !plantCard && typeof document !== 'undefined' && createPortal(<div className="room-placed-object__tools room-placement-toolbar" role="toolbar" aria-label={`${product.name} aanpassen`}>
+            <button type="button" title="Naar voren" aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}><BringToFront /></button>
+            <button type="button" title="Naar achteren" aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}><SendToBack /></button>
             {plantOf(item) && <button type="button" title="Water geven" aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}><Droplet /></button>}
             {PLANT_SPECIES_BY_ID[product.id] && <button type="button" title="Meer over deze plant" aria-label={`Meer weten over ${plantOf(item)?.nickname ?? product.name}`} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })}><Info /></button>}
             {product.views > 1 && <>
@@ -224,7 +259,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
             <button type="button" title="Kleiner" aria-label={`${product.name} kleiner maken`} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))}><Minus /></button>
             <button type="button" title="Groter" aria-label={`${product.name} groter maken`} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))}><Plus /></button>
             <button type="button" title="Terug in voorraad" aria-label={`${product.name} terug in voorraad`} onClick={() => commit(current => returnRoomItem(current, item.id))}><PackagePlus /></button>
-          </div>}
+          </div>, document.body)}
         </div>;
       })}
     </div>
