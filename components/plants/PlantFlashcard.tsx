@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CircleCheck, Droplets, Globe2, Snowflake, Sparkles, Sprout, Sun, Wind, X } from 'lucide-react';
+import { CircleCheck, CloudMoon, Droplets, Globe2, Snowflake, Sparkles, Sprout, Sun, Wind, X } from 'lucide-react';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../../data/plants/firstAid';
@@ -17,7 +17,7 @@ const PROBLEM_ICON: Record<PlantProblemCause, React.ReactNode> = {
   'te-weinig-water': <Droplets />,
   'te-veel-water': <Droplets />,
   'te-veel-zon': <Sun />,
-  'te-weinig-licht': <Sun />,
+  'te-weinig-licht': <CloudMoon />,
   'droge-lucht': <Wind />,
   'te-koud': <Snowflake />,
 };

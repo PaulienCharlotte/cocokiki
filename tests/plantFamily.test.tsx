@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -129,16 +130,25 @@ test('water geven brengt elke plant helemaal terug; hij gaat nooit dood', () => 
   assert.deepEqual(migratePlantFamily(JSON.parse(JSON.stringify(begoten))), begoten);
 });
 
-test('elke soort heeft eigen symptomen; alleen de monstera heeft er al plaatjes bij', () => {
+test('elke soort heeft eigen symptomen, en het plaatje volgt het tekenwerk dat er is', () => {
   const monstera = PLANT_SPECIES_BY_ID['monstera-basket'];
-  assert.equal(monstera.stageArt, true);
+  assert.equal(monstera.art?.dry, 3);
   assert.equal(plantStageImage(monstera, 'fresh'), null);
-  assert.equal(plantStageImage(monstera, 'thirst1'), '/assets/library/plants/monstera-basket/thirst-1.png');
-  assert.equal(plantStageImage(monstera, 'thirst3'), '/assets/library/plants/monstera-basket/thirst-3.png');
-  // Zonder tekenwerk blijft het winkelplaatje staan, maar de tekst klopt wel.
+  assert.equal(plantStageImage(monstera, 'thirst1'), '/assets/library/plants/monstera-basket/dry-1.png');
+  assert.equal(plantStageImage(monstera, 'thirst3'), '/assets/library/plants/monstera-basket/dry-3.png');
+  // De monstera heeft nog geen plaatje voor natte aarde.
+  assert.equal(plantStageImage(monstera, 'wet1'), null);
+
+  // Met één plaatje per oorzaak blijft dat ene plaatje bij elk stadium staan.
   const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
-  assert.equal(plantStageImage(varen, 'thirst3'), null);
-  assert.ok(stageLabel(varen, 'thirst3').length > 0);
+  assert.equal(plantStageImage(varen, 'thirst1'), '/assets/library/plants/hanging-fern/dry-1.png');
+  assert.equal(plantStageImage(varen, 'thirst3'), '/assets/library/plants/hanging-fern/dry-1.png');
+  assert.equal(plantStageImage(varen, 'wet2'), '/assets/library/plants/hanging-fern/wet-1.png');
+  // Een plant zonder tekenwerk houdt het winkelplaatje, maar de tekst klopt wel.
+  const hogeCactus = PLANT_SPECIES_BY_ID['tall-cactus'];
+  assert.equal(hogeCactus.art, undefined);
+  assert.equal(plantStageImage(hogeCactus, 'thirst3'), null);
+  assert.ok(stageLabel(hogeCactus, 'thirst3').length > 0);
 
   // De symptomen verschillen echt per soort: dat is de les.
   assert.notEqual(stageLabel(varen, 'thirst1'), stageLabel(monstera, 'thirst1'));
@@ -260,4 +270,21 @@ test('Kiki legt bij natte aarde uit wat er met deze soort gebeurt', () => {
   // Natte aarde heeft nog geen tekenwerk; het winkelplaatje blijft staan.
   assert.equal(plantStageImage(PLANT_SPECIES_BY_ID['monstera-basket'], 'wet2'), null);
   for (const species of PLANT_SPECIES) assert.ok(species.overwaterAfter >= 1, `${species.id} mist overwaterAfter`);
+});
+
+test('elk aangekondigd plantenplaatje staat er ook echt', () => {
+  for (const species of PLANT_SPECIES) {
+    const art = species.art;
+    if (!art) continue;
+    const bestanden: string[] = [];
+    for (const soort of ['dry', 'wet'] as const) {
+      for (let stap = 1; stap <= (art[soort] ?? 0); stap += 1) bestanden.push(`${soort}-${stap}.png`);
+    }
+    if (art.sun) bestanden.push('sun-1.png');
+    if (art.dark) bestanden.push('dark-1.png');
+    for (const bestand of bestanden) {
+      const pad = `public/assets/library/plants/${species.id}/${bestand}`;
+      assert.ok(existsSync(pad), `${species.id} mist ${bestand}`);
+    }
+  }
 });

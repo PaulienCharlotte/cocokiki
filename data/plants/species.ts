@@ -50,11 +50,13 @@ export interface PlantSpecies {
   /** Wat er te zien is bij toenemende dorst; verschilt per soort. */
   symptoms: Record<ThirstStage, PlantSymptom>;
   /**
-   * Of er eigen tekenwerk is voor de zieke toestanden. Zo ja, dan staan de
-   * plaatjes in /assets/library/plants/<id>/thirst-1.png tot thirst-3.png.
-   * Zonder tekenwerk blijft het winkelplaatje staan; de tekst klopt dan nog wel.
+   * Welk tekenwerk er per oorzaak klaarstaat, in
+   * /assets/library/plants/<id>/. Een getal zegt hoeveel stappen er zijn:
+   * `dry: 3` betekent dry-1.png tot dry-3.png. Is er maar één plaatje, dan
+   * dient dat voor elk stadium. Zonder tekenwerk blijft het winkelplaatje
+   * staan; de tekst en Kiki kloppen dan nog steeds.
    */
-  stageArt?: boolean;
+  art?: { dry?: number; wet?: number; sun?: boolean; dark?: boolean };
 }
 
 export const PLANT_SPECIES: PlantSpecies[] = [
@@ -71,7 +73,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Zie je die gaten? Daar waait de wind zo doorheen. Slim bedacht door de plant zelf!',
     waterDays: 7,
     overwaterAfter: 3,
-    stageArt: true,
+    art: { dry: 3 },
     symptoms: {
       thirst1: { label: 'Bladeren hangen slap', kiki: 'De bladeren hangen omlaag. Dat is hoe een monstera om water vraagt.' },
       thirst2: { label: 'Gele onderbladeren', kiki: 'De onderste bladeren worden geel. Die geeft hij als eerste op.' },
@@ -129,6 +131,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Dit is de makkelijkste plant die er is. Vergeet je water te geven? Hij vindt het prima.',
     waterDays: 21,
     overwaterAfter: 2,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'Rimpels in het blad', kiki: 'Fijne rimpeltjes in de lengte. Hij blijft stevig, maar hij wil water.' },
       thirst2: { label: 'Bladeren buigen opzij', kiki: 'De toppen buigen opzij. Deze plant wordt nooit slap zoals andere.' },
@@ -148,6 +151,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Varens houden van vochtige lucht. In de badkamer voelen ze zich thuis.',
     waterDays: 3,
     overwaterAfter: 5,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'Bruine puntjes', kiki: 'De puntjes kleuren bruin. Een varen heeft het snelst dorst van allemaal.' },
       thirst2: { label: 'Opgekrulde bruine blaadjes', kiki: 'De blaadjes krullen op en worden bruin. Hij wordt niet geel, maar bruin.' },
@@ -167,6 +171,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Hang deze hoog op, dan kunnen de ranken lekker naar beneden groeien.',
     waterDays: 7,
     overwaterAfter: 3,
+    art: { dry: 1, wet: 1, dark: true },
     symptoms: {
       thirst1: { label: 'Slappe ranken', kiki: 'De ranken hangen slapper dan anders en de blaadjes krullen een beetje.' },
       thirst2: { label: 'Gele blaadjes vallen', kiki: 'Langs de ranken worden blaadjes geel en vallen eraf.' },
@@ -186,6 +191,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Laat hij zijn blad hangen? Geef water, dan staat hij een paar uur later weer rechtop.',
     waterDays: 5,
     overwaterAfter: 4,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'Alles hangt over de rand', kiki: 'Hij hangt helemaal over de pot. Dit is zijn manier van roepen.' },
       thirst2: { label: 'Helemaal in elkaar gezakt', kiki: 'Schrik niet. Geef water en over een paar uur staat hij weer rechtop.' },
@@ -205,6 +211,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Zie je dat staafje in het midden? Daar zitten de echte bloemetjes op.',
     waterDays: 6,
     overwaterAfter: 3,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'De glans is weg', kiki: 'De bladeren glimmen niet meer en hangen een beetje.' },
       thirst2: { label: 'Gele vlekken', kiki: 'Op de oudste bladeren komen gele vlekken en het roze verbleekt.' },
@@ -224,6 +231,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Wrijf eens zachtjes over een blaadje en ruik aan je vingers. Citrus!',
     waterDays: 5,
     overwaterAfter: 3,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'Blaadjes krullen omhoog', kiki: 'De blaadjes vouwen omhoog als bootjes. Zo verdampt er minder water.' },
       thirst2: { label: 'Blaadjes vallen af', kiki: 'Een citrus laat gewoon zijn blad vallen als hij dorst heeft.' },
@@ -243,6 +251,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Dikke grijsgroene wortels boven de pot zijn normaal. Laat ze gewoon zitten.',
     waterDays: 7,
     overwaterAfter: 2,
+    art: { dry: 1, wet: 1, sun: true },
     symptoms: {
       thirst1: { label: 'Zilvergrijze wortels', kiki: 'Kijk naar de wortels: groen is nat, zilvergrijs betekent dorst.' },
       thirst2: { label: 'Rimpels als een oude appel', kiki: 'De bladeren rimpelen, net als een appel die te lang ligt.' },
@@ -262,6 +271,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Te veel water is voor een vetplant erger dan te weinig. Echt waar.',
     waterDays: 21,
     overwaterAfter: 1,
+    art: { dry: 1, wet: 1, dark: true },
     symptoms: {
       thirst1: { label: 'Minder bolle blaadjes', kiki: 'De blaadjes zijn minder dik. Daar bewaarde hij zijn water in.' },
       thirst2: { label: 'Rimpelige blaadjes', kiki: 'De blaadjes rimpelen en worden dunner.' },
@@ -281,6 +291,7 @@ export const PLANT_SPECIES: PlantSpecies[] = [
     kikiTip: 'Een cactus drinkt bijna niets. Eén keer per maand een scheutje is al genoeg.',
     waterDays: 30,
     overwaterAfter: 1,
+    art: { dry: 1, wet: 1, dark: true },
     symptoms: {
       thirst1: { label: 'Iets smaller geworden', kiki: 'Hij is een beetje dunner. Zijn water is op.' },
       thirst2: { label: 'Rimpels in de lengte', kiki: 'Je ziet groeven in de lengte, net als bij een harmonica.' },
@@ -322,9 +333,11 @@ export function plantProduct(speciesId: string) {
  * terug en blijft het winkelplaatje staan; de tekst klopt dan nog steeds.
  */
 export function plantStageImage(species: PlantSpecies, stage: PlantStage): string | null {
-  if (stage === 'fresh' || !species.stageArt) return null;
-  // Voor natte aarde is er nog geen tekenwerk; dan blijft het winkelplaatje staan.
-  if (stage === 'wet1' || stage === 'wet2') return null;
-  const nummer = { thirst1: 1, thirst2: 2, thirst3: 3 }[stage];
-  return `/assets/library/plants/${species.id}/thirst-${nummer}.png`;
+  if (stage === 'fresh' || !species.art) return null;
+  const stap = Number(stage.slice(-1));
+  const soort = stage.startsWith('wet') ? 'wet' : 'dry';
+  const beschikbaar = species.art[soort] ?? 0;
+  if (beschikbaar < 1) return null;
+  // Zijn er minder plaatjes dan stadia, dan blijft het laatste staan.
+  return `/assets/library/plants/${species.id}/${soort}-${Math.min(stap, beschikbaar)}.png`;
 }
