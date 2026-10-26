@@ -5,6 +5,8 @@ export type ButtonVariant = 'primary' | 'secondary' | 'quiet' | 'danger' | 'rewa
 export type ButtonSize = 'small' | 'medium' | 'large';
 
 export interface ButtonProps {
+  /** Zodat een lijst knoppen gewoon met key gemaakt kan worden. */
+  key?: React.Key;
   children?: React.ReactNode;
   className?: string;
   disabled?: boolean;

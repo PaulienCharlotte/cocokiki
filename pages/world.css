@@ -1362,30 +1362,6 @@
 @keyframes thirst-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.12; } }
 @media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-thirst3 { animation: none; } }
 
-/* Mijn Planten: vaste ingang in de boomhut, met het aantal dorstige planten. */
-.treehouse-overview__plants {
-  position: absolute; z-index: 3; left: 50%; bottom: clamp(14px, 3vh, 28px);
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 10px 18px 10px 14px;
-  border: 1px solid #fff4e8c4; border-radius: var(--radius-pill);
-  background: #fff7ebf2; box-shadow: 0 8px 20px #43271638;
-  color: #2f6b3d; font-size: .82rem; font-weight: var(--font-weight-heavy);
-  transform: translateX(-50%);
-  transition: transform var(--motion-fast) var(--ease-storybook), box-shadow var(--motion-fast) ease;
-}
-.treehouse-overview__plants svg { width: 19px; height: 19px; }
-.treehouse-overview__plants:hover { transform: translateX(-50%) translateY(-3px); box-shadow: 0 12px 26px #43271645; }
-.treehouse-overview__plants:focus-visible { outline: 4px solid #fff2b8; outline-offset: 3px; }
-.treehouse-overview__plants em {
-  min-width: 21px; padding: 2px 6px; border-radius: var(--radius-pill);
-  background: #d9643c; color: #fff; font-size: .72rem; font-style: normal; text-align: center;
-}
-.treehouse-overview__plants.is-thirsty { color: #a8441f; }
-
-@media (prefers-reduced-motion: reduce) {
-  .treehouse-overview__plants { transition: none; }
-  .treehouse-overview__plants:hover { transform: translateX(-50%); }
-}
 
 .plant-family > header p { margin: 3px 0 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
 
@@ -1429,3 +1405,95 @@
 .room-placed-object__thirst.is-wet1 { background: #cfe3f0; color: #2f6386; }
 .room-placed-object__thirst.is-wet2 { background: #a9cde4; color: #1f4f6e; animation: thirst-pulse 1.8s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-wet2 { animation: none; } }
+
+/* Plantendokter: alles op één witte kaart, zodat het rustig blijft. */
+.clinic { min-height: 100dvh; padding: max(var(--space-4), 76px) var(--space-4) var(--space-6); display: grid; place-items: start center; background: var(--color-background); }
+.clinic__card {
+  width: min(520px, 100%); display: grid; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-card);
+  background: var(--color-surface); box-shadow: var(--shadow-soft);
+}
+.clinic__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.clinic__top h1 { margin: 0; font-size: var(--font-size-md); }
+.clinic__passport { margin: 0; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--radius-pill); background: var(--color-background-soft); color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.clinic__passport svg { width: 15px; height: 15px; color: var(--color-primary); }
+
+.clinic__plant { position: relative; width: min(260px, 64vw); }
+.clinic__plant img { width: 100%; display: block; filter: drop-shadow(0 10px 16px #3b241a22); }
+.clinic__card.is-klaar .clinic__plant img { animation: clinic-herstel 520ms var(--ease-storybook) both; }
+@keyframes clinic-herstel { from { opacity: .35; transform: scale(.95); } to { opacity: 1; transform: none; } }
+
+/* Je raakt de plant zelf aan; de vlakken lichten op zodra je erbij komt. */
+.clinic__toneel { display: grid; gap: var(--space-2); justify-items: center; }
+.clinic__raak { position: absolute; left: 0; width: 100%; padding: 0; border: 2px dashed transparent; border-radius: var(--radius-card); background: transparent; }
+.clinic__raak--blad { top: 0; height: 62%; }
+.clinic__raak--aarde { bottom: 0; height: 38%; }
+.clinic__raak span { position: absolute; left: 50%; bottom: 8px; padding: 4px 10px; border-radius: var(--radius-pill); background: #2f3d2cde; color: #fff; font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); white-space: nowrap; opacity: 0; transform: translateX(-50%); transition: opacity var(--motion-fast) ease; }
+.clinic__raak:hover, .clinic__raak:focus-visible { border-color: #9cb79a; background: #52694d14; outline: none; }
+.clinic__raak:hover span, .clinic__raak:focus-visible span { opacity: 1; }
+.clinic__raak.is-done { border-color: #cfe0d2; background: #52694d0a; }
+
+/* Een wijzend handje laat zonder woorden zien waar je moet tikken. */
+.clinic__handje { position: absolute; z-index: 3; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fffdf7; box-shadow: 0 4px 12px #3b241a38; color: #52694d; pointer-events: none; }
+.clinic__handje svg { width: 19px; height: 19px; }
+.clinic__handje--blad { top: 26%; left: 50%; margin-left: -17px; }
+.clinic__handje--aarde { bottom: 12%; left: 50%; margin-left: -17px; }
+.clinic__handje--helper { top: -8px; right: -10px; }
+
+/* Kiki brengt de patiënt binnen en vertelt waar hij stond. */
+.clinic__baasje { width: 100%; display: flex; align-items: flex-start; gap: var(--space-2); }
+.clinic__helper { position: relative; flex: none; width: 58px; height: 58px; padding: 0; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-background-soft); box-shadow: 0 3px 10px #3b241a22; }
+/* De poses zijn hele figuren; uitsnijden op het hoofd maakt haar herkenbaar. */
+.clinic__helper img { width: 100%; height: 100%; display: block; border-radius: 50%; object-fit: cover; object-position: 50% 4%; }
+.clinic__helper:hover, .clinic__helper:focus-visible { border-color: #9cb79a; outline: none; }
+.clinic__helper.is-done { border-color: #cfe0d2; }
+.clinic__bubbel { position: relative; margin: 0; padding: 10px 13px; border-radius: var(--radius-control); background: var(--color-background-soft); font-size: var(--font-size-md); line-height: 1.4; }
+.clinic__bubbel::before { content: ''; position: absolute; top: 18px; left: -6px; width: 12px; height: 12px; background: var(--color-background-soft); transform: rotate(45deg); }
+.clinic__bubbel strong { display: block; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+
+/* De diagnose als kaartjes met een tekentje, niet als vier tekstknoppen. */
+.clinic__kaarten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.clinic__kaart { display: grid; justify-items: center; gap: 7px; padding: 15px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); color: var(--color-text); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); line-height: 1.25; text-align: center; }
+.clinic__kaart span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; }
+.clinic__kaart svg { width: 21px; height: 21px; }
+.clinic__kaart:hover, .clinic__kaart:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
+.clinic__kaart { transition: transform var(--motion-fast) ease, border-color var(--motion-fast) ease; }
+.clinic__kaart.is-te-weinig-water span { background: #f6ecd9; color: #8a6d2f; }
+.clinic__kaart.is-te-veel-water span { background: #dcebf6; color: #2f6386; }
+.clinic__kaart.is-te-veel-zon span { background: #fbe7cf; color: #a8601f; }
+.clinic__kaart.is-te-weinig-licht span { background: #e6e3ef; color: #5b5076; }
+
+.clinic__naam { display: grid; justify-items: center; gap: 1px; text-align: center; }
+.clinic__naam strong { font-size: var(--font-size-lg); }
+.clinic__naam em { color: var(--color-text-soft); font-size: var(--font-size-sm); }
+
+.clinic__vraag { display: grid; gap: 2px; padding-top: var(--space-2); border-top: 1px solid var(--color-border); }
+.clinic__vraag small { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+.clinic__vraag h2 { margin: 0; font-size: var(--font-size-lg); }
+
+.clinic__notities { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.clinic__notities li { padding: 11px 13px; border-radius: var(--radius-control); background: var(--color-background-soft); font-size: var(--font-size-md); line-height: 1.45; }
+.clinic__notities strong { display: block; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+
+.clinic__acties { display: grid; gap: var(--space-2); }
+.clinic__acties--twee { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.clinic__tool { cursor: grab; touch-action: none; }
+.clinic__uitleg { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+
+.clinic__melding { margin: 0; padding: 11px 13px; border-radius: var(--radius-control); background: var(--color-peach); color: #7a3b33; font-size: var(--font-size-md); }
+.clinic__succes { margin: 0; font-size: var(--font-size-md); line-height: 1.45; }
+.clinic__beloning { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-primary); font-size: var(--font-size-lg); font-weight: var(--font-weight-heavy); }
+.clinic__beloning strong { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-pill); background: var(--color-success-soft); font-size: var(--font-size-sm); }
+.clinic__beloning svg { width: 15px; height: 15px; }
+.clinic__resterend { color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.clinic__hint { justify-self: center; }
+.clinic__kiki-pop { width: 86px; display: block; margin: 0 auto; }
+
+@media (max-width: 420px) {
+  .clinic__acties--twee { grid-template-columns: 1fr; }
+  .clinic__kaart { padding: 12px 8px; font-size: var(--font-size-xs); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clinic__handje { animation: none; }
+  .clinic__card.is-klaar .clinic__plant img { animation: none; }
+}
