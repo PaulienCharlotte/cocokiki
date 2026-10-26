@@ -81,7 +81,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
   };
 
   return <main className={`shop-room decor-shop decor-shop--${store}`}>
-    <img className="shop-room__background" src="/games/shop/shop-street.png" alt="Het gezellige winkelplein" />
+    <img className="shop-room__background" src="/games/shop/shop-street.webp" alt="Het gezellige winkelplein" />
     <button className="shop-dismiss" type="button" onClick={onBack} aria-label="Terug naar het winkelplein" />
     <section className="shop-catalog decor-shop__catalog" aria-labelledby="decor-shop-title">
       <header className="shop-catalog__header">

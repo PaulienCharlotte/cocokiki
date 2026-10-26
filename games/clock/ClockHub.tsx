@@ -4,15 +4,15 @@ import { Button } from '../../design-system';
 import type { ClockGameId, ClockProgress } from './types';
 
 const GAMES: Array<{ id: ClockGameId; title: string; description: string; accent: string; image: string }> = [
-  { id: 'memory', title: 'Klokmemory', description: 'Vind de gelijke tijden.', accent: 'coral', image: '/games/school/clock/clock-memory.png' },
-  { id: 'set-clock', title: 'Zet de klok', description: 'Draai de wijzers goed.', accent: 'wood', image: '/games/school/clock/clock-set.png' },
-  { id: 'race', title: 'Klokkenrace', description: 'Kies de juiste klok.', accent: 'blue', image: '/games/school/clock/clock-race.png' },
+  { id: 'memory', title: 'Klokmemory', description: 'Vind de gelijke tijden.', accent: 'coral', image: '/games/school/clock/clock-memory.webp' },
+  { id: 'set-clock', title: 'Zet de klok', description: 'Draai de wijzers goed.', accent: 'wood', image: '/games/school/clock/clock-set.webp' },
+  { id: 'race', title: 'Klokkenrace', description: 'Kies de juiste klok.', accent: 'blue', image: '/games/school/clock/clock-race.webp' },
 ];
 
 export default function ClockHub({ progress, onPlay }: { progress: ClockProgress; onPlay: (game: ClockGameId) => void }) {
   return <main className="clock-hub" aria-labelledby="clock-hub-title">
     <section className="clock-hub__intro">
-      <img className="clock-hub__mascot" src="/games/school/clock/clock-navigation.png" alt="" />
+      <img className="clock-hub__mascot" src="/games/school/clock/clock-navigation.webp" alt="" />
       <div><p>School</p><h1 id="clock-hub-title">Klokkijken</h1><span>Oefen met wijzers en tijden.</span></div>
     </section>
     <div className="clock-hub__games">

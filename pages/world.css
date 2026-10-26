@@ -264,7 +264,7 @@
 .treehouse-interior__collections button:hover { transform: translateY(-7px) scale(1.025); }
 .treehouse-interior__collections button:focus-visible { outline: 5px solid #fff2b8; outline-offset: 2px; }
 .treehouse-section { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: clamp(28px, 5vw, 70px) 20px; background: #81552f; isolation: isolate; }
-.treehouse-section__backdrop { position: absolute; z-index: -2; inset: -24px; background: linear-gradient(#2c1a1052, #2c1a1080), url('/games/treehouse/treehouse-interior.png') center / cover; filter: blur(5px); transform: scale(1.03); }
+.treehouse-section__backdrop { position: absolute; z-index: -2; inset: -24px; background: linear-gradient(#2c1a1052, #2c1a1080), url('/games/treehouse/treehouse-interior.webp') center / cover; filter: blur(5px); transform: scale(1.03); }
 .treehouse-section__layout { width: min(920px, 100%); display: grid; grid-template-columns: minmax(250px, .9fr) minmax(360px, 1.1fr); align-items: center; gap: clamp(24px, 5vw, 62px); }
 .treehouse-section__art { width: 100%; max-height: 520px; display: block; object-fit: contain; filter: drop-shadow(0 24px 22px #23130b70); }
 .treehouse-section__surface { max-width: 500px; }
@@ -276,7 +276,7 @@
 
 .destination-page__eyebrow { margin-bottom: 5px; color: #48644d; font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
 
-.destination-page { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: clamp(28px, 6vw, 80px) 20px; background-color: var(--color-background-calm); background-image: linear-gradient(#fffaf5c9, #fffaf5e8), url('/games/treehouse/adventure-world-background.png'); background-position: center; background-size: cover; isolation: isolate; }
+.destination-page { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: clamp(28px, 6vw, 80px) 20px; background-color: var(--color-background-calm); background-image: linear-gradient(#fffaf5c9, #fffaf5e8), url('/games/treehouse/adventure-world-background.webp'); background-position: center; background-size: cover; isolation: isolate; }
 .destination-page__background { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
 .destination-page--immersive::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, #20160b24, transparent 48%, #20160b10); pointer-events: none; }
 .destination-page__layout { width: min(940px, 100%); display: grid; grid-template-columns: minmax(280px, .9fr) minmax(360px, 1.1fr); align-items: center; gap: clamp(24px, 5vw, 64px); }
@@ -530,7 +530,7 @@
 .recipe-overview__more { margin: 7px auto 0; }
 
 .cookbook-screen { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: 100px 18px 28px; background: #765031; isolation: isolate; }
-.cookbook-screen__backdrop { position: absolute; z-index: -2; inset: 0; background: linear-gradient(#25150b35, #25150b62), url('/games/treehouse/treehouse-interior.png') center / cover; }
+.cookbook-screen__backdrop { position: absolute; z-index: -2; inset: 0; background: linear-gradient(#25150b35, #25150b62), url('/games/treehouse/treehouse-interior.webp') center / cover; }
 .cookbook-collection { width: min(940px, 100%); max-height: calc(100dvh - 130px); overflow-y: auto; padding: 22px; border: 1px solid #fff8edc4; border-radius: 8px; background: #fffaf0ee; box-shadow: 0 20px 54px #29190e57; color: var(--color-text); backdrop-filter: blur(10px); }
 .cookbook-collection__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
 .cookbook-empty { min-height: 330px; display: grid; place-content: center; justify-items: center; gap: 12px; max-width: 520px; margin: 12px auto 0; text-align: center; }
@@ -627,7 +627,7 @@
 .journey-loading { min-height: 260px; display: grid; place-items: center; color: #587157; font-weight: 800; }
 
 .encyclopedia-screen { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: 100px 18px 28px; background: #765031; isolation: isolate; }
-.encyclopedia-screen__backdrop { position: absolute; z-index: -2; inset: 0; background: linear-gradient(#25150b35, #25150b62), url('/games/treehouse/treehouse-interior.png') center / cover; }
+.encyclopedia-screen__backdrop { position: absolute; z-index: -2; inset: 0; background: linear-gradient(#25150b35, #25150b62), url('/games/treehouse/treehouse-interior.webp') center / cover; }
 .encyclopedia-collection { width: min(940px, 100%); max-height: calc(100dvh - 130px); overflow-y: auto; padding: 22px; border: 1px solid #fff8edc4; border-radius: 8px; background: #fffaf0ee; box-shadow: 0 20px 54px #29190e57; color: var(--color-text); backdrop-filter: blur(10px); }
 .encyclopedia-collection > header { display: flex; align-items: center; gap: 11px; }
 .encyclopedia-collection > header > span { width: 44px; height: 44px; display: grid; flex: 0 0 44px; place-items: center; border-radius: 8px; background: #dfeadf; color: #4f694f; }

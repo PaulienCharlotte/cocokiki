@@ -185,7 +185,7 @@ test('invalid optional tip and nutrient configuration has actionable validation 
   assert.ok(getRecipeIssues({ ...banana, cookingTips: [banana.cookingTips![0], banana.cookingTips![0]] }).includes('tips:duplicate-id'));
   assert.deepEqual(getRecipeIssues(banana), []);
   assert.deepEqual(getRecipeIssues(yogurt), []);
-  NUTRIENTS_BY_ID.iron.iconAsset = '/missing-optional-icon.png';
+  NUTRIENTS_BY_ID.iron.iconAsset = '/missing-optional-icon.webp';
   try { assert.deepEqual(getRecipeIssues(banana), []); }
   finally { delete NUTRIENTS_BY_ID.iron.iconAsset; }
   assert.ok(getRecipeIssues({ ...banana, education: { ...banana.education!, nutrientMemory: { ...banana.education!.nutrientMemory!, pairCount: 2 as 3 } } }).some(issue => issue.includes('pair-count')));
@@ -205,8 +205,8 @@ test('home recipes include real instructions, amounts, safety and deterministic 
 });
 
 test('weighing shows the amount without a clipped ingredient illustration', () => {
-  const html = renderToStaticMarkup(<KitchenScale value={75} full={75} ingredientImage="/games/shop/products/strawberry.png" />);
-  assert.doesNotMatch(html, /cooking-scale__contents|strawberry.png/);
+  const html = renderToStaticMarkup(<KitchenScale value={75} full={75} ingredientImage="/games/shop/products/strawberry.webp" />);
+  assert.doesNotMatch(html, /cooking-scale__contents|strawberry.webp/);
   assert.match(html, /cooking-scale__front/);
   assert.doesNotMatch(html, /transform:/);
 });

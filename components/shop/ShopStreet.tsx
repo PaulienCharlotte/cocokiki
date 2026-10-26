@@ -29,7 +29,7 @@ export default function ShopStreet({ onOpenGroceries, onOpenDecor }: ShopStreetP
   }, []);
   return <main ref={viewport} className="shop-street" aria-labelledby="shop-street-title" onScroll={update}>
     <div className="shop-street__scene">
-    <img className="shop-street__background" src="/games/shop/shop-street.png" alt="Een winkelplein met een supermarkt, meubelwinkel en plantenwinkel" />
+    <img className="shop-street__background" src="/games/shop/shop-street.webp" alt="Een winkelplein met een supermarkt, meubelwinkel en plantenwinkel" />
     <h1 id="shop-street-title" className="treehouse-room__title">Kies een winkel</h1>
     <nav className="shop-street__stores" aria-label="Winkels">
       <button className="shop-street__store shop-street__store--groceries" type="button" onClick={onOpenGroceries} aria-label="Supermarkt openen"><ShoppingBasket /><span>Supermarkt</span></button>

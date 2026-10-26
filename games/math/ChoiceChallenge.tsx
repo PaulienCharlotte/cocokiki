@@ -17,7 +17,7 @@ export function MathVisualHelp({ question, level, onAnswer, locked }: { question
     </div>}
     {['+', '-'].includes(question.operation) && <>
       {level <= 2 && <div className="math-counting-apples" aria-label={`${question.a} appels ${question.operation === '+' ? 'en' : 'waarvan'} ${question.b} ${question.operation === '+' ? 'erbij' : 'weg'}`}>
-        {Array.from({ length: shown }, (_, i) => <img key={i} src="/games/shop/products/apple.png" alt="" className={question.operation === '-' && i >= question.a - question.b ? 'is-removed' : i >= question.a ? 'is-added' : ''} />)}
+        {Array.from({ length: shown }, (_, i) => <img key={i} src="/games/shop/products/apple.webp" alt="" className={question.operation === '-' && i >= question.a - question.b ? 'is-removed' : i >= question.a ? 'is-added' : ''} />)}
       </div>}
       <div className="math-numberline"><label htmlFor="math-numberline">Getallenlijn · {marker}</label><input id="math-numberline" type="range" min={0} max={max} step={1} value={marker} disabled={locked} onChange={event => setMarker(Number(event.target.value))} />
         <div><span>0</span><span>{max}</span></div><div className="math-line-controls"><button type="button" disabled={locked} aria-label="Stap terug" onClick={() => setMarker(value => Math.max(0, value - step))}><Minus size={18} /></button>

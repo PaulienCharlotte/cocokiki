@@ -34,7 +34,7 @@ test('progress indicator clamps values and keeps a readable label', () => {
 });
 
 test('destination portal communicates its title and locked state', () => {
-  const html = renderToStaticMarkup(<DestinationPortal title="Koken" imageSrc="\/koken.png" locked />);
+  const html = renderToStaticMarkup(<DestinationPortal title="Koken" imageSrc="\/koken.webp" locked />);
   assert.match(html, /aria-label="Koken, vergrendeld"/);
   assert.match(html, /disabled=""/);
   assert.match(html, /ck-destination-portal/);

@@ -1,4 +1,4 @@
-.math-module { min-height: 100dvh; padding: 96px 20px 24px; color: #403831; background: url('/games/school/school-interior.jpg') center / cover fixed; }
+.math-module { min-height: 100dvh; padding: 96px 20px 24px; color: #403831; background: url('/games/school/school-interior.webp') center / cover fixed; }
 .math-module * { box-sizing: border-box; letter-spacing: 0; }
 .math-module button, .math-module select { font-family: inherit; cursor: pointer; }
 .math-module button:disabled { cursor: default; }

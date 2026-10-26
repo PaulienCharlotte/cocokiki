@@ -13,5 +13,5 @@ export default function BridgeConnector({ from, to }: BridgeConnectorProps) {
     top: from.y,
     width: distance,
     transform: `translateY(-50%) rotate(${angle}deg)`,
-  }}><img src="/games/treehouse/world-v2/bridge-cutout.png" alt="" /></div>;
+  }}><img src="/games/treehouse/world-v2/bridge-cutout.webp" alt="" /></div>;
 }

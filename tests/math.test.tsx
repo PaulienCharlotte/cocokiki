@@ -362,8 +362,9 @@ test('large berry harvests preserve higher table ranges without creating a wall 
 test('all seven supplied illustrations replace the temporary math objects', () => {
   assert.deepEqual(missingMathAssets, []);
   for (const key of ['squirrel', 'acorn', 'treeHollow', 'bird', 'bee', 'honeyJar', 'cookie'] as const) {
-    const png = readFileSync(`public${mathAssets[key]}`);
-    assert.equal(png[25], 6, `${key} must have real PNG alpha`);
+    const afbeelding = readFileSync(`public${mathAssets[key]}`);
+    assert.equal(afbeelding.subarray(8, 12).toString(), 'WEBP', key);
+    assert.ok(afbeelding.subarray(0, 200).includes('ALPH'), `${key} must keep real alpha`);
   }
   const q = generateQuestion('add-subtract', 2, 0, () => .9);
   const winter = renderToStaticMarkup(<WinterScene question={q} success={false} completed={2} />);

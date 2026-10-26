@@ -3,10 +3,10 @@ import type { PreparationConfig } from './preparation';
 import type { MathChallengeConfig } from './types';
 
 export const FRUIT_YOGURT_ASSETS = {
-  yogurt: '/assets/library/cooking/fruit-yogurt/yogurt-bowl.png',
-  strawberry: '/assets/library/cooking/fruit-yogurt/strawberries.png',
-  banana: '/assets/library/cooking/fruit-yogurt/banana-slices.png',
-  finished: '/games/cooking/fruit-yogurt.png',
+  yogurt: '/assets/library/cooking/fruit-yogurt/yogurt-bowl.webp',
+  strawberry: '/assets/library/cooking/fruit-yogurt/strawberries.webp',
+  banana: '/assets/library/cooking/fruit-yogurt/banana-slices.webp',
+  finished: '/games/cooking/fruit-yogurt.webp',
 } as const;
 const a = FRUIT_YOGURT_ASSETS;
 const kit = ASSET_LIBRARY.cooking.kit;

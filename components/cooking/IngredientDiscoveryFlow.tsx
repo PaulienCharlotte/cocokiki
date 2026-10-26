@@ -73,7 +73,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   if (pendingSave) return <main className="discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
 
   if (journey.stage === 'challenges') return <main className="discovery-stage">
-    <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
+    <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <section className="discovery-card discovery-card--centered discovery-card--unavailable" aria-labelledby="next-stage-title">
       <JourneyStageProgress journey={journey} />
       <span className="discovery-card__success-icon" aria-hidden="true"><Check /></span>
@@ -89,7 +89,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     const nextStage = nextRequiredStage(progress, recipe.id);
     const goToNext = () => replay ? onExit() : nextStage && commit(advanceJourney(progress, recipe.id, nextStage));
     return <main className="discovery-stage">
-      <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
+      <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
       <section className="discovery-card discovery-card--completion" aria-labelledby="discovery-complete-title">
         <div className="discovery-stage__topbar"><Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onExit}>Stoppen</Button></div>
         <JourneyStageProgress journey={journey} />
@@ -127,7 +127,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   const skip = () => commit(skipKnownIngredient(progress, recipe.id));
 
   return <main className="discovery-stage">
-    <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.png" alt="" />
+    <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
       <div className="stage-chrome">
         <div className="discovery-stage__topbar">

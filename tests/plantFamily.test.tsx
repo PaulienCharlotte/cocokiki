@@ -85,7 +85,7 @@ test('de leerkaart toont naam, soortnaam, verzorging en een tip van Kiki', () =>
   assert.match(kaart, /Licht/);
   assert.match(kaart, /Water/);
   assert.match(kaart, /Kiki zegt/);
-  assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.png/);
+  assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.webp/);
   assert.equal(renderToStaticMarkup(<PlantFlashcard speciesId="bestaat-niet" onClose={() => undefined} />), '');
 });
 

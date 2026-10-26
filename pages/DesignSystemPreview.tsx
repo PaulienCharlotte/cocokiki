@@ -73,8 +73,8 @@ export default function DesignSystemPreview({ onHome }: DesignSystemPreviewProps
       <section className="ck-preview__section" aria-labelledby="preview-portals">
         <div className="ck-preview__section-heading"><span>04</span><div><h2 id="preview-portals">Bestemmingen</h2><p>Herkenbare portalen met één duidelijke actie.</p></div></div>
         <div className="ck-preview__portal-grid">
-          <DestinationPortal title="Reizen" badge="Aardrijkskunde" description="Ontdek kaarten en bijzondere plekken." imageSrc="/games/treehouse/world-v2/island-topo-cutout.png" tone="sky" />
-          <DestinationPortal title="Uitdagingen" badge="Korte spellen" description="Oefen wat je al hebt ontdekt." imageSrc="/games/treehouse/world-v2/island-tables-cutout.png" tone="peach" />
+          <DestinationPortal title="Reizen" badge="Aardrijkskunde" description="Ontdek kaarten en bijzondere plekken." imageSrc="/games/treehouse/world-v2/island-topo-cutout.webp" tone="sky" />
+          <DestinationPortal title="Uitdagingen" badge="Korte spellen" description="Oefen wat je al hebt ontdekt." imageSrc="/games/treehouse/world-v2/island-tables-cutout.webp" tone="peach" />
         </div>
       </section>
 
@@ -89,7 +89,7 @@ export default function DesignSystemPreview({ onHome }: DesignSystemPreviewProps
       onClose={() => setDialogOpen(false)}
       title="Klaar om te reizen?"
       description="Kies één route. Je kunt daarna altijd rustig terug naar de wereld."
-      illustration={<img src="/games/treehouse/world-v2/island-topo-cutout.png" alt="Zwevend Topo-eiland" />}
+      illustration={<img src="/games/treehouse/world-v2/island-topo-cutout.webp" alt="Zwevend Topo-eiland" />}
       primaryAction={<Button onClick={() => setDialogOpen(false)}>Kies deze route</Button>}
       secondaryAction={<Button variant="quiet" onClick={() => setDialogOpen(false)}>Nog even kijken</Button>}
     />

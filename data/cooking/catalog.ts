@@ -12,23 +12,23 @@ import type {
 
 export const COOKING_ASSETS: CookingAssetRegistry = {
   recipes: {
-    'banana-pancakes': '/games/cooking/banana-pancakes.png',
-    'fruit-yogurt': '/games/cooking/fruit-yogurt.png',
-    'oat-muffins': '/games/cooking/oat-muffins.png',
+    'banana-pancakes': '/games/cooking/banana-pancakes.webp',
+    'fruit-yogurt': '/games/cooking/fruit-yogurt.webp',
+    'oat-muffins': '/games/cooking/oat-muffins.webp',
   },
   ingredients: {
-    banana: '/games/shop/products/banana.png?v=2',
-    eggs: '/games/shop/products/eggs.png?v=2',
-    oats: '/games/shop/products/oats.png?v=2',
-    yogurt: '/games/shop/products/yogurt.png?v=2',
-    strawberry: '/games/shop/products/strawberry.png?v=2',
+    banana: '/games/shop/products/banana.webp?v=2',
+    eggs: '/games/shop/products/eggs.webp?v=2',
+    oats: '/games/shop/products/oats.webp?v=2',
+    yogurt: '/games/shop/products/yogurt.webp?v=2',
+    strawberry: '/games/shop/products/strawberry.webp?v=2',
   },
   equipment: {
-    bowl: '/games/cooking/equipment/mixing-bowl.png',
-    fork: '/games/cooking/equipment/fork.png',
-    pan: '/games/cooking/equipment/frying-pan.png',
-    spatula: '/games/cooking/equipment/spatula.png',
-    spoon: '/assets/library/cooking/kit/spoon.png',
+    bowl: '/games/cooking/equipment/mixing-bowl.webp',
+    fork: '/games/cooking/equipment/fork.webp',
+    pan: '/games/cooking/equipment/frying-pan.webp',
+    spatula: '/games/cooking/equipment/spatula.webp',
+    spoon: '/assets/library/cooking/kit/spoon.webp',
   },
 };
 

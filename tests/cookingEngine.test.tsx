@@ -199,7 +199,7 @@ test('readiness requires real gameplay, education and existing visual assets', (
   for (const path of getRecipeAssetPaths(recipe)) assert.ok(existsSync(`public${path.split('?')[0]}`), path);
   assert.ok(getRecipeIssues({ ...recipe, preparation: undefined }).includes('preparation-missing'));
   assert.ok(getRecipeIssues({ ...recipe, education: { math: [] } }).includes('math-missing'));
-  assert.ok(getRecipeIssues({ ...recipe, image: '/missing-image.png' }).includes('asset-missing'));
+  assert.ok(getRecipeIssues({ ...recipe, image: '/missing-image.webp' }).includes('asset-missing'));
   assert.ok(getRecipeIssues(RECIPES_BY_ID['oat-muffins']).length > 0);
 });
 test('decoration checkout is atomic and cannot spend coins without ownership', () => memoryStorage((memory, fail) => {
