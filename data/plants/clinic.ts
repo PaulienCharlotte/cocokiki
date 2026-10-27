@@ -19,14 +19,76 @@ export const CLUE_LABEL: Record<ClueSpot, string> = {
 };
 
 /**
+ * Getekende plaatjes bij de knoppen. Waar er nog geen tekening is valt het
+ * scherm terug op een lijn-icoon; docs/plantendokter-assets.md zegt welke
+ * er nog ontbreken.
+ */
+const ICOON_MAP = '/assets/library/plants/icons';
+
+export const CLUE_ICOON: Record<ClueSpot, string> = {
+  blad: `${ICOON_MAP}/blad.webp`,
+  aarde: `${ICOON_MAP}/aarde.webp`,
+  plek: `${ICOON_MAP}/plek.webp`,
+};
+
+export const OORZAAK_PLAATJE: Partial<Record<PlantProblemCause, string>> = {
+  'te-weinig-water': `${ICOON_MAP}/droog.webp`,
+  'te-veel-water': `${ICOON_MAP}/nat.webp`,
+  'te-veel-zon': `${ICOON_MAP}/zon.webp`,
+};
+
+/**
+ * De bonusvraag: wist je nog hoe deze plant heet? Drie namen, altijd dezelfde
+ * drie bij dezelfde plant, zodat een kind er niet door de war van raakt. De
+ * afleiders komen uit dezelfde hoek: planten die op elkaar lijken staan niet
+ * samen in één rijtje als dat te gemeen zou zijn.
+ */
+export function naamKeuzes(speciesId: string): string[] {
+  const alle = PLANT_SPECIES.map(soort => soort.commonName);
+  const eigen = PLANT_SPECIES_BY_ID[speciesId]?.commonName;
+  if (!eigen) return [];
+  const index = PLANT_SPECIES.findIndex(soort => soort.id === speciesId);
+  const anderen = [
+    alle[(index + 3) % alle.length],
+    alle[(index + 7) % alle.length],
+  ].filter(naam => naam !== eigen);
+  const keuzes = [eigen, ...anderen].slice(0, 3);
+  // Vaste volgorde per plant: het juiste antwoord staat niet altijd vooraan.
+  const plek = index % keuzes.length;
+  const zonder = keuzes.filter(naam => naam !== eigen);
+  zonder.splice(plek, 0, eigen);
+  return zonder;
+}
+
+/** Wat de bonusvraag extra oplevert. */
+export const NAAM_BONUS = 1;
+
+/** Hoeveel patiënten er in één spreekuur langskomen. */
+export const CONSULTS_PER_SPREEKUUR = 3;
+
+/** Kort woord voor op het chipje, zodat de knop klein kan blijven. */
+export const CLUE_KORT: Record<ClueSpot, string> = {
+  blad: 'Blad',
+  aarde: 'Aarde',
+  plek: 'Plek',
+};
+
+/** Wat Kiki vraagt bij elke stap; zij is de enige stem op de kaart. */
+export const KIKI_VRAAG = {
+  onderzoek: 'Raak de plant aan. Wat zie je?',
+  diagnose: 'Wat is er aan de hand met deze plant?',
+  behandeling: 'Wat ga je doen om hem te helpen?',
+} as const;
+
+/**
  * Kiki is de assistente van het spreekuur. Zij brengt de patiënt binnen en
  * vertelt wat het baasje gezegd heeft; aan een persoon vraag je eerder iets
  * dan aan een knop. Kiki hoort bij de plantenwereld, Coco bij de keuken.
  */
 export const HELPER_NAME = 'Kiki';
 
-export function helperIntro(commonName: string): string {
-  return `Deze ${commonName.toLowerCase()} is net binnengebracht. Er is iets mis, maar wat?`;
+export function helperIntro(): string {
+  return 'Deze plant is net binnengebracht. Er is iets mis, maar wat?';
 }
 
 /** Wat de aarde en de standplaats verraden; dat is bij elke plant hetzelfde. */
@@ -87,6 +149,10 @@ export const TREATMENTS: Treatment[] = [
 ];
 
 export const TREATMENTS_BY_ID = Object.fromEntries(TREATMENTS.map(t => [t.id, t])) as Record<TreatmentId, Treatment>;
+
+export const GEREEDSCHAP_PLAATJE: Partial<Record<TreatmentId, string>> = {
+  gieter: `${ICOON_MAP}/gieter.webp`,
+};
 
 const BASIS_BEHANDELING: Record<PlantProblemCause, TreatmentId> = {
   'te-weinig-water': 'gieter',

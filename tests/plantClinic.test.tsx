@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { PLANT_SPECIES_BY_ID } from '../data/plants/species';
+import { PLANT_SPECIES, PLANT_SPECIES_BY_ID } from '../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL } from '../data/plants/firstAid';
 import {
   clueText,
+  naamKeuzes,
   DIAGNOSE_CHOICES,
   PATIENT_KINDS,
   treatmentFor,
@@ -110,14 +111,13 @@ test('het spreekuur overleeft een herstart en beschadigde opslag', () => {
 
 test('het spreekuur begint met onderzoeken, niet met gokken', () => {
   const scherm = renderToStaticMarkup(<PlantClinicScreen />);
-  assert.match(scherm, /Plantendokter/);
-  assert.match(scherm, /Stap 1 van 3/);
-  assert.match(scherm, /Onderzoek de plant/);
+  assert.match(scherm, /Raak de plant aan/);
   assert.match(scherm, /Kijk naar de bladeren/);
   assert.match(scherm, /Voel aan de aarde/);
   assert.match(scherm, /Vraag het aan Kiki/);
+  // De plantennaam staat bovenaan; een losse schermtitel leidt alleen af.
+  assert.doesNotMatch(scherm, />Plantendokter</);
   // De diagnose en de behandeling komen pas later.
-  assert.doesNotMatch(scherm, /Stap 2 van 3/);
   assert.doesNotMatch(scherm, new RegExp(PLANT_PROBLEM_LABEL['te-veel-zon']));
 });
 
@@ -148,6 +148,10 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   const scherm = renderToStaticMarkup(<PlantClinicScreen />);
   // Eén kaart, niet drie losse blokken.
   assert.equal(scherm.split('clinic__card').length - 1, 1);
+  // Kiki is de enige stem: precies één tekstballon op de kaart.
+  assert.equal(scherm.split('clinic__bubbel').length - 1, 1);
+  // Drie chips in plaats van drie tekstblokken.
+  assert.equal(scherm.split('clinic__chip"').length - 1 + scherm.split('clinic__chip ').length - 1, 3);
   // De knoppen komen uit het ontwerpsysteem, niet uit eigen maaksel.
   assert.match(scherm, /ck-button ck-button--primary/);
   assert.match(scherm, /ck-button ck-button--quiet/);
@@ -161,4 +165,32 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   assert.match(scherm, /Raak de plant aan/);
   assert.match(scherm, /clinic__raak--blad/);
   assert.match(scherm, /clinic__raak--aarde/);
+});
+
+test('de bonusvraag biedt drie namen met precies één goede', () => {
+  for (const species of PLANT_SPECIES) {
+    const keuzes = naamKeuzes(species.id);
+    assert.equal(keuzes.length, 3, species.id);
+    assert.equal(new Set(keuzes).size, 3, `${species.id} herhaalt een naam`);
+    assert.equal(keuzes.filter(naam => naam === species.commonName).length, 1, species.id);
+    for (const naam of keuzes) {
+      assert.ok(PLANT_SPECIES.some(soort => soort.commonName === naam), `${naam} bestaat niet`);
+    }
+    // Dezelfde plant geeft altijd hetzelfde rijtje, anders raakt een kind in de war.
+    assert.deepEqual(naamKeuzes(species.id), keuzes);
+  }
+  // Het goede antwoord staat niet altijd op dezelfde plek.
+  const plekken = new Set(PLANT_SPECIES.map(soort => naamKeuzes(soort.id).indexOf(soort.commonName)));
+  assert.ok(plekken.size > 1, 'het juiste antwoord staat altijd op dezelfde plek');
+  assert.equal(naamKeuzes('bestaat-niet').length, 0);
+});
+
+test('de naam van de patiënt blijft geheim tot de plant gered is', () => {
+  const scherm = renderToStaticMarkup(<PlantClinicScreen />);
+  assert.match(scherm, /Wie is dit\?/);
+  assert.match(scherm, /Een nieuwe pati(ë|&#x[0-9a-f]+;)nt/);
+  // Geen enkele soortnaam mag al in beeld staan.
+  for (const species of PLANT_SPECIES) {
+    assert.ok(!scherm.includes(species.scientificName), `${species.scientificName} verklapt de plant`);
+  }
 });

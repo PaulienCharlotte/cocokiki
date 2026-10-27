@@ -88,3 +88,7 @@ main.nutrient-memory-screen::after { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .nutrient-memory__card.is-revealed, .cooking-tip { animation: none; }
 }
+.terrace-encyclopedia-trigger.terrace-encyclopedia-trigger { top: 236px; }
+@media (max-width: 720px) {
+  .terrace-encyclopedia-trigger.terrace-encyclopedia-trigger { top: 198px; }
+}

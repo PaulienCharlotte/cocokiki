@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CircleCheck, CloudMoon, Droplets, Globe2, Snowflake, Sparkles, Sprout, Sun, Wind, X } from 'lucide-react';
+import { CircleCheck, CloudMoon, Droplets, Snowflake, Sun, Wind, X } from 'lucide-react';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../../data/plants/firstAid';
@@ -79,14 +79,13 @@ export default function PlantFlashcard({ speciesId, nickname, onClose }: PlantFl
       </div>}
 
       {tab === 'over' ? <div id="plant-panel-over" role="tabpanel" aria-labelledby="plant-tab-over">
-        <p className="plant-card__intro">Waar deze plant vandaan komt en wat hij nodig heeft om zich thuis te voelen.</p>
-        <ul className="plant-card__rows">
-          <CardRow icon={<Globe2 />} tone="herkomst" title="Waar vandaan"><p>{species.origin}</p></CardRow>
-          <CardRow icon={<Sprout />} tone="groei" title="Hoe hij groeit"><p>{species.habitat}</p></CardRow>
-          <CardRow icon={<Sun />} tone="te-veel-zon" title="Licht"><p>{species.light}</p></CardRow>
-          <CardRow icon={<Droplets />} tone="te-weinig-water" title="Water"><p>{species.water}</p></CardRow>
-          <CardRow icon={<Sparkles />} tone="weetje" title="Wist je dat?"><p>{species.funFact}</p></CardRow>
-        </ul>
+        <dl className="plant-card__feiten">
+          <div><dt>Waar vandaan</dt><dd>{species.origin}</dd></div>
+          <div><dt>Hoe hij groeit</dt><dd>{species.habitat}</dd></div>
+          <div><dt>Licht</dt><dd>{species.light}</dd></div>
+          <div><dt>Water</dt><dd>{species.water}</dd></div>
+          <div><dt>Wist je dat?</dt><dd>{species.funFact}</dd></div>
+        </dl>
         <KikiSays pose={ASSET_LIBRARY.avatars.kikiPoses.tip}>{species.kikiTip}</KikiSays>
       </div> : <div id="plant-panel-ehbo" role="tabpanel" aria-labelledby="plant-tab-ehbo">
         <p className="plant-card__intro">Gaat het niet goed met je plant? Zoek op wat je ziet. Bovenaan staat wat bij deze soort het vaakst misgaat.</p>

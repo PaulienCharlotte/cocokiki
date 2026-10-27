@@ -13,3 +13,4 @@ import './plantFamily.test';
 import './storyAndMemory.test';
 import './roomExpansions.test';
 import './plantClinic.test';
+import './plantKnowledge.test';

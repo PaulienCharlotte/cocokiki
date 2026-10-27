@@ -107,6 +107,9 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     {room === 'terrace' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/plantendokter')} aria-label="Plantendokter openen" title="Plantendokter">
       <Stethoscope aria-hidden="true" /><span>Plantendokter</span>
     </button>}
+    {room === 'terrace' && <button className="kitchen-cookbook-trigger terrace-encyclopedia-trigger" type="button" onClick={() => onNavigate('/treehouse/encyclopedia')} aria-label="Mijn Encyclopedie openen" title="Mijn Encyclopedie">
+      <LibraryBig aria-hidden="true" /><span>Encyclopedie</span>
+    </button>}
     {plantsOpen && <PlantFamilyPanel onClose={() => setPlantsOpen(false)} />}
 
     <div className="treehouse-interior__pan-controls" aria-label="Kijk rond en ga naar de kamer ernaast">

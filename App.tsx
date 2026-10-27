@@ -79,8 +79,8 @@ const App: React.FC = () => {
   if (worldContent) return <AppShell
     coins={coins}
     onHome={() => navigate('/')}
-    onBack={() => navigate(current.route.page === 'treehouse-section' ? '/treehouse/kitchen' : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : current.route.page === 'plant-clinic' ? '/treehouse' : '/')}
-    backLabel={current.route.page === 'treehouse-section' ? 'Terug naar de keuken' : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : current.route.page === 'plant-clinic' ? 'Terug naar de boomhut' : 'Terug naar de wereld'}
+    onBack={() => navigate(current.route.page === 'treehouse-section' ? (current.route.section === 'encyclopedia' ? '/treehouse' : '/treehouse/kitchen') : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : current.route.page === 'plant-clinic' ? '/treehouse' : '/')}
+    backLabel={current.route.page === 'treehouse-section' ? (current.route.section === 'encyclopedia' ? 'Terug naar de boomhut' : 'Terug naar de keuken') : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : current.route.page === 'plant-clinic' ? 'Terug naar de boomhut' : 'Terug naar de wereld'}
   ><Suspense fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />

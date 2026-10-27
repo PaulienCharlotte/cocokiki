@@ -1275,92 +1275,55 @@
 .plant-adopt__confirm svg { width: 19px; }
 .plant-adopt__counter { display: block; margin-top: 10px; color: var(--color-text-muted); font-size: var(--font-size-xs); }
 
-.plant-family { width: min(560px, 100%); max-height: calc(100dvh - 32px); display: flex; flex-direction: column; padding: clamp(16px, 3vh, 22px); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-dialog); color: var(--color-text); }
-.plant-family > header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border); }
-.plant-family > header small { color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
-.plant-family > header h2 { margin: 2px 0 0; font-size: var(--font-size-lg); }
-.plant-family > header button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-text); }
-.plant-family__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); min-height: 0; overflow-y: auto; padding-top: var(--space-3); }
-.plant-family__card { position: relative; display: grid; justify-items: center; gap: 2px; padding: 12px 10px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-background-soft); text-align: center; }
-.plant-family__card .decor-asset { width: 86px; height: 86px; object-fit: contain; }
-.plant-family__nickname { font-size: var(--font-size-md); }
-.plant-family__species { color: var(--color-text-muted); font-size: var(--font-size-xs); }
-.plant-family__date { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--color-text-subtle); font-size: .68rem; }
-.plant-family__date svg { width: 13px; }
-.plant-family__actions { display: flex; gap: 6px; margin-top: 8px; }
-.plant-family__actions button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-primary); }
-.plant-family__actions button:hover { border-color: var(--color-primary); background: var(--color-success-soft); }
-.plant-family__actions svg { width: 17px; }
-.plant-family__rename { display: flex; align-items: center; gap: 4px; width: 100%; }
-.plant-family__rename input { min-width: 0; flex: 1 1 auto; min-height: 38px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--font-size-sm); }
-.plant-family__rename button { width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-primary); }
-.plant-family__rename svg { width: 16px; }
-.plant-family__empty { display: grid; justify-items: center; gap: 6px; padding: var(--space-6) var(--space-4); text-align: center; }
-.plant-family__empty img { width: min(170px, 46vw); }
-.plant-family__empty p { margin: 0; font-weight: var(--font-weight-bold); }
-.plant-family__empty small { color: var(--color-text-muted); }
+.plant-family { width: min(560px, 100%); max-height: calc(100dvh - 120px); overflow: auto; display: grid; gap: var(--space-4); align-content: start; padding: var(--space-4); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-strong); }
+.plant-family__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.plant-family__top h2 { margin: 0; font-size: var(--font-size-lg); }
+.plant-family__top p { margin: 2px 0 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.plant-family__sluit, .plant-family__back { width: var(--touch-target); height: var(--touch-target); flex: none; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-background-soft); color: var(--color-text); }
+.plant-family__sluit svg, .plant-family__back svg { width: 20px; height: 20px; }
+.plant-family__back { margin-right: auto; }
 
-@media (max-width: 700px) {
-  .plant-card__hero { grid-template-columns: 76px minmax(0, 1fr); }
-  .plant-card__art { width: 76px; height: 76px; }
-  .plant-family__grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
-}
+.plant-family__empty { display: grid; justify-items: center; gap: 6px; padding: var(--space-5) var(--space-3); text-align: center; }
+.plant-family__empty img { width: 108px; }
+.plant-family__empty p { margin: 0; font-size: var(--font-size-md); font-weight: var(--font-weight-bold); }
+.plant-family__empty small { color: var(--color-text-soft); }
 
-/* --- Lichter: minder gevulde vlakken, rustiger labels, meer witruimte --- */
-.plant-card { background: #fffefb; }
-.plant-card__hero { gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border); }
-.plant-card__hero h2 { font-size: clamp(1.35rem, 4vw, 1.6rem); letter-spacing: -.01em; }
-.plant-card__hero em { font-size: var(--font-size-sm); font-style: italic; }
-.plant-card__nickname { letter-spacing: .04em; }
+/* Eén tegel per plant; tikken opent hem groot. Geen knopjes in het overzicht. */
+.plant-family__grid { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: var(--space-3); }
+.plant-family__card { width: 100%; display: grid; justify-items: center; gap: 2px; padding: var(--space-3) var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); text-align: center; transition: transform var(--motion-fast) ease, border-color var(--motion-fast) ease; }
+.plant-family__card .decor-asset, .plant-family__card img { width: 86px; height: 86px; object-fit: contain; }
+.plant-family__card strong { font-size: var(--font-size-md); }
+.plant-family__card:hover, .plant-family__card:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
+.plant-family__card.is-thirst3, .plant-family__card.is-wet2 { border-color: #e0c3bd; }
 
-/* De feiten staan niet meer elk in een eigen bak, maar in een rustige lijst. */
+.plant-family__staat { font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); color: var(--color-primary); }
+.plant-family__staat.is-thirst1 { color: #8a6d2f; }
+.plant-family__staat.is-thirst2 { color: #96682a; }
+.plant-family__staat.is-thirst3 { color: var(--color-error); }
+.plant-family__staat.is-wet1 { color: #2f6386; }
+.plant-family__staat.is-wet2 { color: #1f4f6e; }
 
-/* Kiki's tip is een los zinnetje, geen tweede blok met een kop erboven. */
-.plant-card__kiki { grid-template-columns: 62px minmax(0, 1fr); gap: var(--space-2); margin-top: var(--space-3); padding: var(--space-3) var(--space-3) var(--space-3) 0; border-radius: var(--radius-card); background: #f4f7f2; }
-.plant-card__kiki img { width: 62px; }
-.plant-card__kiki strong { margin-bottom: 1px; font-size: .72rem; font-weight: var(--font-weight-bold); letter-spacing: .02em; text-transform: none; }
+/* Eén plant groot, met alles wat je ermee kunt doen eronder. */
+.plant-detail { display: grid; justify-items: center; gap: var(--space-2); }
+.plant-detail__plant { width: min(220px, 60vw); }
+.plant-detail__plant .decor-asset, .plant-detail__plant img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 10px 16px #3b241a22); }
+.plant-detail__naam { margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: var(--font-size-xl); }
+.plant-detail__naam button { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-text-soft); }
+.plant-detail__naam svg { width: 15px; height: 15px; }
+.plant-detail__soort { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.plant-detail__staat { margin: var(--space-2) 0 0; font-size: var(--font-size-md); font-weight: var(--font-weight-heavy); color: var(--color-primary); }
+.plant-detail__staat.is-thirst1 { color: #8a6d2f; }
+.plant-detail__staat.is-thirst2 { color: #96682a; }
+.plant-detail__staat.is-thirst3 { color: var(--color-error); }
+.plant-detail__staat.is-wet1 { color: #2f6386; }
+.plant-detail__staat.is-wet2 { color: #1f4f6e; }
+.plant-detail__advies { margin: 0; max-width: 34em; color: var(--color-text-soft); font-size: var(--font-size-md); line-height: 1.45; text-align: center; }
+.plant-detail__acties { width: min(320px, 100%); display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+.plant-detail__rename { display: flex; align-items: center; gap: 6px; }
+.plant-detail__rename input { min-width: 0; flex: 1; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-control); font: inherit; font-size: var(--font-size-md); }
+.plant-detail__rename button { width: 40px; height: 40px; flex: none; display: grid; place-items: center; padding: 0; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); }
+.plant-detail__rename svg { width: 17px; height: 17px; }
 
-/* Naamgeven: drie duidelijke blokken in plaats van zes losse regels. */
-.plant-adopt { width: min(380px, 100%); padding: clamp(20px, 3.4vh, 28px); background: #fffefb; text-align: left; }
-.plant-adopt__intro { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: var(--space-3); }
-.plant-adopt__intro img { width: 84px; display: block; }
-.plant-adopt__intro h2 { margin: 0; font-size: var(--font-size-lg); line-height: var(--line-height-tight); }
-.plant-adopt__intro p { margin: 3px 0 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
-.plant-adopt__plant { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; padding: var(--space-3); border-radius: var(--radius-card); background: var(--color-background-soft); }
-.plant-adopt__plant img { width: 64px; height: 64px; object-fit: contain; }
-.plant-adopt__plant span { color: var(--color-text); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); }
-.plant-adopt form { display: grid; gap: var(--space-2); }
-.plant-adopt__field { color: var(--color-text-subtle); font-size: .72rem; font-weight: var(--font-weight-bold); text-transform: none; }
-.plant-adopt form input { min-height: 50px; padding: 12px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--font-size-md); }
-.plant-adopt form input:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
-.plant-adopt__confirm { margin-top: var(--space-2); }
-.plant-adopt__counter { display: block; margin-top: var(--space-3); color: var(--color-text-subtle); font-size: var(--font-size-xs); text-align: center; }
-
-/* Naambordje en infoknop bij een plant in de kamer. */
-.room-placed-object__label { position: absolute; left: 50%; top: calc(100% + 6px); padding: 3px 10px; border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); white-space: nowrap; box-shadow: var(--shadow-soft); translate: -50% 0; }
-.room-inventory-drawer__actions { display: flex; align-items: center; gap: 6px; }
-.room-inventory-drawer__actions button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-surface-soft); color: var(--color-primary); }
-.room-inventory-drawer__actions svg { width: 19px; }
-
-/* --- Planten verzorgen: dorst tonen en water geven --- */
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-.plant-family__stage { width: 86px; height: 86px; object-fit: contain; }
-.plant-family__stage-label { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--color-primary); font-size: .68rem; font-weight: var(--font-weight-bold); }
-.plant-family__stage-label svg { width: 13px; }
-.plant-family__stage-label.is-thirst1 { color: #8a6d2f; }
-.plant-family__stage-label.is-thirst2 { color: #96682a; }
-.plant-family__stage-label.is-thirst3 { color: var(--color-error); }
-.plant-family__card.is-thirst3 { border-color: #e0c3bd; }
-.plant-family__water { background: var(--color-sky) !important; border-color: #9cc8e3 !important; color: #2c5a76 !important; }
-.plant-family__water:hover { border-color: #6ea9cd !important; }
-
-.plant-family__alert { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: center; gap: var(--space-2); margin-top: var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) 0; border-radius: var(--radius-card); background: #f6f1e8; }
-.plant-family__alert img { width: 62px; }
-.plant-family__alert p { margin: 0; font-size: var(--font-size-sm); line-height: var(--line-height-default); }
-.plant-family__alert strong { display: block; color: var(--color-primary); font-size: .72rem; font-weight: var(--font-weight-bold); }
-
-/* Een druppel op de plant in de kamer, ook zonder hem te selecteren. */
 .room-placed-object__thirst { position: absolute; z-index: 2; top: -6px; right: -6px; width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-sky); color: #2c5a76; box-shadow: var(--shadow-soft); }
 .room-placed-object__thirst svg { width: 15px; }
 .room-placed-object__thirst.is-thirst2 { background: var(--color-honey); color: #6b5120; }
@@ -1385,6 +1348,10 @@
 .plant-card__fix svg { width: 17px; height: 17px; flex: none; margin-top: 2px; color: var(--color-primary); stroke-width: 2; }
 
 /* Eén opbouw voor beide tabbladen van de plantenkaart. */
+.plant-card__feiten { margin: var(--space-3) 0 0; display: grid; gap: var(--space-3); }
+.plant-card__feiten > div { display: grid; gap: 2px; }
+.plant-card__feiten dt { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+.plant-card__feiten dd { margin: 0; font-size: var(--font-size-md); line-height: 1.45; }
 .plant-card__rows { margin: var(--space-2) 0 0; padding: 0; list-style: none; display: grid; }
 .plant-card__row { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: start; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid #efe9e1; }
 .plant-card__row:last-child { border-bottom: 0; }
@@ -1412,94 +1379,133 @@
 .room-placed-object__thirst.is-wet2 { background: #a9cde4; color: #1f4f6e; animation: thirst-pulse 1.8s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-wet2 { animation: none; } }
 
-/* Plantendokter: alles op één witte kaart, zodat het rustig blijft. */
+/* Plantendokter: één kaart, één stem. De plant is het onderwerp, Kiki praat. */
 .clinic { min-height: 100dvh; padding: max(var(--space-4), 76px) var(--space-4) var(--space-6); display: grid; place-items: start center; background: var(--color-background); }
 .clinic__card {
-  width: min(520px, 100%); display: grid; gap: var(--space-3);
+  width: min(480px, 100%); display: grid; gap: var(--space-3);
   padding: var(--space-4); border-radius: var(--radius-card);
   background: var(--color-surface); box-shadow: var(--shadow-soft);
 }
-.clinic__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.clinic__top h1 { margin: 0; font-size: var(--font-size-md); }
-.clinic__passport { margin: 0; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--radius-pill); background: var(--color-background-soft); color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
-.clinic__passport svg { width: 15px; height: 15px; color: var(--color-primary); }
+.clinic__top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.clinic__top h1 { margin: 0; font-size: var(--font-size-xl); line-height: 1.15; }
+.clinic__top em { color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.clinic__passport { margin: 0; flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: var(--radius-pill); background: var(--color-background-soft); color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.clinic__passport svg { width: 14px; height: 14px; color: var(--color-primary); }
 
-.clinic__plant { position: relative; width: min(260px, 64vw); }
+/* Drie stipjes zeggen hetzelfde als "stap 1 van 3", maar zonder woorden. */
+.clinic__stappen { margin: 0; padding: 0; list-style: none; display: flex; gap: 6px; }
+.clinic__stappen li { width: 100%; height: 4px; border-radius: 2px; background: var(--color-border); }
+.clinic__stappen li.is-klaar { background: #b9ccbb; }
+.clinic__card.is-naam .clinic__stappen li, .clinic__card.is-klaar .clinic__stappen li { background: #b9ccbb; }
+.clinic__stappen li.is-nu { background: var(--color-primary); }
+
+.clinic__plant { position: relative; width: min(250px, 62vw); justify-self: center; }
 .clinic__plant img { width: 100%; display: block; filter: drop-shadow(0 10px 16px #3b241a22); }
-.clinic__card.is-klaar .clinic__plant img { animation: clinic-herstel 520ms var(--ease-storybook) both; }
+.clinic__card.is-naam .clinic__plant img { animation: clinic-herstel 520ms var(--ease-storybook) both; }
 @keyframes clinic-herstel { from { opacity: .35; transform: scale(.95); } to { opacity: 1; transform: none; } }
 
-/* Je raakt de plant zelf aan; de vlakken lichten op zodra je erbij komt. */
-.clinic__toneel { display: grid; gap: var(--space-2); justify-items: center; }
+/* Je raakt de plant zelf aan; het vlak licht alleen op als je erbij komt. */
 .clinic__raak { position: absolute; left: 0; width: 100%; padding: 0; border: 2px dashed transparent; border-radius: var(--radius-card); background: transparent; }
 .clinic__raak--blad { top: 0; height: 62%; }
 .clinic__raak--aarde { bottom: 0; height: 38%; }
-.clinic__raak span { position: absolute; left: 50%; bottom: 8px; padding: 4px 10px; border-radius: var(--radius-pill); background: #2f3d2cde; color: #fff; font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); white-space: nowrap; opacity: 0; transform: translateX(-50%); transition: opacity var(--motion-fast) ease; }
-.clinic__raak:hover, .clinic__raak:focus-visible { border-color: #9cb79a; background: #52694d14; outline: none; }
-.clinic__raak:hover span, .clinic__raak:focus-visible span { opacity: 1; }
-.clinic__raak.is-done { border-color: #cfe0d2; background: #52694d0a; }
+.clinic__raak:hover, .clinic__raak:focus-visible { border-color: #9cb79a; background: #52694d12; outline: none; }
+.clinic__raak.is-done { border-color: transparent; }
 
 /* Een wijzend handje laat zonder woorden zien waar je moet tikken. */
-.clinic__handje { position: absolute; z-index: 3; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fffdf7; box-shadow: 0 4px 12px #3b241a38; color: #52694d; pointer-events: none; }
-.clinic__handje svg { width: 19px; height: 19px; }
-.clinic__handje--blad { top: 26%; left: 50%; margin-left: -17px; }
-.clinic__handje--aarde { bottom: 12%; left: 50%; margin-left: -17px; }
-.clinic__handje--helper { top: -8px; right: -10px; }
+.clinic__handje { position: absolute; z-index: 3; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fffdf7; box-shadow: 0 4px 12px #3b241a38; color: #52694d; pointer-events: none; }
+.clinic__handje svg { width: 18px; height: 18px; }
+.clinic__handje--blad { top: 26%; left: 50%; margin-left: -16px; }
+.clinic__handje--aarde { bottom: 12%; left: 50%; margin-left: -16px; }
+.clinic__handje--helper { top: -6px; right: -8px; }
 
-/* Kiki brengt de patiënt binnen en vertelt waar hij stond. */
-.clinic__baasje { width: 100%; display: flex; align-items: flex-start; gap: var(--space-2); }
-.clinic__helper { position: relative; flex: none; width: 58px; height: 58px; padding: 0; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-background-soft); box-shadow: 0 3px 10px #3b241a22; }
-/* De poses zijn hele figuren; uitsnijden op het hoofd maakt haar herkenbaar. */
+/* Kiki is de enige stem op de kaart: vraag, aanwijzing en oordeel. */
+.clinic__gesprek { display: flex; align-items: flex-start; gap: var(--space-2); }
+.clinic__helper { position: relative; flex: none; width: 54px; height: 54px; padding: 0; border: 2px solid var(--color-surface); border-radius: 50%; background: var(--color-background-soft); box-shadow: 0 3px 10px #3b241a22; }
 .clinic__helper img { width: 100%; height: 100%; display: block; border-radius: 50%; object-fit: cover; object-position: 50% 4%; }
-.clinic__helper:hover, .clinic__helper:focus-visible { border-color: #9cb79a; outline: none; }
-.clinic__helper.is-done { border-color: #cfe0d2; }
-.clinic__bubbel { position: relative; margin: 0; padding: 10px 13px; border-radius: var(--radius-control); background: var(--color-background-soft); font-size: var(--font-size-md); line-height: 1.4; }
-.clinic__bubbel::before { content: ''; position: absolute; top: 18px; left: -6px; width: 12px; height: 12px; background: var(--color-background-soft); transform: rotate(45deg); }
+.clinic__helper:hover:not(:disabled), .clinic__helper:focus-visible { border-color: #9cb79a; outline: none; }
+.clinic__helper:disabled { opacity: .85; }
+.clinic__bubbel { position: relative; margin: 0; flex: 1; padding: 11px 14px; border-radius: var(--radius-control); background: var(--color-background-soft); font-size: var(--font-size-md); line-height: 1.45; }
+.clinic__bubbel::before { content: ''; position: absolute; top: 18px; left: -5px; width: 11px; height: 11px; background: inherit; transform: rotate(45deg); }
 .clinic__bubbel strong { display: block; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+.clinic__bubbel.is-mis { background: var(--color-peach); }
+.clinic__bubbel.is-mis strong { color: #7a3b33; }
 
-/* De diagnose als kaartjes met een tekentje, niet als vier tekstknoppen. */
+/* Wat je al onderzocht hebt: drie kleine chips in plaats van drie tekstblokken. */
+.clinic__chips { margin: 0; padding: 0; list-style: none; display: flex; gap: var(--space-2); }
+.clinic__chip { flex: 1; padding: 9px 6px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.clinic__chip.is-done { border-color: #cfe0d2; background: var(--color-success-soft); color: var(--color-primary); }
+.clinic__chip.is-nu { border-color: var(--color-primary); }
+
+/* Antwoorden en gereedschap delen één vorm: een tekentje met een woord eronder. */
 .clinic__kaarten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-.clinic__kaart { display: grid; justify-items: center; gap: 7px; padding: 15px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); color: var(--color-text); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); line-height: 1.25; text-align: center; }
-.clinic__kaart span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; }
+.clinic__kaart { display: grid; justify-items: center; gap: 7px; padding: 14px 8px; border: 0; border-radius: var(--radius-card); background: var(--color-background-soft); color: var(--color-text); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); line-height: 1.25; text-align: center; transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease; }
+.clinic__kaart span { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--color-surface); }
 .clinic__kaart svg { width: 21px; height: 21px; }
-.clinic__kaart:hover, .clinic__kaart:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
-.clinic__kaart { transition: transform var(--motion-fast) ease, border-color var(--motion-fast) ease; }
-.clinic__kaart.is-te-weinig-water span { background: #f6ecd9; color: #8a6d2f; }
-.clinic__kaart.is-te-veel-water span { background: #dcebf6; color: #2f6386; }
-.clinic__kaart.is-te-veel-zon span { background: #fbe7cf; color: #a8601f; }
-.clinic__kaart.is-te-weinig-licht span { background: #e6e3ef; color: #5b5076; }
-
-.clinic__naam { display: grid; justify-items: center; gap: 1px; text-align: center; }
-.clinic__naam strong { font-size: var(--font-size-lg); }
-.clinic__naam em { color: var(--color-text-soft); font-size: var(--font-size-sm); }
-
-.clinic__vraag { display: grid; gap: 2px; padding-top: var(--space-2); border-top: 1px solid var(--color-border); }
-.clinic__vraag small { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
-.clinic__vraag h2 { margin: 0; font-size: var(--font-size-lg); }
-
-.clinic__notities { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
-.clinic__notities li { padding: 11px 13px; border-radius: var(--radius-control); background: var(--color-background-soft); font-size: var(--font-size-md); line-height: 1.45; }
-.clinic__notities strong { display: block; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
-
-.clinic__acties { display: grid; gap: var(--space-2); }
-.clinic__acties--twee { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.clinic__kaart:hover, .clinic__kaart:focus-visible { outline: none; transform: translateY(-2px); box-shadow: 0 6px 16px #3b241a1f; }
 .clinic__tool { cursor: grab; touch-action: none; }
-.clinic__uitleg { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
 
-.clinic__melding { margin: 0; padding: 11px 13px; border-radius: var(--radius-control); background: var(--color-peach); color: #7a3b33; font-size: var(--font-size-md); }
-.clinic__succes { margin: 0; font-size: var(--font-size-md); line-height: 1.45; }
+.clinic__kaart.is-te-weinig-water span, .clinic__kaart.is-gieter span { color: #8a6d2f; }
+.clinic__kaart.is-te-veel-water span, .clinic__kaart.is-sproeien span { color: #2f6386; }
+.clinic__kaart.is-te-veel-zon span, .clinic__kaart.is-schaduw span { color: #a8601f; }
+.clinic__kaart.is-te-weinig-licht span, .clinic__kaart.is-meer-licht span { color: #5b5076; }
+.clinic__kaart.is-laten-drogen span { color: #6b6a5f; }
+.clinic__kaart.is-ompotten span { color: #7a5a3d; }
+.clinic__kaart.is-warmer span { color: #3f6478; }
+
 .clinic__beloning { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-primary); font-size: var(--font-size-lg); font-weight: var(--font-weight-heavy); }
 .clinic__beloning strong { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: var(--radius-pill); background: var(--color-success-soft); font-size: var(--font-size-sm); }
+.clinic__beloning small { color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
 .clinic__beloning svg { width: 15px; height: 15px; }
-.clinic__resterend { color: var(--color-text-soft); font-size: var(--font-size-sm); }
 .clinic__hint { justify-self: center; }
 .clinic__kiki-pop { width: 86px; display: block; margin: 0 auto; }
 
-@media (max-width: 420px) {
-  .clinic__acties--twee { grid-template-columns: 1fr; }
-  .clinic__kaart { padding: 12px 8px; font-size: var(--font-size-xs); }
+@media (max-width: 380px) {
+  .clinic__kaart { font-size: var(--font-size-xs); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .clinic__handje { animation: none; }
-  .clinic__card.is-klaar .clinic__plant img { animation: none; }
+  .clinic__card.is-naam .clinic__plant img { animation: none; }
 }
+
+/* Tekst die alleen voor voorleessoftware bedoeld is. */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* Getekende plaatjes op de knoppen, met de lijn-iconen als terugval. */
+.clinic__tekentje { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--color-surface); overflow: hidden; }
+.clinic__tekentje img { width: 38px; height: 38px; object-fit: contain; }
+
+.clinic__tellers { display: flex; align-items: center; gap: 6px; }
+.clinic__consult { margin: 0; padding: 5px 10px; border-radius: var(--radius-pill); background: var(--color-success-soft); color: var(--color-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+
+.clinic__chip { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.clinic__chip img { width: 22px; height: 22px; object-fit: contain; }
+
+/* Een loep over het blad, zodat je echt kunt inspecteren. */
+.clinic__loep {
+  position: absolute; z-index: 4;
+  width: 104px; height: 104px; border-radius: 50%;
+  border: 3px solid #fffdf7; box-shadow: 0 8px 20px #3b241a40;
+  background-repeat: no-repeat; background-size: 250% auto;
+  animation: clinic-loep 320ms var(--ease-storybook) both;
+}
+.clinic__loep--blad { top: 6%; right: -14px; background-position: 50% 18%; }
+.clinic__loep--aarde { bottom: 4%; right: -14px; background-position: 50% 88%; }
+@keyframes clinic-loep { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+
+.clinic__oogst { margin: 0; padding: 11px 14px; border-radius: var(--radius-control); background: var(--color-success-soft); color: var(--color-primary); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) { .clinic__loep { animation: none; } }
+
+/* De bonusvraag: alleen namen, geen plaatjes, want de plant staat er al. */
+.clinic__namen { display: grid; gap: var(--space-2); }
+.clinic__naamkeuze { padding: 14px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font-size: var(--font-size-md); font-weight: var(--font-weight-heavy); transition: transform var(--motion-fast) ease, border-color var(--motion-fast) ease; }
+.clinic__naamkeuze:hover, .clinic__naamkeuze:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
+
+/* Plantenpagina's in de encyclopedie: hoe meer je weet, hoe voller de kaart. */
+.encyclopedia-entry.is-niveau-1 { opacity: .92; }
+.encyclopedia-entry__niveau { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); }
+.encyclopedia-entry__niveau small { color: var(--color-text-soft); font-weight: var(--font-weight-bold); }
+.encyclopedia-entry.is-niveau-3 .encyclopedia-entry__niveau { color: #2f6b3d; }
+.encyclopedia-entry__feiten { margin: var(--space-2) 0 0; display: grid; gap: 6px; }
+.encyclopedia-entry__feiten > div { display: grid; gap: 1px; }
+.encyclopedia-entry__feiten dt { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+.encyclopedia-entry__feiten dd { margin: 0; font-size: var(--font-size-sm); line-height: 1.4; }
