@@ -11,43 +11,42 @@ zacht belicht. Lever gerust PNG aan, ik zet ze om naar WebP.
 
 ## ✅ Al binnen
 
-Zeven tekeningen staan in `public/assets/library/plants/icons/`:
-blad, aarde, plek (plant voor het raam), gieter, droge gebarsten aarde,
-natte drassige aarde en de zon. Die zitten al in het spel.
+In `public/assets/library/plants/icons/`: blad, aarde, plek, gieter, droog,
+nat, zon, donker, droge-lucht en koud.
+In `public/assets/library/plants/gereedschap/`: zandloper, bloempot, parasol,
+lamp-plant, plantenspuit en sjaal.
+Alles zit in het spel.
 
-## 1. Het gereedschap — de grootste winst
-
-Zes voorwerpen, elk ongeveer 600 × 600, doorzichtige achtergrond. Dit zijn
-de dingen die een kind straks op de plant sleept, dus ze moeten er
-vastpakbaar uitzien.
+## 1. Het gereedschap ✅
 
 | Bestand | Wat | Waarvoor |
 |---|---|---|
-| ~~`gieter.png`~~ ✅ | Al gemaakt | Water geven |
-| `zandloper.png` of `wachtbordje.png` | Iets dat "even wachten" zegt | Even niet gieten |
-| `bloempot-aarde.png` | Lege pot met verse donkere aarde en een schepje | Ompotten |
-| `parasol.png` | Een parasol of zonnescherm | Uit de zon zetten |
-| `lamp.png` | Een schemerlampje of een raam met zon erin | Lichter zetten |
-| `plantenspuit.png` | Een plantenspuit met een wolkje nevel | Bladeren sproeien |
+Compleet. Alle zeven behandelingen hebben een eigen tekening:
 
-> De zandloper is de lastigste om leuk te maken. Een alternatief: een
-> **gieter met een rood kruisje**, of Kiki die haar hand ophoudt.
+| Bestand | Waarvoor |
+|---|---|
+| `gieter` (in `icons/`) | Water geven |
+| `zandloper` | Even niet gieten |
+| `bloempot` | Ompotten |
+| `parasol` | Uit de zon zetten |
+| `lamp-plant` | Lichter zetten |
+| `plantenspuit` | Bladeren sproeien |
+| `sjaal` | Warmer zetten |
 
-Mapje: `public/assets/library/plants/gereedschap/`
+Mapje: `public/assets/library/plants/gereedschap/`. Ze staan op de
+behandelkaartjes én in het plantenboek, naast wat je eraan doet.
+
+> De losse `lamp.webp` is eruit: `lamp-plant.webp` laat zien wat de lamp
+> *doet*, en dat werkt beter op een knop van vijftig pixels.
 
 ---
 
-## 2. De vier oorzaken als tekening
+## 2. De zes oorzaken als tekening
 
-Nu zijn het lijn-iconen uit een standaardset. Vier kleine illustraties van
-ongeveer 300 × 300 maken de keuze veel aantrekkelijker:
+Compleet. Alle zes oorzaken hebben een eigen tekening: `droog`, `nat`,
+`zon`, `donker`, `droge-lucht` en `koud`.
 
-- ~~droog~~ ✅, ~~nat~~ ✅, ~~zon~~ ✅ — al gemaakt
-- **`donker.webp`** — het enige dat nog ontbreekt: een donkere hoek of een
-  maantje achter een raam, voor *te weinig licht*. Zolang die er niet is
-  staat daar nog een lijn-icoontje tussen de tekeningen, en dat valt op.
-
-Mapje: `public/assets/library/plants/oorzaken/`
+Mapje: `public/assets/library/plants/icons/`
 
 ---
 
@@ -102,5 +101,6 @@ Mapje: `public/assets/library/plants/`
    verdient, en vult het paspoort.
 5. **De spreekkamer** komt achter de kaart.
 
-Nummer 1 is veruit het belangrijkst. Met alleen de zes gereedschappen
-verandert het spel al duidelijk van karakter.
+Het spreekuur staat nu helemaal op tekeningen: geen enkel lijn-icoon meer op
+een diagnosekaartje of een behandelknop. Wat nog ontbreekt is sfeer in plaats
+van uitleg: Kiki als dokter, de stempel en het paspoort, en de spreekkamer.

@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, type PanInfo } from 'framer-motion';
-import { CloudMoon, Droplet, Droplets, Flower2, Hand, Hourglass, Lamp, Scissors, Snowflake, Stamp, Sun, Umbrella, Wind } from 'lucide-react';
+import { BookOpen, CloudMoon, Droplet, Droplets, Flower2, Hand, Hourglass, Lamp, Scissors, Snowflake, Stamp, Sun, Umbrella, Wind } from 'lucide-react';
 import { Button, Dialog } from '../design-system';
 import { ASSET_LIBRARY } from '../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../data/plants/species';
 import { PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../data/plants/firstAid';
+import { PLANTENWIJZER, WIJZER_BY_CAUSE } from '../data/plants/wijzer';
 import {
   CLUE_ICOON,
   CLUE_KORT,
@@ -41,6 +42,13 @@ import { awardCurrencyOnce } from '../services/currency';
 type Fase = 'onderzoek' | 'diagnose' | 'behandeling' | 'naam' | 'klaar';
 
 const SPOTS: ClueSpot[] = ['blad', 'aarde', 'plek'];
+
+/** Waaróm je daar moet kijken. Zonder die reden is "kijk daar" geen hint. */
+const ONDERZOEK_WAAROM: Record<ClueSpot, string> = {
+  blad: 'Aan het blad zie je wát er mis is: slap, geel, bruine randjes of bleke plekken.',
+  aarde: 'Aan de aarde voel je of hij te veel of juist te weinig water heeft gehad.',
+  plek: 'Aan de plek zie je of het aan de zon, het donker of de kou kan liggen.',
+};
 const STAPPEN: Fase[] = ['onderzoek', 'diagnose', 'behandeling'];
 
 /** Een tekentje bij elke oorzaak, zodat je het antwoord ook ziet. */
@@ -93,6 +101,9 @@ export default function PlantClinicScreen() {
   const [oogst, setOogst] = useState({ coins: 0, stamps: 0 });
   const [loep, setLoep] = useState<'blad' | 'aarde' | null>(null);
   const [naamGoed, setNaamGoed] = useState<boolean | null>(null);
+  const [boekOpen, setBoekOpen] = useState(false);
+  /** Welke boekpagina open ligt; null betekent: het overzicht met zes tegels. */
+  const [boekPagina, setBoekPagina] = useState<PlantProblemCause | null>(null);
 
   const species = patient ? PLANT_SPECIES_BY_ID[patient.speciesId] : undefined;
   const product = patient ? plantProduct(patient.speciesId) : undefined;
@@ -168,18 +179,29 @@ export default function PlantClinicScreen() {
     setFase('klaar');
   };
 
+  /**
+   * Kiki's hint moet een denkstap geven, geen aansporing. Vroeger zei ze
+   * "kijk nog eens goed naar alle drie de aanwijzingen", en daar heeft een
+   * kind van negen niets aan. Nu noemt ze de vuistregel uit het plantenboek:
+   * waaraan je deze oorzaak herkent, en waarmee je hem niet moet verwarren.
+   */
   const vraagHint = () => {
     setHintGebruikt(true);
+    const pagina = WIJZER_BY_CAUSE[patient.cause];
     if (fase === 'onderzoek') {
-      setHint(volgende ? `${CLUE_LABEL[volgende]}. Daar zit je antwoord.` : 'Je hebt alles gezien. Welke oorzaak past bij álle drie de aanwijzingen?');
+      setHint(volgende
+        ? `${CLUE_LABEL[volgende]}. ${ONDERZOEK_WAAROM[volgende]}`
+        : `Je hebt alles gezien. ${pagina.vuistregel}`);
       return;
     }
     if (fase === 'diagnose') {
-      setHint(`Denk aan de aarde. ${clueText(species, patient.cause, 'aarde')}`);
+      setHint(pagina.vuistregel);
       return;
     }
-    setHint(`Bij ${PLANT_PROBLEM_LABEL[patient.cause].toLowerCase()} hoort maar één goede stap.`);
+    setHint(`${pagina.watDoeJe} Welk gereedschap doet dat?`);
   };
+
+  const boek = boekPagina ? WIJZER_BY_CAUSE[boekPagina] : null;
 
   // Zodra de behandeling klopt staat de plant er weer goed bij, ook tijdens de bonusvraag.
   const genezen = fase === 'naam' || fase === 'klaar';
@@ -311,8 +333,43 @@ export default function PlantClinicScreen() {
         </Button>
       </>}
 
-      {fase !== 'klaar' && fase !== 'naam' && <Button variant="quiet" size="small" className="clinic__hint" onClick={vraagHint}>Kiki, help eens</Button>}
+      {fase !== 'klaar' && fase !== 'naam' && <div className="clinic__onderaan">
+        <Button variant="quiet" size="small" pill startIcon={<BookOpen size={16} />} onClick={() => { setBoekPagina(null); setBoekOpen(true); }}>Plantenboek</Button>
+        <Button variant="quiet" size="small" pill onClick={vraagHint}>Kiki, help eens</Button>
+      </div>}
     </section>
+
+    <Dialog
+      className="plantenboek"
+      open={boekOpen}
+      title={boek ? PLANT_PROBLEM_LABEL[boek.cause] : 'Het plantenboek'}
+      description={boek ? undefined : 'Zes dingen die mis kunnen gaan. Tik aan wat jij ziet.'}
+      illustration={boek ? <img src={boek.plaatje} alt="" /> : undefined}
+      onClose={() => setBoekOpen(false)}
+      primaryAction={boek
+        ? <Button pill onClick={() => setBoekPagina(null)}>Terug naar het boek</Button>
+        : <Button pill onClick={() => setBoekOpen(false)}>Terug naar de patiënt</Button>}
+      secondaryAction={boek ? <Button variant="quiet" pill onClick={() => setBoekOpen(false)}>Terug naar de patiënt</Button> : undefined}
+    >
+      {boek ? <div className="boekpagina">
+        <p><small>Je ziet</small>{boek.zieJe}</p>
+        <p><small>Hoe komt dat?</small>{boek.komtDoor}</p>
+        <p className="boekpagina__doen">
+          <img src={boek.gereedschap} alt="" />
+          <span><small>Doen</small>{boek.watDoeJe}</span>
+        </p>
+      </div> : <div className="plantenboek__tegels">
+        {PLANTENWIJZER.map(pagina => <button
+          key={pagina.cause}
+          type="button"
+          className="plantenboek__tegel"
+          onClick={() => setBoekPagina(pagina.cause)}
+        >
+          <img src={pagina.plaatje} alt="" />
+          <strong>{PLANT_PROBLEM_LABEL[pagina.cause]}</strong>
+        </button>)}
+      </div>}
+    </Dialog>
 
     <Dialog
       open={hint !== null}

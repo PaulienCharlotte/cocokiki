@@ -1,4 +1,4 @@
-import { PLANT_SPECIES, PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage } from './species';
+import { PLANT_GEREEDSCHAP, PLANT_ICOON, PLANT_SPECIES, PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage } from './species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from './firstAid';
 
 /**
@@ -19,22 +19,24 @@ export const CLUE_LABEL: Record<ClueSpot, string> = {
 };
 
 /**
- * Getekende plaatjes bij de knoppen. Waar er nog geen tekening is valt het
- * scherm terug op een lijn-icoon; docs/plantendokter-assets.md zegt welke
- * er nog ontbreken.
+ * Getekende plaatjes bij de knoppen, uit PLANT_ICOON. Waar er nog geen
+ * tekening is valt het scherm terug op een lijn-icoon;
+ * docs/plantendokter-assets.md zegt welke er nog ontbreken.
  */
-const ICOON_MAP = '/assets/library/plants/icons';
-
 export const CLUE_ICOON: Record<ClueSpot, string> = {
-  blad: `${ICOON_MAP}/blad.webp`,
-  aarde: `${ICOON_MAP}/aarde.webp`,
-  plek: `${ICOON_MAP}/plek.webp`,
+  blad: PLANT_ICOON.blad,
+  aarde: PLANT_ICOON.aarde,
+  plek: PLANT_ICOON.plek,
 };
 
-export const OORZAAK_PLAATJE: Partial<Record<PlantProblemCause, string>> = {
-  'te-weinig-water': `${ICOON_MAP}/droog.webp`,
-  'te-veel-water': `${ICOON_MAP}/nat.webp`,
-  'te-veel-zon': `${ICOON_MAP}/zon.webp`,
+/** Elke oorzaak heeft nu zijn eigen tekening. */
+export const OORZAAK_PLAATJE: Record<PlantProblemCause, string> = {
+  'te-weinig-water': PLANT_ICOON.droog,
+  'te-veel-water': PLANT_ICOON.nat,
+  'te-veel-zon': PLANT_ICOON.zon,
+  'te-weinig-licht': PLANT_ICOON.donker,
+  'droge-lucht': PLANT_ICOON.drogeLucht,
+  'te-koud': PLANT_ICOON.koud,
 };
 
 /**
@@ -150,8 +152,15 @@ export const TREATMENTS: Treatment[] = [
 
 export const TREATMENTS_BY_ID = Object.fromEntries(TREATMENTS.map(t => [t.id, t])) as Record<TreatmentId, Treatment>;
 
-export const GEREEDSCHAP_PLAATJE: Partial<Record<TreatmentId, string>> = {
-  gieter: `${ICOON_MAP}/gieter.webp`,
+/** Elk gereedschap heeft nu zijn eigen tekening; geen lijn-iconen meer. */
+export const GEREEDSCHAP_PLAATJE: Record<TreatmentId, string> = {
+  gieter: PLANT_ICOON.gieter,
+  'laten-drogen': PLANT_GEREEDSCHAP.zandloper,
+  ompotten: PLANT_GEREEDSCHAP.bloempot,
+  schaduw: PLANT_GEREEDSCHAP.parasol,
+  'meer-licht': PLANT_GEREEDSCHAP.lamp,
+  sproeien: PLANT_GEREEDSCHAP.plantenspuit,
+  warmer: PLANT_GEREEDSCHAP.sjaal,
 };
 
 const BASIS_BEHANDELING: Record<PlantProblemCause, TreatmentId> = {

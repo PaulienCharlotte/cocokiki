@@ -28,7 +28,7 @@ function adoptieDatum(waarde: string): string {
 }
 
 /** Mijn Planten: een rustig overzicht, met één plant tegelijk in beeld als je erop tikt. */
-export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
+export default function PlantFamilyPanel({ onNavigate, onClose }: { onNavigate?: (path: string) => void; onClose: () => void }) {
   const [family, setFamily] = useState<PlantFamilyState>(loadPlantFamily);
   const [open, setOpen] = useState<string | null>(null);
   const [renaming, setRenaming] = useState(false);
@@ -112,7 +112,7 @@ export default function PlantFamilyPanel({ onClose }: { onClose: () => void }) {
       </ul>}
     </section>
 
-    {info && <PlantFlashcard speciesId={info.speciesId} nickname={info.nickname} onClose={() => setInfo(null)} />}
+    {info && <PlantFlashcard speciesId={info.speciesId} nickname={info.nickname} onNavigate={onNavigate} onClose={() => setInfo(null)} />}
   </div>;
 }
 

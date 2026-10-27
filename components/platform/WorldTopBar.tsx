@@ -57,14 +57,6 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </button>
       </div>
       <div className="world-hud__tools">
-        {onNavigate && <IconButton
-          className={`world-hud__encyclopedie${activePath === ENCYCLOPEDIA_PATH ? ' is-active' : ''}`}
-          size="small"
-          label="Mijn Encyclopedie openen"
-          icon={<BookOpen size={19} />}
-          aria-current={activePath === ENCYCLOPEDIA_PATH ? 'page' : undefined}
-          onClick={() => onNavigate(ENCYCLOPEDIA_PATH)}
-        />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>
@@ -86,10 +78,17 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               <img src={avatar.image} alt="" />
               <div><strong>Hoi!</strong><span>CocoFan123</span></div>
             </div>
-            <button type="button" role="menuitem" className="is-active" onClick={() => {
+            <button type="button" role="menuitem" onClick={() => {
               setProfileOpen(false);
               setAvatarDialogOpen(true);
             }}><UserRound size={21} />Mijn profiel</button>
+            {onNavigate && <button
+              type="button"
+              role="menuitem"
+              className={activePath === ENCYCLOPEDIA_PATH ? 'is-active' : undefined}
+              aria-current={activePath === ENCYCLOPEDIA_PATH ? 'page' : undefined}
+              onClick={() => { setProfileOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}
+            ><BookOpen size={21} />Mijn Encyclopedie</button>}
           </div>}
         </div>
       </div>

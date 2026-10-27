@@ -276,10 +276,10 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(kitchen, /aria-label="Mijn kameritems openen"/);
   assert.match(renderToStaticMarkup(<EncyclopediaScreen onNavigate={() => undefined} />), /Encyclopedie/);
   assert.match(renderToStaticMarkup(<CookbookScreen onNavigate={() => undefined} />), /Mijn Kookboek/);
-  // De encyclopedie is overal bereikbaar vanuit het topmenu.
+  // De encyclopedie zit in het profielmenu, niet als losse knop in de balk.
   const shellMetTopmenu = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onNavigate={() => undefined} activePath="/encyclopedie">Inhoud</AppShell>);
-  assert.match(shellMetTopmenu, /aria-label="Mijn Encyclopedie openen"/);
-  assert.match(shellMetTopmenu, /aria-current="page"/);
+  assert.doesNotMatch(shellMetTopmenu, /world-hud__encyclopedie/);
+  assert.match(shellMetTopmenu, /aria-label="Profielmenu openen"/);
   const nestedShell = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onBack={() => undefined} backLabel="Terug naar de boomhut">Inhoud</AppShell>);
   assert.match(nestedShell, /aria-label="Terug naar de boomhut"/);
 });

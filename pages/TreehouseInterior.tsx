@@ -92,7 +92,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
       <h1 id="treehouse-interior-title" className="treehouse-room__title">{definition.label}</h1>
 
       {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} onNavigate={onNavigate} />}
-      <RoomInventoryDrawer room={room} sceneRef={sceneRef} />
+      <RoomInventoryDrawer room={room} sceneRef={sceneRef} onNavigate={onNavigate} />
     </div>
 
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/treehouse/cookbook')} aria-label="Mijn Kookboek openen" title="Mijn Kookboek">
@@ -106,7 +106,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     {room === 'terrace' && <button className="kitchen-cookbook-trigger terrace-doctor-trigger" type="button" onClick={() => onNavigate('/plantendokter')} aria-label="Plantendokter openen" title="Plantendokter">
       <Stethoscope aria-hidden="true" /><span>Plantendokter</span>
     </button>}
-    {plantsOpen && <PlantFamilyPanel onClose={() => setPlantsOpen(false)} />}
+    {plantsOpen && <PlantFamilyPanel onNavigate={onNavigate} onClose={() => setPlantsOpen(false)} />}
 
     <div className="treehouse-interior__pan-controls" aria-label="Kijk rond en ga naar de kamer ernaast">
       <button type="button" title={scrollEdges.left ? rooms[roomIndex - 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar links'} aria-label={scrollEdges.left && rooms[roomIndex - 1] ? `Naar ${rooms[roomIndex - 1].label}` : 'Kijk naar links'} disabled={scrollEdges.left && !rooms[roomIndex - 1]} onClick={() => panRoom(-1)}>

@@ -341,3 +341,35 @@ export function plantStageImage(species: PlantSpecies, stage: PlantStage): strin
   // Zijn er minder plaatjes dan stadia, dan blijft het laatste staan.
   return `/assets/library/plants/${species.id}/${soort}-${Math.min(stap, beschikbaar)}.webp`;
 }
+
+/**
+ * De getekende plantenicoontjes, op één plek. Het spreekuur en de
+ * verzorgkaart gebruiken dezelfde tekeningen, dus hoort het pad hier en niet
+ * in een van de twee schermen.
+ */
+const ICOON_MAP = '/assets/library/plants/icons';
+
+export const PLANT_ICOON = {
+  blad: `${ICOON_MAP}/blad.webp`,
+  aarde: `${ICOON_MAP}/aarde.webp`,
+  plek: `${ICOON_MAP}/plek.webp`,
+  gieter: `${ICOON_MAP}/gieter.webp`,
+  droog: `${ICOON_MAP}/droog.webp`,
+  nat: `${ICOON_MAP}/nat.webp`,
+  zon: `${ICOON_MAP}/zon.webp`,
+  donker: `${ICOON_MAP}/donker.webp`,
+  drogeLucht: `${ICOON_MAP}/droge-lucht.webp`,
+  koud: `${ICOON_MAP}/koud.webp`,
+} as const;
+
+/** Het gereedschap uit de dokterstas, als getekend voorwerp. */
+const GEREEDSCHAP_MAP = '/assets/library/plants/gereedschap';
+
+export const PLANT_GEREEDSCHAP = {
+  parasol: `${GEREEDSCHAP_MAP}/parasol.webp`,
+  lamp: `${GEREEDSCHAP_MAP}/lamp-plant.webp`,
+  plantenspuit: `${GEREEDSCHAP_MAP}/plantenspuit.webp`,
+  zandloper: `${GEREEDSCHAP_MAP}/zandloper.webp`,
+  bloempot: `${GEREEDSCHAP_MAP}/bloempot.webp`,
+  sjaal: `${GEREEDSCHAP_MAP}/sjaal.webp`,
+} as const;

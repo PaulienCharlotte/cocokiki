@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { existsSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PLANT_SPECIES, PLANT_SPECIES_BY_ID } from '../data/plants/species';
-import { plantFirstAid, PLANT_PROBLEM_LABEL } from '../data/plants/firstAid';
+import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../data/plants/firstAid';
+import { PLANTENWIJZER, WIJZER_BY_CAUSE } from '../data/plants/wijzer';
 import {
   clueText,
+  GEREEDSCHAP_PLAATJE,
+  OORZAAK_PLAATJE,
   naamKeuzes,
   DIAGNOSE_CHOICES,
   PATIENT_KINDS,
@@ -193,4 +197,33 @@ test('de naam van de patiënt blijft geheim tot de plant gered is', () => {
   for (const species of PLANT_SPECIES) {
     assert.ok(!scherm.includes(species.scientificName), `${species.scientificName} verklapt de plant`);
   }
+});
+
+test('het plantenboek dekt elke oorzaak en wijst nergens naar een leeg plaatje', () => {
+  const oorzaken = PLANTENWIJZER.map(pagina => pagina.cause);
+  assert.equal(new Set(oorzaken).size, oorzaken.length);
+  for (const cause of Object.keys(PLANT_PROBLEM_LABEL) as PlantProblemCause[]) {
+    assert.ok(WIJZER_BY_CAUSE[cause], `geen boekpagina voor ${cause}`);
+  }
+  for (const pagina of PLANTENWIJZER) {
+    // Kiki's hint komt hier vandaan, dus hij moet echt iets uitleggen.
+    assert.ok(pagina.vuistregel.length > 40, `${pagina.cause} heeft een te magere vuistregel`);
+    for (const plaatje of [pagina.plaatje, pagina.gereedschap]) {
+      if (plaatje) assert.ok(existsSync(`public${plaatje}`), `${plaatje} staat niet in public`);
+    }
+  }
+});
+
+test('elke oorzaak en elke behandeling heeft een eigen tekening', () => {
+  for (const [id, plaatje] of Object.entries(GEREEDSCHAP_PLAATJE)) {
+    assert.ok(existsSync(`public${plaatje}`), `${id} wijst naar ${plaatje}, maar dat bestaat niet`);
+  }
+  for (const cause of Object.keys(PLANT_PROBLEM_LABEL) as PlantProblemCause[]) {
+    const plaatje = OORZAAK_PLAATJE[cause];
+    assert.ok(plaatje, `geen tekening voor ${cause}`);
+    assert.ok(existsSync(`public${plaatje}`), `${cause} wijst naar ${plaatje}, maar dat bestaat niet`);
+  }
+  // Twee knoppen met hetzelfde plaatje zijn niet uit elkaar te houden.
+  const alle = [...Object.values(GEREEDSCHAP_PLAATJE), ...Object.values(OORZAAK_PLAATJE)];
+  assert.equal(new Set(alle).size, alle.length);
 });

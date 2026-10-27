@@ -14,6 +14,7 @@ import { subscribeLocalState } from '../../services/localState';
 interface Props {
   room: TreehouseRoomId;
   sceneRef: RefObject<HTMLDivElement | null>;
+  onNavigate?: (path: string) => void;
 }
 interface DragState {
   product: DecorProduct;
@@ -27,7 +28,7 @@ interface DragState {
 }
 
 
-export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
+export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Props) {
   const [open, setOpen] = useState(false);
   const [inventory, setInventory] = useState<RoomInventoryState>(loadRoomInventory);
   const [selected, setSelected] = useState<string | null>(null);
@@ -211,7 +212,7 @@ export default function RoomInventoryDrawer({ room, sceneRef }: Props) {
         </div> : <div className="room-inventory-empty"><PackageOpen /><p>{Object.keys(inventory.owned).length ? 'Alles staat in je boomhut.' : 'Nog geen kameritems.'}</p></div>}
       </aside>
     </div>}
-    {plantCard && <PlantFlashcard speciesId={plantCard.speciesId} nickname={plantCard.nickname} onClose={() => setPlantCard(null)} />}
+    {plantCard && <PlantFlashcard speciesId={plantCard.speciesId} nickname={plantCard.nickname} onNavigate={onNavigate} onClose={() => setPlantCard(null)} />}
     {ghost && <>
       <div className="room-decor-ghost" style={{ left: ghost.x, top: ghost.y }}><DecorAsset product={ghost.product} /></div>
       {ghost.returnable && <div ref={returnRef} className={`room-return-target${overReturn ? ' is-over' : ''}`}><PackageOpen /><span>Terug in voorraad</span></div>}

@@ -4,7 +4,7 @@ import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
-import { PLANT_SPECIES, PLANT_SPECIES_BY_ID, plantStageImage } from '../data/plants/species';
+import { PLANT_ICOON, PLANT_SPECIES, PLANT_SPECIES_BY_ID, plantStageImage } from '../data/plants/species';
 import {
   adoptPurchaseOnce,
   cleanNickname,
@@ -78,14 +78,18 @@ test('bewaarde planten overleven een herstart en beschadigde opslag', () => {
   assert.equal(hersteld.plants[0].nickname, 'Vlinderorchidee');
 });
 
-test('de leerkaart toont naam, soortnaam, verzorging en een tip van Kiki', () => {
+test('de verzorgkaart toont naam en verzorging, en verder niets', () => {
   const kaart = renderToStaticMarkup(<PlantFlashcard speciesId="monstera-basket" onClose={() => undefined} />);
+  const species = PLANT_SPECIES_BY_ID['monstera-basket'];
   assert.match(kaart, /Monstera deliciosa/);
-  assert.match(kaart, /Zuid-Mexico/);
   assert.match(kaart, /Licht/);
   assert.match(kaart, /Water/);
-  assert.match(kaart, /Kiki zegt/);
-  assert.match(kaart, /images\/avatars\/kiki\/kiki-tip\.webp/);
+  assert.match(kaart, new RegExp(`Om de ${species.waterDays} dagen`));
+  // Het verhaal hoort in de encyclopedie, dus niet hier.
+  assert.doesNotMatch(kaart, /Zuid-Mexico/);
+  assert.ok(!kaart.includes(species.funFact));
+  assert.ok(!kaart.includes(species.kikiTip));
+  assert.ok(!kaart.includes(species.habitat));
   assert.equal(renderToStaticMarkup(<PlantFlashcard speciesId="bestaat-niet" onClose={() => undefined} />), '');
 });
 
@@ -191,13 +195,21 @@ test('elke plant heeft een EHBO-kaart die verder gaat dan water', () => {
   assert.equal(plantFirstAid('hanging-fern')[0].cause, 'droge-lucht');
 });
 
-test('de leerkaart heeft een tabblad met eerste hulp', () => {
+test('de verzorgkaart laat de zon, de gieter en de aarde zien', () => {
+  const kaart = renderToStaticMarkup(<PlantFlashcard speciesId="monstera-basket" onClose={() => undefined} />);
+  for (const icoon of [PLANT_ICOON.zon, PLANT_ICOON.gieter, PLANT_ICOON.aarde]) {
+    assert.ok(kaart.includes(icoon), `${icoon} ontbreekt op de kaart`);
+    // Een pad dat nergens heen wijst levert een kapot plaatje op in het spel.
+    assert.ok(existsSync(`public${icoon}`), `${icoon} staat niet in public`);
+  }
+});
+
+test('de eerste hulp staat niet meer op de verzorgkaart', () => {
   const kaart = renderToStaticMarkup(<PlantFlashcard speciesId="small-cactus" onClose={() => undefined} />);
-  assert.match(kaart, /Help, wat is er\?/);
-  assert.match(kaart, /Over deze plant/);
-  // Het tabblad Over staat open; de EHBO-tekst komt pas na een klik.
-  assert.match(kaart, /Wist je dat/);
+  assert.doesNotMatch(kaart, /Help, wat is er\?/);
   assert.doesNotMatch(kaart, /zachte, glimmende plek/);
+  // Zonder eigen plant is er ook nog geen encyclopediepagina om naar te wijzen.
+  assert.doesNotMatch(kaart, /Alles over deze plant/);
 });
 
 test('de naam in de winkel en de naam op de kaart gaan over dezelfde plant', () => {

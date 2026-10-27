@@ -29,7 +29,11 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
   const [progress] = useState(loadCookingProgress);
   const [planten] = useState(() => plantKnowledge());
   const [afdeling, setAfdeling] = useState<Afdeling>('planten');
-  const [openPlant, setOpenPlant] = useState<PlantKnowledge | null>(null);
+  const [openPlant, setOpenPlant] = useState<PlantKnowledge | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const gevraagd = new URLSearchParams(window.location.search).get('plant');
+    return gevraagd ? planten.find(item => item.species.id === gevraagd && item.level > 0) ?? null : null;
+  });
   const [openEten, setOpenEten] = useState<IngredientEntry | null>(null);
 
   const ingredienten = INGREDIENTS.filter(item => progress.discoveredIngredientIds.includes(item.id));
@@ -78,7 +82,11 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
       open={openPlant !== null}
       title={openPlant ? openPlant.species.commonName : ''}
       description={openPlant ? KNOWLEDGE_LABEL[openPlant.level] : undefined}
-      onClose={() => setOpenPlant(null)}
+      onClose={() => {
+        setOpenPlant(null);
+        // De diepe link heeft zijn werk gedaan; laat hem niet in de balk staan.
+        if (typeof window !== 'undefined' && window.location.search) window.history.replaceState({}, '', '/encyclopedie');
+      }}
       primaryAction={<Button pill onClick={() => setOpenPlant(null)}>Klaar</Button>}
     >
       {openPlant && <PlantVenster item={openPlant} onNavigate={onNavigate} />}
@@ -146,6 +154,7 @@ function PlantVenster({ item, onNavigate }: { item: PlantKnowledge; onNavigate: 
     {level >= 2 && <>
       <p>{species.habitat}</p>
       <p>{species.funFact}</p>
+      <p className="plantpagina__tip"><strong>Kiki zegt</strong>{species.kikiTip}</p>
     </>}
 
     {level >= 3 ? <ul className="plantpagina__ehbo">
