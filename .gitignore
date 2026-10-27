@@ -13,7 +13,9 @@ dist-ssr
 *.local
 
 # Claude Code
-.claude/
+.claude/*
+# De vormtaal hoort wel in de repo, anders ziet alleen deze machine hem.
+!.claude/skills/
 
 # Editor directories and files
 .vscode/*

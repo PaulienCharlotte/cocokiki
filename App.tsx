@@ -3,7 +3,7 @@ import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from
 import AppShell from './components/platform/AppShell';
 import { DESTINATIONS_BY_ID } from './platform/destinationRegistry';
 import { GAMES_BY_ID } from './platform/gameRegistry';
-import { resolveRoute } from './platform/routes';
+import { resolveRoute, type AppRoute } from './platform/routes';
 import { CURRENCY_CHANGE_EVENT, loadCurrency } from './services/currency';
 import './components/cooking/foundation.css';
 
@@ -11,13 +11,23 @@ const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
 const ChallengesScreen = lazy(() => import('./pages/ChallengesScreen'));
 const TreehouseRoom = lazy(() => import('./pages/TreehouseRoom'));
-const TreehouseSection = lazy(() => import('./pages/TreehouseSection'));
+const CookbookScreen = lazy(() => import('./pages/CookbookScreen'));
+const EncyclopediaScreen = lazy(() => import('./pages/EncyclopediaScreen'));
 const TreehouseInterior = lazy(() => import('./pages/TreehouseInterior'));
 const ShopScreen = lazy(() => import('./pages/ShopScreen'));
 const PlantClinicScreen = lazy(() => import('./pages/PlantClinicScreen'));
 const DesignSystemPreview = lazy(() => import('./pages/DesignSystemPreview'));
 const ClockModule = lazy(() => import('./games/clock/ClockModule'));
 const MathModule = lazy(() => import('./games/math/MathModule'));
+
+/** Waar de terugknop je brengt, per pagina. */
+const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: string }>> = {
+  'treehouse-section': { path: '/treehouse/kitchen', label: 'Terug naar de keuken' },
+  'treehouse-room': { path: '/treehouse', label: 'Terug naar de boomhut' },
+  'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
+  encyclopedia: { path: '/', label: 'Terug naar de wereld' },
+  clock: { path: '/challenges', label: 'Terug naar School' },
+};
 
 const App: React.FC = () => {
   const [current, setCurrent] = useState(() => resolveRoute(window.location.pathname));
@@ -65,7 +75,9 @@ const App: React.FC = () => {
           ? <ShopScreen onNavigate={navigate} />
           : <DestinationScreen destination={DESTINATIONS_BY_ID[current.route.destinationId]} onNavigate={navigate} />
       : current.route.page === 'treehouse-section'
-        ? <TreehouseSection section={current.route.section} onNavigate={navigate} />
+        ? <CookbookScreen onNavigate={navigate} />
+      : current.route.page === 'encyclopedia'
+        ? <EncyclopediaScreen onNavigate={navigate} />
       : current.route.page === 'treehouse-room'
         ? <TreehouseInterior room={current.route.room} onNavigate={navigate} />
       : current.route.page === 'plant-clinic'
@@ -79,8 +91,10 @@ const App: React.FC = () => {
   if (worldContent) return <AppShell
     coins={coins}
     onHome={() => navigate('/')}
-    onBack={() => navigate(current.route.page === 'treehouse-section' ? (current.route.section === 'encyclopedia' ? '/treehouse' : '/treehouse/kitchen') : current.route.page === 'treehouse-room' ? '/treehouse' : current.route.page === 'clock' ? '/challenges' : current.route.page === 'plant-clinic' ? '/treehouse' : '/')}
-    backLabel={current.route.page === 'treehouse-section' ? (current.route.section === 'encyclopedia' ? 'Terug naar de boomhut' : 'Terug naar de keuken') : current.route.page === 'treehouse-room' ? 'Terug naar de boomhut' : current.route.page === 'clock' ? 'Terug naar School' : current.route.page === 'plant-clinic' ? 'Terug naar de boomhut' : 'Terug naar de wereld'}
+    onNavigate={navigate}
+    activePath={current.route.path}
+    onBack={() => navigate(BACK_TARGET[current.route.page]?.path ?? '/')}
+    backLabel={BACK_TARGET[current.route.page]?.label ?? 'Terug naar de wereld'}
   ><Suspense fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />

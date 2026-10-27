@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, Leaf, LibraryBig, Stethoscope } from 'lucide-react';
+import { BookOpen, Leaf, Stethoscope } from 'lucide-react';
 import { type TreehouseRoomId } from '../data/treehouse';
 import { createEmptyCookingProgress, loadCookingProgress, startJourney } from '../services/cookingProgress';
 import { RECIPES_BY_ID } from '../data/cooking/catalog';
@@ -98,17 +98,13 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/treehouse/cookbook')} aria-label="Mijn Kookboek openen" title="Mijn Kookboek">
       <BookOpen aria-hidden="true" /><span>Kookboek</span>
     </button>}
-    {room === 'kitchen' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/treehouse/encyclopedia')} aria-label="Mijn Encyclopedie openen" title="Mijn Encyclopedie"><LibraryBig aria-hidden="true" /><span>Encyclopedie</span></button>}
 
     {/* Planten horen bij het terras, net zoals koken bij de keuken hoort. */}
     {room === 'terrace' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => setPlantsOpen(true)} aria-label="Mijn Planten openen" title="Mijn Planten">
       <Leaf aria-hidden="true" /><span>Mijn Planten</span>
     </button>}
-    {room === 'terrace' && <button className="kitchen-cookbook-trigger kitchen-encyclopedia-trigger" type="button" onClick={() => onNavigate('/plantendokter')} aria-label="Plantendokter openen" title="Plantendokter">
+    {room === 'terrace' && <button className="kitchen-cookbook-trigger terrace-doctor-trigger" type="button" onClick={() => onNavigate('/plantendokter')} aria-label="Plantendokter openen" title="Plantendokter">
       <Stethoscope aria-hidden="true" /><span>Plantendokter</span>
-    </button>}
-    {room === 'terrace' && <button className="kitchen-cookbook-trigger terrace-encyclopedia-trigger" type="button" onClick={() => onNavigate('/treehouse/encyclopedia')} aria-label="Mijn Encyclopedie openen" title="Mijn Encyclopedie">
-      <LibraryBig aria-hidden="true" /><span>Encyclopedie</span>
     </button>}
     {plantsOpen && <PlantFamilyPanel onClose={() => setPlantsOpen(false)} />}
 

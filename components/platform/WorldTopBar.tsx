@@ -1,8 +1,11 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, ChevronDown, UserRound } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronDown, UserRound } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
+
+/** De encyclopedie staat in het topmenu omdat hij over alle spellen heen gaat. */
+const ENCYCLOPEDIA_PATH = '/encyclopedie';
 
 interface WorldTopBarProps {
   coins: number;
@@ -10,9 +13,13 @@ interface WorldTopBarProps {
   onBack?: () => void;
   backLabel?: string;
   embedded?: boolean;
+  /** Zonder deze prop verschijnt de encyclopedieknop niet. */
+  onNavigate?: (path: string) => void;
+  /** Het pad waar je nu bent, zodat de knop zichzelf niet aanprijst. */
+  activePath?: string;
 }
 
-export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false }: WorldTopBarProps) {
+export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false, onNavigate, activePath }: WorldTopBarProps) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
   const [avatarId, setAvatarId] = useState<ProfileAvatarId>(loadProfileAvatar);
@@ -50,6 +57,14 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </button>
       </div>
       <div className="world-hud__tools">
+        {onNavigate && <IconButton
+          className={`world-hud__encyclopedie${activePath === ENCYCLOPEDIA_PATH ? ' is-active' : ''}`}
+          size="small"
+          label="Mijn Encyclopedie openen"
+          icon={<BookOpen size={19} />}
+          aria-current={activePath === ENCYCLOPEDIA_PATH ? 'page' : undefined}
+          onClick={() => onNavigate(ENCYCLOPEDIA_PATH)}
+        />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>

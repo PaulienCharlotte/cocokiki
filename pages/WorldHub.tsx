@@ -42,7 +42,7 @@ export default function WorldHub({ coins, onNavigate }: WorldHubProps) {
       </button>)}
     </nav>
 
-    <WorldTopBar coins={coins} onHome={() => onNavigate('/')} />
+    <WorldTopBar coins={coins} onHome={() => onNavigate('/')} onNavigate={onNavigate} activePath="/" />
 
   </main>;
 }

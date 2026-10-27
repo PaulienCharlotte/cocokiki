@@ -10,7 +10,7 @@ import ChallengesScreen from '../pages/ChallengesScreen';
 import WorldHub from '../pages/WorldHub';
 import TreehouseRoom from '../pages/TreehouseRoom';
 import TreehouseInterior from '../pages/TreehouseInterior';
-import TreehouseSection from '../pages/TreehouseSection';
+import EncyclopediaScreen from '../pages/EncyclopediaScreen';
 import ShopScreen from '../pages/ShopScreen';
 import DecorShop from '../components/shop/DecorShop';
 import PurchaseSuccess from '../components/shop/PurchaseSuccess';
@@ -246,7 +246,9 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   for (const room of TREEHOUSE_ROOMS) {
     assert.deepEqual(resolveRoute(room.path).route, { page: 'treehouse-room', path: room.path, room: room.id });
   }
-  assert.deepEqual(resolveRoute('/treehouse/encyclopedia').route, { page: 'treehouse-section', path: '/treehouse/encyclopedia', section: 'encyclopedia' });
+  assert.deepEqual(resolveRoute('/encyclopedie'), { route: { page: 'encyclopedia', path: '/encyclopedie' }, redirect: false });
+  // De encyclopedie gaat over alle spellen heen en hangt dus niet meer onder de boomhut.
+  assert.deepEqual(resolveRoute('/treehouse/encyclopedia'), { route: { page: 'encyclopedia', path: '/encyclopedie' }, redirect: true });
   assert.deepEqual(resolveRoute('/treehouse/cookbook').route, { page: 'treehouse-section', path: '/treehouse/cookbook', section: 'cookbook' });
   const room = renderToStaticMarkup(<TreehouseRoom onNavigate={() => undefined} />);
   assert.match(room, /aria-label="Woonkamer openen"/);
@@ -260,7 +262,7 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(livingRoom, /aria-label="Mijn kameritems openen"/);
   const kitchen = renderToStaticMarkup(<TreehouseInterior room="kitchen" onNavigate={() => undefined} />);
   assert.match(kitchen, /aria-label="Mijn Kookboek openen"/);
-  assert.match(kitchen, /aria-label="Mijn Encyclopedie openen"/);
+  assert.doesNotMatch(kitchen, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(kitchen, /Mijn keuken/);
   assert.doesNotMatch(kitchen, /Naar Kookstudio/);
   assert.doesNotMatch(kitchen, /treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/);
@@ -272,8 +274,12 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(kitchen, /aria-label="Naar Woonkamer"/);
   assert.match(kitchen, /aria-label="Kijk naar rechts"/);
   assert.match(kitchen, /aria-label="Mijn kameritems openen"/);
-  assert.match(renderToStaticMarkup(<TreehouseSection section="encyclopedia" onNavigate={() => undefined} />), /Mijn Encyclopedie/);
-  assert.match(renderToStaticMarkup(<TreehouseSection section="cookbook" onNavigate={() => undefined} />), /Mijn Kookboek/);
+  assert.match(renderToStaticMarkup(<EncyclopediaScreen onNavigate={() => undefined} />), /Encyclopedie/);
+  assert.match(renderToStaticMarkup(<CookbookScreen onNavigate={() => undefined} />), /Mijn Kookboek/);
+  // De encyclopedie is overal bereikbaar vanuit het topmenu.
+  const shellMetTopmenu = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onNavigate={() => undefined} activePath="/encyclopedie">Inhoud</AppShell>);
+  assert.match(shellMetTopmenu, /aria-label="Mijn Encyclopedie openen"/);
+  assert.match(shellMetTopmenu, /aria-current="page"/);
   const nestedShell = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onBack={() => undefined} backLabel="Terug naar de boomhut">Inhoud</AppShell>);
   assert.match(nestedShell, /aria-label="Terug naar de boomhut"/);
 });

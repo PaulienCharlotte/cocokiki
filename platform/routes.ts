@@ -1,12 +1,13 @@
 import type { DestinationId } from './destinationRegistry';
 import { isExtraRoom, type TreehouseRoomId } from '../data/treehouse';
-export type TreehouseSectionId = 'encyclopedia' | 'cookbook';
+export type TreehouseSectionId = 'cookbook';
 
 export type AppRoute =
   | { page: 'home'; path: '/' }
   | { page: 'destination'; path: `/${DestinationId}`; destinationId: DestinationId }
   | { page: 'treehouse-room'; path: `/treehouse/${TreehouseRoomId}`; room: TreehouseRoomId }
   | { page: 'treehouse-section'; path: `/treehouse/${TreehouseSectionId}`; section: TreehouseSectionId }
+  | { page: 'encyclopedia'; path: '/encyclopedie' }
   | { page: 'challenges'; path: '/challenges' }
   | { page: 'plant-clinic'; path: '/plantendokter' }
   | { page: 'clock'; path: '/school/clock' }
@@ -25,7 +26,6 @@ const TREEHOUSE_ROUTES: Record<string, AppRoute> = {
   '/treehouse/kitchen': { page: 'treehouse-room', path: '/treehouse/kitchen', room: 'kitchen' },
   '/treehouse/bedroom': { page: 'treehouse-room', path: '/treehouse/bedroom', room: 'bedroom' },
   '/treehouse/terrace': { page: 'treehouse-room', path: '/treehouse/terrace', room: 'terrace' },
-  '/treehouse/encyclopedia': { page: 'treehouse-section', path: '/treehouse/encyclopedia', section: 'encyclopedia' },
   '/treehouse/cookbook': { page: 'treehouse-section', path: '/treehouse/cookbook', section: 'cookbook' },
 };
 
@@ -40,6 +40,9 @@ const GAME_ROUTES: Record<string, AppRoute> = {
 
 const LEGACY_ROUTES: Record<string, string> = {
   '/plantdokter': '/plantendokter',
+  '/treehouse/encyclopedia': '/encyclopedie',
+  '/encyclopedia': '/encyclopedie',
+  '/encyclopedie.html': '/encyclopedie',
   '/kliniek': '/plantendokter',
   '/cooking': '/treehouse/cookbook',
   '/topo': '/games/topo',
@@ -64,6 +67,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   else if (TREEHOUSE_ROUTES[canonical]) route = TREEHOUSE_ROUTES[canonical];
   else if (DESTINATION_ROUTES[canonical]) route = DESTINATION_ROUTES[canonical];
   else if (CLINIC_ROUTES[canonical]) route = CLINIC_ROUTES[canonical];
+  else if (canonical === '/encyclopedie') route = { page: 'encyclopedia', path: '/encyclopedie' };
   else if (canonical === '/challenges') route = { page: 'challenges', path: '/challenges' };
   else if (canonical === '/school/clock') route = { page: 'clock', path: '/school/clock' };
   else if (canonical === '/school/math') route = { page: 'math', path: '/school/math' };

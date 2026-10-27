@@ -60,7 +60,6 @@ main.nutrient-memory-screen::after { display: none; }
 .kitchen-ready-recipes { position: fixed; z-index: 12; right: 16px; bottom: 24px; width: min(360px, calc(100% - 32px)); display: grid; gap: 8px; max-height: 36svh; overflow-y: auto; }
 .kitchen-ready-recipes .treehouse-recipe-cta { position: static; right: auto; bottom: auto; translate: none; max-width: none; width: 100%; }
 .kitchen-ready-recipes .treehouse-recipe-cta strong { overflow-wrap: anywhere; }
-.kitchen-encyclopedia-trigger.kitchen-encyclopedia-trigger { top: 174px; }
 .home-recipe-preview { padding: 14px 0; border-top: 1px solid #d6cfc1; }
 .home-recipe-preview summary { cursor: pointer; font-weight: 700; padding: 10px 0; }
 .home-recipe { text-align: left; line-height: 1.6; font-size: 16px; color: #383331; }
@@ -70,9 +69,6 @@ main.nutrient-memory-screen::after { display: none; }
 .home-recipe li { margin-bottom: 10px; }
 .home-recipe-section .cooking-button { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 .cooking-recipe-card { max-height: 70svh; overflow-y: auto; }
-.encyclopedia-entry details { margin-top: 12px; font-size: 15px; }
-.encyclopedia-entry summary { cursor: pointer; font-weight: 700; min-height: 44px; }
-.encyclopedia-entry details p { line-height: 1.5; }
 @media (max-width: 600px) {
   main.nutrient-memory-screen { padding: 90px 14px 20px; }
   .nutrient-memory-shell h1 { font-size: 22px; }
@@ -82,13 +78,13 @@ main.nutrient-memory-screen::after { display: none; }
   .nutrient-memory__card small { font-size: 10px; }
   .nutrient-memory-shell .journey-stages { display: none; }
   .nutrient-memory__score { min-height: 36px; font-size: 13px; }
-  .kitchen-encyclopedia-trigger.kitchen-encyclopedia-trigger { top: 140px; }
   .kitchen-ready-recipes { bottom: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nutrient-memory__card.is-revealed, .cooking-tip { animation: none; }
 }
-.terrace-encyclopedia-trigger.terrace-encyclopedia-trigger { top: 236px; }
+/* Het terras heeft nog twee knoppen: Mijn Planten en de plantendokter. */
+.terrace-doctor-trigger.terrace-doctor-trigger { top: 174px; }
 @media (max-width: 720px) {
-  .terrace-encyclopedia-trigger.terrace-encyclopedia-trigger { top: 198px; }
+  .terrace-doctor-trigger.terrace-doctor-trigger { top: 140px; }
 }

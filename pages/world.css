@@ -632,23 +632,6 @@
 .journey-more[open] > button { position: absolute; z-index: 4; right: 0; bottom: 46px; min-width: 180px; min-height: 44px; display: flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid #d8d0c7; border-radius: 8px; background: #fffdf8; color: #506950; font: inherit; font-size: .75rem; font-weight: 800; box-shadow: 0 8px 22px #2e1e1430; }
 .journey-loading { min-height: 260px; display: grid; place-items: center; color: #587157; font-weight: 800; }
 
-.encyclopedia-screen { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: 100px 18px 28px; background: #765031; isolation: isolate; }
-.encyclopedia-screen__backdrop { position: absolute; z-index: -2; inset: 0; background: linear-gradient(#25150b35, #25150b62), url('/games/treehouse/treehouse-interior.webp') center / cover; }
-.encyclopedia-collection { width: min(940px, 100%); max-height: calc(100dvh - 130px); overflow-y: auto; padding: 22px; border: 1px solid #fff8edc4; border-radius: 8px; background: #fffaf0ee; box-shadow: 0 20px 54px #29190e57; color: var(--color-text); backdrop-filter: blur(10px); }
-.encyclopedia-collection > header { display: flex; align-items: center; gap: 11px; }
-.encyclopedia-collection > header > span { width: 44px; height: 44px; display: grid; flex: 0 0 44px; place-items: center; border-radius: 8px; background: #dfeadf; color: #4f694f; }
-.encyclopedia-collection > header small { display: block; color: #526d52; font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
-.encyclopedia-collection > header h1 { margin-top: 1px; font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1; }
-.encyclopedia-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-top: 20px; }
-.encyclopedia-entry { min-width: 0; display: grid; grid-template-columns: 118px minmax(0, 1fr); align-items: center; gap: 14px; padding: 12px; border: 1px solid #d9cfc5; border-radius: 8px; background: #fffdf9; }
-.encyclopedia-entry > img, .encyclopedia-entry > .cooking-asset-fallback { width: 118px; height: 118px; min-height: 118px; object-fit: contain; background: #e5eee6; border-radius: 8px; }
-.encyclopedia-entry > div { min-width: 0; display: grid; gap: 6px; }
-.encyclopedia-entry h2 { font-size: 1.15rem; }
-.encyclopedia-entry p { color: var(--color-text-muted); font-size: .78rem; line-height: 1.45; }
-.encyclopedia-entry span { display: flex; align-items: center; gap: 5px; color: #526b52; font-size: .7rem; font-weight: var(--font-weight-bold); }
-.encyclopedia-empty { min-height: 330px; display: grid; place-content: center; justify-items: center; gap: 12px; max-width: 520px; margin: 12px auto 0; text-align: center; }
-.encyclopedia-empty > svg { color: #587256; }
-.encyclopedia-empty p { max-width: 460px; color: var(--color-text-muted); line-height: 1.55; }
 
 .math-stage { position: relative; min-height: 100dvh; display: grid; place-items: center; overflow: hidden; padding: 94px 14px 16px; background: #765031; isolation: isolate; }
 .math-stage__background { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: saturate(.88); }
@@ -942,12 +925,6 @@
   .discovery-card--centered, .discovery-card--completion { min-height: min(430px, calc(100dvh - 88px)); }
   .discovery-card--unavailable { min-height: min(350px, calc(100dvh - 88px)); }
   .discovery-collected > span { width: 68px; height: 68px; }
-  .encyclopedia-screen { place-items: start center; padding: 84px 9px 12px; }
-  .encyclopedia-collection { max-height: calc(100dvh - 96px); padding: 14px; }
-  .encyclopedia-grid { grid-template-columns: 1fr; }
-  .encyclopedia-entry { grid-template-columns: 92px minmax(0, 1fr); }
-  .encyclopedia-entry > img, .encyclopedia-entry > .cooking-asset-fallback { width: 92px; height: 92px; min-height: 92px; }
-  .encyclopedia-empty { min-height: 58dvh; }
   .math-stage { place-items: center; padding: 74px 7px max(7px, env(safe-area-inset-bottom)); overflow: hidden; }
   .math-stage__background { position: fixed; height: 100dvh; object-position: 55% center; }
   .math-stage::after { position: fixed; }
@@ -1501,11 +1478,76 @@
 .clinic__naamkeuze:hover, .clinic__naamkeuze:focus-visible { border-color: var(--color-primary); outline: none; transform: translateY(-2px); }
 
 /* Plantenpagina's in de encyclopedie: hoe meer je weet, hoe voller de kaart. */
-.encyclopedia-entry.is-niveau-1 { opacity: .92; }
-.encyclopedia-entry__niveau { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); }
-.encyclopedia-entry__niveau small { color: var(--color-text-soft); font-weight: var(--font-weight-bold); }
-.encyclopedia-entry.is-niveau-3 .encyclopedia-entry__niveau { color: #2f6b3d; }
-.encyclopedia-entry__feiten { margin: var(--space-2) 0 0; display: grid; gap: 6px; }
-.encyclopedia-entry__feiten > div { display: grid; gap: 1px; }
-.encyclopedia-entry__feiten dt { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
-.encyclopedia-entry__feiten dd { margin: 0; font-size: var(--font-size-sm); line-height: 1.4; }
+
+/* ---------------------------------------------------------------------------
+   Encyclopedie: de overkoepelende verzameling, bereikbaar uit het topmenu.
+   Zelfde vormtaal als het spreekuur: rustige achtergrond, één witte kaart,
+   tokens voor alles. Geen eigen kleuren, geen eigen schaduwen.
+   --------------------------------------------------------------------------- */
+.encyclopedie { min-height: 100dvh; padding: max(var(--space-4), 76px) var(--space-4) var(--space-8); display: grid; place-items: start center; background: var(--color-background); }
+.encyclopedie__kaart {
+  width: min(620px, 100%); display: grid; gap: var(--space-4);
+  padding: var(--space-5); border-radius: var(--radius-card);
+  background: var(--color-surface); box-shadow: var(--shadow-soft);
+}
+.encyclopedie__top small { display: block; color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .04em; }
+.encyclopedie__top h1 { margin: 2px 0 0; font-size: var(--font-size-xl); line-height: var(--line-height-tight); }
+
+/* Twee afdelingen naast elkaar, zodat een lege afdeling niemand in de weg zit. */
+.encyclopedie__tabs { display: flex; gap: var(--space-2); padding: 4px; border-radius: var(--radius-pill); background: var(--color-background-soft); }
+.encyclopedie__tab { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text-soft); font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); }
+.encyclopedie__tab small { padding: 1px 7px; border-radius: var(--radius-pill); background: var(--color-surface); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); }
+.encyclopedie__tab.is-aan { background: var(--color-surface); box-shadow: 0 2px 8px #3b241a1a; color: var(--color-text); }
+.encyclopedie__tab.is-aan small { background: var(--color-success-soft); color: var(--color-primary); }
+
+.encyclopedie__raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: var(--space-2); }
+.encyclopedie__tegel {
+  min-width: 0; display: grid; justify-items: center; gap: 4px;
+  padding: var(--space-3) var(--space-2); border: 0; border-radius: var(--radius-control);
+  background: var(--color-background-soft); color: var(--color-text);
+  font-size: var(--font-size-sm); font-weight: var(--font-weight-heavy); text-align: center;
+  transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
+}
+.encyclopedie__tegel img, .encyclopedie__tegel .cooking-asset-fallback { width: 64px; height: 64px; object-fit: contain; }
+.encyclopedie__tegel strong { min-width: 0; font-size: var(--font-size-sm); line-height: 1.2; overflow-wrap: break-word; hyphens: auto; }
+.encyclopedie__tegel small { display: inline-flex; align-items: center; gap: 4px; color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); }
+.encyclopedie__tegel:hover, .encyclopedie__tegel:focus-visible { outline: none; transform: translateY(-2px); box-shadow: 0 6px 16px #3b241a1f; }
+.encyclopedie__tegel.is-niveau-3 small { color: var(--color-primary); }
+
+/* Een leeg vakje zegt dat er nog iets te halen valt, zonder te verklappen wat. */
+.encyclopedie__tegel.is-slot { min-height: 118px; place-content: center; border: 1px dashed var(--color-border); background: transparent; }
+.encyclopedie__tegel.is-slot span { display: grid; place-items: center; color: var(--color-border-strong); }
+
+.encyclopedie__leeg { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-8) var(--space-4); text-align: center; color: var(--color-text-soft); }
+.encyclopedie__leeg svg { color: var(--color-primary); }
+.encyclopedie__leeg p { margin: 0; max-width: 28em; line-height: var(--line-height-default); }
+
+/* De pagina zelf, in een venster: alles wat je over één soort weet. */
+.plantpagina { display: grid; gap: var(--space-3); text-align: left; }
+.plantpagina__plant { width: 128px; height: 128px; justify-self: center; object-fit: contain; }
+.plantpagina__latijn { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); font-style: italic; }
+.plantpagina p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-md); line-height: var(--line-height-default); }
+.plantpagina__feiten { margin: 0; display: grid; gap: var(--space-2); }
+.plantpagina__feiten > div { display: grid; gap: 1px; }
+.plantpagina__feiten dt { color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .03em; }
+.plantpagina__feiten dd { margin: 0; font-size: var(--font-size-sm); line-height: 1.4; }
+.plantpagina__ehbo { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.plantpagina__ehbo li { display: grid; gap: 2px; padding: var(--space-3); border-radius: var(--radius-control); background: var(--color-background-soft); }
+.plantpagina__ehbo strong { color: var(--color-primary); font-size: var(--font-size-sm); }
+.plantpagina__ehbo span { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.45; }
+.plantpagina__volgende { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-control); background: var(--color-success-soft); color: var(--color-primary) !important; font-size: var(--font-size-sm); }
+
+/* De encyclopedieknop in het topmenu. */
+.world-hud__encyclopedie.is-active { background: var(--color-success-soft); color: var(--color-primary); }
+
+@media (max-width: 560px) {
+  .encyclopedie { padding: 72px var(--space-2) var(--space-6); }
+  .encyclopedie__kaart { padding: var(--space-4); gap: var(--space-3); }
+  .encyclopedie__raster { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
+  .encyclopedie__tegel img, .encyclopedie__tegel .cooking-asset-fallback { width: 54px; height: 54px; }
+  .encyclopedie__tegel strong { font-size: var(--font-size-xs); }
+  .encyclopedie__tegel.is-slot { min-height: 86px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .encyclopedie__tegel:hover, .encyclopedie__tegel:focus-visible { transform: none; }
+}

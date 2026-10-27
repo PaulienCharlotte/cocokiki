@@ -26,6 +26,8 @@
   --color-text: #40332d;
   --color-text-muted: #6f625d;
   --color-text-subtle: #81736d;
+  /* Alias: was overal in gebruik, maar nooit gedefinieerd. */
+  --color-text-soft: var(--color-text-muted);
   --color-border: #d9cfc5;
   --color-border-strong: #b9aa9e;
   --color-success: #4f7258;
