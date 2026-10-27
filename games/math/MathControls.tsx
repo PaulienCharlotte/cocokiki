@@ -7,10 +7,11 @@ import { levelUnlocked } from './progress';
 import { resultStatus } from './engine';
 import { MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
 
-export function MathHeader({ game, level, progress, onBack, onLevel, coins = 0, sound = false, onSound }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void }) {
+export function MathHeader({ game, level, progress, onBack, onHome = onBack, onLevel, coins = 0, sound = false, onSound }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onHome?: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void }) {
   const config = game ? MATH_GAMES_BY_ID[game] : null;
   return <header className="math-game-header">
     <button className="math-icon-tool" type="button" aria-label={game ? 'Terug naar rekenen' : 'Terug naar School'} title="Terug" onClick={onBack}><ArrowLeft size={22} /></button>
+    <button className="math-header-brand" type="button" onClick={onHome} aria-label="Naar de wereld"><img src="/images/cocokiki-logo.png" alt="CocoKiki" /></button>
     <h1>{config?.title ?? 'Rekenavonturen'}</h1>
     {game && config && <select className="math-level-select" aria-label="Kies een niveau" value={level} onChange={event => onLevel(Number(event.target.value) as MathLevel)}>{MATH_LEVELS.map(option => <option key={option} value={option} disabled={!levelUnlocked(progress, game, option)}>Niveau {option}{progress.games[game].completed.includes(option) ? ' ✓' : ''}</option>)}</select>}
     <span className="math-wallet" aria-label={`${coins} CocoCoins`}><CocoCoin size={24} />{coins}</span>

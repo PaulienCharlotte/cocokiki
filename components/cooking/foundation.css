@@ -41,7 +41,7 @@ main.nutrient-memory-screen::after { display: none; }
 .cooking-card .cooking-card__scene--heat .cooking-choice,
 .cooking-card .cooking-card__scene--heat .cooking-button,
 .cooking-card .cooking-card__scene--timed .cooking-button { box-shadow: none; }
-.inventory-sell { min-height: 44px; padding: 8px 12px; margin: 8px 0; border: 1px solid #b9c5b4; border-radius: 8px; background: #edf0e7; color: #40563d; font: inherit; cursor: pointer; }
+.inventory-sell { min-height: 44px; padding: 0; margin: 8px 0; border: 0; background: transparent; color: #40563d; font: inherit; }
 @media (max-width: 600px) { .cooking-tip.cooking-tip { padding: 36px 20px 22px; } .cooking-tip.cooking-tip > img { width: 136px; height: 150px; } }
 .cooking-tip h2 { margin: 8px 0 14px; font-size: 24px; line-height: 1.25; font-weight: 800; overflow-wrap: anywhere; }
 .cooking-tip p { margin: 0; font-size: 17px; line-height: 1.6; font-weight: 500; }

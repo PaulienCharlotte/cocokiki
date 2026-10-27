@@ -5,7 +5,7 @@ export const PROFILE_AVATARS = [
   { id: 'kiki', label: 'Kiki', image: '/images/avatars/kiki.webp' },
   { id: 'lua', label: 'Lua', image: '/images/avatars/luiaard.webp' },
   { id: 'samen', label: 'Samen', image: '/images/avatars/samen.webp' },
-  { id: 'stokstaartje', label: 'Stokstaartje', image: '/images/avatars/lua.webp' },
+  { id: 'stokstaartje', label: 'Seb', image: '/images/avatars/lua.webp' },
   { id: 'avonturier', label: 'Avonturier', image: '/images/avatars/avonturier.webp' },
 ] as const;
 

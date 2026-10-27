@@ -31,7 +31,6 @@ export const BANANA_PANCAKE_STEPS: CookingStepConfig[] = [
   { id: 'heat', title: 'Verwarm de pan', instruction: 'Doe er boter in en kies de juiste stand.', station: 'cooktop', mechanic: 'heat', target: 2, addition: { asset: a.butter, label: 'Boter erin' }, levels: [{ value: 1, label: 'Laag' }, { value: 2, label: 'Middel' }, { value: 3, label: 'Hoog' }], buttonLabel: 'Verwarm de pan', asset: k.panEmpty, hint: 'Middel is precies goed: niet te heet.' },
   { id: 'cook', title: 'Bak de pannenkoek', instruction: 'Giet, wacht en draai om.', station: 'cooktop', mechanic: 'timed', target: 3, durationMs: 2500, pouredAsset: k.pancakeRaw, cookedAsset: k.panPancake, startLabel: 'Giet het beslag', finishLabel: 'Draai om', asset: k.panEmpty, hint: 'Wacht tot de rand stevig wordt.' },
   { id: 'serve', title: 'Leg op het bord', instruction: 'Sleep de pannenkoek naar het bord.', station: 'worktop', mechanic: 'drag', target: 1, asset: k.panPancake, hint: 'Het bord staat klaar. Tikken mag ook.', dropTarget: { label: 'Bord', sourceLabel: 'Pannenkoek' } },
-  { id: 'cover', title: 'Extra luchtig?', instruction: 'Dek kort af of serveer meteen.', station: 'worktop', mechanic: 'optional', target: 1, choices: [{ id: 'cover', label: 'Even afdekken' }, { id: 'serve', label: 'Meteen serveren' }], asset: a.finished, hint: 'Beide keuzes zijn goed.' },
 ];
 
 export const COOKING_SESSION_KEY = 'cocokiki:cooking-session:banana-pancakes:v1';

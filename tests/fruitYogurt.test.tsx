@@ -190,5 +190,5 @@ test('insufficient yogurt ingredients cannot partially consume or complete an un
   assert.match(html, /Schenk 150 ml yoghurt/);
   assert.match(html, /Je hebt nog 1 g aardbei nodig/);
   assert.deepEqual(getRecipeIssues(banana), []);
-  assert.equal(banana.preparation!.steps.length, 11);
+  assert.equal(banana.preparation!.steps.length, 10);
 });

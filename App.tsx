@@ -6,6 +6,7 @@ import { GAMES_BY_ID } from './platform/gameRegistry';
 import { resolveRoute, type AppRoute } from './platform/routes';
 import { CURRENCY_CHANGE_EVENT, loadCurrency } from './services/currency';
 import './components/cooking/foundation.css';
+import { guardedNavigation, hasNavigationGuard } from './services/navigationGuard';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
@@ -38,10 +39,19 @@ const App: React.FC = () => {
   }, [current]);
 
   useEffect(() => {
-    const onPopState = () => setCurrent(resolveRoute(window.location.pathname));
+    const onPopState = () => {
+      if (!hasNavigationGuard()) { setCurrent(resolveRoute(window.location.pathname)); return; }
+      const destination = window.location.pathname + window.location.search;
+      if (resolveRoute(window.location.pathname).route.path === current.route.path) return;
+      window.history.pushState({}, '', current.route.path);
+      guardedNavigation(() => {
+        window.history.replaceState({}, '', destination);
+        setCurrent(resolveRoute(window.location.pathname));
+      });
+    };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
+  }, [current.route.path]);
 
   useEffect(() => {
     const onCurrencyChange = (event: Event) => setCoins((event as CustomEvent<number>).detail ?? loadCurrency());
@@ -52,11 +62,13 @@ const App: React.FC = () => {
   }, []);
 
   const navigate = useCallback((path: string) => {
-    const requested = new URL(path, window.location.origin);
-    const next = resolveRoute(requested.pathname);
-    window.history.pushState({}, '', `${next.route.path}${requested.search}`);
-    setCurrent({ route: next.route, redirect: false });
-    window.scrollTo({ top: 0 });
+    guardedNavigation(() => {
+      const requested = new URL(path, window.location.origin);
+      const next = resolveRoute(requested.pathname);
+      window.history.pushState({}, '', `${next.route.path}${requested.search}`);
+      setCurrent({ route: next.route, redirect: false });
+      window.scrollTo({ top: 0 });
+    });
   }, []);
 
   const game = current.route.page === 'game' ? GAMES_BY_ID[current.route.gameId] : null;
@@ -66,7 +78,7 @@ const App: React.FC = () => {
     <WorldHub coins={coins} onNavigate={navigate} />
   </Suspense>;
 
-  if (current.route.page === 'math') return <Suspense fallback={<LoadingScreen />}><MathModule onBack={() => navigate('/challenges')} /></Suspense>;
+  if (current.route.page === 'math') return <Suspense fallback={<LoadingScreen />}><MathModule onBack={() => navigate('/challenges')} onHome={() => navigate('/')} /></Suspense>;
 
   const worldContent = current.route.page === 'destination'
       ? current.route.destinationId === 'treehouse'

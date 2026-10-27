@@ -51,6 +51,34 @@ function finishSteps(state: CookingProgressState, config = recipe) {
   return session;
 }
 
+test('pancakes finish after sliding onto the plate, without a covering choice', () => {
+  const steps = recipe.preparation!.steps;
+  assert.equal(steps.at(-1)?.id, 'serve');
+  assert.equal(steps.at(-1)?.mechanic, 'drag');
+  assert.ok(!steps.some(step => step.id === 'cover'));
+  const state = ready();
+  const session = finishSteps(state);
+  assert.equal(session.stepId, 'serve');
+  const result = completeCookingAttempt(state, recipe, session);
+  assert.equal(result.ok, true);
+  assert.equal(result.progress.preparationSessions[recipe.id].completed, true);
+});
+
+test('an old covering screen resumes at completion without repeating the plate interaction', () => {
+  const state = ready();
+  const old = { ...finishSteps(state), stepId: 'cover' };
+  state.preparationSessions[recipe.id] = migrateCookingSession(old, recipe);
+  const resumed = beginCookingAttempt(state, recipe);
+  assert.equal(resumed.preparationSessions[recipe.id].completed, true);
+  assert.strictEqual(beginCookingAttempt(resumed, recipe), resumed);
+  const notPlated = ready();
+  const pending = finishSteps(notPlated);
+  pending.completedStepIds = pending.completedStepIds.filter(id => id !== 'serve');
+  pending.steps.serve = emptyStepState();
+  notPlated.preparationSessions[recipe.id] = pending;
+  assert.equal(beginCookingAttempt(notPlated, recipe).preparationSessions[recipe.id].completed, false);
+});
+
 test('quantities normalize mass and volume, never pieces into grams', () => {
   assert.deepEqual(canonicalQuantity({ amount: .075, unit: 'kilogram' }), { amount: 75, unit: 'gram' });
   assert.equal(convertQuantity({ amount: .5, unit: 'liter' }, 'milliliter'), 500);

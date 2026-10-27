@@ -9,7 +9,13 @@ import { consumeRecipeIngredients, missingIngredientMessage } from './recipeInve
 export function beginCookingAttempt(progress: CookingProgressState, recipe: RecipeConfig, replay = false): CookingProgressState {
   if (getRecipeIssues(recipe).length || !progress.journeys[recipe.id]) return progress;
   const previous = progress.preparationSessions[recipe.id];
-  if (!replay && previous) return progress;
+  if (!replay && previous) {
+    // A removed optional final step must not make a plated dish require serving again.
+    if (!previous.completed && recipe.preparation!.steps.every(step => previous.completedStepIds.includes(step.id))) {
+      return completeCookingAttempt(progress, recipe, previous).progress;
+    }
+    return progress;
+  }
   const next = structuredClone(progress);
   if (replay) {
     const journey = next.journeys[recipe.id]!;

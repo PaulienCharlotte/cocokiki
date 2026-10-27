@@ -4,6 +4,7 @@ import { Location } from '../types';
 import { locationProgressKey } from '../data/learning';
 import { LOCATION_FACTS } from '../data/locationFacts';
 import InteractiveMap from './InteractiveMap';
+import TipCoach from './TipCoach';
 import MapFactCard from './MapFactCard';
 import RoundResult from './RoundResult';
 
@@ -110,7 +111,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
         <input aria-label="Naam van de plek" placeholder="Naam van de plek" value={answer} onChange={e => setAnswer(e.target.value)} disabled={resolved} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} />
         <button type="submit" className="primary-button" aria-label="Antwoord controleren" disabled={resolved || !answer.trim()}><Check size={20} /></button>
       </form>}
-      {hint && !resolved && <p className="hint-text">{step === 'spell' ? 'De naam begint met ' + target.name.slice(0, 2) + '. (' + target.name.length + ' tekens)' : 'Coco wijst de plek aan op de kaart.'}</p>}
+      {hint && !resolved && <TipCoach coach="seb">{step === 'spell' ? 'De naam begint met ' + target.name.slice(0, 2) + '. (' + target.name.length + ' tekens)' : 'Ik wijs de plek aan op de kaart. Kijk naar de markering.'}</TipCoach>}
       <div className={'answer-feedback' + (resolved ? ' answered' : '')} role="status">{feedback}</div>
       {resolved ? mode === 'find'
         ? <p className="auto-next"><LoaderCircle size={17} />{index + 1 === locations.length ? 'Route afronden...' : 'Volgende plek...'}</p>

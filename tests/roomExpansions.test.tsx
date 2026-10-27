@@ -124,6 +124,7 @@ test('expansion screens use supplied assets and expose navigation, purchase and 
   assert.equal(resolveRoute('/treehouse/extra-6').route.page, 'home');
   const dialog = renderToStaticMarkup(<RoomExpansionDialog onClose={() => undefined} onNavigate={() => undefined} />);
   assert.ok(dialog.includes('150 CocoCoins') && dialog.includes('disabled'));
+  assert.ok(!dialog.includes('Je saldo') && !dialog.includes('CocoCoins nodig'));
   for (const label of ['Hobbykamer', 'Extra slaapkamer', 'Kweekhoek', 'Kas']) assert.ok(dialog.includes(label));
   const source = readFileSync('components/treehouse/RoomInventoryDrawer.tsx', 'utf8');
   assert.ok(source.includes('event.currentTarget.focus') && source.includes('offsetX') && source.includes('lostpointercapture'));

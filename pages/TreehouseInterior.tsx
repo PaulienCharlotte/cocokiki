@@ -10,6 +10,7 @@ import { subscribeLocalState } from '../services/localState';
 import '../components/treehouse/expansion.css';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import PlantFamilyPanel from '../components/plants/PlantFamilyPanel';
+import { roomSwipeDirection } from '../services/roomSwipe';
 
 interface TreehouseInteriorProps {
   room: TreehouseRoomId;
@@ -20,6 +21,7 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
   const [plantsOpen, setPlantsOpen] = useState(false);
   const viewportRef = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
+  const swipe = useRef<{ x: number; y: number; left: boolean; right: boolean } | null>(null);
   const [scrollEdges, setScrollEdges] = useState({ left: true, right: false });
   const [expansions, setExpansions] = useState(loadRoomExpansions);
   useEffect(() => subscribeLocalState(() => setExpansions(loadRoomExpansions()), ROOM_EXPANSIONS_KEY), []);
@@ -86,6 +88,24 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     className={`treehouse-interior treehouse-interior--${room}`}
     aria-labelledby="treehouse-interior-title"
     onScroll={updateScrollEdges}
+    onTouchStart={event => {
+      swipe.current = null;
+      if (event.touches.length !== 1 || (event.target as HTMLElement).closest('button,input,select,textarea,a,[role="dialog"],.room-placed-object,.room-placement-toolbar')) return;
+      const viewport = viewportRef.current!;
+      swipe.current = { x: event.touches[0].clientX, y: event.touches[0].clientY, left: viewport.scrollLeft <= 2, right: viewport.scrollLeft >= viewport.scrollWidth - viewport.clientWidth - 2 };
+    }}
+    onTouchCancel={() => { swipe.current = null; }}
+    onTouchEnd={event => {
+      const start = swipe.current;
+      swipe.current = null;
+      if (!start || event.touches.length || !event.changedTouches[0]) return;
+      const dx = event.changedTouches[0].clientX - start.x;
+      const dy = event.changedTouches[0].clientY - start.y;
+      const direction = roomSwipeDirection(dx, dy, start.left, start.right);
+      if (!direction) return;
+      const adjacent = rooms[roomIndex + direction];
+      if (adjacent) onNavigate(`${adjacent.path}?entry=${direction === 1 ? 'left' : 'right'}`);
+    }}
   >
     <div ref={sceneRef} className="treehouse-interior__scene">
       <img className="treehouse-interior__background" src={definition.background} alt={definition.alt} />

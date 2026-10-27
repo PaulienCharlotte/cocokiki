@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Lightbulb, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { createQuestionDeck, validAnswer } from './engine';
 import ChoiceChallenge from './ChoiceChallenge';
 import DistributionChallenge from './DistributionChallenge';
@@ -10,6 +10,8 @@ import { QUESTION_TRANSITION_MS } from './config';
 import type { MathGameId, MathLevel, MathResult } from './types';
 import { createStoryDeck, type StoryQuestion } from './storyProblems';
 import StoryChallenge from './StoryChallenge';
+import MathHelp from './MathHelp';
+import { techniqueHint } from './techniqueHint';
 
 export default function MathSession({ game, level, onFinish, onSound = () => undefined }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void }) {
   const [questions] = useState(() => game === 'add-subtract' ? createStoryDeck(level) : createQuestionDeck(game, level));
@@ -45,6 +47,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
   return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }} className={`math-session adventure-session${feedback ? ` is-${feedback}` : ''}`} aria-label="Rekenavontuur">
     <div className="math-progress-dots" role="img" aria-label={`Opdracht ${index + 1} van 10, ${index + (feedback === 'correct' ? 1 : 0)} klaar`}>{Array.from({ length: 10 }, (_, i) => <Star size={16} key={i} fill={i < index + (feedback === 'correct' ? 1 : 0) ? 'currentColor' : 'none'} />)}</div>
     <h2 className="math-prompt">{question.prompt}</h2>
+    {feedback !== 'correct' && <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{techniqueHint(question)}</MathHelp>}
     <div className={`math-challenge math-challenge--${question.kind}`} key={question.id}>
       {game === 'divide' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
         : game === 'add-subtract' ? <StoryChallenge question={question as StoryQuestion} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />
@@ -53,6 +56,5 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
         : <ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />}
     </div>
     <div className="adventure-feedback" role="status">{feedback === 'correct' ? game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld!` : 'Goed zo!' : feedback === 'wrong' ? game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : 'Bijna! Probeer nog eens.' : ''}</div>
-    <div className="math-hint-row"><button className="math-icon-tool" type="button" title="Hint" aria-label="Hint" aria-expanded={hint} onClick={() => setHint(value => !value)}><Lightbulb size={20} /></button>{hint && feedback !== 'correct' && <p className="math-hint">{question.hint}</p>}</div>
   </section>;
 }

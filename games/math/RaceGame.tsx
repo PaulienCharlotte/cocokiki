@@ -4,6 +4,7 @@ import { RACE_SECONDS } from './config';
 import { generateQuestion, validAnswer } from './engine';
 import { AnswerChoices } from './ChoiceChallenge';
 import Equation from './Equation';
+import MathHelp from './MathHelp';
 import { raceCoinsAvailable } from './progress';
 import type { MathLevel, MathQuestion, MathResult } from './types';
 
@@ -30,6 +31,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
   const questionRef = useRef(question);
   const [seconds, setSeconds] = useState(RACE_SECONDS), [started, setStarted] = useState(false);
   const [score, setScore] = useState(0), [wrong, setWrong] = useState(false);
+  const [hint, setHint] = useState(false);
   const [available] = useState(raceCoinsAvailable);
   const [raceId] = useState(() => crypto.randomUUID());
   const deadline = useRef(0), finished = useRef(false), order = useRef(0);
@@ -58,7 +60,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
     const correct = validAnswer(question, value); onSound(correct);
     if (!correct) { statistics.current.mistakes++; setWrong(true); return; }
     statistics.current.correct++; statistics.current.score++;
-    setScore(statistics.current.score); setWrong(false);
+    setScore(statistics.current.score); setWrong(false); setHint(false);
     let next = generateQuestion('race', level, ++order.current);
     for (let retry = 0; retry < 6 && next.id === question.id; retry++) next = generateQuestion('race', level, order.current);
     questionRef.current = next; setQuestion(next);
@@ -67,6 +69,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
     <div className="checkout-hud"><span><Clock3 size={20} />{seconds} s</span><strong>{score} klanten</strong><span title="Vandaag nog te verdienen">{Math.max(0, available - score)} munten over vandaag</span></div>
     {!started ? <div className="checkout-start"><ShoppingBasket size={62} /><h2>De winkel gaat open!</h2><button className="adventure-start" type="button" onClick={() => { deadline.current = Date.now() + RACE_SECONDS * 1000; setStarted(true); }}><Play size={20} />Open de winkel</button></div> : <>
       <h2 className="math-prompt">{question.prompt}</h2>
+      <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{question.hint}</MathHelp>
       <div className={`checkout-counter${question.operation === '*' ? ' checkout-counter--single' : ''}`} key={`${question.id}:${order.current}`}>
         <CheckoutOrder question={question} />
         {score > 0 && <span className="checkout-coin" aria-hidden="true">+1</span>}

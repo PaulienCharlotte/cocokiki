@@ -98,11 +98,11 @@ test('banana pancakes preserve the exact MVP quantities and eleven actions', () 
   assert.deepEqual(recipe.actions.map(action => action.order), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 });
 
-test('banana pancake cooking uses eleven ordered, station-aware steps', () => {
-  assert.equal(BANANA_PANCAKE_STEPS.length, 11);
-  assert.equal(new Set(BANANA_PANCAKE_STEPS.map(step => step.id)).size, 11);
+test('banana pancake cooking uses ten ordered, station-aware steps', () => {
+  assert.equal(BANANA_PANCAKE_STEPS.length, 10);
+  assert.equal(new Set(BANANA_PANCAKE_STEPS.map(step => step.id)).size, 10);
   assert.deepEqual(BANANA_PANCAKE_STEPS.map(step => step.station), [
-    'kitchen', 'worktop', 'worktop', 'worktop', 'worktop', 'worktop', 'worktop', 'cooktop', 'cooktop', 'worktop', 'worktop',
+    'kitchen', 'worktop', 'worktop', 'worktop', 'worktop', 'worktop', 'worktop', 'cooktop', 'cooktop', 'worktop',
   ]);
 });
 

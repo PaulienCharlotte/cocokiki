@@ -286,10 +286,16 @@ test('interactive math views expose real controls for mouse, touch and keyboard'
   assert.match(distribution, /Mandje 1/);
   assert.doesNotMatch(distribution, /Controleer/);
   const puzzle = renderToStaticMarkup(<PuzzleChallenge question={generateQuestion('missing', 3)} locked={false} onAnswer={() => undefined} />);
-  assert.match(puzzle, /Bakplaat/);
-  assert.match(puzzle, /Getal /);
+  assert.match(puzzle, /Koekjesbestelling/);
+  assert.match(puzzle, /Aantal (koekjes|dozen)/);
+  assert.match(puzzle, /Bak deze bestelling/);
+  assert.doesNotMatch(puzzle, /Bakplaat|cookie-oven|cookie-chef/);
   assert.doesNotMatch(puzzle, /Plaats getal/);
   const header = renderToStaticMarkup(<MathHeader game="multiply" level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
+  assert.match(header, /alt="CocoKiki"/);
+  assert.match(header, /aria-label="Naar de wereld"/);
+  const hubHeader = renderToStaticMarkup(<MathHeader game={null} level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
+  assert.match(hubHeader, /alt="CocoKiki"/);
   assert.equal((header.match(/disabled=""/g) ?? []).length, 4);
   const race = renderToStaticMarkup(<RaceGame level={1} onFinish={() => undefined} />);
   assert.match(race, /Open de winkel/);

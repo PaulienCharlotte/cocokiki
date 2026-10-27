@@ -4,12 +4,13 @@ import { Location } from '../types';
 import { areaName, availableModes, availableTopics, initialSelection, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
 import { LOCATION_FACTS } from '../data/locationFacts';
-import { nextBatch, PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
+import { nextBatch, PROGRESS_KEY, readProgress, readLocal, recordAnswer, writeLocal } from '../services/localProgress';
 import { awardCurrencyOnce, CURRENCY_CHANGE_EVENT, loadCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
 import MapFactCard from './MapFactCard';
 import PlatformHeader from './platform/PlatformHeader';
 import { GameModuleProps } from '../platform/gameRegistry';
+import './topo-test.css';
 
 const InteractiveMap = lazy(() => import('./InteractiveMap'));
 const GameEngine = lazy(() => import('./GameEngine'));
@@ -17,7 +18,7 @@ const LocationMemoryGame = lazy(() => import('./LocationMemoryGame'));
 const ToetsGame = lazy(() => import('./ToetsGame'));
 
 type OpenPanel = 'region' | 'play' | 'settings' | null;
-interface Session { id: number; mode: PlayMode; locations: Location[]; pairs: MemoryPair[] }
+interface Session { id: number; mode: PlayMode; locations: Location[]; pairs: MemoryPair[]; practiceIds?: string[] }
 
 const ICONS: Record<PlayMode, React.ComponentType<{ size?: number }>> = {
   find: MousePointer2,
@@ -36,9 +37,21 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
 ];
 
 export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
-  const [selection, setSelection] = useState<Selection>(initialSelection);
+  const [savedTest] = useState(() => readLocal<{ selection?: Selection } | null>('cocokiki:active-topo-test:v1', null));
+  const [selection, setSelection] = useState<Selection>(() => savedTest?.selection ? validateSelection(savedTest.selection) : initialSelection());
   const [timer, setTimer] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
+  const [viewportHeight, setViewportHeight] = useState<number>();
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const resize = () => setViewportHeight(viewport?.height ?? window.innerHeight);
+    resize(); viewport?.addEventListener('resize', resize);
+    return () => viewport?.removeEventListener('resize', resize);
+  }, []);
+  const [session, setSession] = useState<Session | null>(() => savedTest?.selection ? { id: Date.now(), mode: 'test', locations: studyLocations(validateSelection(savedTest.selection)), pairs: [] } : null);
+  const exitTest = useRef<(() => void) | null>(null);
+  const registerTestExit = useCallback((request: (() => void) | null) => { exitTest.current = request; }, []);
+  const closeSession = useCallback(() => setSession(null), []);
+  useEffect(() => { writeLocal('cocokiki:active-topo-test:v1', session?.mode === 'test' ? { selection } : null); }, [session, selection]);
   const [progress, setProgress] = useState(readProgress);
   const [score, setScore] = useState(loadCurrency);
   const [storageAvailable, setStorageAvailable] = useState(true);
@@ -109,7 +122,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     changeSelection({ ...selection, topicId, clusterId: 'all' });
   };
 
-  const start = (requestedMode: PlayMode, retryIds?: string[], sourceSelection = selection) => {
+  const start = (requestedMode: PlayMode, retryIds?: string[], sourceSelection = selection, focused = false) => {
     const sourceLocations = studyLocations(sourceSelection);
     const sourcePairs = memoryPairs(sourceSelection);
     const roundSize = sourceLocations.length <= 12 ? sourceLocations.length : 10;
@@ -122,7 +135,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       ? sourcePairs.filter(pair => retryIds.includes(pair.id))
       : nextBatch<MemoryPair>(sourcePairs, requestedMode === 'memory' ? Math.min(8, sourcePairs.length) : 10, progress, pair => pair.id);
 
-    setSession({ id: Date.now(), mode: requestedMode, locations: sessionLocations, pairs: sessionPairs });
+    setSession({ id: Date.now(), mode: requestedMode, locations: sessionLocations, pairs: sessionPairs, practiceIds: focused ? retryIds : undefined });
     window.scrollTo({ top: 0 });
   };
 
@@ -205,21 +218,21 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     </section>}
   </div>;
 
-  return <div className={'topo-app view-discover' + (session ? ' in-session' : '')}>
+  return <div className={'topo-app view-discover' + (session ? ' in-session' : '') + (session?.mode === 'test' ? ' in-test' : '')} style={viewportHeight ? { '--topo-viewport': `${viewportHeight}px` } as React.CSSProperties : undefined}>
     <PlatformHeader onHome={onHome} onBack={onBack} coins={score} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
       {session ? <main className="session-page">
         <div className="session-heading">
-          <button className="back-button" onClick={() => setSession(null)}><ArrowLeft size={18} />Terug naar de kaart</button>
+          <button className="back-button" onClick={() => exitTest.current ? exitTest.current() : setSession(null)}><ArrowLeft size={18} />Terug naar de kaart</button>
           <span>{session.mode === 'memory' ? `${areaName(selection.areaId)} · Weetjes` : context}</span>
           <strong>{MODE_LABELS[session.mode]}</strong>
         </div>
         {session.mode === 'memory' || session.mode === 'quiz'
           ? <LocationMemoryGame key={session.id} mode={session.mode} pairs={session.pairs} choicePool={pairs} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.pairs.map(pair => pair.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />
           : session.mode === 'test'
-            ? <div className="test-workspace"><ToetsGame provinceId={selection.areaId} clusterId="all" studyPool={session.locations} /></div>
-            : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={locations} timerEnabled={timer} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />}
+            ? <div className="test-workspace"><ToetsGame key={session.id} provinceId={selection.areaId} clusterId="all" studyPool={session.locations} registerExit={registerTestExit} onExit={closeSession} onPractice={ids => start('master', ids, selection, true)} /></div>
+            : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={session.practiceIds ? session.locations : locations} timerEnabled={session.practiceIds ? false : timer} onAnswer={onAnswer} onContinue={() => session.practiceIds ? start('master', session.practiceIds, selection, true) : continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id), selection, !!session.practiceIds)} onRetry={ids => start(session.mode, ids, selection, !!session.practiceIds)} onExit={() => setSession(null)} />}
       </main> : <main className="discover-page">
             {mapControls()}
             <section className="map-zone" ref={exploreRef} aria-label="Vrij verkennen">

@@ -1,0 +1,6 @@
+.tip-coach { display: flex; align-items: center; gap: var(--space-3); width: min(100%,560px); margin: var(--space-3) auto; color: var(--color-text); text-align: left; }
+.tip-coach > img { width: calc(var(--space-8) * 2); height: calc(var(--space-8) * 2); flex: 0 0 calc(var(--space-8) * 2); object-fit: contain; }
+.tip-coach > div { position: relative; min-width: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); background: var(--color-background-soft); }
+.tip-coach > div::before { content: ''; position: absolute; left: calc(var(--space-1) * -1); top: calc(50% - var(--space-1)); width: var(--space-2); height: var(--space-2); background: var(--color-background-soft); transform: rotate(45deg); }
+.tip-coach strong { font-size: var(--font-size-sm); color: var(--color-primary); }
+.tip-coach p { margin: var(--space-1) 0 0; font-size: var(--font-size-md); line-height: var(--line-height-default); overflow-wrap: anywhere; }

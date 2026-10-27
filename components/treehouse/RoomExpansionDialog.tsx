@@ -31,8 +31,6 @@ export default function RoomExpansionDialog({ onClose, onNavigate }: { group?: '
     <img className="room-expansion-preview" src={template.background} alt={template.label} />
     <label>Ruimte<select value={templateId} onChange={event => { const chosen = options.find(item => item.id === event.target.value)!; setTemplateId(chosen.id); setName(chosen.label); setError(''); }}>{options.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
     <label>Naam<input value={name} maxLength={30} onChange={event => setName(event.target.value)} /></label>
-    <p>Je saldo: {balance} CocoCoins</p>
-    {price !== null && balance < price && <p role="status">Nog {price - balance} CocoCoins nodig</p>}
     {error && <p role="alert">{error}</p>}
   </Dialog>;
 }
