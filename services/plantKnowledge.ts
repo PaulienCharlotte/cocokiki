@@ -1,5 +1,5 @@
 import { PLANT_SPECIES, type PlantSpecies } from '../data/plants/species';
-import { loadPlantFamily, type PlantFamilyState } from './plantFamily';
+import { reconcilePlantFamily, type PlantFamilyState } from './plantFamily';
 import { loadClinic, STAMPS_NEEDED, type ClinicState } from './plantClinic';
 
 /**
@@ -51,7 +51,7 @@ export function levelFor(speciesId: string, family: PlantFamilyState, clinic: Cl
 
 /** Alle soorten met hun niveau, de verst gevorderde bovenaan. */
 export function plantKnowledge(
-  family: PlantFamilyState = loadPlantFamily(),
+  family: PlantFamilyState = reconcilePlantFamily(),
   clinic: ClinicState = loadClinic(),
 ): PlantKnowledge[] {
   return PLANT_SPECIES

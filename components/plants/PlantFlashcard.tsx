@@ -3,7 +3,7 @@ import { Button, Dialog } from '../../design-system';
 import { PLANT_ICOON, PLANT_SPECIES_BY_ID, plantProduct, type PlantSpecies } from '../../data/plants/species';
 import DecorAsset from '../shop/DecorAsset';
 import { levelFor } from '../../services/plantKnowledge';
-import { loadPlantFamily } from '../../services/plantFamily';
+import { reconcilePlantFamily } from '../../services/plantFamily';
 import { loadClinic } from '../../services/plantClinic';
 
 interface PlantFlashcardProps {
@@ -42,7 +42,7 @@ export default function PlantFlashcard({ speciesId, nickname, onNavigate, onClos
 
   // Alleen doorverwijzen naar een pagina die al bestaat: een plant die je nog
   // niet ontdekt hebt staat in de encyclopedie nog als leeg vakje.
-  const ontdekt = levelFor(species.id, loadPlantFamily(), loadClinic()) > 0;
+  const ontdekt = levelFor(species.id, reconcilePlantFamily(), loadClinic()) > 0;
 
   return <Dialog
     className="verzorgkaart"

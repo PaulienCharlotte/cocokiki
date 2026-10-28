@@ -10,6 +10,7 @@ import {
   PLANT_FAMILY_KEY,
   plantCondition,
   renamePlant,
+  reconcilePlantFamily,
   savePlantFamily,
   stageKiki,
   stageLabel,
@@ -29,7 +30,7 @@ function adoptieDatum(waarde: string): string {
 
 /** Mijn Planten: een rustig overzicht, met één plant tegelijk in beeld als je erop tikt. */
 export default function PlantFamilyPanel({ onNavigate, onClose }: { onNavigate?: (path: string) => void; onClose: () => void }) {
-  const [family, setFamily] = useState<PlantFamilyState>(loadPlantFamily);
+  const [family, setFamily] = useState<PlantFamilyState>(reconcilePlantFamily);
   const [open, setOpen] = useState<string | null>(null);
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState('');
@@ -39,7 +40,7 @@ export default function PlantFamilyPanel({ onNavigate, onClose }: { onNavigate?:
   useEffect(() => { const klok = window.setInterval(() => setNu(Date.now()), 30000); return () => window.clearInterval(klok); }, []);
 
   useEffect(() => {
-    const update = () => setFamily(loadPlantFamily());
+    const update = () => setFamily(reconcilePlantFamily());
     const unsubscribe = subscribeLocalState(update, PLANT_FAMILY_KEY);
     window.addEventListener(PLANT_FAMILY_CHANGE_EVENT, update);
     return () => { unsubscribe(); window.removeEventListener(PLANT_FAMILY_CHANGE_EVENT, update); };

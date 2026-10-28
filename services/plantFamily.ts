@@ -1,6 +1,7 @@
 import { PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage, type ThirstStage, type WetStage } from '../data/plants/species';
 import { plantFirstAid } from '../data/plants/firstAid';
 import { commitLocalState, readDocument } from './localState';
+import { loadRoomInventory } from './roomInventory';
 
 export const PLANT_FAMILY_KEY = 'cocokiki:plant-family:v1';
 export const PLANT_FAMILY_CHANGE_EVENT = 'cocokiki:plant-family-change';
@@ -111,6 +112,43 @@ export function adoptPurchaseOnce(
     plants: [...state.plants, ...nieuwe],
     appliedTransactions: [...state.appliedTransactions, transactionId],
   };
+}
+
+/**
+ * Zorgt dat elke plant uit de voorraad ook in de plantenfamilie staat.
+ *
+ * Mijn Planten bleef leeg voor planten die gekocht waren voordat de familie
+ * bestond. Die staan wel in de voorraad en soms al in een kamer, maar zijn
+ * nooit geadopteerd, dus een kind kreeg te zien dat het nog geen planten had
+ * terwijl ze gewoon op de vensterbank stonden.
+ *
+ * Hier verdwijnt nooit een plant: een kind heeft ze een naam gegeven, en de
+ * voorraad kan alleen maar groeien omdat er niets te verkopen valt.
+ */
+export function syncPlantFamily(
+  state: PlantFamilyState,
+  owned: Record<string, number>,
+  now = new Date().toISOString(),
+  makeId: () => string = () => crypto.randomUUID(),
+): PlantFamilyState {
+  const nieuwe: AdoptedPlant[] = [];
+  for (const [speciesId, aantal] of Object.entries(owned)) {
+    if (!PLANT_SPECIES_BY_ID[speciesId] || !Number.isInteger(aantal) || aantal <= 0) continue;
+    const alGeadopteerd = state.plants.filter(plant => plant.speciesId === speciesId).length;
+    for (let index = alGeadopteerd; index < Math.min(9, aantal); index += 1) {
+      nieuwe.push({ id: makeId(), speciesId, nickname: cleanNickname(null, speciesId), adoptedAt: now });
+    }
+  }
+  if (nieuwe.length === 0) return state;
+  return { ...state, plants: [...state.plants, ...nieuwe] };
+}
+
+/** Haalt de achterstand in, en bewaart hem meteen als er iets bij kwam. */
+export function reconcilePlantFamily(): PlantFamilyState {
+  const huidig = loadPlantFamily();
+  const bijgewerkt = syncPlantFamily(huidig, loadRoomInventory().owned);
+  if (bijgewerkt === huidig) return huidig;
+  return savePlantFamily(bijgewerkt) ? bijgewerkt : huidig;
 }
 
 export function renamePlant(state: PlantFamilyState, id: string, nickname: string): PlantFamilyState {

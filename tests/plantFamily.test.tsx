@@ -8,6 +8,7 @@ import { PLANT_ICOON, PLANT_SPECIES, PLANT_SPECIES_BY_ID, plantStageImage } from
 import {
   adoptPurchaseOnce,
   cleanNickname,
+  syncPlantFamily,
   createEmptyPlantFamily,
   MAX_NICKNAME_LENGTH,
   migratePlantFamily,
@@ -299,4 +300,30 @@ test('elk aangekondigd plantenplaatje staat er ook echt', () => {
       assert.ok(existsSync(pad), `${species.id} mist ${bestand}`);
     }
   }
+});
+
+test('planten uit de voorraad komen alsnog in de familie terecht', () => {
+  let teller = 0;
+  const leeg = createEmptyPlantFamily();
+  const nu = '2026-10-28T10:00:00.000Z';
+  const maakId = () => `p${(teller += 1)}`;
+
+  // Drie planten en een bank in de voorraad, maar niets geadopteerd.
+  const bij = syncPlantFamily(leeg, { 'small-cactus': 2, orchid: 1, 'sofa-green': 3 }, nu, maakId);
+  assert.equal(bij.plants.length, 3);
+  assert.deepEqual(bij.plants.map(plant => plant.speciesId).sort(), ['orchid', 'small-cactus', 'small-cactus']);
+  assert.ok(bij.plants.every(plant => plant.nickname.length > 0));
+
+  // Nog een keer draaien verandert niets: de achterstand is ingehaald.
+  assert.equal(syncPlantFamily(bij, { 'small-cactus': 2, orchid: 1 }, nu, maakId), bij);
+
+  // Koop je er eentje bij, dan komt alleen die erbij.
+  const extra = syncPlantFamily(bij, { 'small-cactus': 3, orchid: 1 }, nu, maakId);
+  assert.equal(extra.plants.length, 4);
+
+  // Een plant die je al een naam gaf blijft staan, ook als de voorraad krimpt.
+  const gedoopt = renamePlant(extra, extra.plants[0].id, 'Stekel');
+  const nagekomen = syncPlantFamily(gedoopt, {}, nu, maakId);
+  assert.equal(nagekomen, gedoopt);
+  assert.equal(nagekomen.plants[0].nickname, 'Stekel');
 });
