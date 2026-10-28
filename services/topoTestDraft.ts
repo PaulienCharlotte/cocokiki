@@ -7,6 +7,10 @@ export function loadTestDraft(ids: string[]): TestDraft {
   const answers = saved?.answers && typeof saved.answers === 'object' ? Object.fromEntries(Object.entries(saved.answers).filter(([id, value]) => validIds.has(id) && typeof value === 'string')) : {};
   const orderIds = Array.isArray(saved?.orderIds) ? [...new Set(saved.orderIds.filter(id => validIds.has(id)))] : [];
   const deferredIds = Array.isArray(saved?.deferredIds) ? [...new Set(saved.deferredIds.filter(id => validIds.has(id)))] : [];
-  return { answers, submitted: saved?.submitted === true, retryIds: Array.isArray(saved?.retryIds) ? saved.retryIds.filter(id => validIds.has(id)) : null, ...(orderIds.length ? { orderIds } : {}), ...(deferredIds.length ? { deferredIds } : {}) };
+  // Oude foutenoefeningen waren deeltoetsen. Hervat nu de hele toets;
+  // alleen een al nagekeken uitslag houdt zijn oorspronkelijke selectie.
+  const submitted = saved?.submitted === true;
+  const retryIds = submitted && Array.isArray(saved?.retryIds) ? saved.retryIds.filter(id => validIds.has(id)) : null;
+  return { answers, submitted, retryIds, ...(orderIds.length ? { orderIds } : {}), ...(deferredIds.length ? { deferredIds } : {}) };
 }
 export function saveTestDraft(ids: string[], draft: TestDraft): boolean { return writeLocal(testDraftKey(ids), draft); }

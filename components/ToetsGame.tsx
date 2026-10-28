@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
 import { Location } from '../types';
-import { CheckCircle, XCircle, RotateCcw, Maximize2, Minimize2, Shuffle, HelpCircle, Settings2, ArrowLeft, ArrowRight, Check, ListChecks } from 'lucide-react';
+import { CheckCircle, XCircle, RotateCcw, Maximize2, Minimize2, Shuffle, HelpCircle, Settings2, ArrowLeft, ArrowRight, ListChecks } from 'lucide-react';
 import { UNLABELED_TILE_URL } from './InteractiveMap';
 import { Button, Dialog, IconButton } from '../design-system';
 import TipCoach from './TipCoach';
@@ -337,6 +337,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       <header className="test-focused__toolbar">
         <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span></div>
         <div>
+          {!submitted && <Button variant="quiet" size="small" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}>Toets nakijken</Button>}
           <IconButton label="Uitleg van Seb" icon={<HelpCircle size={20} />} onClick={() => setPanel('help')} />
           <IconButton label="Toetsinstellingen voor ouders" icon={<Settings2 size={20} />} onClick={() => setPanel('settings')} />
         </div>
@@ -371,7 +372,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
           </div>
           {!submitted ? <form className="test-focused__form" onSubmit={event => { event.preventDefault(); saveAndNext(); inputRef.current?.focus(); }}>
             <input ref={inputRef} id="topo-active-answer" aria-label={`Naam bij ${locationLabel(active).toLowerCase()}`} value={answers[active.id] ?? ''} onChange={event => handleChange(active.id, event.target.value)} placeholder="Naam…" autoComplete="off" autoCorrect="off" spellCheck={false} />
-            <IconButton type="submit" label="Bewaar en ga naar de volgende plek" icon={<Check size={22} />} />
+            <Button type="submit" size="small" endIcon={<ArrowRight size={20} />} disabled={!answers[active.id]?.trim()}>Volgende plek</Button>
           </form> : <p className={`test-focused__feedback ${result?.details[active.id] ? 'is-correct' : 'is-wrong'}`}>
             {result?.details[active.id] ? <CheckCircle size={20} /> : <XCircle size={20} />}<span>{answers[active.id] || 'Niet ingevuld'}{!result?.details[active.id] && <strong>Het is {active.name}.</strong>}</span>
           </p>}
@@ -379,7 +380,6 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
         <div className="test-focused__actions">
           {!submitted ? <>
             <Button variant="quiet" size="small" startIcon={<RotateCcw size={18} />} onClick={deferActive}>Later terugkomen{deferredIds.length > 0 ? ` (${deferredIds.length})` : ''}</Button>
-            <Button size="small" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}>Nakijken</Button>
           </> : <>
             <Button variant="secondary" size="small" startIcon={<ListChecks size={18} />} onClick={() => setPanel('review')}>Antwoorden bekijken</Button>
             {onPractice && result && result.correct < result.total && <Button size="small" startIcon={<RotateCcw size={18} />} onClick={() => onPractice(locations.filter(location => !result.details[location.id]).map(location => location.id))}>Oefen lastige plekken</Button>}
@@ -388,7 +388,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       </section>
       {panel === 'resume' && <Dialog open title="Er is een vorige uitslag" description="Wil je een nieuwe toets beginnen of je vorige uitslag bekijken?" onClose={restoreResult} primaryAction={<Button onClick={restart}>Nieuwe toets beginnen</Button>} secondaryAction={<Button variant="secondary" onClick={restoreResult}>Vorige uitslag bekijken</Button>} />}
       {panel === 'help' && <Dialog open title="Zo werkt de toets" onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Ik ga beginnen</Button>}>
-        <TipCoach coach="seb">Tik op een nummer of letter op de kaart. Typ de naam en tik op het vinkje. Weet je het even niet? Kies Later terugkomen. Die plek komt na de andere lege plekken terug. Pas bij Nakijken zie je wat goed is.</TipCoach>
+        <TipCoach coach="seb">Tik op een nummer of letter op de kaart. Typ de naam en kies Volgende plek. Weet je het even niet? Kies Later terugkomen. Die plek komt na de andere lege plekken terug. Klaar met alles? Kies bovenaan Toets nakijken.</TipCoach>
       </Dialog>}
       {panel === 'settings' && <Dialog open title="Voor ouders" onClose={() => setPanel(null)} primaryAction={<Button variant="secondary" startIcon={<Shuffle size={18} />} disabled={submitted} onClick={shuffle}>Nummering husselen</Button>} secondaryAction={<Button variant="quiet" onClick={() => setPanel('restart')}>Nieuwe toets</Button>}>
         <p>Nummers en letters wisselen van plek. Ingevulde antwoorden blijven bij de juiste locatie bewaard.</p>

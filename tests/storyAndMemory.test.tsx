@@ -66,9 +66,16 @@ test('topo answers, submitted results and retry sets survive reload independentl
     assert.equal(loadTestDraft(['a', 'b']).answers.a, 'Utrecht');
     saveTestDraft(['a', 'b'], { ...draft, submitted: false, deferredIds: ['a', 'a', 'unknown'] });
     assert.deepEqual(loadTestDraft(['a', 'b']).deferredIds, ['a']);
+    assert.equal(loadTestDraft(['a', 'b']).retryIds, null);
+    assert.deepEqual(loadTestDraft(['a', 'b']).answers, draft.answers);
+    const fullArea = Array.from({ length: 27 }, (_, index) => `plek-${index}`);
+    saveTestDraft(fullArea, { answers: { 'plek-1': 'Lelystad' }, submitted: false, retryIds: fullArea.slice(0, 11) });
+    const resumed = loadTestDraft(fullArea);
+    assert.equal(resumed.retryIds, null);
+    assert.equal(resumed.answers['plek-1'], 'Lelystad');
     assert.deepEqual(loadTestDraft(['c']), { answers: {}, submitted: false, retryIds: null });
     memory.set(testDraftKey(['a']), JSON.stringify({ answers: { a: 12, c: 'Onbekend' }, retryIds: ['a', 'c'] }));
-    assert.deepEqual(loadTestDraft(['a']), { answers: {}, submitted: false, retryIds: ['a'] });
+    assert.deepEqual(loadTestDraft(['a']), { answers: {}, submitted: false, retryIds: null });
     memory.set(testDraftKey(['a']), 'broken');
     assert.deepEqual(loadTestDraft(['a']), { answers: {}, submitted: false, retryIds: null });
   } finally { if (original) Object.defineProperty(globalThis, 'localStorage', original); else Reflect.deleteProperty(globalThis, 'localStorage'); }

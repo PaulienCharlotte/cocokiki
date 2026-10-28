@@ -1,5 +1,6 @@
 .topo-app.view-discover:not(.in-session) .discover-page { padding-top: calc(var(--space-12) * 2); }
 .topo-app.in-test { height: var(--topo-viewport,100dvh); min-height: 0; padding-bottom: 0; overflow: hidden; background: var(--color-background); }
+.topo-app.in-test .world-hud { width: calc(100% - var(--space-4) * 2); }
 .topo-app.in-test .session-page { height: 100%; display: flex; flex-direction: column; padding-top: calc(var(--space-12) * 2); }
 .topo-app.in-test .session-heading { flex: 0 0 auto; padding: var(--space-1) var(--space-4); gap: var(--space-3); border: 0; }
 .topo-app.in-test .session-heading > strong { display: none; }
@@ -15,13 +16,13 @@
 .test-focused__toolbar > div:first-child { flex-wrap: wrap; }
 .test-focused__toolbar strong { font-size: var(--font-size-md); }
 .test-focused__toolbar span { font-size: var(--font-size-sm); color: var(--color-text-muted); }
-.test-focused__answer { flex: 0 0 auto; padding: var(--space-2) var(--space-4); border-top: 1px solid var(--color-border); background: var(--color-surface); }
-.test-focused__place { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); max-width: 620px; margin: auto; }
+.test-focused__answer { flex: 0 0 auto; padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-border); background: var(--color-surface); }
+.test-focused__place { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); max-width: 820px; margin: 0 auto var(--space-3); }
 .test-focused__place label { text-align: center; font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); color: var(--color-text); }
-.test-focused__form { display: flex; gap: var(--space-2); max-width: 620px; margin: 0 auto; }
+.test-focused__form { display: flex; gap: var(--space-3); max-width: 820px; margin: 0 auto; }
 .test-focused__form input { flex: 1; min-width: 0; min-height: var(--touch-target); padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); font: inherit; font-size: var(--font-size-md); color: var(--color-text); background: var(--color-surface); }
 .test-focused__form input:focus-visible { outline: 3px solid var(--color-focus-ring); outline-offset: 1px; }
-.test-focused__actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: var(--space-2); padding-top: var(--space-2); }
+.test-focused__actions { display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: var(--space-3); padding-top: var(--space-3); max-width: 820px; margin: auto; }
 .test-focused__feedback { display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin: var(--space-2) auto; min-height: var(--touch-target); color: var(--color-primary); }
 .test-focused__feedback strong { display: block; }
 .test-focused__feedback.is-wrong { color: var(--color-error); }
@@ -40,8 +41,12 @@
   .topo-app.in-test .session-heading > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .topo-app.in-test .session-heading .back-button { white-space: nowrap; }
   .topo-app.in-test .test-workspace { padding: 0 var(--space-2) var(--space-2); }
-  .test-focused__toolbar { padding: var(--space-1) var(--space-2); }
+  .topo-app.in-test .world-hud { width: calc(100% - var(--space-2) * 2); }
+  .test-focused__toolbar { padding: var(--space-2); flex-wrap: wrap; }
+  .test-focused__toolbar > div:last-child { margin-left: auto; }
   .test-focused__toolbar > div:first-child { display: grid; gap: var(--space-1); }
-  .test-focused__answer { padding: var(--space-1) var(--space-2) var(--space-2); }
+  .test-focused__answer { padding: var(--space-3); }
+  .test-focused__place { margin-bottom: var(--space-2); }
+  .test-focused__form { gap: var(--space-2); }
   .test-focused__place label { font-size: var(--font-size-md); }
 }
