@@ -73,9 +73,15 @@ const GEREEDSCHAP_ICOON: Record<TreatmentId, React.ReactNode> = {
 };
 
 /** Een getekend plaatje als dat er is, anders het lijn-icoon. */
+/**
+ * Een tekening staat los op het kaartje, zonder schijfje eromheen: een
+ * vierkante tekening in een rond vlak snijdt de hoeken eraf, en daar is precies
+ * het handvat van de gieter en de rand van de parasol de dupe van. Het
+ * lijn-icoon houdt zijn schijfje wel, want anders zweeft het.
+ */
 function Tekentje({ bron, terugval, naam }: { bron?: string; terugval: React.ReactNode; naam: string }) {
   return bron
-    ? <span className="clinic__tekentje" aria-hidden="true"><img src={bron} alt="" /></span>
+    ? <img className="clinic__tekening" src={bron} alt="" aria-hidden="true" />
     : <span aria-hidden="true" title={naam}>{terugval}</span>;
 }
 
