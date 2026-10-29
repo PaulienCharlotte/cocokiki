@@ -85,3 +85,28 @@ export function advancePreparation(session: CookingSession, recipe: RecipeConfig
   const completedStepIds = [...new Set([...session.completedStepIds, step.id])];
   return { ...session, completedStepIds, stepId: recipe.preparation!.steps[index + 1]?.id ?? step.id, updatedAt: new Date(now).toISOString() };
 }
+
+/**
+ * Een stap terugkijken.
+ *
+ * Een kind dat een tip wegklikte of niet meer weet hoeveel het ook alweer moest
+ * wegen, moest het recept tot nu toe overnieuw doen. Terugbladeren verandert
+ * niets aan wat al afgerond is: het verzet alleen waar je kijkt.
+ */
+export function goBackPreparation(session: CookingSession, recipe: RecipeConfig): CookingSession {
+  if (session.completed) return session;
+  const steps = recipe.preparation!.steps;
+  const index = steps.findIndex(step => step.id === session.stepId);
+  const vorige = steps[index - 1];
+  if (!vorige) return session;
+  return { ...session, stepId: vorige.id };
+}
+
+/** Terug naar de eerste stap die nog niet af is: waar je gebleven was. */
+export function resumePreparation(session: CookingSession, recipe: RecipeConfig): CookingSession {
+  if (session.completed) return session;
+  const steps = recipe.preparation!.steps;
+  const verder = steps.find(step => !session.completedStepIds.includes(step.id)) ?? steps[steps.length - 1];
+  if (!verder || verder.id === session.stepId) return session;
+  return { ...session, stepId: verder.id };
+}

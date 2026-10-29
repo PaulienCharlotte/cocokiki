@@ -6,6 +6,7 @@ import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
 import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFlow';
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
+import { createCookingSession, goBackPreparation, resumePreparation } from '../data/cooking/session';
 import { EQUIPMENT, INGREDIENTS, RECIPES, RECIPES_BY_ID, getCompletedRecipes } from '../data/cooking/catalog';
 import { getRecipeAccess } from '../data/cooking/availability';
 import { INGREDIENT_DISCOVERIES, INGREDIENT_DISCOVERIES_BY_ID } from '../data/cooking/discovery';
@@ -534,4 +535,26 @@ test('free and recipe shopping sessions persist independently with their price s
   } finally {
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: original });
   }
+});
+
+test('terugbladeren verzet alleen waar je kijkt', () => {
+  const recept = RECIPES.find(item => item.id === 'blueberry-muffins')!;
+  const stappen = recept.preparation!.steps;
+  const start = createCookingSession(recept, 'a', '2026-10-29T10:00:00.000Z');
+
+  // Doe alsof de eerste drie stappen af zijn en je bij de vierde staat.
+  const onderweg = { ...start, stepId: stappen[3].id, completedStepIds: stappen.slice(0, 3).map(stap => stap.id) };
+
+  const terug = goBackPreparation(onderweg, recept);
+  assert.equal(terug.stepId, stappen[2].id);
+  // Wat af was blijft af: terugkijken is geen overdoen.
+  assert.deepEqual(terug.completedStepIds, onderweg.completedStepIds);
+
+  // Twee keer terug, en dan in één keer weer naar waar je was.
+  const nogVerderTerug = goBackPreparation(terug, recept);
+  assert.equal(nogVerderTerug.stepId, stappen[1].id);
+  assert.equal(resumePreparation(nogVerderTerug, recept).stepId, stappen[3].id);
+
+  // Bij de eerste stap valt er niets terug te bladeren.
+  assert.equal(goBackPreparation(start, recept), start);
 });

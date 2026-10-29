@@ -5,7 +5,7 @@ import { recipeSpoonStock } from './recipeMeasures';
 
 const kit = '/assets/library/cooking/kit/';
 export const MUFFIN_OVEN: OvenConfig = { targetTemperature: 200, minimumMinutes: 15, maximumMinutes: 20, temperatureTolerance: 15, preheatDegreesPerSecond: 24, gameSecondsPerMinute: 1.5, coolingSeconds: 4, minimumTemperature: 100, maximumTemperature: 260, temperatureStep: 5, minimumSelectableMinutes: 5, maximumSelectableMinutes: 30 };
-const base = { station: 'worktop' as const, target: 1, hint: 'Tikken mag ook.' };
+const base = { station: 'worktop' as const, target: 1 };
 const oven = (id: string, action: 'preheat' | 'bake' | 'cool', title: string, instruction: string): CookingStepConfig => ({ ...base, station: 'oven', id, title, instruction, mechanic: 'oven', action, oven: MUFFIN_OVEN, asset: '/assets/library/treehouse/furnishings/oven.webp', panAsset: a.pan, resultAsset: a.muffin, portions: 10 });
 const weigh = (id: string, title: string, target: number, asset: string, contents: 'dry' | 'berries'): CookingStepConfig => ({ ...base, id, title, target, instruction: `Weeg ${target} gram af.`, mechanic: 'weigh', unit: 'gram', increments: [5, 25, 50], maximum: target + 100, asset, contents });
 const spoon = (id: string, title: string, target: number, asset: string): CookingStepConfig => ({ ...base, id, title, target, instruction: `${title}. Elk maatje is een kwart theelepel.`, mechanic: 'measure', vessel: 'spoon', vesselAsset: kit + 'spoon.webp', unitLabel: 'kwart tl', increments: [1, 2, 4], maximum: target + 4, asset });

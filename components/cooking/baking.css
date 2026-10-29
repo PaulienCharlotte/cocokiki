@@ -19,8 +19,8 @@
 .cooking-card__scene--weigh .cooking-button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 .cooking-card__scene--weigh:has(.cooking-weighing[data-layered="true"]) { background-image: none !important; background-color: var(--color-background-soft); box-shadow: none; }
 .cooking-weighing__controls .ck-button { max-width: 100%; }
-.baking-scale-fill { position: absolute; inset: 15% 24% 62%; border-radius: 50%; z-index: 1; background: var(--color-cream); box-shadow: inset 0 2px 5px #3b241a26; }
-.baking-scale-fill--berries { background: var(--color-focus); }
+.baking-scale-fill { position: absolute; inset: 15% 24% 62%; z-index: 1; display: grid; place-items: center; overflow: hidden; border-radius: 50%; }
+.baking-scale-fill img { width: 76%; height: 76%; object-fit: contain; transition: transform var(--motion-default) var(--ease-storybook), opacity var(--motion-default) ease; }
 .baking-measure { position: relative; width: min(68%, 16rem); aspect-ratio: 1; isolation: isolate; margin-right: 18%; }
 .baking-measure > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; pointer-events: none; }
 .baking-measure__liquid { position: absolute; bottom: 12%; left: 26%; width: 59%; max-height: 70%; background: var(--color-honey); border-radius: 0 0 32% 32%; opacity: .75; transition: height var(--motion-gentle); z-index: 3; mix-blend-mode: multiply; pointer-events: none; }
@@ -43,7 +43,6 @@
 .baking-pan__batter i:nth-child(1) { left: 20%; top: 20%; }.baking-pan__batter i:nth-child(2) { left: 60%; top: 35%; }.baking-pan__batter i:nth-child(3) { left: 40%; top: 60%; }
 .baking-oven { position: relative; width: min(100%, 24rem); aspect-ratio: 1.15; isolation: isolate; }
 .baking-oven > img { width: 100%; height: 100%; object-fit: contain; }
-.baking-oven__temperature { position: absolute; top: 24%; left: 35%; padding: var(--space-1) var(--space-2); background: var(--color-surface); border-radius: var(--radius-control-sm); }
 .baking-oven__tray { position: absolute; left: 24%; right: 24%; top: 51%; height: 25%; }
 .baking-oven__tray > img { width: 100%; height: 100%; object-fit: contain; }
 .baking-oven__food { position: absolute; inset: 0 8% 23%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); transform-origin: bottom; transition: transform var(--motion-gentle), filter var(--motion-gentle); }
@@ -51,7 +50,7 @@
 .baking-oven__piece img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .baking-oven__piece > i { position: absolute; inset: 20% 10% 0; border-radius: 50%; background: var(--color-honey); }
 .baking-cooled { width: min(70%, 16rem); height: 12rem; object-fit: contain; animation: baking-cool 2s ease-in-out infinite alternate; }
-.baking-oven-status { display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2); color: var(--color-primary); font-size: var(--font-size-sm); }
+.baking-oven-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--color-success-soft); color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); }
 .cooking-card:has(.baking-interaction) { height: auto; min-height: 0; max-height: none; flex: none; }
 .cooking-card .cooking-card__scene:has(.baking-interaction) { flex: none; min-height: 0; height: auto; background-image: none !important; background-color: var(--color-background-soft); box-shadow: none; }
 .cooking-stage:has(.baking-interaction) .cooking-stage__shell { height: auto; min-height: 100%; }
