@@ -1,1446 +1,2484 @@
 {
-  "generatedAt": "2026-10-25T09:25:21.599Z",
-  "count": 260,
+  "generatedAt": "2026-10-29T11:44:42.650Z",
+  "count": 438,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
       "path": "/assets/baby-lua/backgrounds/jungle-source.webp",
       "category": "assets",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:baby-lua:backgrounds:jungle",
       "path": "/assets/baby-lua/backgrounds/jungle.webp",
       "category": "assets",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:baby-lua:characters:lua-poses-source",
       "path": "/assets/baby-lua/characters/lua-poses-source.webp",
       "category": "assets",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:baby-lua:characters:lua-poses",
       "path": "/assets/baby-lua/characters/lua-poses.webp",
       "category": "assets",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:baking-powder",
+      "path": "/assets/library/cooking/baking/baking-powder.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:blueberry-muffin",
+      "path": "/assets/library/cooking/baking/blueberry-muffin.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:measuring-jug",
+      "path": "/assets/library/cooking/baking/measuring-jug.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:muffin-liner",
+      "path": "/assets/library/cooking/baking/muffin-liner.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:muffin-pan",
+      "path": "/assets/library/cooking/baking/muffin-pan.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:salt",
+      "path": "/assets/library/cooking/baking/salt.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:baking:vanilla-extract",
+      "path": "/assets/library/cooking/baking/vanilla-extract.webp",
+      "category": "cooking",
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:banana",
       "path": "/assets/library/cooking/banana-pancakes/banana.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:batter",
       "path": "/assets/library/cooking/banana-pancakes/batter.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:bowl",
       "path": "/assets/library/cooking/banana-pancakes/bowl.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:butter",
       "path": "/assets/library/cooking/banana-pancakes/butter.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:eggs",
       "path": "/assets/library/cooking/banana-pancakes/eggs.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:finished",
       "path": "/assets/library/cooking/banana-pancakes/finished.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:fork",
       "path": "/assets/library/cooking/banana-pancakes/fork.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:mashed-banana",
       "path": "/assets/library/cooking/banana-pancakes/mashed-banana.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:pan",
       "path": "/assets/library/cooking/banana-pancakes/pan.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:pancake-golden",
       "path": "/assets/library/cooking/banana-pancakes/pancake-golden.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:pancake-raw",
       "path": "/assets/library/cooking/banana-pancakes/pancake-raw.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:spatula",
       "path": "/assets/library/cooking/banana-pancakes/spatula.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:banana-pancakes:whisk",
       "path": "/assets/library/cooking/banana-pancakes/whisk.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:coco-chef-tip",
+      "path": "/assets/library/cooking/coco-chef-tip.webp",
+      "category": "cooking",
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:fruit-yogurt:banana-slices",
       "path": "/assets/library/cooking/fruit-yogurt/banana-slices.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:fruit-yogurt:strawberries",
       "path": "/assets/library/cooking/fruit-yogurt/strawberries.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:fruit-yogurt:yogurt-bowl",
       "path": "/assets/library/cooking/fruit-yogurt/yogurt-bowl.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:baking-tray-cookies",
       "path": "/assets/library/cooking/kit/baking-tray-cookies.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:baking-tray",
       "path": "/assets/library/cooking/kit/baking-tray.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:banana-mashed",
       "path": "/assets/library/cooking/kit/banana-mashed.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:banana-peeled",
       "path": "/assets/library/cooking/kit/banana-peeled.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:banana",
       "path": "/assets/library/cooking/kit/banana.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:bowl-batter",
       "path": "/assets/library/cooking/kit/bowl-batter.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:bowl-eggs",
       "path": "/assets/library/cooking/kit/bowl-eggs.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:bowl-empty",
       "path": "/assets/library/cooking/kit/bowl-empty.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:bowl-mashed-banana",
       "path": "/assets/library/cooking/kit/bowl-mashed-banana.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:butter",
       "path": "/assets/library/cooking/kit/butter.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:egg-cracked",
       "path": "/assets/library/cooking/kit/egg-cracked.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:egg-open",
       "path": "/assets/library/cooking/kit/egg-open.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:egg",
       "path": "/assets/library/cooking/kit/egg.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:flour",
       "path": "/assets/library/cooking/kit/flour.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:fork",
       "path": "/assets/library/cooking/kit/fork.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:milk",
       "path": "/assets/library/cooking/kit/milk.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:oil",
       "path": "/assets/library/cooking/kit/oil.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:pan-empty",
       "path": "/assets/library/cooking/kit/pan-empty.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:pan-pancake",
       "path": "/assets/library/cooking/kit/pan-pancake.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:pancake-golden",
       "path": "/assets/library/cooking/kit/pancake-golden.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:pancake-raw",
       "path": "/assets/library/cooking/kit/pancake-raw.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:scale",
       "path": "/assets/library/cooking/kit/scale.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:spatula",
       "path": "/assets/library/cooking/kit/spatula.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:spoon",
       "path": "/assets/library/cooking/kit/spoon.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:sugar",
       "path": "/assets/library/cooking/kit/sugar.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:cooking:kit:whisk",
       "path": "/assets/library/cooking/kit/whisk.webp",
       "category": "cooking",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:bloempot",
+      "path": "/assets/library/plants/gereedschap/bloempot.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:lamp-plant",
+      "path": "/assets/library/plants/gereedschap/lamp-plant.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:parasol",
+      "path": "/assets/library/plants/gereedschap/parasol.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:plantenspuit",
+      "path": "/assets/library/plants/gereedschap/plantenspuit.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:sjaal",
+      "path": "/assets/library/plants/gereedschap/sjaal.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:gereedschap:zandloper",
+      "path": "/assets/library/plants/gereedschap/zandloper.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-fern:dry-1",
+      "path": "/assets/library/plants/hanging-fern/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-fern:sun-1",
+      "path": "/assets/library/plants/hanging-fern/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-fern:wet-1",
+      "path": "/assets/library/plants/hanging-fern/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-vine:dark-1",
+      "path": "/assets/library/plants/hanging-vine/dark-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-vine:dry-1",
+      "path": "/assets/library/plants/hanging-vine/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:hanging-vine:wet-1",
+      "path": "/assets/library/plants/hanging-vine/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:aarde",
+      "path": "/assets/library/plants/icons/aarde.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:blad",
+      "path": "/assets/library/plants/icons/blad.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:donker",
+      "path": "/assets/library/plants/icons/donker.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:droge-lucht",
+      "path": "/assets/library/plants/icons/droge-lucht.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:droog",
+      "path": "/assets/library/plants/icons/droog.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:gieter",
+      "path": "/assets/library/plants/icons/gieter.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:koud",
+      "path": "/assets/library/plants/icons/koud.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:nat",
+      "path": "/assets/library/plants/icons/nat.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:plek",
+      "path": "/assets/library/plants/icons/plek.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:icons:zon",
+      "path": "/assets/library/plants/icons/zon.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:monstera-basket:dry-1",
+      "path": "/assets/library/plants/monstera-basket/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:monstera-basket:dry-2",
+      "path": "/assets/library/plants/monstera-basket/dry-2.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:monstera-basket:dry-3",
+      "path": "/assets/library/plants/monstera-basket/dry-3.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orange-tree:dry-1",
+      "path": "/assets/library/plants/orange-tree/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orange-tree:sun-1",
+      "path": "/assets/library/plants/orange-tree/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orange-tree:wet-1",
+      "path": "/assets/library/plants/orange-tree/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orchid:dry-1",
+      "path": "/assets/library/plants/orchid/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orchid:sun-1",
+      "path": "/assets/library/plants/orchid/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:orchid:wet-1",
+      "path": "/assets/library/plants/orchid/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:pink-flower:dry-1",
+      "path": "/assets/library/plants/pink-flower/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:pink-flower:sun-1",
+      "path": "/assets/library/plants/pink-flower/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:pink-flower:wet-1",
+      "path": "/assets/library/plants/pink-flower/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:small-cactus:dark-1",
+      "path": "/assets/library/plants/small-cactus/dark-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:small-cactus:dry-1",
+      "path": "/assets/library/plants/small-cactus/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:small-cactus:wet-1",
+      "path": "/assets/library/plants/small-cactus/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:snake-plant:dry-1",
+      "path": "/assets/library/plants/snake-plant/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:snake-plant:sun-1",
+      "path": "/assets/library/plants/snake-plant/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:snake-plant:wet-1",
+      "path": "/assets/library/plants/snake-plant/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:succulent:dark-1",
+      "path": "/assets/library/plants/succulent/dark-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:succulent:dry-1",
+      "path": "/assets/library/plants/succulent/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:succulent:wet-1",
+      "path": "/assets/library/plants/succulent/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:white-flower:dry-1",
+      "path": "/assets/library/plants/white-flower/dry-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:white-flower:sun-1",
+      "path": "/assets/library/plants/white-flower/sun-1.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:white-flower:wet-1",
+      "path": "/assets/library/plants/white-flower/wet-1.webp",
+      "category": "plants",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:furniture-plants-sheet",
       "path": "/assets/library/shop/decor/furniture-plants-sheet.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:arched-cabinet",
       "path": "/assets/library/shop/decor/products/arched-cabinet.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:arched-floor-lamp",
       "path": "/assets/library/shop/decor/products/arched-floor-lamp.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:bunk-bed-v4",
-      "path": "/assets/library/shop/decor/products/bunk-bed-v4.webp",
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-1",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-2",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-3",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-4",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-5",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-6",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-7",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunk-bed-stairs:view-8",
+      "path": "/assets/library/shop/decor/products/bunk-bed-stairs/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:bunk-bed",
       "path": "/assets/library/shop/decor/products/bunk-bed.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:coffee-table-v4",
-      "path": "/assets/library/shop/decor/products/coffee-table-v4.webp",
+      "id": "assets:library:shop:decor:products:bunny-chair:view-1",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-2",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-3",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-4",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-5",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-6",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-7",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bunny-chair:view-8",
+      "path": "/assets/library/shop/decor/products/bunny-chair/view-8.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-1",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-2",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-3",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-4",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-5",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-6",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-7",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cloud-shelf:view-8",
+      "path": "/assets/library/shop/decor/products/cloud-shelf/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:coffee-table",
       "path": "/assets/library/shop/decor/products/coffee-table.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:corner-sofa",
-      "path": "/assets/library/shop/decor/products/corner-sofa.webp",
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-1",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-2",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-3",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-4",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-5",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-6",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-7",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-corner-sofa:view-8",
+      "path": "/assets/library/shop/decor/products/cream-corner-sofa/view-8.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-1",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-2",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-3",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-4",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-5",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-6",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-7",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:cream-two-seater:view-8",
+      "path": "/assets/library/shop/decor/products/cream-two-seater/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:cream-wardrobe-v4",
       "path": "/assets/library/shop/decor/products/cream-wardrobe-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:cream-wardrobe",
       "path": "/assets/library/shop/decor/products/cream-wardrobe.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-1",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-2",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-3",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-4",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-5",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-6",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-7",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-armchair:view-8",
+      "path": "/assets/library/shop/decor/products/daisy-armchair/view-8.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-1",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-2",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-3",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-4",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-5",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-6",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-7",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:daisy-sofa:view-8",
+      "path": "/assets/library/shop/decor/products/daisy-sofa/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:dining-set",
       "path": "/assets/library/shop/decor/products/dining-set.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:double-bed-v4",
       "path": "/assets/library/shop/decor/products/double-bed-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:double-bed",
       "path": "/assets/library/shop/decor/products/double-bed.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:drawer-chest-v4",
       "path": "/assets/library/shop/decor/products/drawer-chest-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:drawer-chest",
       "path": "/assets/library/shop/decor/products/drawer-chest.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:flower-lights-v4",
       "path": "/assets/library/shop/decor/products/flower-lights-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:flower-lights",
       "path": "/assets/library/shop/decor/products/flower-lights.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:flower-rug-v4",
       "path": "/assets/library/shop/decor/products/flower-rug-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:flower-rug",
       "path": "/assets/library/shop/decor/products/flower-rug.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-chair-v4",
       "path": "/assets/library/shop/decor/products/green-chair-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-chair",
       "path": "/assets/library/shop/decor/products/green-chair.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-lamp-v4",
       "path": "/assets/library/shop/decor/products/green-lamp-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-lamp",
       "path": "/assets/library/shop/decor/products/green-lamp.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-wardrobe-v4",
       "path": "/assets/library/shop/decor/products/green-wardrobe-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:green-wardrobe",
       "path": "/assets/library/shop/decor/products/green-wardrobe.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-chair-v4",
       "path": "/assets/library/shop/decor/products/hanging-chair-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-chair",
       "path": "/assets/library/shop/decor/products/hanging-chair.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-fern-v3",
       "path": "/assets/library/shop/decor/products/hanging-fern-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-fern",
       "path": "/assets/library/shop/decor/products/hanging-fern.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-vine-v3",
       "path": "/assets/library/shop/decor/products/hanging-vine-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:hanging-vine",
       "path": "/assets/library/shop/decor/products/hanging-vine.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:jute-rug-v4",
       "path": "/assets/library/shop/decor/products/jute-rug-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:jute-rug",
       "path": "/assets/library/shop/decor/products/jute-rug.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:leaf-rug-v4",
       "path": "/assets/library/shop/decor/products/leaf-rug-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:leaf-rug",
       "path": "/assets/library/shop/decor/products/leaf-rug.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:media-cabinet-v4",
-      "path": "/assets/library/shop/decor/products/media-cabinet-v4.webp",
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-1",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-2",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-3",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-4",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-5",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-6",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-7",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:low-coffee-table:view-8",
+      "path": "/assets/library/shop/decor/products/low-coffee-table/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:media-cabinet",
       "path": "/assets/library/shop/decor/products/media-cabinet.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:monstera-basket-v3",
       "path": "/assets/library/shop/decor/products/monstera-basket-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:monstera-basket",
       "path": "/assets/library/shop/decor/products/monstera-basket.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:orange-tree-v3",
       "path": "/assets/library/shop/decor/products/orange-tree-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:orange-tree",
       "path": "/assets/library/shop/decor/products/orange-tree.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:orchid-v4",
       "path": "/assets/library/shop/decor/products/orchid-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:orchid",
       "path": "/assets/library/shop/decor/products/orchid.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:palm-clay-pot-v4",
       "path": "/assets/library/shop/decor/products/palm-clay-pot-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:palm-clay-pot",
       "path": "/assets/library/shop/decor/products/palm-clay-pot.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:palm-white-pot-v4",
       "path": "/assets/library/shop/decor/products/palm-white-pot-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:palm-white-pot",
       "path": "/assets/library/shop/decor/products/palm-white-pot.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-flower-v3",
       "path": "/assets/library/shop/decor/products/pink-flower-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-flower",
       "path": "/assets/library/shop/decor/products/pink-flower.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-lamp-v4",
       "path": "/assets/library/shop/decor/products/pink-lamp-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-lamp",
       "path": "/assets/library/shop/decor/products/pink-lamp.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-rug-v4",
       "path": "/assets/library/shop/decor/products/pink-rug-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:pink-rug",
       "path": "/assets/library/shop/decor/products/pink-rug.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-1",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-2",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-3",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-4",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-5",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-6",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-7",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:plant-shelf:view-8",
+      "path": "/assets/library/shop/decor/products/plant-shelf/view-8.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:pumpkin-pouf",
+      "path": "/assets/library/shop/decor/products/pumpkin-pouf.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:rattan-chair-v4",
       "path": "/assets/library/shop/decor/products/rattan-chair-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:rattan-chair",
       "path": "/assets/library/shop/decor/products/rattan-chair.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:ribbed-sideboard",
-      "path": "/assets/library/shop/decor/products/ribbed-sideboard.webp",
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-1",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:rose-armchair",
-      "path": "/assets/library/shop/decor/products/rose-armchair.webp",
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-2",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-2.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-3",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-4",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-5",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-6",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-7",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:ribbed-tv-cabinet:view-8",
+      "path": "/assets/library/shop/decor/products/ribbed-tv-cabinet/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:rose-pouf",
       "path": "/assets/library/shop/decor/products/rose-pouf.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:round-table-v4",
       "path": "/assets/library/shop/decor/products/round-table-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:round-table",
       "path": "/assets/library/shop/decor/products/round-table.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
-      "id": "assets:library:shop:decor:products:single-bed-v4",
-      "path": "/assets/library/shop/decor/products/single-bed-v4.webp",
+      "id": "assets:library:shop:decor:products:shell-bed:view-1",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-1.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-2",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-3",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-4",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-5",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-6",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-7",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:shell-bed:view-8",
+      "path": "/assets/library/shop/decor/products/shell-bed/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:single-bed",
       "path": "/assets/library/shop/decor/products/single-bed.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:small-cactus-v4",
       "path": "/assets/library/shop/decor/products/small-cactus-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:small-cactus",
       "path": "/assets/library/shop/decor/products/small-cactus.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:snake-plant-v3",
       "path": "/assets/library/shop/decor/products/snake-plant-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:snake-plant",
       "path": "/assets/library/shop/decor/products/snake-plant.webp",
       "category": "shop",
-      "format": "png"
-    },
-    {
-      "id": "assets:library:shop:decor:products:soft-sofa-v4",
-      "path": "/assets/library/shop/decor/products/soft-sofa-v4.webp",
-      "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:soft-sofa",
       "path": "/assets/library/shop/decor/products/soft-sofa.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:succulent-v4",
       "path": "/assets/library/shop/decor/products/succulent-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:succulent",
       "path": "/assets/library/shop/decor/products/succulent.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-1",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-1.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-2",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-2.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-3",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-3.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-4",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-4.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-5",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-5.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-6",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-6.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-7",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-7.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:swivel-armchair:view-8",
+      "path": "/assets/library/shop/decor/products/swivel-armchair/view-8.webp",
+      "category": "shop",
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:tall-cactus-v4",
       "path": "/assets/library/shop/decor/products/tall-cactus-v4.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:tall-cactus",
       "path": "/assets/library/shop/decor/products/tall-cactus.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:terrazzo-table",
       "path": "/assets/library/shop/decor/products/terrazzo-table.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:white-flower-v3",
       "path": "/assets/library/shop/decor/products/white-flower-v3.webp",
       "category": "shop",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:shop:decor:products:white-flower",
       "path": "/assets/library/shop/decor/products/white-flower.webp",
       "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:expansions:extra-bedroom",
+      "path": "/assets/library/treehouse/expansions/extra-bedroom.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:expansions:greenhouse",
+      "path": "/assets/library/treehouse/expansions/greenhouse.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:expansions:growing-deck",
+      "path": "/assets/library/treehouse/expansions/growing-deck.png",
+      "category": "treehouse",
+      "format": "png"
+    },
+    {
+      "id": "assets:library:treehouse:expansions:hobby-room",
+      "path": "/assets/library/treehouse/expansions/hobby-room.png",
+      "category": "treehouse",
       "format": "png"
     },
     {
       "id": "assets:library:treehouse:furnishings:cart",
       "path": "/assets/library/treehouse/furnishings/cart.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:fridge-open",
       "path": "/assets/library/treehouse/furnishings/fridge-open.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:fridge",
       "path": "/assets/library/treehouse/furnishings/fridge.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:island",
       "path": "/assets/library/treehouse/furnishings/island.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:oven-open",
       "path": "/assets/library/treehouse/furnishings/oven-open.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:oven",
       "path": "/assets/library/treehouse/furnishings/oven.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:pantry-open",
       "path": "/assets/library/treehouse/furnishings/pantry-open.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:pantry",
       "path": "/assets/library/treehouse/furnishings/pantry.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:add",
       "path": "/assets/library/treehouse/icons/add.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:arrow-left",
       "path": "/assets/library/treehouse/icons/arrow-left.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:arrow-right",
       "path": "/assets/library/treehouse/icons/arrow-right.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:bedroom",
       "path": "/assets/library/treehouse/icons/bedroom.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:garden",
       "path": "/assets/library/treehouse/icons/garden.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:home",
       "path": "/assets/library/treehouse/icons/home.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:kitchen",
       "path": "/assets/library/treehouse/icons/kitchen.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:icons:living-room",
       "path": "/assets/library/treehouse/icons/living-room.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:overview:treehouse-overview",
       "path": "/assets/library/treehouse/overview/treehouse-overview.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:rooms:bedroom",
       "path": "/assets/library/treehouse/rooms/bedroom.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:rooms:kitchen-furnished",
       "path": "/assets/library/treehouse/rooms/kitchen-furnished.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:rooms:kitchen",
       "path": "/assets/library/treehouse/rooms/kitchen.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:rooms:living-room",
       "path": "/assets/library/treehouse/rooms/living-room.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:rooms:terrace",
       "path": "/assets/library/treehouse/rooms/terrace.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:stations:cooktop",
       "path": "/assets/library/treehouse/stations/cooktop.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:stations:worktop",
       "path": "/assets/library/treehouse/stations/worktop.webp",
       "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:island-icons",
+      "path": "/dreamworld/island-icons.png",
+      "category": "dreamworld",
+      "format": "png"
+    },
+    {
+      "id": "dreamworld:plant-clinic",
+      "path": "/dreamworld/plant-clinic.png",
+      "category": "dreamworld",
+      "format": "png"
+    },
+    {
+      "id": "dreamworld:world-map",
+      "path": "/dreamworld/world-map.png",
+      "category": "dreamworld",
       "format": "png"
     },
     {
       "id": "games:cooking:banana-pancakes",
       "path": "/games/cooking/banana-pancakes.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:equipment:fork",
       "path": "/games/cooking/equipment/fork.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:equipment:frying-pan",
       "path": "/games/cooking/equipment/frying-pan.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:equipment:mixing-bowl",
       "path": "/games/cooking/equipment/mixing-bowl.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:equipment:spatula",
       "path": "/games/cooking/equipment/spatula.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:fruit-yogurt",
       "path": "/games/cooking/fruit-yogurt.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:oat-muffins",
       "path": "/games/cooking/oat-muffins.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:destinations:cooking-studio",
       "path": "/games/destinations/cooking-studio.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:destinations:shop-interior",
       "path": "/games/destinations/shop-interior.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:destinations:topo-entry",
       "path": "/games/destinations/topo-entry.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:destinations:travel-room",
       "path": "/games/destinations/travel-room.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:red-baby-lua:cloud-reference",
       "path": "/games/red-baby-lua/cloud-reference.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:red-baby-lua:lua-poses",
       "path": "/games/red-baby-lua/lua-poses.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:red-baby-lua:plant-reference",
       "path": "/games/red-baby-lua/plant-reference.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:red-baby-lua:rocks",
       "path": "/games/red-baby-lua/rocks.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:clock:clock-memory",
       "path": "/games/school/clock/clock-memory.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:clock:clock-navigation",
       "path": "/games/school/clock/clock-navigation.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:clock:clock-race",
       "path": "/games/school/clock/clock-race.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:clock:clock-school-navigation-v2",
       "path": "/games/school/clock/clock-school-navigation-v2.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:clock:clock-set",
       "path": "/games/school/clock/clock-set.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:add-subtract",
+      "path": "/games/school/math/add-subtract.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:acorn",
+      "path": "/games/school/math/adventures/acorn.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:basket",
+      "path": "/games/school/math/adventures/basket.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:bee",
+      "path": "/games/school/math/adventures/bee.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:bird",
+      "path": "/games/school/math/adventures/bird.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:blueberry-plant",
+      "path": "/games/school/math/adventures/blueberry-plant.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:blueberry",
+      "path": "/games/school/math/adventures/blueberry.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:cookie",
+      "path": "/games/school/math/adventures/cookie.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:garden-tools",
+      "path": "/games/school/math/adventures/garden-tools.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:herbs",
+      "path": "/games/school/math/adventures/herbs.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:honey-jar",
+      "path": "/games/school/math/adventures/honey-jar.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:seedlings",
+      "path": "/games/school/math/adventures/seedlings.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:squirrel",
+      "path": "/games/school/math/adventures/squirrel.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:strawberry-plant",
+      "path": "/games/school/math/adventures/strawberry-plant.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:strawberry",
+      "path": "/games/school/math/adventures/strawberry.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:tomato-plant",
+      "path": "/games/school/math/adventures/tomato-plant.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:tree-hollow-original",
+      "path": "/games/school/math/adventures/tree-hollow-original.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:tree-hollow",
+      "path": "/games/school/math/adventures/tree-hollow.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:balance",
+      "path": "/games/school/math/balance.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:divide",
+      "path": "/games/school/math/divide.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:missing",
+      "path": "/games/school/math/missing.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:multiply",
+      "path": "/games/school/math/multiply.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:race",
+      "path": "/games/school/math/race.webp",
+      "category": "games",
+      "format": "webp"
     },
     {
       "id": "games:school:school-interior",
       "path": "/games/school/school-interior.webp",
       "category": "games",
-      "format": "jpg"
+      "format": "webp"
     },
     {
       "id": "games:school:tables-cta",
       "path": "/games/school/tables-cta.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:school:topo-cta",
       "path": "/games/school/topo-cta.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products-sheet",
       "path": "/games/shop/products-sheet.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:apple",
       "path": "/games/shop/products/apple.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:avocado",
       "path": "/games/shop/products/avocado.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:banana",
       "path": "/games/shop/products/banana.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:basil",
       "path": "/games/shop/products/basil.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:blueberry",
       "path": "/games/shop/products/blueberry.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:bread",
       "path": "/games/shop/products/bread.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:broccoli",
       "path": "/games/shop/products/broccoli.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:butter",
       "path": "/games/shop/products/butter.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:canned-tomatoes",
       "path": "/games/shop/products/canned-tomatoes.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:carrot",
       "path": "/games/shop/products/carrot.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:cheese",
       "path": "/games/shop/products/cheese.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:cherry-tomatoes",
       "path": "/games/shop/products/cherry-tomatoes.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:cucumber",
       "path": "/games/shop/products/cucumber.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:eggs",
       "path": "/games/shop/products/eggs.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:flour",
       "path": "/games/shop/products/flour.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:garlic",
       "path": "/games/shop/products/garlic.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:honey",
       "path": "/games/shop/products/honey.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:lemon",
       "path": "/games/shop/products/lemon.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:lettuce",
       "path": "/games/shop/products/lettuce.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:milk",
       "path": "/games/shop/products/milk.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:mushrooms",
       "path": "/games/shop/products/mushrooms.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:oats",
       "path": "/games/shop/products/oats.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:olive-oil",
       "path": "/games/shop/products/olive-oil.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:onion",
       "path": "/games/shop/products/onion.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:orange",
       "path": "/games/shop/products/orange.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:parsley",
       "path": "/games/shop/products/parsley.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:pasta",
       "path": "/games/shop/products/pasta.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:pear",
       "path": "/games/shop/products/pear.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:pepper",
       "path": "/games/shop/products/pepper.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:potato",
       "path": "/games/shop/products/potato.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:raspberry",
       "path": "/games/shop/products/raspberry.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:rice",
       "path": "/games/shop/products/rice.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:spaghetti",
       "path": "/games/shop/products/spaghetti.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:spinach",
       "path": "/games/shop/products/spinach.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:spring-onion",
       "path": "/games/shop/products/spring-onion.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:strawberry",
       "path": "/games/shop/products/strawberry.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:sugar",
       "path": "/games/shop/products/sugar.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:tomato-sauce",
       "path": "/games/shop/products/tomato-sauce.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:tomato",
       "path": "/games/shop/products/tomato.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:products:yogurt",
       "path": "/games/shop/products/yogurt.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:shop:shop-street",
       "path": "/games/shop/shop-street.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:adventure-world-background",
       "path": "/games/treehouse/adventure-world-background.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:cocokiki-world-hub",
       "path": "/games/treehouse/cocokiki-world-hub.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:cookbook-cta",
       "path": "/games/treehouse/cookbook-cta.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:encyclopedia-cta",
       "path": "/games/treehouse/encyclopedia-cta.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:treehouse-home-clean",
       "path": "/games/treehouse/treehouse-home-clean.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:treehouse-interior",
       "path": "/games/treehouse/treehouse-interior.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:bridge-cutout",
       "path": "/games/treehouse/world-v2/bridge-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:bridge",
       "path": "/games/treehouse/world-v2/bridge.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:coco-cutout",
       "path": "/games/treehouse/world-v2/coco-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:coco",
       "path": "/games/treehouse/world-v2/coco.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:island-tables-cutout",
       "path": "/games/treehouse/world-v2/island-tables-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:island-tables",
       "path": "/games/treehouse/world-v2/island-tables.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:island-topo-cutout",
       "path": "/games/treehouse/world-v2/island-topo-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:island-topo",
       "path": "/games/treehouse/world-v2/island-topo.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:kiki-cutout",
       "path": "/games/treehouse/world-v2/kiki-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:kiki",
       "path": "/games/treehouse/world-v2/kiki.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:treehouse-central-cutout",
       "path": "/games/treehouse/world-v2/treehouse-central-cutout.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world-v2:treehouse-central",
       "path": "/games/treehouse/world-v2/treehouse-central.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:bridge-rope",
       "path": "/games/treehouse/world/bridge-rope.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:coco",
       "path": "/games/treehouse/world/coco.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:island-forest-tafels",
       "path": "/games/treehouse/world/island-forest-tafels.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:island-forest",
       "path": "/games/treehouse/world/island-forest.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:island-mountain-topo",
       "path": "/games/treehouse/world/island-mountain-topo.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:island-mountain",
       "path": "/games/treehouse/world/island-mountain.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:kiki",
       "path": "/games/treehouse/world/kiki.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:treehouse:world:treehouse-central",
       "path": "/games/treehouse/world/treehouse-central.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:challenges-control",
       "path": "/games/world-hub/challenges-control.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:coins-control",
       "path": "/games/world-hub/coins-control.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:settings-control",
       "path": "/games/world-hub/settings-control.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:treehouse-control",
       "path": "/games/world-hub/treehouse-control.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:v2:cooking-island",
@@ -1470,13 +2508,13 @@
       "id": "games:world-hub:v2:world-background-desktop",
       "path": "/games/world-hub/v2/world-background-desktop.webp",
       "category": "games",
-      "format": "jpg"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:v2:world-background-mobile",
       "path": "/games/world-hub/v2/world-background-mobile.webp",
       "category": "games",
-      "format": "jpg"
+      "format": "webp"
     },
     {
       "id": "games:world-hub:v2:world-background",
@@ -1488,7 +2526,7 @@
       "id": "games:world-hub:world-hub-v2",
       "path": "/games/world-hub/world-hub-v2.webp",
       "category": "games",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "images:avatars:avonturier",
@@ -1505,6 +2543,36 @@
     {
       "id": "images:avatars:kiki",
       "path": "/images/avatars/kiki.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki:kiki-cheer",
+      "path": "/images/avatars/kiki/kiki-cheer.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki:kiki-explore",
+      "path": "/images/avatars/kiki/kiki-explore.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki:kiki-plant",
+      "path": "/images/avatars/kiki/kiki-plant.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki:kiki-tip",
+      "path": "/images/avatars/kiki/kiki-tip.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki:kiki-worried",
+      "path": "/images/avatars/kiki/kiki-worried.webp",
       "category": "images",
       "format": "webp"
     },
@@ -1554,7 +2622,7 @@
       "id": "images:logo-kikicoco",
       "path": "/images/logo-kikicoco.webp",
       "category": "images",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "images:topococoicon_1",

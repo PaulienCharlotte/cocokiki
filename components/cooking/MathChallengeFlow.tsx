@@ -17,6 +17,7 @@ import CookingAssetImage from './CookingAssetImage';
 import DigitalScale from './DigitalScale';
 import JourneyStageProgress from './JourneyStageProgress';
 import RewardToast from './RewardToast';
+import AmountInput from './AmountInput';
 
 interface MathChallengeFlowProps {
   recipe: RecipeConfig;
@@ -44,7 +45,7 @@ function Stepper({ value, step, minimum = 0, maximum = 100, onStep, label, unit 
   const clamp = (current: number, direction: -1 | 1) => Math.min(maximum, Math.max(minimum, current + direction * step));
   return <div className="math-stepper" aria-label={label}>
     <button type="button" aria-label={`${label} verminderen`} onClick={() => onStep(current => clamp(current, -1))}><Minus /></button>
-    <strong aria-live="polite">{value}{unit && <em>{unit}</em>}</strong>
+    <span className="math-stepper__amount"><AmountInput value={value} minimum={minimum} maximum={maximum} label={label} onChange={next => onStep(() => next)} />{unit && <em>{unit}</em>}</span>
     <button type="button" aria-label={`${label} vermeerderen`} onClick={() => onStep(current => clamp(current, 1))}><Plus /></button>
   </div>;
 }

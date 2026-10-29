@@ -27,7 +27,7 @@ export function MathCompletion({ game, level, result, reward, saved, onRetrySave
     illustration={<div className="math-stars" aria-label={`${status.stars} sterren`}>{[1, 2, 3].map(star => <Star key={star} size={34} fill={star <= status.stars ? 'currentColor' : 'none'} />)}</div>}
     primaryAction={!saved ? <Button onClick={onRetrySave}>Opnieuw opslaan</Button> : status.passed && level < 5 ? <Button onClick={onNext}>Volgend niveau</Button> : <Button onClick={onReplay}>Opnieuw spelen</Button>}
     secondaryAction={<>{(!saved || status.passed && level < 5) && <Button variant="secondary" onClick={onReplay}>Opnieuw spelen</Button>}<Button variant="quiet" onClick={onBack}>Terug naar rekenen</Button></>}>
-    {!saved ? <p role="alert">Opslaan lukte niet. Je resultaat blijft hier staan.</p> : <p className="math-earned"><CocoCoin size={22} /> {reward > 0 ? `+${reward} CocoCoins` : game === 'race' ? result.correct === 0 ? 'De volgende klant wacht op je. Probeer het nog eens!' : 'Vandaag zijn alle winkelmunten verdiend, of deze ronde is al beloond.' : status.passed ? 'Deze beloning heb je al verdiend.' : 'Probeer het nog eens. Je voortgang blijft bewaard.'}</p>}
+    {!saved ? <p role="alert">Opslaan lukte niet. Je resultaat blijft hier staan.</p> : <p className="math-earned"><CocoCoin size={22} /> {reward > 0 ? `+${reward} CocoCoins` : 'Deze ronde is al beloond, of er zijn nog geen opdrachten opgelost.'}</p>}
     {!status.passed && <p>{game === 'race' ? 'Op jouw tempo, zonder puntenaftrek.' : 'Bij 8 van de 10 meteen goed speel je het volgende niveau vrij.'}</p>}
   </Dialog>;
 }

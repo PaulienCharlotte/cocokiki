@@ -1,8 +1,11 @@
 import type { RecipeConfig } from './types';
 import { emptyStepState, type CookingSession, type CookingStepConfig, type CookingStepState } from './preparation';
+import { emptyOven, restoreOven } from './oven';
 
 export function createCookingSession(recipe: RecipeConfig, attemptId: string = crypto.randomUUID(), now = new Date().toISOString()): CookingSession {
-  return { version: 2, recipeId: recipe.id, recipeVersion: recipe.preparation!.version, attemptId, stepId: recipe.preparation!.steps[0].id, completedStepIds: [], steps: {}, seenTipIds: [], dismissedTipIds: [], completed: false, updatedAt: now };
+  const oven = recipe.preparation!.steps.find(step => step.mechanic === 'oven');
+  return { version: 2, recipeId: recipe.id, recipeVersion: recipe.preparation!.version, attemptId, stepId: recipe.preparation!.steps[0].id, completedStepIds: [], steps: {}, seenTipIds: [], dismissedTipIds: [], completed: false, updatedAt: now,
+    ...(oven?.mechanic === 'oven' ? { oven: { ...emptyOven(), temperature: oven.oven.minimumTemperature, chosenMinutes: oven.oven.minimumMinutes } } : {}) };
 }
 const integer = (value: unknown, max = 100000) => typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(max, Math.floor(value))) : 0;
 export function migrateCookingSession(value: unknown, recipe: RecipeConfig): CookingSession {
@@ -20,12 +23,13 @@ export function migrateCookingSession(value: unknown, recipe: RecipeConfig): Coo
       selectedTools: step.mechanic === 'collect' && Array.isArray(state.selectedTools) ? [...new Set(state.selectedTools.filter(id => step.tools.some(tool => tool.id === id)))] : [],
       phase: state.phase === 'wait' || state.phase === 'flip' ? state.phase : 'pour',
       readyAt: typeof state.readyAt === 'number' && Number.isFinite(state.readyAt) ? state.readyAt : null,
-      choice: typeof state.choice === 'string' ? state.choice : null };
+      choice: typeof state.choice === 'string' ? state.choice : null,
+      ...(step.mechanic === 'portion' ? { portions: Array.from({ length: step.target }, (_, i) => integer(state.portions?.[i], 1)), lined: Array.isArray(state.lined) ? [...new Set(state.lined.filter(i => Number.isInteger(i) && i >= 0 && i < step.target))] : [] } : {}) };
   }
   const completedStepIds = Array.isArray(source.completedStepIds) ? [...new Set(source.completedStepIds.filter(id => ids.has(id)))] : [];
   return { ...empty, attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
     stepId: steps.find(step => !completedStepIds.includes(step.id))?.id ?? steps[steps.length - 1].id,
-    completedStepIds, steps: states, completed: source.completed === true && steps.every(step => completedStepIds.includes(step.id)),
+    completedStepIds, steps: states, ...(empty.oven ? { oven: restoreOven(source.oven ?? empty.oven) } : {}), completed: source.completed === true && steps.every(step => completedStepIds.includes(step.id)),
     seenTipIds: Array.isArray(source.seenTipIds) ? [...new Set(source.seenTipIds.filter(id => typeof id === 'string'))] : [],
     dismissedTipIds: Array.isArray(source.dismissedTipIds) ? [...new Set(source.dismissedTipIds.filter(id => typeof id === 'string'))] : [],
     updatedAt: typeof source.updatedAt === 'string' ? source.updatedAt : empty.updatedAt };
@@ -60,6 +64,9 @@ export function stepSatisfied(step: CookingStepConfig, state: CookingStepState, 
     case 'repeat': return state.count >= step.target;
     case 'drag': return state.count >= 1;
     case 'weigh': return state.quantity === step.target;
+    case 'measure': return state.quantity === step.target;
+    case 'portion': return state.portions?.length === step.target && state.portions.every(value => value === 1) && state.lined?.length === step.target;
+    case 'oven': return state.count >= 1;
     case 'heat': return state.count >= 1 && state.heat === step.target;
     case 'timed': return state.phase === 'flip' && state.readyAt !== null && now >= state.readyAt;
     case 'optional': return step.choices.some(choice => choice.id === state.choice);

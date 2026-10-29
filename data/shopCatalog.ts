@@ -1,4 +1,5 @@
 import { SHOP_PRICES } from './shopPricing';
+import { BAKING_ASSETS } from './cooking/muffinIngredients';
 
 export type ShopCategory = 'vegetables' | 'fruit' | 'dairy' | 'pantry' | 'herbs';
 export type ProductUnit = 'piece' | 'gram' | 'milliliter';
@@ -25,6 +26,7 @@ export const SHOP_CATEGORIES: Array<{ id: 'all' | ShopCategory; label: string }>
 ];
 
 const PRODUCT_PACKAGES: Record<string, [number, ProductUnit, string]> = {
+  'sunflower-oil': [1000, 'milliliter', '1 liter'], 'baking-powder': [90, 'gram', '6 x 15 g'], salt: [500, 'gram', '500 g'], 'vanilla-extract': [35, 'milliliter', '35 ml'],
   tomato: [1, 'piece', 'per stuk'], carrot: [1, 'piece', 'per stuk'], pepper: [1, 'piece', 'per stuk'], cucumber: [1, 'piece', 'per stuk'],
   potato: [1, 'piece', 'per stuk'], onion: [1, 'piece', 'per stuk'], garlic: [1, 'piece', 'per bol'], broccoli: [1, 'piece', 'per stuk'],
   strawberry: [250, 'gram', '250 g'], blueberry: [125, 'gram', '125 g'], banana: [1, 'piece', 'per stuk'], apple: [1, 'piece', 'per stuk'],
@@ -43,7 +45,7 @@ const product = (id: string, name: string, category: ShopCategory): ShopProduct 
   id,
   name,
   category,
-  image: `/games/shop/products/${id}.webp?v=2`,
+  image: BAKING_ASSETS[id as keyof typeof BAKING_ASSETS] ?? `/games/shop/products/${id}.webp?v=2`,
   unitAmount,
   unit,
   packageLabel,
@@ -53,6 +55,10 @@ const product = (id: string, name: string, category: ShopCategory): ShopProduct 
 };
 
 export const SHOP_PRODUCTS: ShopProduct[] = [
+  product('sunflower-oil', 'Zonnebloemolie', 'pantry'),
+  product('baking-powder', 'Bakpoeder', 'pantry'),
+  product('salt', 'Zout', 'pantry'),
+  product('vanilla-extract', 'Vanille-extract', 'pantry'),
   product('tomato', 'Tomaat', 'vegetables'),
   product('carrot', 'Wortel', 'vegetables'),
   product('pepper', 'Paprika', 'vegetables'),

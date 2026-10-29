@@ -12,6 +12,14 @@ is een richting voor receptkeuze, geen oordeel over het kind of diens eten.
 
 ## Oefenen en economie
 
+Winkelmandje: bij een tekort kan het kind ter plekke voedings- en rekenvragen
+beantwoorden. Een goed antwoord verdient maximaal 5 CocoCoins, begrensd op het
+actuele tekort. Een fout antwoord verdient niets. Zodra het mandje betaalbaar
+is stopt de verdienoptie. De bestaande receptbeloningen veranderen niet.
+Vraagvoortgang en de beloning worden atomair opgeslagen met een unieke
+transactie per mandje/vraag, zodat herladen of een dubbele callback geen extra
+munten geeft. Het mandje zelf blijft ongewijzigd bewaard.
+
 Klokkijken: eerste voltooiing per spel/niveau 5, 7, 9, 11, 13 CocoCoins.
 Een nieuwe volledig afgeronde oefenronde verdient 4, 5, 6, 7, 8 CocoCoins.
 Een ronde bestaat uit een heel memorybord of vijf klokopdrachten. Geen

@@ -28,7 +28,7 @@ type Afdeling = 'planten' | 'voeding';
 export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenProps) {
   const [progress] = useState(loadCookingProgress);
   const [planten] = useState(() => plantKnowledge());
-  const [afdeling, setAfdeling] = useState<Afdeling>('planten');
+  const [afdeling, setAfdeling] = useState<Afdeling>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'voeding' ? 'voeding' : 'planten');
   const [openPlant, setOpenPlant] = useState<PlantKnowledge | null>(() => {
     if (typeof window === 'undefined') return null;
     const gevraagd = new URLSearchParams(window.location.search).get('plant');

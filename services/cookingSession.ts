@@ -5,6 +5,7 @@ import { emptyStepState } from '../data/cooking/preparation';
 import { getRecipeIssues } from '../data/cooking/validation';
 import { completeJourney } from './cookingProgress';
 import { consumeRecipeIngredients, missingIngredientMessage } from './recipeInventory';
+import { ovenResult } from '../data/cooking/oven';
 
 export function beginCookingAttempt(progress: CookingProgressState, recipe: RecipeConfig, replay = false): CookingProgressState {
   if (getRecipeIssues(recipe).length || !progress.journeys[recipe.id]) return progress;
@@ -30,8 +31,10 @@ export function beginCookingAttempt(progress: CookingProgressState, recipe: Reci
 
 export function completeCookingAttempt(progress: CookingProgressState, recipe: RecipeConfig, session: CookingSession) {
   const saved = progress.preparationSessions[recipe.id];
+  const ovenStep = recipe.preparation?.steps.find(step => step.mechanic === 'oven');
   if (saved?.completed && saved.attemptId === session.attemptId) return { ok: true, progress, message: null };
   if (!saved || saved.attemptId !== session.attemptId || progress.journeys[recipe.id]?.stage !== 'cooking'
+    || (ovenStep?.mechanic === 'oven' && (session.oven?.status !== 'served' || session.oven.result !== 'good' || session.oven.trayPlaced || ovenResult(session.oven, ovenStep.oven) !== 'good'))
     || getRecipeIssues(recipe).length || !recipe.preparation!.steps.every(step => session.completedStepIds.includes(step.id) && stepSatisfied(step, session.steps[step.id] ?? emptyStepState()))) {
     return { ok: false, progress, message: 'Deze kookpoging is veranderd. Sluit de keuken en probeer opnieuw.' };
   }

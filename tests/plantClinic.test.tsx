@@ -69,7 +69,7 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   const patient = { ...PATIENT_KINDS[0], consultId: 'consult-1' };
 
   const eerste = finishConsult(staat, patient, 0, false);
-  assert.equal(eerste.coins, 3);
+  assert.equal(eerste.coins, 2);
   assert.equal(eerste.stampEarned, false);
   staat = eerste.state;
 
@@ -78,10 +78,10 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   assert.equal(dubbel.coins, 0);
   assert.equal(dubbel.state, staat);
 
-  // Een misser of een hint levert minder op, maar nooit niets.
+  // Een denkstap of herkansing verandert de beloning niet.
   staat = finishConsult(staat, { ...patient, consultId: 'consult-2' }, 0, true).state;
   const derde = finishConsult(staat, { ...patient, consultId: 'consult-3' }, 2, false);
-  assert.equal(derde.coins, 1);
+  assert.equal(derde.coins, 2);
   assert.equal(derde.stampEarned, true);
   assert.equal(hasStamp(derde.state, patient.speciesId), true);
   assert.equal(derde.state.correct[patient.speciesId], STAMPS_NEEDED);

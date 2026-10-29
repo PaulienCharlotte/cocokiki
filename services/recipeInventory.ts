@@ -16,7 +16,12 @@ export function ingredientRequirements(recipe: RecipeConfig, progress: CookingPr
 /** Validate the entire recipe before making any deduction. Legacy prepaid items are retained. */
 export function consumeRecipeIngredients(progress: CookingProgressState, recipe: RecipeConfig) {
   const journey = progress.journeys[recipe.id];
-  const requirements = ingredientRequirements(recipe, progress, journey?.consumedIngredientIds);
+  const effectiveRecipe = { ...recipe, ingredients: recipe.ingredients.map(item => {
+    const optional = item.optionalPortion;
+    return optional && progress.preparationSessions[recipe.id]?.steps[optional.stepId]?.choice !== optional.selectedChoice
+      ? { ...item, amount: item.amount - optional.amount } : item;
+  }) };
+  const requirements = ingredientRequirements(effectiveRecipe, progress, journey?.consumedIngredientIds);
   if (!journey || requirements.some(item => !item.sufficient)) return { ok: false, progress, missing: requirements.filter(item => !item.sufficient) };
   const next = structuredClone(progress);
   for (const item of requirements) {

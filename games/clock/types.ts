@@ -1,4 +1,4 @@
-export type ClockGameId = 'memory' | 'set-clock' | 'race';
+export type ClockGameId = 'memory' | 'set-clock' | 'race' | 'world-times';
 export type ClockLevel = 1 | 2 | 3 | 4 | 5;
 export type ClockRaceMode = 'analog' | 'digital' | 'mixed';
 

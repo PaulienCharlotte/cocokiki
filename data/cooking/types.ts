@@ -20,6 +20,7 @@ export interface IngredientEntry {
 }
 
 export interface RecipeIngredient {
+  optionalPortion?: { amount: number; stepId: string; selectedChoice: string };
   ingredientId: string;
   amount: number;
   unit: 'piece' | 'gram' | 'milliliter';

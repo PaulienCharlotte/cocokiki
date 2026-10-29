@@ -1,6 +1,7 @@
 import React from 'react';
 import { RotateCcw } from 'lucide-react';
 import KitchenScale from './KitchenScale';
+import AmountInput from './AmountInput';
 
 interface DigitalScaleProps {
   bowlImage: string;
@@ -16,6 +17,7 @@ const INCREMENT_STYLE: Record<number, string> = { 5: 'is-add-5', 10: 'is-add-10'
 export default function DigitalScale({ ingredientImage, value, target, increments, onChange }: DigitalScaleProps) {
   return <div className="digital-scale-wrap">
     <KitchenScale value={value} full={target} ingredientImage={ingredientImage} />
+    <label className="digital-scale__entry"><AmountInput label="Gewicht in gram" value={value} maximum={Math.max(1000, target * 4)} onChange={onChange} /><span>g</span></label>
     <div className="cooking-weighing__controls">
       {increments.map(increment => <button
         type="button"

@@ -19,7 +19,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
   const [selected, setSelected] = useState<number>();
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [hint, setHint] = useState(false);
-  const stats = useRef({ correct: 0, total: 10, score: 0, mistakes: 0 });
+  const stats = useRef({ correct: 0, total: 10, score: 0, mistakes: 0, solved: 0, roundId: crypto.randomUUID() });
   const hadMistake = useRef(false), answered = useRef(false), finished = useRef(false);
   const finishRef = useRef(onFinish); finishRef.current = onFinish;
   const workspace = useRef<HTMLElement>(null), keyboard = useRef(false);
@@ -41,6 +41,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
     onSound(valid);
     if (valid) {
       answered.current = true; setFeedback('correct');
+      stats.current.solved++;
       if (!hadMistake.current) { stats.current.correct++; stats.current.score++; }
     } else { hadMistake.current = true; stats.current.mistakes++; setFeedback('wrong'); setHint(true); }
   };

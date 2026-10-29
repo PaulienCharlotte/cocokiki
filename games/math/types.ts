@@ -21,6 +21,6 @@ export interface MathQuestion {
   fruit?: 'strawberry' | 'blueberry';
   checkout?: import('./checkoutCatalog').CheckoutDetails;
 }
-export interface MathResult { correct: number; total: number; score: number; mistakes: number; raceId?: string }
+export interface MathResult { correct: number; total: number; score: number; mistakes: number; raceId?: string; roundId?: string; solved?: number }
 export interface MathGameProgress { completed: MathLevel[]; best: Partial<Record<MathLevel, MathResult>> }
 export interface MathProgress { version: 1; games: Record<MathGameId, MathGameProgress> }

@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Check, RotateCcw } from 'lucide-react';
-import { motion, useAnimationControls } from 'framer-motion';
-import type { CookingStepConfig, CookingStepState } from '../../data/cooking/preparation';
+import { Check, Minus, Plus, RotateCcw } from 'lucide-react';
+import { Button, IconButton } from '../../design-system';
+import { motion, MotionConfig, useAnimationControls, useReducedMotion } from 'framer-motion';
+import type { CookingStepConfig, CookingStepState, OvenState } from '../../data/cooking/preparation';
+import { emptyOven } from '../../data/cooking/oven';
+import { IngredientVessel, MeasureInteraction, OvenInteraction, PortionInteraction } from './BakingInteractions';
 import CookingAssetImage from './CookingAssetImage';
 import DragToTarget from './DragToTarget';
 import KitchenScale from './KitchenScale';
@@ -12,13 +15,16 @@ interface Props {
   onChange: (patch: Partial<CookingStepState>) => void;
   onComplete: (patch?: Partial<CookingStepState>) => void;
   onMiss: (message: string) => void;
+  oven?: OvenState;
+  onOvenChange?: (patch: Partial<OvenState>) => void;
 }
 function frameFor(frames: string[] | undefined, count: number, fallback: string) {
   return frames?.length ? frames[Math.min(count, frames.length - 1)] : fallback;
 }
-export default function CookingInteraction({ step, state, onChange, onComplete, onMiss }: Props) {
+export default function CookingInteraction({ step, state, onChange, onComplete, onMiss, oven, onOvenChange }: Props) {
   const toolControls = useAnimationControls();
   const vesselControls = useAnimationControls();
+  const reduced = useReducedMotion();
   const countRef = useRef(state.count);
   useEffect(() => { countRef.current = state.count; }, [state.count]);
   useEffect(() => {
@@ -27,6 +33,9 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
     return () => window.clearTimeout(timer);
   }, [step.id, state.phase, state.readyAt, onChange]);
 
+  if (step.mechanic === 'oven') return <OvenInteraction step={step} oven={oven ?? emptyOven()} onOvenChange={onOvenChange ?? (() => undefined)} onComplete={() => onComplete({ count: 1 })} />;
+  if (step.mechanic === 'measure') return <MotionConfig reducedMotion="user"><MeasureInteraction step={step} state={state} onChange={onChange} onComplete={() => onComplete()} /></MotionConfig>;
+  if (step.mechanic === 'portion') return <MotionConfig reducedMotion="user"><PortionInteraction step={step} state={state} onChange={onChange} onComplete={() => onComplete({ choice: state.choice ?? 'plain' })} /></MotionConfig>;
   if (step.mechanic === 'collect') return <div className="cooking-tools">
     {step.tools.map(({ id, label, asset }) => {
       const selected = state.selectedTools.includes(id);
@@ -40,18 +49,21 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
   </div>;
 
   if (step.mechanic === 'drag') return <DragToTarget sourceAsset={step.asset} sourceLabel={step.dropTarget.sourceLabel} targetLabel={step.dropTarget.label} targetAsset={step.dropTarget.asset}
+    targetContent={step.contents && step.dropTarget.asset ? <IngredientVessel asset={step.dropTarget.asset} contents={step.contents} /> : undefined}
     onHit={() => onComplete({ count: 1 })} onMiss={() => onMiss(`Laat los op de ${step.dropTarget.label.toLowerCase()}.`)} />;
 
   if (step.mechanic === 'repeat') {
     const repeat = () => {
       const count = Math.min(step.target, countRef.current + 1);
       countRef.current = count;
-      toolControls.start({ y: [0, 26, 0], rotate: [0, -14, 0], transition: { duration: .4, ease: 'easeInOut' } });
-      vesselControls.start({ scale: [1, 1.05, 1], transition: { duration: .35, ease: 'easeInOut' } });
+      if (!reduced) {
+        toolControls.start({ x: step.contents ? [0, 14, -14, 0] : [0, 0], y: [0, step.contents === 'berries' ? 12 : 26, 0], rotate: [0, step.contents === 'berries' ? -6 : -14, 0], transition: { duration: .4, ease: 'easeInOut' } });
+        vesselControls.start({ scale: [1, 1.05, 1], transition: { duration: .35, ease: 'easeInOut' } });
+      }
       if (count >= step.target) onComplete({ count }); else onChange({ count });
     };
     return <div className="cooking-tap"><div className="cooking-tap__scene">
-      <motion.div className="cooking-tap__vessel" animate={vesselControls}><CookingAssetImage src={frameFor(step.vesselByCount, state.count, step.asset)} /></motion.div>
+      <motion.div className="cooking-tap__vessel" animate={vesselControls}>{step.contents ? <IngredientVessel asset={step.asset} contents={step.contents} /> : <CookingAssetImage src={frameFor(step.vesselByCount, state.count, step.asset)} />}</motion.div>
       {step.tapTool ? <motion.button type="button" className="cooking-tap__tool" animate={toolControls} whileHover={{ scale: 1.05 }} whileTap={{ scale: .92 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`}>
         <CookingAssetImage src={frameFor(step.toolByCount, state.count, step.tapTool.asset)} />
       </motion.button> : <motion.button type="button" className="cooking-tap__overlay" whileTap={{ scale: .94, rotate: -2 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`} />}
@@ -62,14 +74,14 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
   if (step.mechanic === 'weigh') {
     const suffix = step.unit === 'gram' ? 'g' : 'ml';
     const change = (delta: number) => onChange({ quantity: Math.max(0, Math.min(step.maximum, state.quantity + delta)) });
-    return <div className="cooking-weighing"><KitchenScale value={state.quantity} full={step.target} ingredientImage={step.asset} unit={suffix} />
+    return <div className="cooking-weighing" data-layered={!!step.contents}><KitchenScale value={state.quantity} full={step.target} ingredientImage={step.asset} contents={step.contents} unit={suffix} />
       <div className="cooking-weighing__controls">
-        {step.increments.map(increment => <button key={increment} type="button" className={`cooking-chip is-add-${increment === 5 ? 5 : 10}`} onClick={() => change(increment)}>+{increment} {suffix}</button>)}
-        <button type="button" className="cooking-chip is-subtract" onClick={() => change(-step.increments[0])}>−{step.increments[0]} {suffix}</button>
-        <button type="button" className="cooking-chip is-reset" onClick={() => onChange({ quantity: 0 })} aria-label="Weegschaal leegmaken"><RotateCcw /></button>
-      </div><button type="button" className="cooking-button" disabled={state.quantity !== step.target} onClick={() => onComplete()}>
+        {step.increments.map(increment => <Button key={increment} variant="quiet" startIcon={<Plus />} onClick={() => change(increment)}>{increment} {suffix}</Button>)}
+        <Button variant="quiet" startIcon={<Minus />} onClick={() => change(-step.increments[0])}>{step.increments[0]} {suffix} terug</Button>
+        <IconButton label="Weegschaal leegmaken" icon={<RotateCcw />} onClick={() => onChange({ quantity: 0 })} />
+      </div><Button disabled={state.quantity !== step.target} onClick={() => onComplete()}>
         {state.quantity === step.target ? `Precies ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'}!` : `Maak er ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'} van`}
-      </button></div>;
+      </Button></div>;
   }
   if (step.mechanic === 'heat') return <div className="cooking-heating">
     <motion.div className="cooking-heating__pan" animate={state.count > 0 ? { scale: [1, 1.05, 1] } : {}} transition={{ duration: .4 }}><CookingAssetImage src={step.asset} /></motion.div>

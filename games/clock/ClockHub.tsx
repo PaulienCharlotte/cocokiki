@@ -7,6 +7,7 @@ const GAMES: Array<{ id: ClockGameId; title: string; description: string; accent
   { id: 'memory', title: 'Klokmemory', description: 'Vind de gelijke tijden.', accent: 'coral', image: '/games/school/clock/clock-memory.webp' },
   { id: 'set-clock', title: 'Zet de klok', description: 'Draai de wijzers goed.', accent: 'wood', image: '/games/school/clock/clock-set.webp' },
   { id: 'race', title: 'Klokkenrace', description: 'Kies de juiste klok.', accent: 'blue', image: '/games/school/clock/clock-race.webp' },
+  { id: 'world-times', title: 'Wereldtijden', description: 'Reis langs klokken over de hele wereld.', accent: 'blue', image: '/games/school/clock/clock-navigation.webp' },
 ];
 
 export default function ClockHub({ progress, onPlay }: { progress: ClockProgress; onPlay: (game: ClockGameId) => void }) {

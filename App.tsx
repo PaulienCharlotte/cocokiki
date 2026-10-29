@@ -7,11 +7,14 @@ import { resolveRoute, type AppRoute } from './platform/routes';
 import { CURRENCY_CHANGE_EVENT, loadCurrency } from './services/currency';
 import './components/cooking/foundation.css';
 import { guardedNavigation, hasNavigationGuard } from './services/navigationGuard';
+import { ISLANDS_BY_ID, islandForActivity } from './platform/dreamworld';
+import './components/dreamworld/dreamworld.css';
+import './components/memory-compact.css';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
-const ChallengesScreen = lazy(() => import('./pages/ChallengesScreen'));
 const TreehouseRoom = lazy(() => import('./pages/TreehouseRoom'));
+const TreehouseUnitTest = lazy(() => import('./pages/TreehouseUnitTest'));
 const CookbookScreen = lazy(() => import('./pages/CookbookScreen'));
 const EncyclopediaScreen = lazy(() => import('./pages/EncyclopediaScreen'));
 const TreehouseInterior = lazy(() => import('./pages/TreehouseInterior'));
@@ -20,9 +23,14 @@ const PlantClinicScreen = lazy(() => import('./pages/PlantClinicScreen'));
 const DesignSystemPreview = lazy(() => import('./pages/DesignSystemPreview'));
 const ClockModule = lazy(() => import('./games/clock/ClockModule'));
 const MathModule = lazy(() => import('./games/math/MathModule'));
+const IslandEnvironment = lazy(() => import('./pages/IslandEnvironment'));
+const DecorShop = lazy(() => import('./components/shop/DecorShop'));
+const PlantFamilyPanel = lazy(() => import('./components/plants/PlantFamilyPanel'));
+const FlagsMemory = lazy(() => import('./pages/FlagsMemory'));
 
 /** Waar de terugknop je brengt, per pagina. */
 const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: string }>> = {
+  store: { path: '/shop', label: 'Terug naar winkels' },
   'treehouse-section': { path: '/treehouse/kitchen', label: 'Terug naar de keuken' },
   'treehouse-room': { path: '/treehouse', label: 'Terug naar de boomhut' },
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
@@ -78,9 +86,22 @@ const App: React.FC = () => {
     <WorldHub coins={coins} onNavigate={navigate} />
   </Suspense>;
 
-  if (current.route.page === 'math') return <Suspense fallback={<LoadingScreen />}><MathModule onBack={() => navigate('/challenges')} onHome={() => navigate('/')} /></Suspense>;
-
-  const worldContent = current.route.page === 'destination'
+  const parentIsland = islandForActivity(current.route.path + window.location.search);
+  const backTarget = current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : BACK_TARGET[current.route.page];
+  const back = () => navigate(backTarget?.path ?? '/');
+  const worldContent = current.route.page === 'island'
+      ? <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      : current.route.page === 'math'
+      ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={() => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
+      : current.route.page === 'store'
+      ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} onBack={back} />
+      : current.route.page === 'plant-collection'
+      ? <div className="dream-plant-collection"><PlantFamilyPanel onNavigate={navigate} onClose={() => navigate('/')} /></div>
+      : current.route.page === 'flags-memory'
+      ? <FlagsMemory onBack={back} />
+      : current.route.page === 'game' && GameModule
+      ? <GameModule onHome={() => navigate('/')} onBack={back} />
+      : current.route.page === 'destination'
       ? current.route.destinationId === 'treehouse'
         ? <TreehouseRoom onNavigate={navigate} />
         : current.route.destinationId === 'shop'
@@ -88,33 +109,32 @@ const App: React.FC = () => {
           : <DestinationScreen destination={DESTINATIONS_BY_ID[current.route.destinationId]} onNavigate={navigate} />
       : current.route.page === 'treehouse-section'
         ? <CookbookScreen onNavigate={navigate} />
+      : current.route.page === 'treehouse-unit-test'
+        ? <TreehouseUnitTest />
       : current.route.page === 'encyclopedia'
-        ? <EncyclopediaScreen onNavigate={navigate} />
+        ? <EncyclopediaScreen key={current.route.path + window.location.search} onNavigate={navigate} />
       : current.route.page === 'treehouse-room'
         ? <TreehouseInterior room={current.route.room} onNavigate={navigate} />
       : current.route.page === 'plant-clinic'
         ? <PlantClinicScreen />
       : current.route.page === 'challenges'
-        ? <ChallengesScreen onNavigate={navigate} />
+        ? <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'clock'
-        ? <ClockModule onBack={() => navigate('/challenges')} />
+        ? <ClockModule onBack={() => navigate('/islands/discovery')} />
         : null;
 
-  if (worldContent) return <AppShell
+  if (worldContent) return <div className="dream-app"><AppShell
     coins={coins}
     onHome={() => navigate('/')}
     onNavigate={navigate}
     activePath={current.route.path}
-    onBack={() => navigate(BACK_TARGET[current.route.page]?.path ?? '/')}
-    backLabel={BACK_TARGET[current.route.page]?.label ?? 'Terug naar de wereld'}
-  ><Suspense fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell>;
+    onBack={back}
+    backLabel={backTarget?.label ?? 'Terug naar Dreamworld'}
+  ><Suspense key={current.route.path + window.location.search} fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell></div>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />
   </Suspense>;
-  if (!GameModule) return null;
-  return <Suspense fallback={<div className="platform-loading" role="status"><img src="/images/cocokiki-logo.png" alt="" />Spel laden...</div>}>
-    <GameModule onHome={() => navigate('/')} onBack={() => navigate('/challenges')} />
-  </Suspense>;
+  return null;
 };
 
 function LoadingScreen() {

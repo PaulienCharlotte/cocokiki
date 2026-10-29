@@ -1,6 +1,7 @@
 import { PATIENT_KINDS, type PatientKind } from '../data/plants/clinic';
 import { PLANT_SPECIES_BY_ID } from '../data/plants/species';
 import { commitLocalState, readDocument } from './localState';
+import { learningReward } from './learningReward';
 
 export const PLANT_CLINIC_KEY = 'cocokiki:plant-clinic:v1';
 export const PLANT_CLINIC_CHANGE_EVENT = 'cocokiki:plant-clinic-change';
@@ -90,8 +91,7 @@ export interface ConsultResult {
 }
 
 /**
- * Rond een consult af. In één keer goed levert het meest op, maar ook na een
- * misser of een hint verdien je iets: opgeven is nooit nodig.
+ * Denkstappen en herkansingen verlagen de gedeelde leerbeloning niet.
  */
 export function finishConsult(
   state: ClinicState,
@@ -104,7 +104,7 @@ export function finishConsult(
   }
   const eerder = state.correct[patient.speciesId] ?? 0;
   const nu = eerder + 1;
-  const coins = mistakes === 0 && !hintUsed ? 3 : mistakes === 0 ? 2 : 1;
+  const coins = learningReward();
   return {
     state: {
       ...state,

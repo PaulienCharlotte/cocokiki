@@ -1,0 +1,20 @@
+.unit-test { min-height: 100dvh; padding: calc(var(--space-12) * 3) var(--space-4) var(--space-8); background: var(--color-background-calm); color: var(--color-text); }
+.unit-test__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin: 0 auto var(--space-6); max-width: 1180px; }
+.unit-test__toolbar h1 { margin: 0; font-size: var(--font-size-xl); }
+.unit-test__controls { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.unit-test__controls label { display: flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); font-size: var(--font-size-sm); }
+.unit-test__controls input { accent-color: var(--color-primary); }
+.unit-test__controls input[type="checkbox"] { width: var(--space-5); height: var(--space-5); }
+.unit-test__zoom input { width: 100px; min-height: var(--touch-target); }
+.unit-test__zoom output { width: 5ch; text-align: end; font-variant-numeric: tabular-nums; }
+.unit-test__viewport { max-width: 1180px; margin: auto; overflow: auto; padding: var(--space-2); }
+.unit-test__plane { position: relative; margin-inline: auto; flex-shrink: 0; }
+.unit-test__room { position: absolute; overflow: hidden; }
+.unit-test__room img { position: absolute; display: block; max-width: none; pointer-events: none; user-select: none; }
+.unit-test :focus-visible { outline: 3px solid var(--color-focus-ring); outline-offset: var(--space-1); }
+@media (max-width: 600px) {
+  .unit-test { padding-inline: var(--space-2); }
+  .unit-test__toolbar { padding-inline: var(--space-2); gap: var(--space-2); }
+  .unit-test__controls { gap: var(--space-2); }
+  .unit-test__viewport { padding: 0; }
+}

@@ -2,6 +2,7 @@ import { commitLocalState, readDocument, readLocalState, subscribeLocalState } f
 import { resultStatus } from './engine';
 import { RACE_DAILY_COIN_CAP } from './config';
 import { MATH_GAME_IDS, MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
+import { learningReward } from '../../services/learningReward';
 
 export const MATH_PROGRESS_KEY = 'cocokiki:math-progress:v1';
 export const RACE_EARNINGS_KEY = 'cocokiki:math-race-earnings:v1';
@@ -64,17 +65,18 @@ export function finishMathLevel(game: MathGameId, level: MathLevel, result: Math
       if (previousRun) return { ok: previousRun.signature === signature, reward: 0, progress };
       const day = raceDayKey(now), earned = earnings.days[day] ?? 0;
       if (!Number.isSafeInteger(earned) || earned < 0) return { ok: false, reward: 0, progress };
-      const reward = Math.min(result.correct, Math.max(0, RACE_DAILY_COIN_CAP - earned));
+      const reward = learningReward(result.correct);
       earnings.days[day] = earned + reward;
       earnings.runs[result.raceId] = { reward, signature };
       const saved = commitLocalState({ [MATH_PROGRESS_KEY]: JSON.stringify(next), [RACE_EARNINGS_KEY]: JSON.stringify(earnings) }, [{ id: `math:checkout:${result.raceId}`, amount: reward }]);
       return { ok: saved.status === 'applied' || saved.status === 'duplicate', reward: saved.status === 'applied' ? reward : 0, progress: saved.status === 'invalid' ? progress : next };
     } catch { return { ok: false, reward: 0, progress }; }
   }
-  const operations: Array<{ id: string; amount: number }> = [];
-  if (status.passed) operations.push({ id: `math:${game}:level:${level}`, amount: 5 });
-  if (status.perfect) operations.push({ id: `math:${game}:perfect:${level}`, amount: 3 });
-  if (record.completed.length === 5) operations.push({ id: `math:${game}:all-levels`, amount: 10 });
+  const solved = result.solved ?? result.correct;
+  if (!Number.isSafeInteger(solved) || solved < result.correct || solved > result.total) return { ok: false, reward: 0, progress };
+  const roundId = result.roundId ?? `legacy:${game}:${level}:${JSON.stringify(result)}`;
+  if (!roundId || roundId.length > 500) return { ok: false, reward: 0, progress };
+  const operations = [{ id: `math:round:${game}:${roundId}`, amount: learningReward(solved) }];
   // Read the receipt before committing so replays can report only newly earned coins.
   const before = loadRewardLedger();
   const reward = operations.filter(operation => !Object.prototype.hasOwnProperty.call(before, operation.id)).reduce((sum, operation) => sum + operation.amount, 0);

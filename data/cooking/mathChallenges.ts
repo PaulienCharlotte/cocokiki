@@ -1,5 +1,6 @@
 import type { MathChallengeConfig, RecipeId } from './types';
 import { FRUIT_YOGURT_MATH } from './fruitYogurt';
+import { MUFFIN_MATH } from './blueberryMuffins';
 
 export const BANANA_PANCAKE_MATH_CHALLENGES: MathChallengeConfig[] = [
   {
@@ -42,6 +43,7 @@ export const BANANA_PANCAKE_MATH_CHALLENGES: MathChallengeConfig[] = [
 ];
 
 export const MATH_CHALLENGES_BY_RECIPE: Record<RecipeId, MathChallengeConfig[]> = {
+  'blueberry-muffins': MUFFIN_MATH,
   'banana-pancakes': BANANA_PANCAKE_MATH_CHALLENGES,
   'fruit-yogurt': FRUIT_YOGURT_MATH,
   'oat-muffins': [],

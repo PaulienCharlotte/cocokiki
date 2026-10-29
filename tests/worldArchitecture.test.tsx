@@ -64,23 +64,22 @@ test('game header reuses the homepage menu with coins and profile controls', () 
   assert.doesNotMatch(html, /app-header platform-header/);
 });
 
-test('world hub renders three accessible canvas hotspots and compact tools', () => {
+test('Dreamworld renders one intact world image, six hotspots and compact tools', () => {
   assert.deepEqual(WORLD_ISLANDS.map(island => island.path), ['/treehouse', '/challenges', '/shop']);
   const html = renderToStaticMarkup(<WorldHub coins={69} onNavigate={() => undefined} />);
-  assert.equal((html.match(/world-island world-island--/g) ?? []).length, 3);
+  assert.equal((html.match(/class="dream-hotspot"/g) ?? []).length, 6);
   assert.doesNotMatch(html, /world-bridge/);
-  assert.match(html, /aria-label="Mijn Boomhut openen"/);
-  assert.match(html, /aria-label="School openen"/);
+  assert.match(html, /aria-label="Mijn boomhut openen"/);
+  assert.match(html, /aria-label="Rekeneiland openen"/);
   assert.doesNotMatch(html, /aria-label="Koken openen"/);
-  assert.match(html, /aria-label="Winkels openen"/);
+  assert.match(html, /aria-label="Planteneiland openen"/);
+  assert.match(html, /aria-label="Kookeiland openen"/);
+  assert.match(html, /aria-label="Ontdekkingseiland openen"/);
+  assert.match(html, /aria-label="Taleneiland openen"/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
-  assert.match(html, /games\/world-hub\/v2\/world-background-desktop\.webp/);
-  assert.match(html, /games\/world-hub\/v2\/world-background-mobile\.webp/);
-  assert.match(html, /games\/world-hub\/v2\/treehouse-island\.webp/);
-  assert.match(html, /games\/world-hub\/v2\/school-island\.webp/);
-  assert.match(html, /games\/world-hub\/v2\/shop-island\.webp/);
+  assert.match(html, /dreamworld\/world-map\.png/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.png/);
   assert.match(html, /images\/avatars\/coco\.webp/);
@@ -234,9 +233,9 @@ test('room inventory migrates existing purchases and rejects invalid or excess p
 
 test('shop catalog has configurable package prices and enables purchases', () => {
   assert.equal(SHOP_CATEGORIES[0].id, 'all');
-  assert.equal(SHOP_PRODUCTS.length, 40);
+  assert.equal(SHOP_PRODUCTS.length, 44);
   assert.ok(SHOP_PRODUCTS.every(product => Number.isInteger(product.price) && product.price > 0 && product.purchasable));
-  assert.ok(SHOP_PRODUCTS.every(product => product.image === `/games/shop/products/${product.id}.webp?v=2`));
+  assert.ok(SHOP_PRODUCTS.every(product => product.image.startsWith('/games/shop/products/') || product.image.startsWith('/assets/library/cooking/')));
   assert.ok(new Set(SHOP_PRODUCTS.map(product => product.id)).size === SHOP_PRODUCTS.length);
   assert.equal(new Set(SHOP_PRODUCTS.map(product => product.image)).size, SHOP_PRODUCTS.length);
 });
@@ -304,7 +303,7 @@ test('interactive kitchen separates groceries and keeps standard equipment avail
   const progress = createEmptyCookingProgress();
   progress.inventory.consumables = { banana: 2, eggs: 3, oats: 40 };
   assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.id), ['banana', 'eggs', 'oats']);
-  assert.deepEqual(buildKitchenInventory(progress, 'equipment').map(item => item.id), ['bowl', 'fork', 'pan', 'spatula', 'spoon']);
+  assert.deepEqual(new Set(buildKitchenInventory(progress, 'equipment').map(item => item.id)), new Set(['bowl', 'fork', 'pan', 'spatula', 'spoon', 'whisk', 'scale', 'measuring-jug', 'muffin-pan']));
   assert.deepEqual(buildKitchenInventory(createEmptyCookingProgress(), 'groceries'), []);
   progress.inventory.consumables = { yogurt: 350, strawberry: 175 };
   assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.quantityLabel), ['350 ml in voorraad', '175 g in voorraad']);

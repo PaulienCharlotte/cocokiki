@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, ChevronDown, UserRound } from 'lucide-react';
+import { ArrowLeft, Backpack as BackpackIcon, ShoppingBag, Map, BookOpen, ChevronDown, UserRound } from 'lucide-react';
+import Backpack from '../dreamworld/Backpack';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -17,9 +18,11 @@ interface WorldTopBarProps {
   onNavigate?: (path: string) => void;
   /** Het pad waar je nu bent, zodat de knop zichzelf niet aanprijst. */
   activePath?: string;
+  worldShortcut?: boolean;
 }
 
-export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false, onNavigate, activePath }: WorldTopBarProps) {
+export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false, onNavigate, activePath, worldShortcut = false }: WorldTopBarProps) {
+  const [backpackOpen, setBackpackOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
   const [avatarId, setAvatarId] = useState<ProfileAvatarId>(loadProfileAvatar);
@@ -57,6 +60,10 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </button>
       </div>
       <div className="world-hud__tools">
+        {worldShortcut && <IconButton className="world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
+        {onNavigate && <IconButton label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
+        {onNavigate && <IconButton label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
+        {onNavigate && <IconButton className="world-backpack-shortcut" label="Mijn rugzak" size="small" icon={<BackpackIcon size={20} />} onClick={() => setBackpackOpen(true)} />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>
@@ -82,6 +89,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               setProfileOpen(false);
               setAvatarDialogOpen(true);
             }}><UserRound size={21} />Mijn profiel</button>
+            {onNavigate && <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); setBackpackOpen(true); }}><BackpackIcon size={21} />Mijn rugzak</button>}
             {onNavigate && <button
               type="button"
               role="menuitem"
@@ -93,6 +101,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </div>
       </div>
     </header>
+    {backpackOpen && onNavigate && <Backpack onClose={() => setBackpackOpen(false)} onNavigate={onNavigate} />}
 
     <Dialog
       open={avatarDialogOpen}

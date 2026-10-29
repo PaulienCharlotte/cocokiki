@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { ASSET_LIBRARY } from '../../data/assetLibrary';
 import { EQUIPMENT_BY_ID } from '../../data/cooking/catalog';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
-import { emptyStepState, type CookingStepState } from '../../data/cooking/preparation';
+import { emptyStepState, type CookingStepState, type OvenState } from '../../data/cooking/preparation';
+import { restoreOven, tickOven } from '../../data/cooking/oven';
 import { advancePreparation, createCookingSession, updateCookingStep } from '../../data/cooking/session';
 import { getRecipeIssues } from '../../data/cooking/validation';
 import { loadCookingProgress, saveCookingProgress } from '../../services/cookingProgress';
@@ -24,7 +25,7 @@ interface Props {
   onClose: () => void;
   onShop?: () => void;
 }
-const STATION_LABELS = { cooktop: 'Kookplaat', worktop: 'Werkblad', kitchen: 'Keuken' } as const;
+const STATION_LABELS = { cooktop: 'Kookplaat', worktop: 'Werkblad', kitchen: 'Keuken', oven: 'Oven' } as const;
 
 export default function CookingExperience(props: Props) {
   const { recipe, onProgressChange, onClose, onShop } = props;
@@ -38,12 +39,30 @@ export default function CookingExperience(props: Props) {
   const session = progress.preparationSessions[recipe.id] ?? initial.current;
   const sessionRef = useRef(session);
   sessionRef.current = session;
+  const clockPaused = useRef(false);
+  clockPaused.current = bookOpen || !!visibleTip;
+  const ovenStep = recipe.preparation?.steps.find(item => item.mechanic === 'oven');
+
+  useEffect(() => {
+    if (ovenStep?.mechanic !== 'oven') return;
+    const timer = window.setInterval(() => {
+      if (document.visibilityState !== 'visible' || clockPaused.current) return;
+      const current = loadCookingProgress();
+      const saved = current.preparationSessions[recipe.id];
+      if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || !saved.oven) return;
+      const oven = tickOven(saved.oven, ovenStep.oven, 1);
+      if (JSON.stringify(oven) === JSON.stringify(saved.oven)) return;
+      const next = { ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: { ...saved, oven } } };
+      if (saveCookingProgress(next, undefined, { rewards: false })) accept(next);
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [recipe.id]);
 
   const accept = (next: CookingProgressState) => { sessionRef.current = next.preparationSessions[recipe.id]; setProgress(next); onProgressChange(next); };
   const persist = (next: CookingProgressState, presentationOnly = false) => {
     const nextSession = next.preparationSessions[recipe.id];
     const nextStep = recipe.preparation?.steps.find(item => item.id === nextSession?.stepId);
-    const tip = nextSession && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
+    const tip = nextSession && !visibleTip && !(nextStep?.mechanic === 'oven') && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
     if (tip) next = { ...next, preparationSessions: { ...next.preparationSessions, [recipe.id]: presentCookingTip(nextSession, tip) } };
     if (!saveCookingProgress(next, undefined, presentationOnly ? { rewards: false } : undefined)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
     accept(next);
@@ -64,7 +83,7 @@ export default function CookingExperience(props: Props) {
   const step = preparation.steps.find(item => item.id === session.stepId) ?? preparation.steps[0];
   const index = preparation.steps.indexOf(step);
   const state = session.steps[step.id] ?? emptyStepState();
-  const background = step.station === 'kitchen' ? ASSET_LIBRARY.treehouse.rooms.kitchen : ASSET_LIBRARY.treehouse.stations[step.station];
+  const background = step.station === 'kitchen' ? ASSET_LIBRARY.treehouse.rooms.kitchen : ASSET_LIBRARY.treehouse.stations[step.station === 'oven' ? 'worktop' : step.station];
 
   const change = (patch: Partial<CookingStepState>, advance = false) => {
     const current = loadCookingProgress();
@@ -72,6 +91,12 @@ export default function CookingExperience(props: Props) {
     const live = sessionRef.current;
     if (!saved || !live || saved.attemptId !== live.attemptId || saved.stepId !== step.id || saved.completed) {
       setMessage('Je kookpoging is veranderd. Sluit dit scherm en open het recept opnieuw.'); return;
+    }
+    if (advance && step.mechanic === 'oven') {
+      const oven = restoreOven(saved.oven);
+      if (step.action === 'preheat' && (!oven.powered || oven.temperature !== step.oven.targetTemperature)) return;
+      if (step.action === 'bake' && (oven.result !== 'good' || oven.status !== 'finished')) return;
+      if (step.action === 'cool' && (oven.result !== 'good' || oven.status !== 'served' || oven.trayPlaced)) return;
     }
     let nextSession = updateCookingStep(saved, patch);
     if (advance) nextSession = advancePreparation(nextSession, recipe);
@@ -82,6 +107,13 @@ export default function CookingExperience(props: Props) {
       return;
     }
     if (persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } })) setMessage(null);
+  };
+  const changeOven = (patch: Partial<OvenState>) => {
+    const current = loadCookingProgress();
+    const saved = current.preparationSessions[recipe.id];
+    if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || saved.stepId !== step.id) return;
+    const oven = restoreOven({ ...restoreOven(saved.oven), ...patch });
+    persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: { ...saved, oven } } }, true);
   };
   const replay = () => {
     const current = loadCookingProgress();
@@ -121,9 +153,10 @@ export default function CookingExperience(props: Props) {
       </aside>}
       {visibleTip && <CookingTipCard tip={visibleTip} onDismiss={closeTip} />}
       <article className="cooking-card"><small className="cooking-card__station">{STATION_LABELS[step.station]}</small><h1 id="cooking-step-title">{step.title}</h1><p className="cooking-card__instruction">{step.instruction}</p>
+        {session.oven?.powered && step.mechanic !== 'oven' && <output className="baking-oven-status">Oven: {Math.round(session.oven.actualTemperature)} °C · {session.oven.preheated ? 'Klaar voor het bakken' : 'Warmt op'}</output>}
         {(message || stockMessage) && <div className="cooking-card__hint is-nudge" role="alert"><p>{message ?? stockMessage}</p>{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</div>}
         <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${step.station === 'kitchen' ? '' : ' has-surface'}`} style={step.station === 'kitchen' ? undefined : { backgroundImage: `url(${background})` }}>
-          <React.Fragment key={`${session.attemptId}:${step.id}:${retry}`}><CookingInteraction step={step} state={state} onChange={patch => change(patch)} onComplete={patch => change(patch ?? {}, true)} onMiss={setMessage} /></React.Fragment>
+          <React.Fragment key={`${session.attemptId}:${step.id}:${retry}`}><CookingInteraction step={step} state={state} oven={session.oven} onOvenChange={changeOven} onChange={patch => change(patch)} onComplete={patch => change(patch ?? {}, true)} onMiss={setMessage} /></React.Fragment>
         </div><p className="cooking-card__hint">{step.hint}</p>
       </article>
     </div>

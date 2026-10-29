@@ -1,6 +1,8 @@
 import { BANANA_PREPARATION } from './bananaPancakeCooking';
 import { BANANA_PANCAKE_MATH_CHALLENGES } from './mathChallenges';
 import { FRUIT_YOGURT_MATH, FRUIT_YOGURT_PREPARATION } from './fruitYogurt';
+import { BLUEBERRY_MUFFINS } from './blueberryMuffins';
+import { BAKING_ASSETS, MUFFIN_INGREDIENTS } from './muffinIngredients';
 import type {
   CookingProgressState,
   CookingAssetRegistry,
@@ -33,6 +35,7 @@ export const COOKING_ASSETS: CookingAssetRegistry = {
 };
 
 export const INGREDIENTS: IngredientEntry[] = [
+  ...MUFFIN_INGREDIENTS,
   {
     id: 'banana', name: 'Banaan', image: COOKING_ASSETS.ingredients.banana, contentStatus: 'ready', nutrientIds: ['carbohydrates', 'fiber'],
     origin: 'Bananen groeien aan grote kruidenplanten in warme gebieden.',
@@ -65,6 +68,7 @@ export const INGREDIENTS: IngredientEntry[] = [
 ];
 
 export const EQUIPMENT: EquipmentItem[] = [
+  ...Object.entries({ whisk: ['Garde', '/assets/library/cooking/kit/whisk.webp'], scale: ['Weegschaal', '/assets/library/cooking/kit/scale.webp'], 'measuring-jug': ['Maatbeker', BAKING_ASSETS.jug], 'muffin-pan': ['Muffinbakvorm', BAKING_ASSETS.pan] }).map(([id, [name, image]]) => ({ id, name, image, contentStatus: 'ready' as const, permanent: true as const })),
   { id: 'bowl', name: 'Mengkom', image: COOKING_ASSETS.equipment.bowl, contentStatus: 'ready', permanent: true },
   { id: 'fork', name: 'Vork', image: COOKING_ASSETS.equipment.fork, contentStatus: 'ready', permanent: true },
   { id: 'pan', name: 'Koekenpan', image: COOKING_ASSETS.equipment.pan, contentStatus: 'ready', permanent: true },
@@ -93,6 +97,7 @@ const bananaPancakeActions = [
 }));
 
 export const RECIPES: RecipeConfig[] = [
+  BLUEBERRY_MUFFINS,
   {
     id: 'banana-pancakes', name: 'Bananenpannenkoekjes', category: 'breakfast', availability: 'playable', requiredCompletedRecipes: 0, level: 1,
     shortDescription: 'Zachte pannenkoekjes van banaan, ei en havermout.', preparationMinutes: 15, servings: 2,

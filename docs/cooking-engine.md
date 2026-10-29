@@ -1,5 +1,143 @@
 # Cooking Engine
 
+## Shopping Practice and Direct Amount Entry (2026-10-29)
+
+`components/shop/BasketPractice.tsx` replaces the basket item list temporarily,
+not the page or shopping session. If its total exceeds the live wallet, the child
+can answer alternating nutrient/function and weight/arithmetic questions inside
+the drawer. Recipe shopping reuses that recipe's learned memory nutrients; free
+shopping uses the central beginner nutrient library. Wrong answers can be retried.
+Correct answers earn up to 5 coins, capped at the remaining basket deficit, and
+then stop. The existing checkout remains explicit; no purchase is automatic.
+
+`services/shoppingPractice.ts` persists a question cursor and earned amount per
+basket session inside the existing wallet document envelope. Its atomic reward
+transaction ID contains the basket ID and question ID. It rereads the stored
+basket and wallet before awarding, rejects stale callbacks/replaced baskets, and
+does not modify basket contents or price snapshots. Reloading retains both the
+basket and question progress. ShopScreen now only accepts a basket change after
+its save succeeds, with an error message on failure.
+
+`components/cooking/AmountInput.tsx` supplies labelled numeric keyboard entry to
+the recipe-scaling/quantity steppers and DigitalScale. Plus/minus controls remain.
+Blank/intermediate edits are allowed; blur or Enter normalizes the amount to a
+whole number in range. New styles live next to these components, not in world.css.
+Browser tests cover deficit earning through checkout, saved basket/question after
+reload, wrong answers, typed 200->400 and 195->390 gram amounts, scale entry and
+320/375/1200px layouts. Service tests cover duplicate rewards and failed writes.
+
+## Blueberry Muffins and Generic Baking (2026-10-29)
+
+`data/cooking/blueberryMuffins.ts` registers a playable ten-portion recipe in the
+same CookingExperience. Banana pancakes, fruit yogurt and the pending oat recipe
+keep their IDs and progress. `BakingInteractions.tsx` adds generic `measure`,
+`portion` and `oven` renderers, not a muffin page. New UI uses design-system
+buttons/tokens, native labelled sliders, keyboard alternatives and reduced-motion
+styles. Existing weighing now wraps its controls on narrow screens; only steps
+with `contents` opt into programmatically drawn bowl/scale contents.
+
+### Oven State and Clock Policy
+
+`preparation.ts` defines explicit `OvenConfig` and `OvenState`; `oven.ts` contains
+pure restoration, heating, start validation and result evaluation. Target/range,
+temperature tolerance, time window, acceleration, preheat rate and cooling delay
+come from the recipe. The legacy heat level is unchanged. A preheat step powers
+the shared session oven; foreground ticks keep it warming while other steps run.
+Door, tray, actual/set temperature, chosen/elapsed time, accumulated temperature
+exposure, result and cooling progress are persisted with the existing session.
+
+The controller advances at most one simulated second per foreground tick.
+Unmounting, hidden tabs, recipe dialogs and Coco tips pause the oven. No deadline
+or offline elapsed-time calculation is used: reloading resumes the saved elapsed
+time, so a batch cannot burn while the player is away. Existing pancake timers
+retain their absolute-deadline behavior. Failed writes do not advance the saved
+oven. Multi-tab simultaneous writes retain the existing localStorage limitation.
+
+Starting requires power, preheat, a tray, closed door and a selected duration.
+Results compare the average simulated baking temperature and elapsed minutes
+with configured tolerances; this is educational feedback, not a food-safety
+thermal model. Short bakes can continue for three more simulated minutes. A dark
+batch offers a baking-practice reset, not a claim that burned food can be repaired.
+Successful completion requires all steps plus a good, removed and cooled batch.
+CSS layers implement rising, color changes and ten portions; existing oven open/
+closed images and a code-drawn cooling rack are reused.
+
+### Measures, Ingredients and Economy
+
+`recipeMeasures.ts` converts quarter-teaspoon counts using ingredient-specific
+reference estimates: baking powder 4 g/tsp, fine/table salt 6 g/tsp, metric liquid
+measuring spoon 5 ml/tsp. Each complete recipe amount is rounded up once for
+integer inventory: 8 g powder, 2 g salt and 8 ml vanilla. These are stock estimates,
+not universal density conversions; the child measures the original spoon amounts.
+The source milk amount is approximate. The game models 80 ml oil plus 50 ml egg
+and 107 ml milk to reach a roughly 237 ml US cup. Real instructions say to fill
+to the cup line, rather than asserting every egg needs exactly 107 ml milk.
+
+Sugar reserves 163 g for shopping: 150 g batter plus an optional approximately
+13 g tablespoon. `RecipeIngredient.optionalPortion` references a saved step choice;
+completion deducts the topping only when selected. There is no partial deduction
+or fractional inventory. Buying, save revisions and one-time reward reconciliation
+remain in the existing shopping/wallet services. Recipe completion pays 10 coins,
+discovery/challenge rewards keep their existing values, and replay does not pay
+the first-completion reward twice. Gerei remains standard kitchen equipment.
+
+`muffinIngredients.ts` adds eight ingredient/discovery entries and reuses the egg.
+The memory references six existing nutrient/function pairs; no nutrient component
+or new nutrient definitions were added. Three math challenges reuse weighing,
+quantity selection and scaling. Three tips use the existing Coco artwork and
+completed-step triggers, and are suppressed during oven interaction.
+
+### Assets and Sources
+
+Seven isolated, padded, lossless WebP files live in
+`public/assets/library/cooking/baking/`. They derive from the user's supplied
+2026-10-29 sheet, using local foreground instance masks and separate crops. Alpha
+was checked for fully transparent exterior and opaque object interiors. The paper
+liner was masked separately; the original clipped pan edge was restored in an
+image edit, then isolated. No background-bearing crop is used as a substitute.
+The glass jug retains its illustrated pale reflections; it is not a physically
+accurate refractive glass shader. Recipe thumbnails reuse the finished muffin.
+
+References checked on 2026-10-29:
+- Recipe: https://www.inspiredtaste.net/18982/our-favorite-easy-blueberry-muffin-recipe/
+- Ingredient weights: https://www.kingarthurbaking.com/learn/ingredient-weight-chart
+- Spoon estimates: https://www.voedingscentrum.nl/nl/gezonde-recepten/kookhulp/hoeveel-gram-milliliter-theelepel-eetlepel.aspx
+- Raw flour/egg safety: https://www.cdc.gov/food-safety/foods/no-raw-dough.html
+- Baking powder science: https://extension.illinois.edu/sites/default/files/4h_cooking_201_book.pdf
+- Indicative prices (10 coins/euro): AH sunflower oil 1 L EUR1.35; baking powder
+  6x15 g EUR0.39; salt 500 g approximately EUR0.49; vanilla extract 35 ml EUR4.59.
+  Existing provisional pricing stays in `shopPricing.ts`; these are not live prices.
+
+Run `npm run assets:inventory`, `npm test`, `npx tsc --noEmit` and `npm run build`.
+`tests/baking.test.tsx` covers measures, purchasing, oven state/results, restore,
+portioning, optional topping, atomic completion, reward idempotency and controls.
+Browser verification uses a fresh temporary profile, not the user's browser save.
+
+### Delivery and Verification
+
+New files: `components/cooking/BakingInteractions.tsx`, `baking.css`,
+`data/cooking/blueberryMuffins.ts`, `muffinIngredients.ts`, `oven.ts`,
+`recipeMeasures.ts`, `tests/baking.test.tsx`, seven WebP assets and
+`public/recipes/blueberry-muffins.html`.
+
+Integration files: `CookingExperience.tsx`, `CookingInteraction.tsx`,
+`CookingAssetImage.tsx`, `DragToTarget.tsx`, `KitchenScale.tsx`, cooking
+`catalog.ts`, `discovery.ts`, `mathChallenges.ts`, `preparation.ts`, `session.ts`,
+`types.ts`, `validation.ts`, `data/shopCatalog.ts`, `data/shopPricing.ts`,
+`services/cookingSession.ts`, `services/recipeInventory.ts`, `services/shopping.ts`, asset inventory,
+`tests/index.test.ts`, `tests/cookingJourney.test.tsx` and
+`tests/worldArchitecture.test.tsx`. Existing unrelated working-tree edits are
+preserved; no commit or push is part of this task.
+
+Verification: 234 automated tests; TypeScript and production build pass. The
+existing large Phaser bundle warning remains. Played the twenty preparation
+steps to completion at 375px, checking weighing, measuring, portioning and oven
+at 320/375/1200px with no final horizontal overflow or page errors. Reloaded
+during baking and confirmed saved elapsed time. Separate real-pointer tests
+verify measuring drag, rejected off-target drop, keyboard addition, liner drag
+and batter drag. Physical touchscreen hardware was not tested. Native image
+dragging is disabled so it cannot steal the parent motion interaction.
+
 ## Scope and Changed Files
 
 The existing banana artwork, CSS and kitchen remain in use. Fruit yogurt is the first additional production recipe, configured in `data/cooking/fruitYogurt.ts` without recipe-specific components.

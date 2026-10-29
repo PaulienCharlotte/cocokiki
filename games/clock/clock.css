@@ -30,7 +30,7 @@
 .clock-hub__intro p { margin: 0 0 2px; color: #577052; font-size: .75rem; font-weight: 850; text-transform: uppercase; }
 .clock-hub__intro h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1; }
 .clock-hub__intro span { display: block; margin-top: 8px; color: var(--color-text-muted); font-size: 1rem; }
-.clock-hub__games { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.clock-hub__games { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 
 .clock-mode-card { min-width: 0; overflow: hidden; border: 1px solid #dfd4c8; border-radius: 8px; background: #fffdf9; box-shadow: 0 9px 24px #5b402017; }
 .clock-mode-card__art { height: 230px; display: grid; place-items: center; padding: 18px; background: #f6eadc; }

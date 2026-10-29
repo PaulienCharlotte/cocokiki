@@ -1307,7 +1307,7 @@
 @media (prefers-reduced-motion: reduce) { .room-placed-object__thirst.is-wet2 { animation: none; } }
 
 /* Plantendokter: één kaart, één stem. De plant is het onderwerp, Kiki praat. */
-.clinic { min-height: 100dvh; padding: max(var(--space-4), 76px) var(--space-4) var(--space-6); display: grid; place-items: start center; background: var(--color-background); }
+.clinic { min-height: 100dvh; padding: max(var(--space-4), 76px) var(--space-4) var(--space-6); display: grid; place-items: start center; background: var(--color-background) url('/dreamworld/plant-clinic.png') center / cover no-repeat; }
 .clinic__card {
   width: min(480px, 100%); display: grid; gap: var(--space-3);
   padding: var(--space-4); border-radius: var(--radius-card);

@@ -1,0 +1,101 @@
+.dreamworld { position: relative; height: 100dvh; overflow: hidden; background: var(--color-sky); }
+.dreamworld .world-hud, .dream-app > .world-shell > .world-shell__header .world-hud { width: calc(100% - var(--space-4) * 2); }
+.dreamworld .world-hud { top: var(--space-3); }
+.dream-map { position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab; }
+.dream-map.is-dragging { cursor: grabbing; }
+.dream-map__image-plane { position: absolute; left: 50%; top: 50%; transform-origin: center; user-select: none; }
+.dream-map__image-plane > img { display: block; width: 100%; height: 100%; pointer-events: none; }
+.dream-hotspot { position: absolute; display: flex; align-items: center; justify-content: center; min-width: var(--touch-target); min-height: var(--touch-target); padding: var(--space-2); border: 0; border-radius: var(--radius-card); background: transparent; color: var(--color-text); cursor: pointer; }
+.dream-hotspot:focus-visible { outline: 3px solid var(--color-on-primary); outline-offset: 0; background: var(--color-focus-ring); }
+.dream-island-icon { display: block; flex-shrink: 0; width: calc(var(--space-12) + var(--space-4)); height: calc(var(--space-12) + var(--space-4)); border-radius: 50%; background-repeat: no-repeat; background-size: 391.8367% 261.2245%; box-shadow: var(--shadow-soft); transform: scale(var(--map-icon-scale, 1)); transform-origin: center; pointer-events: none; }
+.dream-hotspot:hover .dream-island-icon, .dream-hotspot:focus-visible .dream-island-icon { outline: 2px solid var(--color-on-primary); outline-offset: var(--space-1); }
+.dream-map--debug .dream-hotspot { outline: 2px dashed var(--color-error); background: var(--color-focus-ring); }
+.dream-map__controls { position: absolute; right: var(--space-4); bottom: var(--space-4); display: flex; gap: var(--space-2); z-index: 2; }
+.dream-map__pan { display: none; }
+.dream-shop-menu { display: grid; gap: var(--space-3); }
+.dream-island { position: relative; min-height: 100dvh; overflow: hidden; background: var(--color-background-calm); }
+.dream-island__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dream-island__scene { position: absolute; inset: calc(var(--space-12) * 3) 0 var(--space-6); }
+.dream-location { position: absolute; left: var(--location-x); top: var(--location-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: min(22%, 220px); height: min(32%, 210px); min-height: var(--touch-target); min-width: var(--touch-target); padding: var(--space-2); border: 0; background: transparent; color: var(--color-text); cursor: pointer; }
+.dream-location img { min-height: 0; max-height: 80%; width: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px #3b241a30); transition: transform var(--motion-default) var(--ease-storybook); }
+.dream-location:hover img, .dream-location:focus-visible img { transform: translateY(calc(var(--space-2) * -1)); }
+.dream-location:focus-visible { outline: 3px solid var(--color-focus); border-radius: var(--radius-control); }
+.dream-location__flags { display: flex; align-items: center; justify-content: center; width: 100%; height: 80%; }
+.dream-location__flags span { display: grid; place-items: center; width: 48%; aspect-ratio: 3 / 4; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-soft); font-size: var(--font-size-2xl); transform: rotate(-8deg); }
+.dream-location__flags span + span { margin-left: calc(var(--space-3) * -1); transform: rotate(8deg); }
+.dream-island__soon { position: relative; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-6); padding: var(--space-8); text-align: center; background: var(--color-surface-glass); }
+.dream-island__soon h2 { max-width: 30ch; font-size: var(--font-size-2xl); }
+.dream-app .world-hud { position: fixed; z-index: 200; }
+.dream-app .world-shell__header { z-index: 8500; }
+.dream-app .test-focused.is-fullscreen { top: calc(var(--space-12) * 2 + var(--space-3)); height: calc(100dvh - var(--space-12) * 2 - var(--space-3)); }
+body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-stage { top: calc(var(--space-12) * 2 + var(--space-3)); }
+.dream-app .platform-world-header { display: none; }
+.dream-app .clinic { padding-top: calc(var(--space-12) * 2 + var(--space-6)); }
+.dream-app .math-header-brand, .dream-app .math-wallet { display: none; }
+.dream-app .topo-app.in-test .session-page { padding-top: calc(var(--space-12) * 2); }
+.dream-app .topo-app.view-discover:not(.in-session) .discover-page { padding-top: calc(var(--space-12) * 2); }
+.dream-app .dream-plant-collection .plant-card-backdrop { position: relative; inset: auto; min-height: 100dvh; padding-top: calc(var(--space-12) * 3); background: var(--color-background-calm); }
+.dream-backpack ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); list-style: none; padding: 0; gap: var(--space-3); }
+.dream-backpack li { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.dream-backpack li img { width: var(--space-12); height: var(--space-12); object-fit: contain; }
+.dream-backpack li span { overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .dream-app .clinic { padding-top: calc(var(--space-12) + var(--space-8)); }
+  .dream-app .world-map-shortcut { display: none; }
+  .dream-app .world-backpack-shortcut, .dreamworld .world-backpack-shortcut { display: none; }
+  body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-stage { top: calc(var(--space-12) + var(--space-6)); }
+  .dream-app .test-focused.is-fullscreen { top: calc(var(--space-12) + var(--space-6)); height: calc(100dvh - var(--space-12) - var(--space-6)); }
+  .dreamworld .world-hud, .dream-app > .world-shell > .world-shell__header .world-hud { width: calc(100% - var(--space-2) * 2); }
+  .dream-map { top: 0; }
+  .dream-map__controls { bottom: var(--space-3); right: var(--space-3); flex-direction: column; }
+  .dream-map__pan { display: flex; position: absolute; bottom: var(--space-3); left: 50%; transform: translateX(-50%); gap: var(--space-12); z-index: 2; }
+  .dream-island__scene { inset: calc(var(--space-12) * 3) 0 var(--space-4); }
+  .dream-location { width: 37%; height: 26%; }
+  .dream-island--math .dream-location { width: 40%; height: 26%; }
+  .dream-island--math .dream-location:nth-child(odd) { left: 26%; }
+  .dream-island--math .dream-location:nth-child(even) { left: 74%; }
+  .dream-island--math .dream-location:nth-child(-n+2) { top: 22%; }
+  .dream-island--math .dream-location:nth-child(n+3):nth-child(-n+4) { top: 50%; }
+  .dream-island--math .dream-location:nth-child(n+5) { top: 78%; }
+  .dream-app .topo-app.in-test .session-page { padding-top: calc(var(--space-12) + var(--space-6)); }
+}
+@media (prefers-reduced-motion: reduce) { .dream-location img { transition: none; } }
+
+/* De wereld en spellen gebruiken het hele venster; het vaste menu ligt erboven. */
+.dream-island__scene { top: calc(var(--space-12) * 2); }
+.dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 3 + var(--space-4)); padding: var(--math-top) 0 0; min-height: 100dvh; }
+.dream-app .math-adventure .math-game { width: 100%; min-height: calc(100dvh - var(--math-top)); margin: 0; align-items: stretch; }
+.dream-app .math-adventure .math-session { min-height: calc(100dvh - var(--math-top)); border: 0; border-radius: 0; box-shadow: none; padding: var(--space-6); background: var(--color-surface); }
+.dream-app .math-adventure .math-game-header { top: calc(var(--space-12) * 2); width: 100%; min-height: var(--space-12); display: flex; flex-wrap: nowrap; gap: var(--space-2); padding: var(--space-1) var(--space-4); border: 0; border-radius: 0; box-shadow: none; }
+.dream-app .math-game-header > .math-icon-tool:first-child { display: none; }
+.dream-app .math-adventure .math-game-header h1 { flex: 1; width: auto; font-size: var(--font-size-md); }
+.dream-app .math-adventure .math-game-header .math-level-select { flex: 0 0 auto; width: calc(var(--space-12) * 2 + var(--space-6)); max-width: none; margin: 0; }
+.dream-app .math-adventure:not(.math-adventure--multiply) .math-game-header { left: auto; right: var(--space-4); transform: none; width: auto; background: transparent; backdrop-filter: none; }
+.dream-app .math-adventure:not(.math-adventure--multiply) .math-game-header h1 { display: none; }
+.dream-app .math-adventure:not(.math-adventure--multiply) .math-game { position: fixed; inset: 0; height: 100dvh; overflow-y: auto; background: var(--color-surface); }
+.dream-app .math-adventure:not(.math-adventure--multiply) .math-session { min-height: 100dvh; padding-top: var(--math-top); }
+.dream-app .math-module.math-adventure--multiply { padding: 0; }
+.dream-app .math-adventure--multiply .math-game { position: fixed; inset: 0; height: 100dvh; min-height: 0; }
+.dream-app .math-adventure--multiply .math-lua { width: 100%; height: 100dvh; padding: 0; border: 0; border-radius: 0; }
+.dream-app .math-lua .lua-game-shell { height: 100%; min-height: 0; border-radius: 0; }
+.dream-app .math-lua .lua-hud { top: calc(var(--space-12) * 2 + var(--space-3)); }
+.dream-app .math-lua .lua-timer { top: calc(var(--space-12) * 3 + var(--space-6)); }
+.dream-app .math-lua .lua-setup-controls .math-game-header { position: static; transform: none; width: 100%; padding: var(--space-2) 0; margin: 0 0 var(--space-2); background: transparent; backdrop-filter: none; justify-content: flex-end; }
+.dream-app .lua-setup-controls .math-game-header h1, .dream-app .lua-setup-controls .math-header-brand, .dream-app .lua-setup-controls .math-wallet, .dream-app .lua-setup-controls .math-icon-tool:first-child { display: none; }
+.dream-app .lua-game-page { padding: 0; }
+.dream-flags-memory { min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-6)) var(--space-4) var(--space-4); background: var(--color-background); }
+@media (max-width: 600px) {
+  .dream-island__scene { top: calc(var(--space-12) + var(--space-6)); }
+  .dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 2 + var(--space-8)); }
+  .dream-app .math-adventure .math-game-header { top: calc(var(--space-12) + var(--space-6)); padding-inline: var(--space-2); }
+  .dream-app .math-adventure .math-session { padding: var(--space-4) var(--space-3); }
+  .dream-app .math-adventure .cookie-order { gap: var(--space-3); margin: var(--space-2) auto; }
+  .dream-app .math-adventure .cookie-order > img { width: calc(var(--space-12) + var(--space-8)); height: calc(var(--space-12) + var(--space-8)); }
+  .dream-app .math-adventure .math-prompt { margin-block: var(--space-3); }
+  .dream-app .math-module.math-adventure--multiply { padding: 0; }
+  .dream-app .math-lua .lua-hud { top: calc(var(--space-12) + var(--space-6)); }
+  .dream-app .math-lua .lua-timer { top: calc(var(--space-12) * 2 + var(--space-8)); }
+  .dreamworld .world-hud__brand, .dream-app .world-hud__brand { width: calc(var(--space-12) + var(--space-8)); }
+  .dreamworld .world-profile__trigger > svg, .dream-app .world-profile__trigger > svg { display: none; }
+  .dream-flags-memory { padding-top: calc(var(--space-12) + var(--space-8)); }
+}

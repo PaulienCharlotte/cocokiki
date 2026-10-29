@@ -25,6 +25,9 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
     if (step.mechanic === 'repeat') paths.push(...(step.vesselByCount ?? []), ...(step.toolByCount ?? []), ...(step.tapTool ? [step.tapTool.asset] : []));
     if (step.mechanic === 'heat') paths.push(step.addition.asset);
     if (step.mechanic === 'timed') paths.push(step.pouredAsset, step.cookedAsset);
+    if (step.mechanic === 'measure') paths.push(step.vesselAsset);
+    if (step.mechanic === 'portion') paths.push(step.panAsset, step.linerAsset, step.toppingAsset);
+    if (step.mechanic === 'oven') paths.push(step.panAsset, step.resultAsset, '/assets/library/treehouse/furnishings/oven.webp', '/assets/library/treehouse/furnishings/oven-open.webp');
   }
   return [...new Set(paths)];
 }
@@ -46,7 +49,12 @@ export function getRecipeIssues(recipe: RecipeConfig): string[] {
   if (new Set(steps.map(step => step.id)).size !== steps.length) issues.push('duplicate-step');
   for (const step of steps) {
     if (!step.id || !step.title || !step.instruction || !Number.isFinite(step.target) || step.target <= 0) issues.push(`invalid-step:${step.id}`);
-    if (!['collect', 'drag', 'repeat', 'weigh', 'heat', 'timed', 'optional'].includes(step.mechanic)) issues.push(`unsupported:${step.id}`);
+    if (!['collect', 'drag', 'repeat', 'weigh', 'heat', 'timed', 'optional', 'measure', 'portion', 'oven'].includes(step.mechanic)) issues.push(`unsupported:${step.id}`);
+    if (step.mechanic === 'measure' && (!step.increments.length || step.increments.some(n => !Number.isSafeInteger(n) || n <= 0) || step.maximum < step.target || !step.unitLabel)) issues.push(`measure:${step.id}`);
+    if (step.mechanic === 'portion' && (!Number.isSafeInteger(step.target) || step.target > 24 || !Number.isSafeInteger(step.columns) || step.columns < 1 || step.columns > 6)) issues.push(`portion:${step.id}`);
+    if (step.mechanic === 'portion' && step.positions && (step.positions.length !== step.target || step.positions.some(p => !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 100 || p.y < 0 || p.y > 100))) issues.push(`portion-layout:${step.id}`);
+    if (step.mechanic === 'oven' && (Object.values(step.oven).some(n => !Number.isFinite(n) || n <= 0) || step.oven.minimumMinutes > step.oven.maximumMinutes || step.oven.targetTemperature > 260)) issues.push(`oven:${step.id}`);
+    if (step.mechanic === 'oven' && (!Number.isSafeInteger(step.portions) || step.portions < 1 || step.portions > 24 || step.oven.minimumTemperature > step.oven.targetTemperature || step.oven.maximumTemperature < step.oven.targetTemperature || step.oven.minimumSelectableMinutes > step.oven.minimumMinutes || step.oven.maximumSelectableMinutes < step.oven.maximumMinutes)) issues.push(`oven-range:${step.id}`);
     if (step.mechanic === 'collect' && (!step.tools.length || step.target !== step.tools.length || step.tools.some(tool => !recipe.equipmentIds.includes(tool.id)))) issues.push(`tools:${step.id}`);
     if (step.mechanic === 'weigh' && (!step.increments.length || step.maximum < step.target || step.increments.some(value => value <= 0))) issues.push(`weigh:${step.id}`);
     if (step.mechanic === 'heat' && !step.levels.some(level => level.value === step.target)) issues.push(`heat:${step.id}`);
@@ -58,6 +66,7 @@ export function getRecipeIssues(recipe: RecipeConfig): string[] {
     const quantity = canonicalQuantity(item);
     const ingredient = INGREDIENTS_BY_ID[item.ingredientId];
     const discovery = INGREDIENT_DISCOVERIES_BY_ID[item.ingredientId];
+    if (item.optionalPortion && (!Number.isSafeInteger(item.optionalPortion.amount) || item.optionalPortion.amount <= 0 || item.optionalPortion.amount >= item.amount || !steps.some(step => step.id === item.optionalPortion!.stepId && step.mechanic === 'portion'))) issues.push(`optional-quantity:${item.ingredientId}`);
     if (!quantity || quantity.amount <= 0 || quantity.unit !== SHOP_PRODUCTS_BY_ID[item.ingredientId]?.unit) issues.push(`unit:${item.ingredientId}`);
     if (ingredient?.contentStatus !== 'ready' || !discovery?.questions.length) issues.push(`discovery:${item.ingredientId}`);
     if (discovery?.questions.some(question => !question.options.some(option => option.id === question.correctOptionId))) issues.push(`question:${item.ingredientId}`);

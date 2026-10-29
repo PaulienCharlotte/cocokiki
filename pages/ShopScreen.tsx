@@ -14,6 +14,7 @@ import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 import CocoCoin from '../components/platform/CocoCoin';
 import PurchaseSuccess from '../components/shop/PurchaseSuccess';
 import { Button } from '../design-system';
+import BasketPractice from '../components/shop/BasketPractice';
 
 type ActiveCategory = 'all' | ShopCategory;
 
@@ -31,6 +32,7 @@ function missingBadge(missing: number, unit: string): string {
 }
 
 interface ShopScreenProps {
+  initialStore?: 'groceries';
   recipeId?: RecipeId;
   progress?: CookingProgressState;
   onProgressChange?: (progress: CookingProgressState) => void;
@@ -38,14 +40,18 @@ interface ShopScreenProps {
   onNavigate?: (path: string) => void;
 }
 
-export default function ShopScreen({ recipeId, progress: externalProgress, onProgressChange, onExit, onNavigate }: ShopScreenProps) {
+export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, progress: externalProgress, onProgressChange, onExit, onNavigate }: ShopScreenProps) {
+  const queryRecipe = initialStore && typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('recipe') : null;
+  const recipeId = requestedRecipeId ?? (queryRecipe && Object.prototype.hasOwnProperty.call(RECIPES_BY_ID, queryRecipe) ? queryRecipe as RecipeId : undefined);
+  const overviewLabel = recipeId ? initialStore ? 'Terug naar de keuken' : 'Terug naar het kookboek' : initialStore ? 'Terug naar winkels' : 'Terug naar winkeloverzicht';
   const mode = recipeId ? 'recipe' : 'free';
-  const [activeStore, setActiveStore] = useState<'groceries' | DecorStoreId | null>(recipeId ? 'groceries' : null);
+  const [activeStore, setActiveStore] = useState<'groceries' | DecorStoreId | null>(recipeId ? 'groceries' : initialStore ?? null);
   const [category, setCategory] = useState<ActiveCategory>('all');
   const [session, setSession] = useState<ShoppingSession>(() => loadShoppingSession(mode, recipeId ?? null));
   const [progress, setProgress] = useState<CookingProgressState>(() => externalProgress ?? loadCookingProgress());
   const [coins, setCoins] = useState(loadCurrency);
   const [basketOpen, setBasketOpen] = useState(false);
+  const [practiceOpen, setPracticeOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
@@ -53,6 +59,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
   const total = basketTotal(session);
   const count = basketCount(session);
+  const deficit = Math.max(0, total - coins);
   const requirements = recipeId ? recipeRequirementStatus(progress, recipeId, session) : [];
   const completedRequirements = requirements.filter(item => item.collected).length;
   const missingRequirements = requirements.filter(item => !item.collected);
@@ -67,8 +74,8 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   }, []);
 
   const updateSession = (next: ShoppingSession) => {
+    if (!saveShoppingSession(next)) { setNotice('Je mandje kan even niet worden opgeslagen. Probeer opnieuw; je eerdere boodschappen blijven bewaard.'); return; }
     setSession(next);
-    saveShoppingSession(next);
     setNotice('');
   };
   const commitProgress = (next: CookingProgressState, spend?: { id: string; amount: number }) => {
@@ -87,6 +94,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
     if (!commitProgress(purchased, { id: `shopping:${session.id}`, amount: prepared.total })) return;
     setCoins(loadCurrency());
     setBasketOpen(false);
+    setPracticeOpen(false);
     setCheckoutComplete(true);
     const nextSession = createShoppingSession(mode, recipeId ?? null);
     saveShoppingSession(nextSession);
@@ -106,7 +114,8 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
   const backToOverview = () => {
     setCheckoutComplete(false);
-    if (recipeId && onExit) onExit();
+    if (initialStore && recipeId && onNavigate) onNavigate('/treehouse/kitchen');
+    else if ((recipeId || initialStore) && onExit) onExit();
     else setActiveStore(null);
   };
 
@@ -115,10 +124,10 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
 
   return <main className="shop-room">
     <img className="shop-room__background" src="/games/destinations/shop-interior.webp" alt="Een gezellige winkel vol ingrediënten" />
-    <button className="shop-dismiss" type="button" onClick={() => recipeId ? onExit?.() : setActiveStore(null)} aria-label={recipeId ? 'Terug naar het kookboek' : 'Terug naar het winkelplein'} />
+    <button className="shop-dismiss" type="button" onClick={backToOverview} aria-label={overviewLabel} />
     <section className={`shop-catalog${recipeId && recipeRequirementsSatisfied(progress, recipeId) ? ' has-recipe-ready' : ''}`} aria-labelledby="shop-title">
       <header className="shop-catalog__header">
-        <button className="shop-icon-button" type="button" onClick={backToOverview} aria-label={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'} title={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'}><ArrowLeft /></button>
+        <button className="shop-icon-button" type="button" onClick={backToOverview} aria-label={overviewLabel} title={overviewLabel}><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><ShoppingBasket size={20} /></span>
         <div><small>{recipeId ? 'Receptboodschappen' : 'Vrij winkelen'}</small><h1 id="shop-title">Winkel</h1></div>
         <div className="shop-catalog__actions">
@@ -174,16 +183,22 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
       <aside className="shop-drawer" role="dialog" aria-modal="true" aria-label="Winkelmandje" onMouseDown={event => event.stopPropagation()}>
         <header><div><small>{count} producten</small><h2>Jouw mandje</h2></div><button type="button" onClick={() => setBasketOpen(false)} aria-label="Sluit mandje"><X /></button></header>
         <div className="shop-drawer__items">
+          {practiceOpen ? <BasketPractice key={session.id} session={session} deficit={deficit} onBack={() => setPracticeOpen(false)} onBalance={setCoins} /> : <>
           {count === 0 && <p className="shop-empty">Kies iets lekkers uit de winkel.</p>}
           {(Object.entries(session.basket) as Array<[string, number]>).map(([id, packages]) => { const item = SHOP_PRODUCTS_BY_ID[id]; return <div className="shop-basket-row" key={id}>
             <img src={item.image} alt="" /><div><strong>{item.name}</strong><small>{item.packageLabel}</small></div>
             <div className="shop-quantity"><button type="button" onClick={() => updateSession(adjustBasket(session, id, -1))} aria-label={`Minder ${item.name}`}><Minus /></button><span>{packages}</span><button type="button" onClick={() => updateSession(adjustBasket(session, id, 1))} aria-label={`Meer ${item.name}`}><Plus /></button></div>
             <b>{packages * session.priceSnapshot.prices[id]}</b><button className="shop-remove" type="button" onClick={() => updateSession(adjustBasket(session, id, -packages))} aria-label={`Verwijder ${item.name}`}><Trash2 /></button>
           </div>; })}
+          </>}
         </div>
-        <footer><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
-          {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
-          {notice.includes('tekort') && <button className="shop-earn-link" type="button" onClick={() => onNavigate ? onNavigate('/challenges') : window.location.assign('/challenges')}>Oefen en verdien CocoCoins</button>}
+        <footer className="shop-drawer__checkout"><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
+          {notice && <p className="shop-notice" role="alert">{notice}</p>}
+          {deficit > 0 && count > 0 && <>
+            <p className="shop-notice">Je komt {deficit} CocoCoins tekort. Je mandje blijft bewaard.</p>
+            {!practiceOpen && <Button onClick={() => { setNotice(''); setPracticeOpen(true); }}>Verdien met vragen</Button>}
+          </>}
+          <Button variant={deficit > 0 ? 'quiet' : 'primary'} endIcon={<ChevronRight />} onClick={checkout} disabled={count === 0 || deficit > 0}>Afrekenen</Button>
         </footer>
       </aside>
     </div>}
@@ -192,7 +207,7 @@ export default function ShopScreen({ recipeId, progress: externalProgress, onPro
       title={recipeId && missingRequirements.length > 0 ? 'Je hebt al wat in huis!' : 'Goed gewinkeld!'}
       description={journeyRecipeId && journey && journeyReady ? `Alles voor ${RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.` : 'Je boodschappen staan in je voorraad.'}
       onContinue={() => setCheckoutComplete(false)} onOverview={backToOverview}
-      overviewLabel={recipeId && onExit ? 'Terug naar het kookboek' : 'Terug naar winkeloverzicht'}
+      overviewLabel={overviewLabel}
       primaryAction={journeyRecipeId && journey && journeyReady ? <Button endIcon={<ChevronRight size={18} />} onClick={returnToJourney}>Naar de keuken</Button> : undefined}>
       {recipeId && missingRequirements.length > 0 && <>
         <p>Dit heb je nog nodig:</p>

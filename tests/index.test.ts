@@ -14,3 +14,8 @@ import './storyAndMemory.test';
 import './roomExpansions.test';
 import './plantClinic.test';
 import './plantKnowledge.test';
+import './dreamworld.test';
+import './baking.test';
+import './shoppingPractice.test';
+import './learningReward.test';
+import './treehouseUnits.test';

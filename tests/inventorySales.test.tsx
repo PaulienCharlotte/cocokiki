@@ -59,13 +59,13 @@ test('grocery sales deduct a complete package, preserve partial stock and fail a
 }));
 
 test('clock rounds reward first completion and practice without duplicate payouts', () => stored(() => {
-  for (const game of ['memory', 'set-clock', 'race'] as const) {
-    assert.equal(rewardClockRound(game, 2, `${game}-first`), clockLevelReward(2));
+  for (const game of ['memory', 'set-clock', 'race', 'world-times'] as const) {
+    assert.equal(rewardClockRound(game, 2, `${game}-first`), game === 'memory' ? 12 : 10);
     assert.equal(rewardClockRound(game, 2, `${game}-first`), 0);
-    assert.equal(rewardClockRound(game, 2, `${game}-practice`), 5);
+    assert.equal(rewardClockRound(game, 2, `${game}-practice`), game === 'memory' ? 12 : 10);
     assert.ok(loadClockProgress().completed[game].includes(2));
   }
-  assert.equal(loadCurrency(), 36);
+  assert.equal(loadCurrency(), 84);
 }));
 
 test('full recipe restart restores memory even after a legacy completed recipe', () => {

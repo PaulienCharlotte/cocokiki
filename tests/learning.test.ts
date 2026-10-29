@@ -114,12 +114,12 @@ test('Baby Lua scoring separates first tries, retries and timeouts', () => {
   assert.equal(roundDuration(4200, { ...EMPTY_STATS, bestStreak: 10 }), 2688);
 });
 
-test('Baby Lua rewards harder tables with more CocoKiki currency', () => {
-  assert.equal(currencyReward(1, true), 1);
+test('Baby Lua uses the same coins for every table and retries', () => {
+  assert.equal(currencyReward(1, true), 2);
   assert.equal(currencyReward(4, true), 2);
-  assert.equal(currencyReward(8, true), 3);
-  assert.equal(currencyReward('mix', true), 4);
-  assert.ok(currencyReward(8, false) < currencyReward(8, true));
+  assert.equal(currencyReward(8, true), 2);
+  assert.equal(currencyReward('mix', true), 2);
+  assert.equal(currencyReward(8, false), 2);
 });
 
 test('Nederland contains exactly twelve provinces and twelve provincial capitals', () => {

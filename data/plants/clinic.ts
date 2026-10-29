@@ -1,5 +1,6 @@
 import { PLANT_GEREEDSCHAP, PLANT_ICOON, PLANT_SPECIES, PLANT_SPECIES_BY_ID, type PlantSpecies, type PlantStage } from './species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from './firstAid';
+import { LEARNING_COINS } from '../../services/learningReward';
 
 /**
  * Het spreekuur van de plantendokter.
@@ -63,7 +64,7 @@ export function naamKeuzes(speciesId: string): string[] {
 }
 
 /** Wat de bonusvraag extra oplevert. */
-export const NAAM_BONUS = 1;
+export const NAAM_BONUS = LEARNING_COINS;
 
 /** Hoeveel patiënten er in één spreekuur langskomen. */
 export const CONSULTS_PER_SPREEKUUR = 3;

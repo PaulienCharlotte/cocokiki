@@ -1,7 +1,9 @@
 import { COOKING_ASSETS } from './catalog';
 import type { IngredientDiscoveryConfig } from './types';
+import { MUFFIN_DISCOVERIES } from './muffinIngredients';
 
 export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
+  ...MUFFIN_DISCOVERIES,
   {
     ingredientId: 'banana',
     title: 'Ontdek de banaan!',
@@ -37,7 +39,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
     title: 'Ontdek het ei!',
     collectionLabel: 'Ei',
     educationalText: 'De eieren die we meestal eten komen van kippen en bevatten eiwitten en vitamines.',
-    heroFact: 'Een ei helpt het pannenkoekenbeslag bij elkaar te houden.',
+    heroFact: 'Een ei helpt beslag bij elkaar te houden.',
     origin: { label: 'Van kip tot keuken', text: 'De meeste eieren in Nederlandse keukens komen van kippen. Op de doos staat hoe de kippen zijn gehouden.' },
     nutrition: [
       { nutrient: 'Eiwitten', role: 'Zijn bouwstoffen voor spieren en andere delen van het lichaam.' },
@@ -49,7 +51,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
     difficulty: 1,
     questions: [{
       id: 'egg-animal', type: 'single-choice',
-      prompt: 'Waarom gebruiken we ei in dit pannenkoekenbeslag?',
+      prompt: 'Waarom gebruiken we ei in beslag?',
       options: [
         { id: 'chicken', label: 'Het helpt de ingrediënten bij elkaar te houden.' },
         { id: 'sweet', label: 'Het maakt het beslag vanzelf zoet.' },

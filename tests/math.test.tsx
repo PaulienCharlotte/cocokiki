@@ -231,24 +231,24 @@ test('eight first attempts unlock a level and perfect scores have separate eligi
   }
 });
 
-test('math rewards are atomic, shared, one-time, and support a later perfect run', () => storage(() => {
+test('math rewards solved answers, repeats and prevents duplicate settlement', () => storage(() => {
   const empty = loadMathProgress();
   assert.equal(levelUnlocked(empty, 'multiply', 1), true);
   assert.equal(levelUnlocked(empty, 'multiply', 2), false);
   assert.equal(finishMathLevel('multiply', 2, perfect).ok, false);
   assert.equal(loadCurrency(), 0);
   const first = finishMathLevel('multiply', 1, { correct: 8, total: 10, score: 8, mistakes: 2 });
-  assert.equal(first.reward, 5);
-  assert.equal(loadCurrency(), 5);
+  assert.equal(first.reward, 16);
+  assert.equal(loadCurrency(), 16);
   assert.equal(levelUnlocked(loadMathProgress(), 'multiply', 2), true);
   assert.equal(nextMathLevel(loadMathProgress(), 'multiply'), 2);
-  assert.equal(finishMathLevel('multiply', 1, perfect).reward, 3);
+  assert.equal(finishMathLevel('multiply', 1, perfect).reward, 20);
   assert.equal(finishMathLevel('multiply', 1, perfect).reward, 0);
-  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, level === 5 ? 18 : 8);
-  assert.equal(loadCurrency(), 50);
+  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, 20);
+  assert.equal(loadCurrency(), 116);
   assert.equal(finishMathLevel('multiply', 5, perfect).reward, 0);
-  assert.equal(finishMathLevel('multiply', 1, { correct: 2, total: 10, score: 2, mistakes: 8 }).reward, 0);
-  assert.equal(loadCurrency(), 50);
+  assert.equal(finishMathLevel('multiply', 1, { correct: 2, total: 10, score: 2, mistakes: 8 }).reward, 4);
+  assert.equal(loadCurrency(), 120);
   assert.deepEqual(loadMathProgress().games.multiply.completed, [1, 2, 3, 4, 5]);
   assert.deepEqual(loadMathProgress().games.divide.completed, []);
   assert.equal(loadMathProgress().games.multiply.best[1]?.correct, 10);
@@ -262,8 +262,8 @@ test('failed math writes cannot pay coins or unlock levels, then safely retry', 
   assert.equal(loadCurrency(), 20);
   assert.deepEqual(loadMathProgress().games.balance.completed, []);
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: actual });
-  assert.equal(finishMathLevel('balance', 1, perfect).reward, 8);
-  assert.equal(loadCurrency(), 28);
+  assert.equal(finishMathLevel('balance', 1, perfect).reward, 20);
+  assert.equal(loadCurrency(), 40);
   assert.equal(JSON.parse(readDocument(MATH_PROGRESS_KEY)!).games.balance.completed[0], 1);
   assert.ok(memory.size > 0);
 }));
@@ -306,22 +306,22 @@ test('interactive math views expose real controls for mouse, touch and keyboard'
   assert.match(drag, /onClick/);
 });
 
-test('race coins are capped daily while unlimited scores and old progress remain intact', () => storage(() => {
+test('race uses shared coins without a game-specific daily cap and preserves old progress', () => storage(() => {
   const day = new Date(2026, 9, 25, 12), tomorrow = new Date(2026, 9, 26, 12);
   const run = (score: number, raceId: string): MathResult => ({ score, correct: score, total: score, mistakes: 0, raceId });
   finishMathLevel('multiply', 1, perfect);
   const before = loadCurrency();
-  assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 23);
+  assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 46);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 0);
   assert.equal(finishMathLevel('race', 1, run(24, 'run-one'), day).ok, false);
-  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, RACE_DAILY_COIN_CAP - 23);
-  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 0);
+  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, 200);
+  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 300);
   assert.equal(loadMathProgress().games.race.best[3]?.score, 150);
-  assert.equal(loadCurrency(), before + RACE_DAILY_COIN_CAP);
+  assert.equal(loadCurrency(), before + 546);
   assert.equal(raceCoinsAvailable(day), 0);
   assert.equal(raceCoinsAvailable(tomorrow), RACE_DAILY_COIN_CAP);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), tomorrow).reward, 0);
-  assert.equal(finishMathLevel('race', 1, run(12, 'run-four'), tomorrow).reward, 12);
+  assert.equal(finishMathLevel('race', 1, run(12, 'run-four'), tomorrow).reward, 24);
   assert.deepEqual(loadMathProgress().games.multiply.completed, [1]);
   assert.equal(loadMathProgress().games.multiply.best[1]?.score, 10);
   assert.equal(finishMathLevel('race', 1, { ...run(2, 'invalid-bonus'), score: 3 }, tomorrow).ok, false);
@@ -335,10 +335,10 @@ test('race settlement retries atomically after storage failure, including zero s
   assert.equal(loadCurrency(), 0);
   assert.deepEqual(loadMathProgress().games.race.completed, []);
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: actual });
-  assert.equal(finishMathLevel('race', 1, result).reward, 18);
+  assert.equal(finishMathLevel('race', 1, result).reward, 36);
   assert.equal(finishMathLevel('race', 1, result).reward, 0);
   assert.equal(finishMathLevel('race', 1, { correct: 0, total: 0, score: 0, mistakes: 0, raceId: 'zero-race' }).ok, true);
-  assert.equal(loadCurrency(), 18);
+  assert.equal(loadCurrency(), 36);
 }));
 
 test('old race combo scores survive migration without retroactive payment or lost unlocks', () => {
@@ -405,5 +405,5 @@ test('Lua reuses its existing question engine for all five math levels without a
     }
     assert.deepEqual([...found], [...LUA_LEVEL_TABLES[level - 1]]);
   }
-  assert.deepEqual(luaMathResult({ firstTry: 8, eventual: 10, missed: 0, streak: 3, bestStreak: 5, score: 50 }), { correct: 8, total: 10, score: 8, mistakes: 2 });
+  assert.deepEqual(luaMathResult({ firstTry: 8, eventual: 10, missed: 0, streak: 3, bestStreak: 5, score: 50 }), { correct: 8, total: 10, score: 8, mistakes: 2, solved: 10 });
 });

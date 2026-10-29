@@ -157,7 +157,7 @@ test('cookie hints give the inverse calculation and coaches use distinct avatars
 });
 
 test('memory boards retain every pair, keep partners together and only advance after a full board', () => {
-  for (const count of [3, 4, 6, 8]) for (const size of [2, 3]) {
+  for (const count of [3, 4, 6, 8]) for (const size of [2, 3, 4, 6]) {
     const ids = Array.from({ length: count }, (_, index) => `pair-${index}`);
     const visited: string[] = [];
     for (let matched = 0; matched < count; matched += size) {

@@ -1,0 +1,64 @@
+.baking-interaction { width: 100%; max-width: 38rem; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: var(--space-4); color: var(--color-text); }
+.baking-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2); }
+.baking-interaction .ck-button { max-width: 100%; }
+.baking-caption { font-size: var(--font-size-sm); color: var(--color-text-muted); text-align: center; }
+.baking-interaction p { margin: 0; text-align: center; }
+.baking-interaction output { font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; }
+.baking-amount { font-size: var(--font-size-lg); }
+.baking-slider { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-2); width: 100%; font-weight: var(--font-weight-bold); }
+.baking-slider input { flex: 1 0 100%; width: 100%; min-height: var(--touch-target); accent-color: var(--color-primary); }
+.baking-interaction progress { width: 100%; height: var(--space-4); accent-color: var(--color-primary); }
+.baking-vessel { position: relative; width: min(100%, 17rem); margin-inline: auto; aspect-ratio: 1; isolation: isolate; }
+.baking-vessel > img { width: 100%; height: 100%; object-fit: contain; }
+.baking-vessel__contents { position: absolute; inset: 15% 12% 18%; border-radius: 50%; background: var(--color-cream); box-shadow: inset 0 3px 10px #3b241a26; transition: opacity var(--motion-gentle); }
+.baking-vessel--liquid .baking-vessel__contents { background: var(--color-reward); }
+.baking-vessel--batter .baking-vessel__contents, .baking-vessel--berries .baking-vessel__contents { background: var(--color-honey); }
+.baking-vessel__contents i, .baking-pan__batter i { position: absolute; width: 15%; aspect-ratio: 1; border-radius: 50%; background: var(--color-focus); box-shadow: inset -2px -2px 3px #332a276b; }
+.cooking-weighing { width: 100%; min-width: 0; }
+.cooking-weighing__controls { max-width: 100%; flex-wrap: wrap; justify-content: center; }
+.cooking-card__scene--weigh .cooking-button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.cooking-card__scene--weigh:has(.cooking-weighing[data-layered="true"]) { background-image: none !important; background-color: var(--color-background-soft); box-shadow: none; }
+.cooking-weighing__controls .ck-button { max-width: 100%; }
+.baking-scale-fill { position: absolute; inset: 15% 24% 62%; border-radius: 50%; z-index: 1; background: var(--color-cream); box-shadow: inset 0 2px 5px #3b241a26; }
+.baking-scale-fill--berries { background: var(--color-focus); }
+.baking-measure { position: relative; width: min(68%, 16rem); aspect-ratio: 1; isolation: isolate; margin-right: 18%; }
+.baking-measure > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; pointer-events: none; }
+.baking-measure__liquid { position: absolute; bottom: 12%; left: 26%; width: 59%; max-height: 70%; background: var(--color-honey); border-radius: 0 0 32% 32%; opacity: .75; transition: height var(--motion-gentle); z-index: 3; mix-blend-mode: multiply; pointer-events: none; }
+.baking-measure--spoon .baking-measure__liquid { left: 28%; bottom: 58%; width: 45%; max-height: 28%; border-radius: 50%; background: var(--color-cream); }
+.baking-measure__marks { position: absolute; left: 52%; top: 22%; bottom: 16%; width: 24%; z-index: 4; font-size: var(--font-size-xs); color: var(--color-text); }
+.baking-measure__marks span { position: absolute; width: 100%; border-bottom: 1px solid var(--color-text-muted); text-align: right; }
+.baking-measure__source { position: absolute; right: -38%; top: 4%; width: 42%; aspect-ratio: 1; padding: var(--space-2); border: 0; background: transparent; touch-action: none; cursor: grab; z-index: 5; }
+.baking-measure__source img { width: 100%; height: 100%; object-fit: contain; }
+.baking-portion-source { width: 6rem; height: 6rem; border: 0; background: transparent; cursor: grab; touch-action: none; z-index: 3; }
+.baking-portion-source img { width: 100%; height: 100%; object-fit: contain; }
+.baking-pan { width: 100%; position: relative; aspect-ratio: 1.65; }
+.baking-pan > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.baking-pan__slots { position: absolute; inset: 11% 9% 14%; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--space-1); }
+.baking-pan__slots.is-positioned { inset: 0; display: block; }
+.baking-pan__slots.is-positioned .baking-pan__slot { position: absolute; width: 19%; height: 25%; transform: translate(-50%, -50%); }
+.baking-pan__sugar { position: absolute; inset: 8%; border: 3px dotted var(--color-cream); border-radius: 50%; }
+.baking-pan__slot { position: relative; min-width: 0; min-height: var(--touch-target); padding: 0; border: 1px dashed var(--color-border); border-radius: 50%; background: var(--color-overlay); cursor: pointer; }
+.baking-pan__slot > img { position: absolute; width: 100%; height: 100%; inset: 0; object-fit: contain; }
+.baking-pan__batter { position: absolute; inset: 12% 10% 22%; border-radius: 50%; background: var(--color-honey); }
+.baking-pan__batter i:nth-child(1) { left: 20%; top: 20%; }.baking-pan__batter i:nth-child(2) { left: 60%; top: 35%; }.baking-pan__batter i:nth-child(3) { left: 40%; top: 60%; }
+.baking-oven { position: relative; width: min(100%, 24rem); aspect-ratio: 1.15; isolation: isolate; }
+.baking-oven > img { width: 100%; height: 100%; object-fit: contain; }
+.baking-oven__temperature { position: absolute; top: 24%; left: 35%; padding: var(--space-1) var(--space-2); background: var(--color-surface); border-radius: var(--radius-control-sm); }
+.baking-oven__tray { position: absolute; left: 24%; right: 24%; top: 51%; height: 25%; }
+.baking-oven__tray > img { width: 100%; height: 100%; object-fit: contain; }
+.baking-oven__food { position: absolute; inset: 0 8% 23%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); transform-origin: bottom; transition: transform var(--motion-gentle), filter var(--motion-gentle); }
+.baking-oven__piece { position: relative; min-width: 0; min-height: 0; }
+.baking-oven__piece img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.baking-oven__piece > i { position: absolute; inset: 20% 10% 0; border-radius: 50%; background: var(--color-honey); }
+.baking-cooled { width: min(70%, 16rem); height: 12rem; object-fit: contain; animation: baking-cool 2s ease-in-out infinite alternate; }
+.baking-oven-status { display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2); color: var(--color-primary); font-size: var(--font-size-sm); }
+.cooking-card:has(.baking-interaction) { height: auto; min-height: 0; max-height: none; flex: none; }
+.cooking-card .cooking-card__scene:has(.baking-interaction) { flex: none; min-height: 0; height: auto; background-image: none !important; background-color: var(--color-background-soft); box-shadow: none; }
+.cooking-stage:has(.baking-interaction) .cooking-stage__shell { height: auto; min-height: 100%; }
+.cooking-stage:has(.baking-interaction) { overflow-y: auto; }
+.baking-cooling { position: relative; width: min(100%, 20rem); aspect-ratio: 1.2; display: grid; place-items: center; }
+.baking-cooling svg { position: absolute; inset: 15% 0 0; width: 100%; height: 80%; color: var(--color-border-strong); }
+.baking-cooling .baking-cooled { z-index: 1; }
+@keyframes baking-cool { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+@media (max-width: 400px) { .baking-interaction { padding: var(--space-2); gap: var(--space-3); } .baking-oven { max-width: 17rem; } .baking-pan { aspect-ratio: 1.35; } .baking-controls .ck-button { padding-inline: var(--space-2); } }
+@media (prefers-reduced-motion: reduce) { .baking-interaction *, .baking-vessel * { animation: none !important; transition: none !important; } }

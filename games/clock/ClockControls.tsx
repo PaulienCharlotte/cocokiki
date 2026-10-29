@@ -41,7 +41,7 @@ export function ClockGameHeader({ title, level, onBack, onLevelChange, completed
 export function ClockCompletion({ reward, onReplay, onHub }: { reward: number; onReplay: () => void; onHub: () => void }) {
   return <section className="clock-completion" aria-live="polite">
     <span className="clock-completion__check"><Check aria-hidden="true" /></span>
-    <div><strong>Niveau voltooid</strong><p>{reward > 0 ? <>Je verdient <CocoCoin size={18} /> {reward} CocoCoins.</> : 'Je had deze beloning al verdiend.'}</p></div>
+    <div><strong>Niveau voltooid</strong><p>{reward > 0 ? <>Je verdient <CocoCoin size={18} /> {reward} CocoCoins.</> : 'Geoefend! Voor getoonde antwoorden krijg je geen munten. Elke ronde wordt maar eenmaal beloond.'}</p></div>
     <Button size="small" startIcon={<RotateCcw size={16} />} onClick={onReplay}>Nog een keer</Button>
     <Button size="small" variant="secondary" onClick={onHub}>Spellen kiezen</Button>
   </section>;

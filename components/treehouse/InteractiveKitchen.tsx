@@ -133,6 +133,6 @@ export default function InteractiveKitchen({ progress, sceneRef, onNavigate }: {
         </motion.button>)}
       </div>
     </section>, document.body)}
-    {openRecipe && typeof document !== 'undefined' && createPortal(<CookingExperience recipe={openRecipe} progress={cookingProgress} onProgressChange={setCookingProgress} onClose={() => { setOpenRecipeId(null); setCookingProgress(loadCookingProgress()); }} onShop={() => onNavigate ? onNavigate('/shop') : window.location.assign('/shop')} />, document.body)}
+    {openRecipe && typeof document !== 'undefined' && createPortal(<CookingExperience recipe={openRecipe} progress={cookingProgress} onProgressChange={setCookingProgress} onClose={() => { setOpenRecipeId(null); setCookingProgress(loadCookingProgress()); }} onShop={() => { const path = `/shop/groceries?recipe=${encodeURIComponent(openRecipe.id)}`; if (onNavigate) onNavigate(path); else window.location.assign(path); }} />, document.body)}
   </>;
 }

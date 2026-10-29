@@ -7,5 +7,5 @@ export function luaTableForLevel(level: MathLevel, random = Math.random): number
   return tables[Math.min(tables.length - 1, Math.floor(random() * tables.length))];
 }
 export function luaMathResult(stats: SessionStats): MathResult {
-  return { correct: stats.firstTry, total: 10, score: stats.firstTry, mistakes: Math.max(0, 10 - stats.firstTry) };
+  return { correct: stats.firstTry, total: 10, score: stats.firstTry, mistakes: Math.max(0, 10 - stats.firstTry), solved: stats.eventual };
 }

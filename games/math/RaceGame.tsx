@@ -5,8 +5,8 @@ import { generateQuestion, validAnswer } from './engine';
 import { AnswerChoices } from './ChoiceChallenge';
 import Equation from './Equation';
 import MathHelp from './MathHelp';
-import { raceCoinsAvailable } from './progress';
 import type { MathLevel, MathQuestion, MathResult } from './types';
+import { techniqueHint } from './techniqueHint';
 
 export function CheckoutOrder({ question }: { question: MathQuestion }) {
   if (!question.checkout) return null;
@@ -32,7 +32,6 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
   const [seconds, setSeconds] = useState(RACE_SECONDS), [started, setStarted] = useState(false);
   const [score, setScore] = useState(0), [wrong, setWrong] = useState(false);
   const [hint, setHint] = useState(false);
-  const [available] = useState(raceCoinsAvailable);
   const [raceId] = useState(() => crypto.randomUUID());
   const deadline = useRef(0), finished = useRef(false), order = useRef(0);
   const statistics = useRef({ correct: 0, total: 0, score: 0, mistakes: 0 });
@@ -66,13 +65,13 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
     questionRef.current = next; setQuestion(next);
   };
   return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }} className={`math-session checkout-game${wrong ? ' is-wrong' : ''}`} aria-label="Winkelgekte ronde">
-    <div className="checkout-hud"><span><Clock3 size={20} />{seconds} s</span><strong>{score} klanten</strong><span title="Vandaag nog te verdienen">{Math.max(0, available - score)} munten over vandaag</span></div>
+    <div className="checkout-hud"><span><Clock3 size={20} />{seconds} s</span><strong>{score} klanten</strong></div>
     {!started ? <div className="checkout-start"><ShoppingBasket size={62} /><h2>De winkel gaat open!</h2><button className="adventure-start" type="button" onClick={() => { deadline.current = Date.now() + RACE_SECONDS * 1000; setStarted(true); }}><Play size={20} />Open de winkel</button></div> : <>
       <h2 className="math-prompt">{question.prompt}</h2>
-      <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{question.hint}</MathHelp>
+      <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{techniqueHint(question)}</MathHelp>
       <div className={`checkout-counter${question.operation === '*' ? ' checkout-counter--single' : ''}`} key={`${question.id}:${order.current}`}>
         <CheckoutOrder question={question} />
-        {score > 0 && <span className="checkout-coin" aria-hidden="true">+1</span>}
+        {score > 0 && <span className="checkout-coin" aria-hidden="true">+2</span>}
       </div>
       <Equation question={question} />
       <div className="checkout-answers" key={order.current}><AnswerChoices question={question} locked={finished.current} onAnswer={answer} /></div>

@@ -5,6 +5,7 @@ import { shuffle } from '../services/localProgress';
 import RoundResult from './RoundResult';
 import './memory-mobile.css';
 import { memoryBoardIds } from '../services/memoryBoards';
+import { learningReward } from '../services/learningReward';
 
 interface Props {
   mode: 'memory' | 'quiz';
@@ -34,7 +35,7 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, 
     locked.current = true;
     const isCorrect = choice.id === target.id;
     setSelected(choice.id);
-    onAnswer(target.id, isCorrect, isCorrect ? 10 : 0);
+    onAnswer(target.id, isCorrect, learningReward(Number(isCorrect)));
     if (isCorrect) setCorrect(c => c + 1);
     else setWrong(ids => [...ids, target.id]);
   };
@@ -59,7 +60,7 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }:
   const [feedback, setFeedback] = useState('');
   const locked = useRef(false);
   const seenErrors = useRef(new Set<string>());
-  const batchSize = pairs[0]?.kind === 'fact' ? 2 : 3;
+  const batchSize = pairs[0]?.kind === 'fact' ? 4 : 6;
   const batch = Math.floor(matched.length / batchSize);
   const activePairs = new Set(memoryBoardIds(pairs.map(pair => pair.id), matched.length, batchSize));
   const activeCards = cards.filter(card => activePairs.has(card.pair.id));
@@ -73,7 +74,7 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }:
       setMoves(m => m + 1);
       if (match) {
         setMatched(ids => [...ids, first.pair.id]);
-        onAnswer(first.pair.id, !seenErrors.current.has(first.pair.id), 10);
+        onAnswer(first.pair.id, !seenErrors.current.has(first.pair.id), learningReward());
         setFeedback('Setje gevonden: ' + first.pair.left + '.');
       } else {
         seenErrors.current.add(first.pair.id); seenErrors.current.add(second.pair.id);
@@ -98,7 +99,7 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }:
         if (flipped.length === 1) locked.current = true;
         setFlipped(previous => [...previous, card.id]);
       }}>
-        <span className="memory-inner"><span className="card-back" aria-hidden="true"><img src="/images/logo-compas-geel.svg" width="60" height="60" alt="" /><span>{index + 1}</span></span>
+        <span className="memory-inner"><span className="card-back" aria-hidden="true"><img src="/images/logo-compas-geel.svg" width="60" height="60" alt="" /></span>
           <span className="card-front" aria-hidden={!visible}><small>{card.side === 'left' ? card.pair.kind === 'flag' ? 'Land' : card.pair.kind === 'fact' ? 'Plek' : 'Gebied' : card.pair.kind === 'flag' ? 'Vlag' : card.pair.kind === 'capital' ? 'Hoofdstad' : 'Weetje'}</small><span className={flag ? 'memory-flag' : 'memory-text'}>{visible ? card.pair[card.side] : ''}</span>{isMatched && <Check className="match-check" size={18} />}</span>
         </span>
       </button>;

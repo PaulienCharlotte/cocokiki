@@ -1,5 +1,6 @@
 import { SessionStats } from '../types';
 import { TableChoice } from '../types';
+import { learningReward } from '../../../../services/learningReward';
 
 export const EMPTY_STATS: SessionStats = { firstTry: 0, eventual: 0, missed: 0, streak: 0, bestStreak: 0, score: 0 };
 
@@ -32,6 +33,5 @@ export function roundDuration(baseMs: number, stats: SessionStats): number {
 }
 
 export function currencyReward(table: TableChoice, firstTry: boolean): number {
-  const difficulty = table === 'mix' ? 4 : [6, 7, 8, 9].includes(table) ? 3 : [3, 4].includes(table) ? 2 : 1;
-  return firstTry ? difficulty : Math.max(1, Math.ceil(difficulty / 2));
+  return learningReward();
 }

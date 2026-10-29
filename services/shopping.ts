@@ -62,7 +62,15 @@ function isSession(value: unknown): value is ShoppingSession {
 export function loadShoppingSession(mode: ShoppingSession['mode'], recipeId: RecipeId | null = null): ShoppingSession {
   try {
     const parsed = JSON.parse(localStorage.getItem(storageKey(mode, recipeId)) ?? 'null');
-    if (isSession(parsed) && parsed.mode === mode && parsed.recipeId === recipeId) return parsed;
+    if (isSession(parsed) && parsed.mode === mode && parsed.recipeId === recipeId) {
+      // Keep agreed basket prices; add prices only for newly introduced products.
+      const added = SHOP_PRODUCTS.filter(product => !Object.prototype.hasOwnProperty.call(parsed.priceSnapshot.prices, product.id));
+      if (!added.length) return parsed;
+      const next = { ...parsed, priceSnapshot: { ...parsed.priceSnapshot, prices: { ...parsed.priceSnapshot.prices,
+        ...Object.fromEntries(added.map(product => [product.id, getProductPrice(product.id, parsed.priceSnapshot.season)])) } } };
+      saveShoppingSession(next);
+      return next;
+    }
   } catch {
     // A damaged session is replaced below.
   }

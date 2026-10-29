@@ -10,6 +10,11 @@ export const COCOCOINS_PER_EURO = 10;
 export const SHOP_PRICE_VERSION = '2026.1';
 
 export const SHOP_PRICES: Record<string, ProductPriceConfig> = {
+  // Indicative AH reference prices, checked 2026-10-29; existing 10 coins/euro economy.
+  'sunflower-oil': { cocoCoins: 14, provisional: true },
+  'baking-powder': { cocoCoins: 4, provisional: true },
+  salt: { cocoCoins: 5, provisional: true },
+  'vanilla-extract': { cocoCoins: 46, provisional: true },
   tomato: { cocoCoins: 5, provisional: true },
   carrot: { cocoCoins: 3, provisional: true },
   pepper: { cocoCoins: 12, provisional: true },

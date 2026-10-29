@@ -1,11 +1,12 @@
 import type { ClockGameId, ClockLevel, ClockProgress, ClockRaceMode } from './types';
 import { commitLocalState, readDocument, readLocalState } from '../../services/localState';
+import { learningReward } from '../../services/learningReward';
 
 export const CLOCK_PROGRESS_KEY = 'cocokiki:clock-progress:v1';
 export const CLOCK_RACE_MODE_KEY = 'cocokiki:clock-race-mode:v1';
 
 export function createEmptyClockProgress(): ClockProgress {
-  return { version: 1, completed: { memory: [], 'set-clock': [], race: [] } };
+  return { version: 1, completed: { memory: [], 'set-clock': [], race: [], 'world-times': [] } };
 }
 
 function validLevel(value: unknown): value is ClockLevel {
@@ -23,6 +24,7 @@ export function migrateClockProgress(value: unknown): ClockProgress {
       memory: [...new Set(Array.isArray(completed.memory) ? completed.memory.filter(validLevel) : [])].sort(),
       'set-clock': [...new Set(Array.isArray(completed['set-clock']) ? completed['set-clock'].filter(validLevel) : [])].sort(),
       race: [...new Set(Array.isArray(completed.race) ? completed.race.filter(validLevel) : [])].sort(),
+      'world-times': [...new Set(Array.isArray(completed['world-times']) ? completed['world-times'].filter(validLevel) : [])].sort(),
     },
   };
 }
@@ -51,19 +53,20 @@ export function completeClockLevel(progress: ClockProgress, game: ClockGameId, l
 }
 
 export function clockLevelReward(level: ClockLevel): number {
-  return 3 + level * 2;
+  return learningReward(5);
 }
 
 /** One round token prevents repeated effects from awarding the same practice twice. */
-export function rewardClockRound(game: ClockGameId, level: ClockLevel, roundId: string): number {
+export function rewardClockRound(game: ClockGameId, level: ClockLevel, roundId: string, solved = game === 'memory' ? 6 : 5): number {
   if (!roundId || !validLevel(level)) return 0;
+  if (!Number.isSafeInteger(solved) || solved < 0 || solved > (game === 'memory' ? 6 : 5)) return 0;
   try {
     const state = readLocalState();
     const id = `clock:round:${roundId}`;
     if (Object.prototype.hasOwnProperty.call(state.appliedTransactions, id)) return 0;
     const milestone = `clock:${game}:level:${level}`;
     const first = !Object.prototype.hasOwnProperty.call(state.appliedTransactions, milestone);
-    const amount = first ? clockLevelReward(level) : 3 + level;
+    const amount = learningReward(solved);
     const next = completeClockLevel(loadClockProgress(), game, level).progress;
     const operations = first ? [{ id: milestone, amount }, { id, amount: 0 }] : [{ id, amount }];
     return commitLocalState({ [CLOCK_PROGRESS_KEY]: JSON.stringify(next) }, operations).status === 'applied' ? amount : 0;

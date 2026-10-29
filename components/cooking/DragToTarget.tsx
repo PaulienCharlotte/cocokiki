@@ -8,6 +8,7 @@ interface DragToTargetProps {
   sourceLabel: string;
   targetLabel: string;
   targetAsset?: string;
+  targetContent?: React.ReactNode;
   onHit: () => void;
   onMiss: () => void;
 }
@@ -17,7 +18,7 @@ interface DragToTargetProps {
  * ingrediënt op het doel wordt losgelaten; ernaast loslaten veert terug.
  * Tikken doet hetzelfde als slepen, zodat het ook met toetsenbord lukt.
  */
-export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, targetAsset, onHit, onMiss }: DragToTargetProps) {
+export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, targetAsset, targetContent, onHit, onMiss }: DragToTargetProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const [landed, setLanded] = useState(false);
   const [over, setOver] = useState(false);
@@ -69,9 +70,9 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
 
     <div className="cooking-drop__target-slot">
       <div ref={targetRef} className={`cooking-drop__target${over ? ' is-over' : ''}${landed ? ' is-filled' : ''}`}>
-        {targetAsset
+        {targetContent ?? (targetAsset
           ? <CookingAssetImage src={targetAsset} alt="" />
-          : <span className="cooking-drop__plate" aria-hidden="true" />}
+          : <span className="cooking-drop__plate" aria-hidden="true" />)}
         {landed && <motion.span
           className="cooking-drop__landed"
           initial={{ scale: .4, y: -40, opacity: 0 }}

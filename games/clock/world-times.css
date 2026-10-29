@@ -1,0 +1,45 @@
+.clock-game.world-times { min-height: calc(100dvh - var(--space-12) * 3); padding: var(--space-5); background: var(--color-surface); color: var(--color-text); }
+.world-times__header { display: flex; align-items: center; gap: var(--space-4); }
+.world-times h1 { margin: 0; font-size: var(--font-size-xl); }
+.world-times__modes { display: flex; gap: var(--space-2); padding-block: var(--space-4); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-4); }
+.world-times label { display: grid; gap: var(--space-1); min-width: 0; font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
+.world-times select, .world-times input[type=time] { width: 100%; min-width: 0; min-height: var(--touch-target); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; }
+.world-times__clocks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+.world-times__city { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; gap: var(--space-2); }
+.world-times__city label { width: 100%; }
+.world-times__city .analog-clock { width: min(100%, 160px); }
+.world-times__flag { font-size: var(--font-size-xl); }
+.world-times__digital { font-size: var(--font-size-xl); font-variant-numeric: tabular-nums; }
+.world-times small { color: var(--color-text-muted); font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+.world-times__travel { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.world-times__travel label { flex: 1; }
+.world-times__travel input { width: 100%; min-height: var(--touch-target); accent-color: var(--color-primary); }
+.world-times__level { max-width: 360px; margin-bottom: var(--space-3); }
+.world-times__practice > progress { width: 100%; accent-color: var(--color-primary); }
+.world-times__journey { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-4); max-width: 640px; margin: var(--space-4) auto; text-align: center; }
+.world-times__journey > div { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); min-width: 0; }
+.world-times__journey .analog-clock { width: min(100%, 160px); }
+.world-times__journey h2 { font-size: var(--font-size-lg); margin: 0; overflow-wrap: anywhere; }
+.world-times__journey p { font-size: var(--font-size-sm); margin: 0; }
+.world-times__answer { display: flex; flex-wrap: wrap; align-items: end; justify-content: center; gap: var(--space-3); }
+.world-times__answer label { flex: 1; max-width: 240px; }
+.world-times__feedback { min-height: var(--space-8); margin-top: var(--space-3); color: var(--color-primary); font-size: var(--font-size-sm); }
+.world-times__hint { margin: var(--space-2) 0 0; padding: var(--space-3); background: var(--color-background-soft); border-radius: var(--radius-control); line-height: 1.5; }
+@media (min-width: 601px) and (max-height: 760px) {
+  .clock-module:has(.world-times) { padding-bottom: var(--space-3); }
+  .clock-game.world-times { padding: var(--space-4); }
+  .world-times__modes { padding-block: var(--space-3); }
+  .world-times__city .analog-clock { width: min(100%, 128px); }
+}
+@media (max-width: 600px) {
+  .clock-game.world-times { padding: var(--space-3); }
+  .world-times__clocks { gap: var(--space-2); }
+  .world-times__city select { font-size: var(--font-size-xs); padding-inline: var(--space-1); }
+  .world-times__city .analog-clock { max-width: 100px; }
+  .world-times__city { font-size: var(--font-size-xs); }
+  .world-times__travel { flex-wrap: wrap; }
+  .world-times__travel label { min-width: 40%; }
+  .world-times__journey { gap: var(--space-2); }
+  .world-times__answer label { flex-basis: 40%; }
+  .world-times__answer > .ck-button { width: 100%; }
+}

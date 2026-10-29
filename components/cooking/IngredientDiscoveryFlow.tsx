@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Check, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, RotateCcw, SkipForward, Sparkles } from 'lucide-react';
 import { Button, ProgressIndicator } from '../../design-system';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
@@ -124,7 +124,12 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     setToastCoins(result.coinDelta);
   };
 
-  const skip = () => commit(skipKnownIngredient(progress, recipe.id));
+  const skip = () => {
+    if (!commit(skipKnownIngredient(progress, recipe.id))) return;
+    setWrongAnswer(null);
+    setSelectedAnswer(null);
+    setToastCoins(0);
+  };
 
   return <main className="discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
@@ -143,7 +148,6 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
           {alreadyCollected && <span className="discovery-collected-badge"><Check size={16} />Al verzameld</span>}
           <IngredientDiscoveryCard config={config} ingredient={ingredient} />
           <Button size="large" onClick={() => commit(showDiscoveryQuestion(progress, recipe.id))}>{alreadyCollected ? 'Bekijk de vraag' : 'Naar de vraag'}</Button>
-          {alreadyCollected && <button className="discovery-skip" type="button" onClick={skip}>Overslaan, dit ingrediënt ken ik al</button>}
         </>}
 
         {(discovery.step === 'question' || discovery.step === 'correct') && <>
@@ -162,6 +166,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
           {wrongAnswer && <div className="discovery-feedback discovery-feedback--wrong" role="alert"><RotateCcw size={20} /><span><strong>Nog niet.</strong> {config.educationalText}</span></div>}
           {discovery.step === 'correct' && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
         </>}
+        {alreadyCollected && (discovery.step === 'learn' || discovery.step === 'question') && <Button variant="quiet" startIcon={<SkipForward size={18} />} onClick={skip}>Ingrediënt overslaan</Button>}
       </div>
     </section>
     <RecipeOverviewDialog recipe={showRecipe ? recipe : null} progress={progress} journey={journey} onClose={() => setShowRecipe(false)} onStart={() => setShowRecipe(false)} onReplay={replay ? undefined : () => onReplay()} />

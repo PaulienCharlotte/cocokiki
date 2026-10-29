@@ -7,6 +7,7 @@ import InteractiveMap from './InteractiveMap';
 import TipCoach from './TipCoach';
 import MapFactCard from './MapFactCard';
 import RoundResult from './RoundResult';
+import { learningReward } from '../services/learningReward';
 
 interface Props {
   mode: 'find' | 'spell' | 'master';
@@ -37,6 +38,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
   const [seconds, setSeconds] = useState(15);
   const locked = useRef(false);
   const hadError = useRef(false);
+  const answerRevealed = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const target = locations[index];
 
@@ -45,7 +47,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
     if (locked.current || !target) return;
     locked.current = true;
     const clean = success && !hadError.current && !hint;
-    onAnswer(locationProgressKey(target), clean, success ? (clean ? 10 : 5) : 0);
+    onAnswer(locationProgressKey(target), clean, learningReward(Number(success), answerRevealed.current));
     if (clean) setCorrect(c => c + 1);
     else setWrongIds(ids => [...ids, target.id]);
     setResolved(true); setReveal(true); setFactDismissed(false); setFeedback(message);
@@ -84,7 +86,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
   const next = () => {
     setIndex(i => i + 1); setStep(mode === 'spell' ? 'spell' : 'find'); setAnswer('');
     setResolved(false); setHint(false); setReveal(false); setFeedback(''); setDetour(null); setFactDismissed(false); setSeconds(15);
-    locked.current = false; hadError.current = false;
+    locked.current = false; hadError.current = false; answerRevealed.current = false;
   };
   useEffect(() => {
     if (mode !== 'find' || !resolved) return;
@@ -111,13 +113,13 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
         <input aria-label="Naam van de plek" placeholder="Naam van de plek" value={answer} onChange={e => setAnswer(e.target.value)} disabled={resolved} autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} />
         <button type="submit" className="primary-button" aria-label="Antwoord controleren" disabled={resolved || !answer.trim()}><Check size={20} /></button>
       </form>}
-      {hint && !resolved && <TipCoach coach="seb">{step === 'spell' ? 'De naam begint met ' + target.name.slice(0, 2) + '. (' + target.name.length + ' tekens)' : 'Ik wijs de plek aan op de kaart. Kijk naar de markering.'}</TipCoach>}
+      {hint && !resolved && <TipCoach coach="seb">{step === 'spell' ? 'De naam begint met ' + target.name.slice(0, 2) + '. (' + target.name.length + ' tekens)' : 'Ik wijs de plek aan op de kaart. Deze plek oefen je zonder munten.'}</TipCoach>}
       <div className={'answer-feedback' + (resolved ? ' answered' : '')} role="status">{feedback}</div>
       {resolved ? mode === 'find'
         ? <p className="auto-next"><LoaderCircle size={17} />{index + 1 === locations.length ? 'Route afronden...' : 'Volgende plek...'}</p>
         : <button className="primary-button next-question" onClick={next}>{index + 1 === locations.length ? 'Bekijk de route' : 'Volgende plek'}<ArrowRight size={18} /></button>
         : <div className="question-tools">
-        <button className="secondary-button" onClick={() => { setHint(true); hadError.current = true; if (step === 'find') setReveal(true); }} disabled={hint}><Lightbulb size={17} />Hint</button>
+        <button className="secondary-button" onClick={() => { setHint(true); hadError.current = true; if (step === 'find') { answerRevealed.current = true; setReveal(true); } }} disabled={hint}><Lightbulb size={17} />Hint</button>
         <button className="text-button" onClick={() => finish(false, 'Dit is ' + target.name + '.')}>Toon antwoord</button>
       </div>}
     </section>

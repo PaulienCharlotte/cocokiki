@@ -10,7 +10,7 @@ interface SetClockGameProps {
   initialLevel: ClockLevel;
   completedLevels: ClockLevel[];
   onBack: () => void;
-  onComplete: (level: ClockLevel, roundId: string) => number;
+  onComplete: (level: ClockLevel, roundId: string, solved?: number) => number;
 }
 
 const ROUND_COUNT = 5;
@@ -24,9 +24,11 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
   const [hint, setHint] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
   const roundId = useRef(crypto.randomUUID());
+  const revealed = useRef(false), eligible = useRef(0);
 
   const reset = (nextLevel = level) => {
     roundId.current = crypto.randomUUID();
+    revealed.current = false; eligible.current = 0;
     setLevel(nextLevel);
     setTarget(generateTime(nextLevel));
     setAnswer({ hours: 12, minutes: 0 });
@@ -47,9 +49,11 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
   };
   const next = useCallback(() => {
     const nextScore = score + 1;
+    if (!revealed.current) eligible.current++;
+    revealed.current = false;
     if (nextScore >= ROUND_COUNT) {
       setScore(nextScore);
-      setReward(onComplete(level, roundId.current));
+      setReward(onComplete(level, roundId.current, eligible.current));
       return;
     }
     setScore(nextScore);
@@ -81,12 +85,12 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
       </div>
     </div>
     <div className="clock-game__feedback" aria-live="polite">
-      {hint && feedback !== 'correct' && <span>Hint: de digitale tijd is <strong>{formatDigitalTime(target)}</strong>.</span>}
+      {hint && feedback !== 'correct' && <span>De digitale tijd is <strong>{formatDigitalTime(target)}</strong>. Deze klok oefen je zonder munten.</span>}
       {feedback === 'wrong' && <span className="is-wrong">Bijna. Kijk nog eens naar de lange wijzer.</span>}
       {feedback === 'correct' && <span className="is-correct"><Check size={18} /> Goed gezet!</span>}
     </div>
     <div className="clock-game__actions">
-      <Button variant="quiet" startIcon={<Lightbulb size={18} />} onClick={() => setHint(true)}>Hint</Button>
+      <Button variant="quiet" disabled={feedback === 'correct'} startIcon={<Lightbulb size={18} />} onClick={() => { revealed.current = true; setHint(true); }}>Toon tijd</Button>
       <Button startIcon={<Check size={18} />} disabled={feedback === 'correct'} onClick={check}>{feedback === 'correct' ? 'Goed!' : 'Controleer'}</Button>
     </div>
     {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onBack} />}

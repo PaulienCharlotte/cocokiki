@@ -10,7 +10,7 @@ export default function NutrientMemory({ config, onComplete }: { config: Nutrien
   const announced = useRef(false);
   const done = memoryComplete(state, deck);
   const pairIds = [...new Set<string>(deck.map(card => card.nutrientId))];
-  const activeIds = new Set(memoryBoardIds(pairIds, state.matchedIds.length / 2, 3));
+  const activeIds = new Set(memoryBoardIds(pairIds, state.matchedIds.length / 2, 6));
   useEffect(() => {
     if (state.openIds.length !== 2) return;
     const timer = window.setTimeout(() => setState(hideMismatchedCards), 1600);

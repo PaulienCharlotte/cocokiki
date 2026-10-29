@@ -16,6 +16,7 @@ import { luaMathResult, luaTableForLevel } from '../math/luaBridge';
 interface Props {
   onHome: () => void;
   onCoinsChange?: (coins: number) => void;
+  setupControls?: React.ReactNode;
   mathAdventure?: { level: MathLevel; onComplete: (result: MathResult) => void; sound: boolean };
 }
 const FEEDBACK = ['Goed gered!', 'Knap gedaan!', 'Super snel!', 'Lua is veilig!'];
@@ -25,7 +26,7 @@ const MODE_INFO: Array<{ id: LuaGameMode; label: string; detail: string }> = [
   { id: 'challenge', label: 'Uitdaging', detail: 'Sneller en gemixt' },
 ];
 
-export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure }: Props) {
+export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, setupControls }: Props) {
   const ROUND_COUNT = mathAdventure ? 10 : 8;
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
@@ -63,7 +64,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure }:
     const stars = starsFor(finalStats, playedRounds);
     const nextBest = { score: Math.max(best.score, finalStats.score), stars: Math.max(best.stars, stars) };
     setBest(nextBest); saveBest(nextBest); setGamePhase('results'); audioRef.current.play('results');
-    mathAdventure?.onComplete(luaMathResult(finalStats));
+    mathAdventure?.onComplete({ ...luaMathResult(finalStats), roundId: coinSessionId.current });
   }, [best, mathAdventure]);
 
   const beginRound = useCallback((nextRound: number, sourceStats: SessionStats, previousId = '') => {
@@ -132,7 +133,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure }:
     const firstTry = wrongChoices.length === 0;
     const nextStats = recordSuccess(stats, firstTry);
     difficultyRef.current = nextDifficulty(difficultyRef.current, nextStats.streak, !firstTry);
-    const comboBonus = firstTry && nextStats.streak >= 5 ? 2 : firstTry && nextStats.streak >= 3 ? 1 : 0;
+    const comboBonus = 0;
     const earned = currencyReward(preferences.mode === 'challenge' ? 'mix' : preferences.table, firstTry) + comboBonus;
     if (!mathAdventure) { setCoins(awardCurrencyOnce(`lua:${coinSessionId.current}:${round}:${activeQuestion.id}`, earned).balance); setSessionCoins(previous => previous + earned); }
     setStats(nextStats);
@@ -159,6 +160,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure }:
       {phase === 'menu' && <section className="lua-menu" aria-labelledby="lua-title">
         <p className="lua-kicker">Jungle-avontuur</p><h1 id="lua-title">Red Baby Lua!</h1>
         <p>Oefen keer- en deelsommen, ontwijk de rotsen en help Lua veilig door de jungle.</p>
+        {setupControls && <div className="lua-setup-controls">{setupControls}</div>}
         {!mathAdventure && <><fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong><small>{mode.detail}</small></button>)}</div></fieldset>
         <fieldset className="lua-tables"><legend>Kies je tafel</legend><div>{[1,2,3,4,5,6,7,8,9,10,'mix'].map(value => <button key={value} type="button" aria-pressed={preferences.table === value} onClick={() => updatePreference('table', value as TableChoice)}>{value === 'mix' ? 'Mix' : value}</button>)}</div></fieldset></>}
         <div className="lua-menu-balance"><CocoCoin size={20} /><strong>{coins}</strong><span>CocoCoins</span></div>
