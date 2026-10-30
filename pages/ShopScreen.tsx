@@ -120,7 +120,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
   };
 
   if (!activeStore) return <ShopStreet onOpenGroceries={() => setActiveStore('groceries')} onOpenDecor={setActiveStore} />;
-  if (activeStore !== 'groceries') return <DecorShop store={activeStore} onBack={() => setActiveStore(null)} />;
+  if (activeStore !== 'groceries') return <DecorShop store={activeStore} onBack={() => setActiveStore(null)} onNavigate={onNavigate} />;
 
   return <main className="shop-room">
     <img className="shop-room__background" src="/games/destinations/shop-interior.webp" alt="Een gezellige winkel vol ingrediënten" />

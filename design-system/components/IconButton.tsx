@@ -3,17 +3,20 @@ import { cx } from '../utils';
 import type { ButtonVariant } from './Button';
 
 export interface IconButtonProps {
+  key?: string;
   label: string;
   icon: React.ReactNode;
   variant?: ButtonVariant;
   size?: 'small' | 'medium' | 'large';
   className?: string;
+  style?: React.CSSProperties;
   disabled?: boolean;
   title?: string;
   type?: 'button' | 'submit' | 'reset';
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   'aria-current'?: React.AriaAttributes['aria-current'];
   'aria-expanded'?: boolean;
+  'aria-pressed'?: boolean;
 }
 
 export default function IconButton({ label, icon, variant = 'quiet', size = 'medium', className, title, type = 'button', ...props }: IconButtonProps) {

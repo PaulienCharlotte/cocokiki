@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Backpack as BackpackIcon, Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
@@ -11,10 +11,13 @@ import PlantFamilyPanel from '../plants/PlantFamilyPanel';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import CocoCoin from '../platform/CocoCoin';
 import PurchaseSuccess from './PurchaseSuccess';
+import Backpack from '../dreamworld/Backpack';
+import { subscribeLocalState } from '../../services/localState';
 
 interface DecorShopProps {
   store: DecorStoreId;
   onBack: () => void;
+  onNavigate?: (path: string) => void;
 }
 
 type ActiveCategory = 'all' | DecorCategory;
@@ -23,7 +26,10 @@ function createTransactionId(store: DecorStoreId): string {
   return `decor:${store}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export default function DecorShop({ store, onBack }: DecorShopProps) {
+export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps) {
+  const [backpackOpen, setBackpackOpen] = useState(false);
+  const [inventory, setInventory] = useState(loadRoomInventory);
+  useEffect(() => subscribeLocalState(() => setInventory(loadRoomInventory()), ROOM_INVENTORY_KEY), []);
   const [category, setCategory] = useState<ActiveCategory>('all');
   const [basket, setBasket] = useState<Record<string, number>>({});
   const [basketOpen, setBasketOpen] = useState(false);
@@ -90,6 +96,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
         <div><small>{definition.eyebrow}</small><h1 id="decor-shop-title">{definition.label}</h1></div>
         <div className="shop-catalog__actions">
+          {store === 'furniture' && onNavigate && <button className="shop-icon-button" type="button" aria-label="Mijn rugzak openen" title="Rugzak" onClick={() => setBackpackOpen(true)}><BackpackIcon /></button>}
           {store === 'plants' && <button className="shop-icon-button" type="button" onClick={() => setFamilyOpen(true)} aria-label="Mijn Plantenfamilie openen" title="Mijn Plantenfamilie"><Sprout /></button>}
           <button className="shop-basket-button" type="button" onClick={() => setBasketOpen(true)} aria-label={`Open mandje met ${count} producten`}><ShoppingBasket /><span>{count}</span><strong>{total}</strong></button>
         </div>
@@ -101,6 +108,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
         {products.map(product => <article className="shop-product decor-product" role="listitem" key={product.id}>
           {/* Het plaatje spreekt voor zich; de naam blijft in de alt-tekst staan. */}
           <DecorAsset product={product} className="shop-product__art" />
+          {store === 'furniture' && inventory.owned[product.id] > 0 && <button type="button" className="decor-product__owned" aria-label={`Bekijk voorraad: ${product.name}, ${inventory.owned[product.id]} in bezit`} title={`${inventory.owned[product.id]} in bezit, inclusief ingerichte meubels`} onClick={() => setBackpackOpen(true)}><BackpackIcon size={14} aria-hidden="true" /><span>{inventory.owned[product.id]}</span></button>}
           {PLANT_SPECIES_BY_ID[product.id] && <button className="decor-product__info" type="button" onClick={() => setInfoSpecies(product.id)} aria-label={`Meer weten over ${product.name}`}><Info /></button>}
           <div className="shop-product__buy"><span><CocoCoin size={18} />{product.price}</span><button type="button" onClick={() => adjust(product.id, 1)} aria-label={`Voeg ${product.name} toe`}><Plus /></button></div>
         </article>)}
@@ -124,6 +132,7 @@ export default function DecorShop({ store, onBack }: DecorShopProps) {
       </aside>
     </div>}
 
+    {backpackOpen && onNavigate && <Backpack onClose={() => setBackpackOpen(false)} onNavigate={onNavigate} />}
     {infoSpecies && <PlantFlashcard speciesId={infoSpecies} onClose={() => setInfoSpecies(null)} />}
     {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
     {adopted.length > 0 && <PlantAdoptionDialog plants={adopted} onName={nameAdopted} onDone={() => { setAdopted([]); setSuccess(true); }} />}

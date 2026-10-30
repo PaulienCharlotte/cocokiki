@@ -1,6 +1,6 @@
 import { ASSET_LIBRARY } from './assetLibrary';
 
-export type BaseRoomId = 'living-room' | 'kitchen' | 'bedroom' | 'terrace';
+export type BaseRoomId = 'living-room' | 'kitchen' | 'bathroom' | 'bedroom' | 'terrace';
 export type ExtraRoomId = `extra-${1 | 2 | 3 | 4 | 5}`;
 export type TreehouseRoomId = BaseRoomId | ExtraRoomId;
 
@@ -14,6 +14,12 @@ export interface TreehouseRoomDefinition {
 }
 
 export const TREEHOUSE_ROOMS: TreehouseRoomDefinition[] = [
+  {
+    id: 'bathroom', label: 'Badkamer', path: '/treehouse/bathroom',
+    background: '/assets/library/treehouse/expansions/hobby-room.png',
+    icon: ASSET_LIBRARY.treehouse.icons.home,
+    alt: 'Een lege houten kamer voor de badkamer',
+  },
   {
     id: 'bedroom',
     label: 'Slaapkamer',

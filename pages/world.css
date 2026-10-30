@@ -1215,6 +1215,7 @@
 
 /* --- Plantenwereld: leerkaart, adoptie en de plantenfamilie --- */
 .decor-product { position: relative; }
+.decor-product__owned { position: absolute; top: var(--space-2); right: var(--space-2); display: inline-flex; justify-content: center; align-items: center; gap: var(--space-1); min-width: var(--touch-target); min-height: var(--touch-target); padding: var(--space-1) var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-primary); font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); cursor: pointer; }
 .decor-product__info { position: absolute; z-index: 1; top: 6px; right: 6px; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-primary); }
 .decor-product__info:hover { border-color: var(--color-primary); background: var(--color-success-soft); }
 .decor-product__info svg { width: 17px; }

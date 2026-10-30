@@ -35,7 +35,7 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
 .dream-app .topo-app.in-test .session-page { padding-top: calc(var(--space-12) * 2); }
 .dream-app .topo-app.view-discover:not(.in-session) .discover-page { padding-top: calc(var(--space-12) * 2); }
 .dream-app .dream-plant-collection .plant-card-backdrop { position: relative; inset: auto; min-height: 100dvh; padding-top: calc(var(--space-12) * 3); background: var(--color-background-calm); }
-.dream-backpack ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); list-style: none; padding: 0; gap: var(--space-3); }
+.dream-backpack ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); list-style: none; padding: 0; gap: var(--space-3); }
 .dream-backpack li { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .dream-backpack li img { width: var(--space-12); height: var(--space-12); object-fit: contain; }
 .dream-backpack li span { overflow-wrap: anywhere; }

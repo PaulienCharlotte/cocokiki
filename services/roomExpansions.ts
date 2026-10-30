@@ -30,7 +30,7 @@ export function ownedRooms(state = loadRoomExpansions()): TreehouseRoomDefinitio
     return { id: room.id, label: room.name, path: `/treehouse/${room.id}` as const, background: template.background, icon: template.icon, alt: `Lege ${template.label.toLowerCase()} in de boomhut` };
   });
   return [
-    ...['bedroom', 'living-room', 'kitchen'].map(id => TREEHOUSE_ROOMS.find(room => room.id === id)!),
+    ...['bedroom', 'living-room', 'kitchen', 'bathroom'].map(id => TREEHOUSE_ROOMS.find(room => room.id === id)!),
     ...extensions.filter(room => roomGroup(state.rooms.find(item => item.id === room.id)!.template) === 'inside'),
     TREEHOUSE_ROOMS.find(room => room.id === 'terrace')!,
     ...extensions.filter(room => roomGroup(state.rooms.find(item => item.id === room.id)!.template) === 'balcony'),

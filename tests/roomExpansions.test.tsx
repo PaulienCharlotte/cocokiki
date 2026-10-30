@@ -47,7 +47,7 @@ test('room and balcony purchases have separate prices, stable instances and atom
   assert.equal(new Set(saved.rooms.map(room => room.id)).size, 5);
   assert.equal(buyRoom('hobby-room', 'Vol', 'fourth-room').status, 'full');
   assert.equal(buyRoom('growing-deck', 'Vol', 'third-balcony').status, 'full');
-  assert.equal(ownedRooms().length, 9);
+  assert.equal(ownedRooms().length, 10);
   assert.equal(ownedRooms().at(-1)?.label, 'Kas');
   assert.deepEqual(migrateRoomExpansions(JSON.parse(JSON.stringify(saved))), saved);
 }));

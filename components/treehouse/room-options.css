@@ -1,0 +1,36 @@
+.room-options-trigger { position: fixed; z-index: 14; bottom: max(20px, env(safe-area-inset-bottom)); left: 18px; background: var(--color-surface); box-shadow: var(--shadow-soft); }
+.room-overview-link { position: fixed; z-index: 14; top: 112px; left: 18px; }
+.room-overview-link .ck-button { background: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-soft); }
+.treehouse-interior .room-inventory-trigger,
+.treehouse-interior .kitchen-cookbook-trigger { width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; display: grid; place-items: center; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); backdrop-filter: none; z-index: 14; }
+.treehouse-interior .kitchen-cookbook-trigger { left: auto; right: 70px; }
+.treehouse-interior .terrace-doctor-trigger { left: auto; right: 122px; }
+.treehouse-interior .room-inventory-trigger > span,
+.treehouse-interior .kitchen-cookbook-trigger > span { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.treehouse-interior .room-inventory-trigger b { position: absolute; right: -5px; top: -5px; min-width: 18px; height: 18px; border: 1px solid var(--color-surface); background: var(--color-success-soft); color: var(--color-primary); font-size: 10px; }
+.treehouse-interior .room-inventory-trigger:hover,
+.treehouse-interior .kitchen-cookbook-trigger:hover { background: var(--color-surface-soft); border-color: var(--color-primary); }
+.treehouse-interior .treehouse-interior__pan-controls { position: fixed; z-index: 14; top: 48%; left: 12px; right: 12px; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(-50%); }
+.treehouse-interior .treehouse-interior__pan-controls button { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-primary); box-shadow: var(--shadow-soft); padding: 0; pointer-events: auto; }
+.treehouse-interior .treehouse-interior__pan-controls button:disabled { opacity: .35; cursor: default; }
+.room-options { display: grid; gap: var(--space-4); justify-items: center; }
+.room-options__icons { display: grid; grid-template-columns: repeat(4, minmax(44px, 1fr)); gap: var(--space-3); }
+.room-options__icons [aria-pressed="true"] { background: var(--color-success-soft); outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.room-options > p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+@media (max-width: 600px) {
+  .room-options-trigger { left: 10px; }
+  .room-overview-link { top: 82px; left: 10px; }
+  .room-overview-link .ck-button { padding-inline: 10px; font-size: var(--font-size-sm); }
+  .treehouse-interior .kitchen-cookbook-trigger { right: 62px; }
+  .treehouse-interior .terrace-doctor-trigger { right: 114px; }
+}
+.treehouse-interior .room-overview-link { top: 112px; left: auto; right: 18px; }
+.treehouse-interior .room-overview-link .ck-icon-button { background: var(--color-surface); box-shadow: var(--shadow-soft); }
+.treehouse-interior .room-inventory-trigger { top: 112px; right: 70px; }
+.treehouse-interior .kitchen-cookbook-trigger { top: 112px; right: 122px; }
+.treehouse-interior .terrace-doctor-trigger { top: 112px; right: 174px; }
+.treehouse-interior .room-options-trigger { top: 112px; bottom: auto; left: auto; right: 122px; }
+.treehouse-interior .kitchen-groceries-trigger { top: 112px; right: 174px; width: 44px; height: 44px; min-height: 44px; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); }
+@media (max-width: 600px) {
+  .treehouse-interior .room-overview-link, .treehouse-interior .room-inventory-trigger, .treehouse-interior .kitchen-cookbook-trigger, .treehouse-interior .room-options-trigger, .treehouse-interior .kitchen-groceries-trigger { top: 82px; }
+}

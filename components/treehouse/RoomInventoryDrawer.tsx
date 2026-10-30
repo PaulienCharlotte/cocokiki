@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { BringToFront, SendToBack, Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { Backpack, BringToFront, SendToBack, Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { layerRoomItem, roomItemDepth, availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
@@ -202,7 +202,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   const overlay = <>
     {open && <div className="room-inventory-backdrop room-decor-backdrop" onMouseDown={() => setOpen(false)}>
       <aside className="room-inventory-drawer" role="dialog" aria-modal="true" aria-labelledby="room-inventory-title" onMouseDown={event => event.stopPropagation()}>
-        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Voorraad</h2></div><div className="room-inventory-drawer__actions"><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></div></header>
+        <header><div><small>Mijn spullen</small><h2 id="room-inventory-title">Rugzak</h2></div><div className="room-inventory-drawer__actions"><button ref={closeRef} type="button" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} aria-label="Sluiten"><X /></button></div></header>
         {products.length > 0 ? <div className="room-inventory-grid">
           {products.map(({ product, amount }) => <article key={product.id}>
             <button className="room-inventory-place" type="button" aria-label={`${product.name} in kamer plaatsen`} onPointerDown={event => begin(event, product)} onClick={event => { if (event.detail === 0) { place(product, window.innerWidth / 2, window.innerHeight * .72); setOpen(false); } }}><DecorAsset product={product} /></button>
@@ -264,8 +264,8 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
         </div>;
       })}
     </div>
-    <button ref={triggerRef} className={`room-inventory-trigger${overReturn ? ' is-drop-target' : ''}`} type="button" onClick={() => setOpen(true)} aria-label="Mijn kameritems openen" title="Voorraad" aria-expanded={open}>
-      <PackageOpen aria-hidden="true" /><span>Voorraad</span>
+    <button ref={triggerRef} className={`room-inventory-trigger${overReturn ? ' is-drop-target' : ''}`} type="button" onClick={() => setOpen(true)} aria-label="Mijn rugzak openen" title="Rugzak" aria-expanded={open}>
+      <Backpack aria-hidden="true" /><span>Rugzak</span>
       {products.length > 0 && <b>{products.reduce((total, item) => total + item.amount, 0)}</b>}
     </button>
     {notice && <p className="room-decor-notice" role="alert">{notice}</p>}

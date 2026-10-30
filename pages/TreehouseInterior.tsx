@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, Leaf, Stethoscope } from 'lucide-react';
+import { BookOpen, House, Leaf, Stethoscope } from 'lucide-react';
+import { IconButton } from '../design-system';
 import { type TreehouseRoomId } from '../data/treehouse';
 import { createEmptyCookingProgress, loadCookingProgress, startJourney } from '../services/cookingProgress';
 import { RECIPES_BY_ID } from '../data/cooking/catalog';
@@ -11,6 +12,7 @@ import '../components/treehouse/expansion.css';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import PlantFamilyPanel from '../components/plants/PlantFamilyPanel';
 import { roomSwipeDirection } from '../services/roomSwipe';
+import RoomOptions from '../components/treehouse/RoomOptions';
 
 interface TreehouseInteriorProps {
   room: TreehouseRoomId;
@@ -55,14 +57,9 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
   }, []);
 
   const panRoom = useCallback((direction: -1 | 1) => {
-    const edge = direction === -1 ? scrollEdges.left : scrollEdges.right;
     const adjacent = rooms[roomIndex + direction];
-    if (edge && adjacent) { onNavigate(`${adjacent.path}?entry=${direction === 1 ? 'left' : 'right'}`); return; }
-    viewportRef.current?.scrollBy({
-      left: direction * Math.max(220, window.innerWidth * 0.7),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    });
-  }, [scrollEdges, rooms, roomIndex, onNavigate]);
+    if (adjacent) onNavigate(adjacent.path);
+  }, [rooms, roomIndex, onNavigate]);
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -114,6 +111,8 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
       {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} onNavigate={onNavigate} />}
       <RoomInventoryDrawer room={room} sceneRef={sceneRef} onNavigate={onNavigate} />
     </div>
+    <RoomOptions key={room} roomId={room} onNavigate={onNavigate} />
+    <div className="room-overview-link"><IconButton label="Mijn boomhut" icon={<House size={21} />} onClick={() => onNavigate('/treehouse')} /></div>
 
     {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/treehouse/cookbook')} aria-label="Mijn Kookboek openen" title="Mijn Kookboek">
       <BookOpen aria-hidden="true" /><span>Kookboek</span>
@@ -128,11 +127,11 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
     </button>}
     {plantsOpen && <PlantFamilyPanel onNavigate={onNavigate} onClose={() => setPlantsOpen(false)} />}
 
-    <div className="treehouse-interior__pan-controls" aria-label="Kijk rond en ga naar de kamer ernaast">
-      <button type="button" title={scrollEdges.left ? rooms[roomIndex - 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar links'} aria-label={scrollEdges.left && rooms[roomIndex - 1] ? `Naar ${rooms[roomIndex - 1].label}` : 'Kijk naar links'} disabled={scrollEdges.left && !rooms[roomIndex - 1]} onClick={() => panRoom(-1)}>
+    <div className="treehouse-interior__pan-controls" aria-label="Andere kamer">
+      <button type="button" title={rooms[roomIndex - 1]?.label ?? 'Eerste kamer'} aria-label={rooms[roomIndex - 1] ? `Naar ${rooms[roomIndex - 1].label}` : 'Eerste kamer'} disabled={!rooms[roomIndex - 1]} onClick={() => panRoom(-1)}>
         <ArrowLeft /><span className="sr-only">Links</span>
       </button>
-      <button type="button" title={scrollEdges.right ? rooms[roomIndex + 1]?.label ?? 'Einde van de boomhut' : 'Kijk naar rechts'} aria-label={scrollEdges.right && rooms[roomIndex + 1] ? `Naar ${rooms[roomIndex + 1].label}` : 'Kijk naar rechts'} disabled={scrollEdges.right && !rooms[roomIndex + 1]} onClick={() => panRoom(1)}>
+      <button type="button" title={rooms[roomIndex + 1]?.label ?? 'Laatste kamer'} aria-label={rooms[roomIndex + 1] ? `Naar ${rooms[roomIndex + 1].label}` : 'Laatste kamer'} disabled={!rooms[roomIndex + 1]} onClick={() => panRoom(1)}>
         <ArrowRight /><span className="sr-only">Rechts</span>
       </button>
     </div>

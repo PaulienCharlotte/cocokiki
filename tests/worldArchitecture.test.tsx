@@ -241,7 +241,7 @@ test('shop catalog has configurable package prices and enables purchases', () =>
 });
 
 test('treehouse routes expose separate encyclopedia and cookbook spaces', () => {
-  assert.deepEqual(TREEHOUSE_ROOMS.map(room => room.id), ['bedroom', 'terrace', 'living-room', 'kitchen']);
+  assert.deepEqual(TREEHOUSE_ROOMS.map(room => room.id), ['bathroom', 'bedroom', 'terrace', 'living-room', 'kitchen']);
   for (const room of TREEHOUSE_ROOMS) {
     assert.deepEqual(resolveRoute(room.path).route, { page: 'treehouse-room', path: room.path, room: room.id });
   }
@@ -258,7 +258,9 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   const livingRoom = renderToStaticMarkup(<TreehouseInterior room="living-room" onNavigate={() => undefined} />);
   assert.doesNotMatch(livingRoom, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(livingRoom, /aria-label="Mijn Kookboek openen"/);
-  assert.match(livingRoom, /aria-label="Mijn kameritems openen"/);
+  assert.match(livingRoom, /aria-label="Mijn rugzak openen"/);
+  assert.doesNotMatch(livingRoom, /aria-label="Kamer aanpassen"/);
+  assert.match(livingRoom, /aria-label="Mijn boomhut"/);
   const kitchen = renderToStaticMarkup(<TreehouseInterior room="kitchen" onNavigate={() => undefined} />);
   assert.match(kitchen, /aria-label="Mijn Kookboek openen"/);
   assert.doesNotMatch(kitchen, /aria-label="Mijn Encyclopedie openen"/);
@@ -271,13 +273,16 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.match(kitchen, /data-kitchen-station="worktop"/);
   assert.match(kitchen, /data-kitchen-station="cooktop"/);
   assert.match(kitchen, /aria-label="Naar Woonkamer"/);
-  assert.match(kitchen, /aria-label="Kijk naar rechts"/);
-  assert.match(kitchen, /aria-label="Mijn kameritems openen"/);
+  assert.match(kitchen, /aria-label="Naar Badkamer"/);
+  assert.match(kitchen, /aria-label="Mijn rugzak openen"/);
   assert.match(renderToStaticMarkup(<EncyclopediaScreen onNavigate={() => undefined} />), /Encyclopedie/);
   assert.match(renderToStaticMarkup(<CookbookScreen onNavigate={() => undefined} />), /Mijn Kookboek/);
   // De encyclopedie zit in het profielmenu, niet als losse knop in de balk.
   const shellMetTopmenu = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onNavigate={() => undefined} activePath="/encyclopedie">Inhoud</AppShell>);
   assert.doesNotMatch(shellMetTopmenu, /world-hud__encyclopedie/);
+  assert.doesNotMatch(shellMetTopmenu, /Mijn rugzak/);
+  const furniture = renderToStaticMarkup(<DecorShop store="furniture" onBack={() => undefined} onNavigate={() => undefined} />);
+  assert.match(furniture, /aria-label="Mijn rugzak openen"/);
   assert.match(shellMetTopmenu, /aria-label="Profielmenu openen"/);
   const nestedShell = renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined} onBack={() => undefined} backLabel="Terug naar de boomhut">Inhoud</AppShell>);
   assert.match(nestedShell, /aria-label="Terug naar de boomhut"/);

@@ -13,7 +13,6 @@ import './components/memory-compact.css';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
-const TreehouseRoom = lazy(() => import('./pages/TreehouseRoom'));
 const TreehouseUnitTest = lazy(() => import('./pages/TreehouseUnitTest'));
 const CookbookScreen = lazy(() => import('./pages/CookbookScreen'));
 const EncyclopediaScreen = lazy(() => import('./pages/EncyclopediaScreen'));
@@ -87,14 +86,14 @@ const App: React.FC = () => {
   </Suspense>;
 
   const parentIsland = islandForActivity(current.route.path + window.location.search);
-  const backTarget = current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : BACK_TARGET[current.route.page];
+  const backTarget = current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined);
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
       ? <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
       : current.route.page === 'math'
       ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={() => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'
-      ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} onBack={back} />
+      ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} onBack={back} onNavigate={navigate} />
       : current.route.page === 'plant-collection'
       ? <div className="dream-plant-collection"><PlantFamilyPanel onNavigate={navigate} onClose={() => navigate('/')} /></div>
       : current.route.page === 'flags-memory'
@@ -103,7 +102,7 @@ const App: React.FC = () => {
       ? <GameModule onHome={() => navigate('/')} onBack={back} />
       : current.route.page === 'destination'
       ? current.route.destinationId === 'treehouse'
-        ? <TreehouseRoom onNavigate={navigate} />
+        ? <TreehouseUnitTest onNavigate={navigate} />
         : current.route.destinationId === 'shop'
           ? <ShopScreen onNavigate={navigate} />
           : <DestinationScreen destination={DESTINATIONS_BY_ID[current.route.destinationId]} onNavigate={navigate} />

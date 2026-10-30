@@ -30,6 +30,7 @@ const DESTINATION_ROUTES: Record<string, AppRoute> = {
 };
 
 const TREEHOUSE_ROUTES: Record<string, AppRoute> = {
+  '/treehouse/bathroom': { page: 'treehouse-room', path: '/treehouse/bathroom', room: 'bathroom' },
   '/treehouse/living-room': { page: 'treehouse-room', path: '/treehouse/living-room', room: 'living-room' },
   '/treehouse/kitchen': { page: 'treehouse-room', path: '/treehouse/kitchen', room: 'kitchen' },
   '/treehouse/bedroom': { page: 'treehouse-room', path: '/treehouse/bedroom', room: 'bedroom' },
