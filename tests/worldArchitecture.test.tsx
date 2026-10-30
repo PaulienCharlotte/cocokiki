@@ -74,12 +74,12 @@ test('Dreamworld renders one intact world image, six hotspots and compact tools'
   assert.doesNotMatch(html, /aria-label="Koken openen"/);
   assert.match(html, /aria-label="Planteneiland openen"/);
   assert.match(html, /aria-label="Kookeiland openen"/);
-  assert.match(html, /aria-label="Ontdekkingseiland openen"/);
-  assert.match(html, /aria-label="Taleneiland openen"/);
+  assert.match(html, /aria-label="Topo-eiland openen"/);
+  assert.match(html, /aria-label="Taaleiland openen"/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
-  assert.match(html, /dreamworld\/world-map\.png/);
+  assert.match(html, /dreamworld\/world-map-modern\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.png/);
   assert.match(html, /images\/avatars\/coco\.webp/);
@@ -156,10 +156,18 @@ test('purchase confirmation offers an overview exit alongside continued shopping
   for (const label of ['Naar de keuken', 'Terug naar het kookboek', 'Verder winkelen']) assert.ok(recipe.includes(label));
 });
 
-test('decor products have individual local WebP assets with transparency', () => {
+test('decor products have valid local PNG originals or transparent WebP assets', () => {
   for (const product of DECOR_PRODUCTS) {
     const filename = `public${product.image.split('?')[0]}`;
     const afbeelding = readFileSync(filename);
+    if (filename.endsWith('.png')) {
+      assert.deepEqual([...afbeelding.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], product.id);
+      if (product.sheet) {
+        assert.equal(afbeelding.readUInt32BE(16), product.sheet.width, product.id);
+        assert.equal(afbeelding.readUInt32BE(20), product.sheet.height, product.id);
+      }
+      continue;
+    }
     assert.equal(afbeelding.subarray(8, 12).toString(), 'WEBP', product.id);
     // VP8X met een ALPH-blok betekent dat de doorzichtigheid bewaard is.
     assert.ok(afbeelding.subarray(0, 200).includes('ALPH'), `${product.id} mist doorzichtigheid`);

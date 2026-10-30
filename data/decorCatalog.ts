@@ -1,5 +1,5 @@
 export type DecorStoreId = 'furniture' | 'plants';
-export type DecorCategory = 'sleeping' | 'seating' | 'storage' | 'tables' | 'rugs' | 'lighting' | 'large-plants' | 'hanging-plants' | 'flowering-plants' | 'small-plants';
+export type DecorCategory = 'bathroom' | 'sleeping' | 'seating' | 'storage' | 'tables' | 'rugs' | 'lighting' | 'large-plants' | 'hanging-plants' | 'flowering-plants' | 'small-plants';
 
 export interface SpriteCrop {
   x: number;
@@ -9,6 +9,7 @@ export interface SpriteCrop {
 }
 
 export interface DecorProduct {
+  sheet?: { columns: number; rows: number; width: number; height: number; frames?: SpriteCrop[] };
   id: string;
   name: string;
   store: DecorStoreId;
@@ -39,7 +40,7 @@ function defaultRoomWidth(id: string, category: DecorCategory): number {
  * eigen map met view-1 tot en met view-N; de rest heeft één vast plaatje.
  */
 export function decorViewImage(product: DecorProduct, view: number): string {
-  if (product.views < 2) return product.image;
+  if (product.views < 2 || product.sheet) return product.image;
   const index = ((Math.round(view) % product.views) + product.views) % product.views;
   return `/assets/library/shop/decor/products/${product.id}/view-${index + 1}.webp`;
 }
@@ -54,6 +55,7 @@ export const DECOR_STORES: Record<DecorStoreId, { label: string; eyebrow: string
 export const DECOR_CATEGORIES: Record<DecorStoreId, Array<{ id: 'all' | DecorCategory; label: string }>> = {
   furniture: [
     { id: 'all', label: 'Alles' },
+    { id: 'bathroom', label: 'Badkamer' },
     { id: 'sleeping', label: 'Bedden' },
     { id: 'seating', label: 'Zitten' },
     { id: 'storage', label: 'Kasten' },
@@ -140,6 +142,48 @@ const turnable = (id: string, name: string, category: DecorCategory, price: numb
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  ...[
+    { id: 'bathroom-vanity', name: 'Wastafelmeubel', price: 100, roomWidth: 24, width: 1536, height: 1024 },
+    { id: 'clawfoot-bathtub', name: 'Ligbad', price: 150, roomWidth: 32 },
+    { id: 'glass-shower', name: 'Douchecabine', price: 140, roomWidth: 20 },
+    { id: 'laundry-basket', name: 'Wasmand', price: 35, roomWidth: 12 },
+    { id: 'rolled-towels', name: 'Handdoekenset', price: 25, roomWidth: 12 },
+  ].map(({ id, name, price, roomWidth, width = 1774, height = 887 }): DecorProduct => ({
+    ...turnable(id, name, 'bathroom', price, roomWidth),
+    image: `/assets/library/shop/decor/products/bathroom/${id}.png`,
+    sheet: { columns: 4, rows: 2, width, height,
+      ...(id === 'bathroom-vanity' ? { frames: [0, 1].flatMap(row => [
+        { x: 0, y: row * 512, width: 430, height: 512 },
+        { x: 430, y: row * 512, width: 400, height: 512 },
+        { x: 830, y: row * 512, width: 300, height: 512 },
+        { x: 1130, y: row * 512, width: 406, height: 512 },
+      ]) } : {}),
+    },
+  })),
+  { ...turnable('bath-tray', 'Badplankje', 'bathroom', 25, 24),
+    image: '/assets/library/shop/decor/products/bathroom/bath-tray.png',
+    sheet: { columns: 4, rows: 2, width: 1774, height: 887,
+      frames: [0, 1].flatMap(row => [
+        { x: 0, y: row * 443.5, width: 525, height: 443.5 },
+        { x: 525, y: row * 443.5, width: 505, height: 443.5 },
+        { x: 1030, y: row * 443.5, width: 460, height: 443.5 },
+        { x: 1490, y: row * 443.5, width: 284, height: 443.5 },
+      ]) },
+  },
+  { ...turnable('bath-wall-lamp', 'Wandlampje', 'bathroom', 35, 10), views: 2,
+    image: '/assets/library/shop/decor/products/bathroom/bath-wall-lamp.png',
+    sheet: { columns: 2, rows: 1, width: 1774, height: 887 } },
+  ...[
+    { id: 'bath-sponge', name: 'Badspons', price: 10, roomWidth: 6 },
+    { id: 'soap-dispenser', name: 'Zeeppompje', price: 15, roomWidth: 5 },
+    { id: 'rinse-cup', name: 'Spoelbeker', price: 10, roomWidth: 5 },
+    { id: 'toothbrush-cup', name: 'Tandenborstelbeker', price: 20, roomWidth: 7 },
+  ].map(({ id, name, price, roomWidth }): DecorProduct => ({
+    ...furniture(id, name, 'bathroom', price), roomWidth,
+    image: `/assets/library/shop/decor/products/bathroom/${id}.png`,
+  })),
+  { ...furniture('hanging-towel', 'Handdoek aan haak', 'bathroom', 20),
+    image: '/assets/library/shop/decor/products/bathroom/hanging-towel.png', roomWidth: 8 },
   turnable('plant-shelf', 'Plantenplank', 'storage', 55, 20),
   turnable('cloud-shelf', 'Wolkenplank', 'storage', 45, 20),
   furniture('pumpkin-pouf', 'Pompoenpoef', 'seating', 35),

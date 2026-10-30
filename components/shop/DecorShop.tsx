@@ -94,7 +94,7 @@ export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps)
       <header className="shop-catalog__header">
         <button className="shop-icon-button" type="button" onClick={onBack} aria-label="Terug naar winkeloverzicht" title="Terug naar winkeloverzicht"><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
-        <div><small>{definition.eyebrow}</small><h1 id="decor-shop-title">{definition.label}</h1></div>
+        <div className="decor-shop__heading"><h1 id="decor-shop-title">{definition.label}</h1></div>
         <div className="shop-catalog__actions">
           {store === 'furniture' && onNavigate && <button className="shop-icon-button" type="button" aria-label="Mijn rugzak openen" title="Rugzak" onClick={() => setBackpackOpen(true)}><BackpackIcon /></button>}
           {store === 'plants' && <button className="shop-icon-button" type="button" onClick={() => setFamilyOpen(true)} aria-label="Mijn Plantenfamilie openen" title="Mijn Plantenfamilie"><Sprout /></button>}

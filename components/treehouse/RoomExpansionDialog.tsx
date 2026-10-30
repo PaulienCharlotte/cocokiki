@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button, Dialog } from '../../design-system';
 import { ROOM_TEMPLATES, type RoomTemplateId } from '../../data/treehouse';
-import { buyRoom, loadRoomExpansions, nextRoomPrice } from '../../services/roomExpansions';
+import { buyRoom, loadRoomExpansions, roomTemplatePrice } from '../../services/roomExpansions';
 import { loadCurrency } from '../../services/currency';
 import { subscribeLocalState } from '../../services/localState';
 
@@ -15,7 +15,7 @@ export default function RoomExpansionDialog({ onClose, onNavigate }: { group?: '
   const [balance, setBalance] = useState(loadCurrency);
   const [rooms, setRooms] = useState(loadRoomExpansions);
   const template = options.find(item => item.id === templateId)!;
-  const price = nextRoomPrice(rooms, template.group);
+  const price = roomTemplatePrice(rooms, templateId);
   useEffect(() => subscribeLocalState(() => { setBalance(loadCurrency()); setRooms(loadRoomExpansions()); }), []);
   const purchase = () => {
     if (price === null) return;

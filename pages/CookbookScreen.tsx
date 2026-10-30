@@ -141,20 +141,15 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     </section>
   </main>;
 
-  return <main className="cooking-room">
+  return <main className="cooking-room cookbook-library-room">
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in jouw eigen boomhut" />
     <section className="recipe-library" aria-labelledby="cooking-title">
-      <div className="recipe-library__controls">
-        <header className="recipe-library__header">
-          <span aria-hidden="true"><ChefHat size={22} /></span>
-          <div><small>Kies een recept</small><h1 id="cooking-title">Mijn Kookboek</h1></div>
-        </header>
-        <nav className="recipe-categories" aria-label="Receptcategorieën">
+      <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>
+        <nav className="recipe-categories recipe-library__filters" aria-label="Receptcategorieën">
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>
           <button type="button" aria-pressed={category === 'preparing'} onClick={() => setCategory('preparing')}>Bereiden</button>
         </nav>
-      </div>
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
         {notice && <p role="alert">{notice}</p>}
         {recipes.map(recipe => <div role="listitem" key={recipe.id}><RecipeCard recipe={recipe} progress={progress} journey={progress.journeys[recipe.id]} onOpen={setSelected} /></div>)}

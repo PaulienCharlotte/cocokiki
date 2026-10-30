@@ -13,6 +13,28 @@ import { SHOP_PRODUCTS_BY_ID } from '../data/shopCatalog';
 import { rewardClockRound, loadClockProgress, clockLevelReward } from '../games/clock/clockProgress';
 import WorldTopBar from '../components/platform/WorldTopBar';
 import CookingTipCard from '../components/cooking/CookingTipCard';
+import DecorAsset from '../components/shop/DecorAsset';
+
+test('bathroom furniture has twelve purchasable products and crops individual rotation views', () => {
+  const products = Object.values(DECOR_PRODUCTS_BY_ID).filter(product => product.category === 'bathroom');
+  assert.equal(products.length, 12);
+  for (const product of products) {
+    assert.equal(product.store, 'furniture');
+    assert.ok(product.price > 0);
+    if (product.sheet) {
+      assert.equal(product.views, product.sheet.columns * product.sheet.rows);
+      const first = renderToStaticMarkup(<DecorAsset product={product} view={0} />);
+      const next = renderToStaticMarkup(<DecorAsset product={product} view={1} />);
+      assert.notEqual(first, next);
+      assert.equal(first, renderToStaticMarkup(<DecorAsset product={product} view={8} />));
+      assert.equal(renderToStaticMarkup(<DecorAsset product={product} view={-1} />), renderToStaticMarkup(<DecorAsset product={product} view={7} />));
+      assert.ok(first.includes(product.image));
+      assert.ok(first.includes('viewBox="0 0'));
+    } else {
+      assert.equal(product.views, 1);
+    }
+  }
+});
 
 function stored(run: () => void) {
   const previous = globalThis.localStorage;

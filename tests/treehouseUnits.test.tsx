@@ -3,7 +3,7 @@ import test from 'node:test';
 import React from 'react';
 import { existsSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { assembledTreehouseLayout, buildSlots, expandableTreehouseLayout, INITIAL_BUILD_ROOMS, moveBuildRoom, prototypeUnitLayout, ROOM_UNIT_ASSET, ROOM_UNIT_FRAME, TREEHOUSE_UNIT_ASSETS, TREE_TRUNK_ASSETS, TREE_CANOPY_ASSETS, validBuildRooms } from '../data/treehouseUnits';
+import { assembledTreehouseLayout, buildSlots, expandableTreehouseLayout, INITIAL_BUILD_ROOMS, moveBuildRoom, prototypeUnitLayout, treehouseViewWidth, ROOM_UNIT_ASSET, ROOM_UNIT_FRAME, TREEHOUSE_UNIT_ASSETS, TREE_TRUNK_ASSETS, TREE_CANOPY_ASSETS, validBuildRooms } from '../data/treehouseUnits';
 import { BUILD_PREVIEW_KEY, loadBuildPreview, saveBuildPreview } from '../services/treehouseBuildPreview';
 import { commitLocalState } from '../services/localState';
 import { loadCurrency } from '../services/currency';
@@ -13,6 +13,17 @@ import { loadTreehouseLayout, saveTreehouseLayout, roomSaleAmount, sellTreehouse
 import { buyRoom, loadRoomExpansions } from '../services/roomExpansions';
 import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
 import { loadRoomInventory, ROOM_INVENTORY_KEY } from '../services/roomInventory';
+
+test('mobile treehouse keeps rooms readable while desktop and preview still fit the whole scene', () => {
+  const layout = expandableTreehouseLayout(true, INITIAL_BUILD_ROOMS);
+  const mobile = treehouseViewWidth(375, 760, layout.width, layout.height, true);
+  assert.ok(mobile > 375);
+  assert.ok(mobile * ROOM_UNIT_FRAME.width / layout.width >= 185);
+  assert.ok(mobile * layout.height / layout.width <= 760);
+  assert.ok(treehouseViewWidth(1200, 760, layout.width, layout.height, true) <= 1200);
+  assert.ok(treehouseViewWidth(375, 760, layout.width, layout.height, false) <= 375);
+  assert.match(TREEHOUSE_UNIT_ASSETS.bathroom.src, /bathroom-empty.png$/);
+});
 
 test('room prototype has an isolated route without replacing the actual treehouse', () => {
   assert.deepEqual(resolveRoute('/treehouse/unit-test'), { route: { page: 'treehouse-unit-test', path: '/treehouse/unit-test' }, redirect: false });

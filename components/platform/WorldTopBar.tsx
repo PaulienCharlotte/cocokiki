@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, ShoppingBag, Map, BookOpen, ChevronDown, UserRound } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -22,6 +22,16 @@ interface WorldTopBarProps {
 
 export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false, onNavigate, activePath, worldShortcut = false }: WorldTopBarProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  const navigationRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!navigationOpen) return;
+    const close = (event: PointerEvent) => { if (!navigationRef.current?.contains(event.target as Node)) setNavigationOpen(false); };
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setNavigationOpen(false); };
+    document.addEventListener('pointerdown', close);
+    document.addEventListener('keydown', escape);
+    return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape); };
+  }, [navigationOpen]);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
   const [avatarId, setAvatarId] = useState<ProfileAvatarId>(loadProfileAvatar);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -58,9 +68,9 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </button>
       </div>
       <div className="world-hud__tools">
-        {worldShortcut && <IconButton className="world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
-        {onNavigate && <IconButton label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
-        {onNavigate && <IconButton label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
+        {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>
@@ -94,6 +104,17 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               onClick={() => { setProfileOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}
             ><BookOpen size={21} />Mijn Encyclopedie</button>}
           </div>}
+        </div>
+        <div className="world-hud__mobile-menu" ref={navigationRef}>
+          <IconButton label="Navigatiemenu openen" icon={<Menu size={20} />} aria-expanded={navigationOpen} onClick={() => { setNavigationOpen(open => !open); setProfileOpen(false); }} />
+          {navigationOpen && <nav className="world-hud__navigation" aria-label="Hoofdnavigatie">
+            <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
+            {onNavigate && <>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/treehouse/cookbook'); }}><ChefHat />Kookboek</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}><BookOpen />Encyclopedie</button>
+            </>}
+          </nav>}
         </div>
       </div>
     </header>

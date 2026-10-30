@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Coins, RotateCcw, ArrowLeft, ArrowRight, ZoomOut, ZoomIn, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { Coins, RotateCcw, ArrowLeft, ArrowRight, ZoomOut, ZoomIn, Plus, SlidersHorizontal, Trash2, Armchair } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../design-system';
-import { expandableTreehouseLayout, INITIAL_BUILD_ROOMS, moveBuildRoom, validBuildRooms, prototypeUnitLayout, TREEHOUSE_UNIT_ASSETS, ROOM_UNIT_FRAME, type BuildRoomAsset, type PreviewUnit } from '../data/treehouseUnits';
+import { expandableTreehouseLayout, INITIAL_BUILD_ROOMS, moveBuildRoom, validBuildRooms, prototypeUnitLayout, treehouseViewWidth, TREEHOUSE_UNIT_ASSETS, ROOM_UNIT_FRAME, type BuildRoomAsset, type PreviewUnit } from '../data/treehouseUnits';
 import { loadBuildPreview, saveBuildPreview } from '../services/treehouseBuildPreview';
 import './treehouse-unit-test.css';
 import SellAction from '../components/treehouse/SellAction';
 import { ROOM_ICONS } from '../data/roomIcons';
 import { ROOM_TEMPLATES, isExtraRoom, type RoomTemplateId } from '../data/treehouse';
-import { buyRoom, loadRoomExpansions, nextRoomPrice } from '../services/roomExpansions';
+import { buyRoom, loadRoomExpansions, roomTemplatePrice } from '../services/roomExpansions';
 import { loadTreehouseLayout, saveTreehouseLayout, roomSaleAmount, sellTreehouseRoom } from '../services/treehouseLayout';
 import { loadCurrency } from '../services/currency';
+import BuildShop from '../components/treehouse/BuildShop';
 
 interface RoomDrag { id: string; pointer: number; startX: number; startY: number; dx: number; dy: number; column: number; floor: number; moved: boolean }
 
@@ -17,6 +18,7 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
   const live = !!onNavigate;
   const [joined, setJoined] = useState(true);
   const [zoom, setZoom] = useState(100);
+  const [panned, setPanned] = useState(false);
   const [mode, setMode] = useState<'house' | 'grid'>('house');
   const [rooms, setRooms] = useState(() => live ? loadTreehouseLayout() : loadBuildPreview());
   const saveRooms = live ? saveTreehouseLayout : saveBuildPreview;
@@ -30,6 +32,7 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
   const [error, setError] = useState('');
   const [clearing, setClearing] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [buildShopOpen, setBuildShopOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [removeId, setRemoveId] = useState('');
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
@@ -70,27 +73,29 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
     ...grid, units: grid.units.map(unit => ({ ...unit, asset: 'room' as const, width: ROOM_UNIT_FRAME.width, height: ROOM_UNIT_FRAME.height })),
   };
   const dropAllowed = drag ? moveBuildRoom(rooms, drag.id, drag.column, drag.floor) !== null : false;
-  const fitWidth = Math.min(viewportSize.width, viewportSize.height * layout.width / layout.height);
+  const fitWidth = treehouseViewWidth(viewportSize.width, viewportSize.height, layout.width, layout.height, live);
   const selectedRoom = rooms.find(room => room.id === removeId);
-  const price = live ? nextRoomPrice(loadRoomExpansions(), ROOM_TEMPLATES.find(item => item.id === templateId)!.group) : 0;
+  const price = live ? roomTemplatePrice(loadRoomExpansions(), templateId) : 0;
+  const addPlaces = live ? [house.slots[0] ?? { column: 0, floor: -1, x: 0, y: 0, width: layout.width, height: 240 }] : house.slots.slice(0, 1);
   return <main className={`unit-test${live ? ' unit-test--live' : ''}`} aria-label="Mijn boomhut">
     <header className="unit-test__toolbar">
       <div className="unit-test__controls" role="toolbar" aria-label="Bouwgereedschap">
+        {live && <IconButton label="Meubelwinkel openen" icon={<Armchair size={19} />} onClick={() => onNavigate?.('/shop/furniture')} />}
         <IconButton label="Uitzoomen" disabled={zoom <= 50} icon={<ZoomOut size={19} />} onClick={() => setZoom(value => Math.max(50, value - 10))} />
         <output aria-label="Zoom">{zoom}%</output>
         <IconButton label="Inzoomen" disabled={zoom >= 250} icon={<ZoomIn size={19} />} onClick={() => setZoom(value => Math.min(250, value + 10))} />
-        <IconButton label="Weergave herstellen" disabled={zoom === 100} icon={<RotateCcw size={19} />} onClick={() => { setZoom(100); viewportRef.current?.scrollTo({ left: 0, top: 0 }); }} />
+        <IconButton label="Weergave herstellen" disabled={zoom === 100 && !panned} icon={<RotateCcw size={19} />} onClick={() => { setZoom(100); viewportRef.current?.scrollTo({ left: 0, top: 0 }); setPanned(false); }} />
         {!live && <IconButton label="Bouwinstellingen" aria-expanded={settingsOpen} icon={<SlidersHorizontal size={19} />} onClick={() => setSettingsOpen(true)} />}
       </div>
     </header>
-    <section ref={viewportRef} className="unit-test__viewport" aria-label={mode === 'house' ? 'Boomhut met slaapkamer, terras, woonkamer, keuken, dak en boomstam' : 'Vier kamerunits, twee naast en twee boven elkaar'} tabIndex={0}>
+    <section ref={viewportRef} className="unit-test__viewport" aria-label={mode === 'house' ? 'Boomhut met slaapkamer, terras, woonkamer, keuken, dak en boomstam' : 'Vier kamerunits, twee naast en twee boven elkaar'} tabIndex={0} onScroll={event => setPanned(event.currentTarget.scrollLeft > 1 || event.currentTarget.scrollTop > 1)}>
       <div ref={planeRef} className={`unit-test__plane${drag ? ' is-dragging' : ''}`} style={{ width: fitWidth > 0 ? `${fitWidth * zoom / 100}px` : `${zoom}%`, aspectRatio: `${layout.width} / ${layout.height}` }}>
         {layout.units.map((unit: PreviewUnit) => {
           const asset = TREEHOUSE_UNIT_ASSETS[unit.asset], frame = asset.frame;
           const room = mode === 'house' ? rooms.find(item => item.id === (unit.roomId ?? unit.id)) : undefined;
           const moving = !!room && drag?.id === room.id;
           return <div key={unit.id} className={`unit-test__room unit-test__room--${unit.asset}${room ? ' is-movable' : ''}${moving ? ' is-moving' : ''}`} data-unit={unit.id}
-          role={room ? 'button' : undefined} tabIndex={room ? 0 : undefined} aria-label={room ? `${room.name}${unit.asset === 'roof' ? ' met dak' : ''} verplaatsen` : undefined} aria-roledescription={room ? 'sleepbare kamer' : undefined}
+          role={room ? 'button' : undefined} tabIndex={room ? 0 : undefined} aria-label={room ? `${room.name}${unit.roomId ? ' met dak' : ''} verplaatsen` : undefined} aria-roledescription={room ? 'sleepbare kamer' : undefined}
           onKeyDown={event => {
             if (!room) return;
             if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (live) onNavigate?.(`/treehouse/${room.id}`); else { setRemoveId(room.id); setError(''); setRemoving(true); } return; }
@@ -141,10 +146,11 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
           const { Icon } = ROOM_ICONS.find(icon => icon.id === room.icon) ?? ROOM_ICONS[0];
           return <IconButton key={`nav-${room.id}`} className="unit-test__room-link" label={`${room.name} openen`} title={room.name} icon={<Icon size={23} />} style={{ left: `${(unit.x + unit.width / 2) / layout.width * 100}%`, top: `${(unit.y + unit.height * .6) / layout.height * 100}%` }} onClick={() => onNavigate?.(`/treehouse/${room.id}`)} />;
         })}
-        {mode === 'house' && house.slots.slice(0, 1).map(place => <button key="add-room" className="unit-test__add" type="button" aria-label="Kamer toevoegen" title="Kamer toevoegen" style={{ left: `${(place.x + place.width / 2) / layout.width * 100}%`, top: `${(place.y + place.height * (rooms.some(room => room.column === place.column && room.floor === place.floor - 1) ? .15 : .5)) / layout.height * 100}%` }} onClick={() => { setSlot(place); setAsset('room'); setName('Hobbykamer'); setTemplateId('hobby-room'); setIconId('sofa'); setAddStep(0); purchaseId.current = crypto.randomUUID(); setError(''); }}><Plus /></button>)}
+        {mode === 'house' && addPlaces.map(place => <button key="add-room" className="unit-test__add" type="button" aria-label="Kamer toevoegen" title="Kamer toevoegen" style={{ left: `${(place.x + place.width / 2) / layout.width * 100}%`, top: `${(place.y + place.height * (rooms.some(room => room.column === place.column && room.floor === place.floor - 1) ? .15 : .5)) / layout.height * 100}%` }} onClick={() => { if (live) { setBuildShopOpen(true); return; } setSlot(place); setAsset('room'); setName('Hobbykamer'); setTemplateId('hobby-room'); setIconId('sofa'); setAddStep(0); purchaseId.current = crypto.randomUUID(); setError(''); }}><Plus /></button>)}
       </div>
     </section>
     <p className={`unit-test__notice${notice ? ' is-visible' : ''}`} role="status">{notice}</p>
+    {buildShopOpen && <BuildShop onClose={() => setBuildShopOpen(false)} onBuilt={() => { setRooms(loadTreehouseLayout()); setBuildShopOpen(false); }} />}
     <Dialog open={removing} title={rooms.find(room => room.id === removeId)?.name ?? 'Onderdeel'} onClose={() => setRemoving(false)} primaryAction={null}>
       <div className="unit-test__sale">
       {live && <div className="unit-test__icon-library" role="group" aria-label="Kamericoon">{ROOM_ICONS.map(({ id, label, Icon }) => <IconButton key={id} label={label} aria-pressed={selectedRoom?.icon === id} icon={<Icon size={24} />} onClick={() => { const next = rooms.map(room => room.id === removeId ? { ...room, icon: id } : room); if (saveRooms(next)) setRooms(next); else setError('Opslaan lukt even niet.'); }} />)}</div>}

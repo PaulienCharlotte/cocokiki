@@ -6,6 +6,11 @@ export const ROOM_UNIT_FRAME = { sourceWidth: 1448, sourceHeight: 1086, x: 48, y
 export const TREEHOUSE_UNIT_ASSETS = {
   room: { src: ROOM_UNIT_ASSET, label: 'Houten kamer', frame: ROOM_UNIT_FRAME },
   bedroom: { src: '/assets/library/treehouse/units/bedroom.png', label: 'Slaapkamer', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 32, y: 158, width: 1384, height: 784 } },
+  bathroom: { src: '/assets/library/treehouse/units/bathroom-empty.png', label: 'Badkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 26, y: 54, width: 1485, height: 903 } },
+  blush: { src: '/assets/library/treehouse/units/blush-room.png', label: 'Roze kamer', frame: { sourceWidth: 1672, sourceHeight: 941, x: 30, y: 50, width: 1610, height: 855 } },
+  garden: { src: '/assets/library/treehouse/units/garden-room.png', label: 'Tuinkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 78, y: 20, width: 1378, height: 942 } },
+  roofBlue: { src: '/assets/library/treehouse/units/roof-blue.png', label: 'Blauw dak', frame: { sourceWidth: 1883, sourceHeight: 835, x: 14, y: 70, width: 1855, height: 700 } },
+  roofFlowers: { src: '/assets/library/treehouse/units/roof-flowers.png', label: 'Bloemendak', frame: { sourceWidth: 2112, sourceHeight: 744, x: 0, y: 0, width: 2112, height: 735 } },
   kitchen: { src: '/assets/library/treehouse/units/kitchen.png', label: 'Keuken', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 50, y: 99, width: 1438, height: 787 } },
   terrace: { src: '/assets/library/treehouse/units/terrace.png', label: 'Terras', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 0, y: 374, width: 1448, height: 548 } },
   roof: { src: '/assets/library/treehouse/units/roof.png', label: 'Dak', frame: { sourceWidth: 2172, sourceHeight: 724, x: 0, y: 0, width: 2172, height: 704 } },
@@ -22,14 +27,19 @@ export type TreehouseUnitAssetId = keyof typeof TREEHOUSE_UNIT_ASSETS;
 export const TREE_TRUNK_ASSETS: readonly TreehouseUnitAssetId[] = ['trunk', 'trunkLeft', 'trunkRight'];
 export const TREE_CANOPY_ASSETS: readonly TreehouseUnitAssetId[] = ['canopyWide', 'canopyTall', 'canopy'];
 export interface PreviewUnit { id: string; asset: TreehouseUnitAssetId; x: number; y: number; width: number; height: number; flipX?: boolean; roomId?: string }
-export type BuildRoomAsset = 'room' | 'bedroom' | 'kitchen' | 'terrace';
-export interface BuildRoom { id: string; asset: BuildRoomAsset; name: string; column: number; floor: number; icon?: string }
+export type BuildRoomAsset = 'room' | 'bedroom' | 'kitchen' | 'terrace' | 'bathroom' | 'blush' | 'garden';
+export type RoofAsset = 'roof' | 'roofBlue' | 'roofFlowers';
+export interface BuildRoom { id: string; asset: BuildRoomAsset; name: string; column: number; floor: number; icon?: string; roof?: RoofAsset }
+export function treehouseViewWidth(width: number, height: number, layoutWidth: number, layoutHeight: number, live: boolean): number {
+  const preferred = live && width <= 600 ? Math.max(width, layoutWidth / ROOM_UNIT_FRAME.width * 190) : width;
+  return Math.min(preferred, height * layoutWidth / layoutHeight);
+}
 export function validBuildRooms(rooms: BuildRoom[]): boolean {
   if (!rooms.length || rooms.length > 16 || new Set(rooms.map(room => room.id)).size !== rooms.length || new Set(rooms.map(room => `${room.column}:${room.floor}`)).size !== rooms.length) return false;
   if (rooms.some(room => !Number.isInteger(room.column) || !Number.isInteger(room.floor) || room.column < 0 || room.column > 3 || room.floor < 0 || room.floor > 3)) return false;
   if (!rooms.some(room => room.floor === 0)) return false;
   // Extra bomen dragen zij-uitbreidingen; terrassen blijven naar boven open.
-  if (rooms.some(room => rooms.some(below => below.column === room.column && below.floor === room.floor - 1 && below.asset === 'terrace'))) return false;
+  if (rooms.some(room => rooms.some(below => below.column === room.column && below.floor === room.floor - 1 && ['terrace', 'garden'].includes(below.asset)))) return false;
   const connected = new Set([rooms[0].id]);
   for (let pass = 0; pass < rooms.length; pass++) for (const room of rooms) {
     if (rooms.some(other => connected.has(other.id) && Math.abs(other.column - room.column) + Math.abs(other.floor - room.floor) === 1)) connected.add(room.id);
@@ -53,7 +63,7 @@ export const INITIAL_BUILD_ROOMS: BuildRoom[] = [
 export const STARTER_HOME_ROOMS: BuildRoom[] = [
   { id: 'living-room', asset: 'room', name: 'Woonkamer', column: 0, floor: 0, icon: 'sofa' },
   { id: 'kitchen', asset: 'kitchen', name: 'Keuken', column: 1, floor: 0, icon: 'pot' },
-  { id: 'bathroom', asset: 'kitchen', name: 'Badkamer', column: 2, floor: 0, icon: 'bath' },
+  { id: 'bathroom', asset: 'bathroom', name: 'Badkamer', column: 2, floor: 0, icon: 'bath' },
   { id: 'bedroom', asset: 'bedroom', name: 'Slaapkamer', column: 0, floor: 1, icon: 'bed' },
   { id: 'terrace', asset: 'terrace', name: 'Terras', column: 1, floor: 1, icon: 'flower' },
 ];
@@ -93,14 +103,15 @@ export function expandableTreehouseLayout(joined: boolean, rooms: BuildRoom[]) {
     units.push({ id: `platform-${room.id}`, asset: 'platform', x: x - 20, y: bottom - 150, width: platformWidth, height: platformWidth * 340 / 2072 });
   }
   for (const room of [...rooms].sort((a, b) => b.floor - a.floor || a.column - b.column)) {
-    const roomHeight = room.asset === 'terrace' ? size.width * TREEHOUSE_UNIT_ASSETS.terrace.frame.height / TREEHOUSE_UNIT_ASSETS.terrace.frame.width : size.height;
+    const roomHeight = room.asset === 'terrace' ? size.width * TREEHOUSE_UNIT_ASSETS.terrace.frame.height / TREEHOUSE_UNIT_ASSETS.terrace.frame.width : room.asset === 'garden' ? size.height * 942 / 599 : size.height;
     const x = 100 + room.column * stepX, y = 480 + (highest - room.floor) * stepY;
     units.push({ id: room.id, asset: room.asset, x, y: y + size.height - roomHeight, width: size.width, height: roomHeight });
   }
   for (const room of rooms) {
-    if (room.asset === 'terrace' || rooms.some(item => item.column === room.column && item.floor > room.floor)) continue;
-    const roofWidth = size.width + 80, roofHeight = roofWidth * 704 / 2172;
-    units.push({ id: `roof-${room.id}`, asset: 'roof', roomId: room.id, x: 60 + room.column * stepX, y: 480 + (highest - room.floor) * stepY - roofHeight + 130, width: roofWidth, height: roofHeight });
+    if (['terrace', 'garden'].includes(room.asset) || rooms.some(item => item.column === room.column && item.floor > room.floor)) continue;
+    const roof = room.roof ?? 'roof', frame = TREEHOUSE_UNIT_ASSETS[roof].frame;
+    const roofWidth = size.width + 80, roofHeight = roofWidth * frame.height / frame.width;
+    units.push({ id: `roof-${room.id}`, asset: roof, roomId: room.id, x: 60 + room.column * stepX, y: 480 + (highest - room.floor) * stepY - roofHeight + 130, width: roofWidth, height: roofHeight });
   }
   // Iedere losse kamergroep krijgt toegang; één ladder voor de hele verdieping kan groepen onbereikbaar laten.
   const groundRoom = rooms.filter(room => room.floor === 0).sort((a, b) => a.column - b.column)[0];

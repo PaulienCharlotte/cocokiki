@@ -1559,3 +1559,46 @@
    je kunt er niets meer aan doen. Het pijltje vooruit in de balk brengt je
    weer naar het heden. */
 .cooking-card__scene.is-terugblik { opacity: .72; filter: saturate(.85); }
+
+.decor-shop__catalog { container-type: inline-size; }
+.cooking-room.cookbook-library-room { height: 100dvh; min-height: 0; box-sizing: border-box; align-items: stretch; padding: 96px 16px 16px; }
+.cookbook-library-room .recipe-library { width: 100%; height: 100%; max-height: none; gap: 12px; }
+.recipe-library .recipe-library__filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 0; overflow: visible; background: transparent; border: 0; box-shadow: none; }
+.recipe-library__filters button { min-height: 44px; background: rgb(255 250 241 / 88%); backdrop-filter: blur(8px); }
+@media (max-width: 600px) {
+  .cooking-room.cookbook-library-room { padding: 84px 8px 12px; }
+  .recipe-library__filters button { padding-inline: 12px; }
+}
+.world-hud { position: fixed; min-height: 64px; background: rgb(255 250 241 / 16%); border-color: #ffffff55; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 6px 24px #3c2d3d12; border-radius: 24px; }
+.world-hud__brand { width: 156px; }
+.world-hud__tools { gap: 10px; }
+.world-hud__mobile-menu { display: none; position: relative; }
+.world-hud__navigation { position: absolute; top: calc(100% + 12px); right: 0; width: 220px; padding: 8px; display: grid; gap: 4px; border: 1px solid #fff9; border-radius: 16px; background: rgb(255 250 241 / 92%); backdrop-filter: blur(16px); box-shadow: 0 8px 24px #3c2d3d25; }
+.world-hud__navigation button { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 8px; background: transparent; color: var(--color-text); text-align: left; font: inherit; }
+.world-hud__navigation button:hover { background: var(--color-success-soft); }
+.world-hud__navigation svg { width: 20px; height: 20px; }
+@media (max-width: 600px) {
+  .world-hud .world-desktop-tool { display: none; }
+  .world-hud__mobile-menu { display: block; }
+  .world-hud { min-height: 60px; gap: 4px; }
+  .world-hud .world-hud__brand { width: 82px; }
+  .world-hud__tools { gap: 4px; }
+  .world-hud .world-profile__trigger { min-width: 44px; padding: 0; }
+  .world-hud .world-hud__back { min-width: 44px; width: 44px; height: 44px; }
+  .world-hud .world-hud__balance { gap: 2px; }
+  .world-hud .world-hud__balance strong { min-width: 2ch; font-size: 14px; }
+}
+.decor-shop .shop-catalog__header { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; }
+.decor-shop .shop-catalog__mark { display: none; }
+.decor-shop .decor-shop__heading h1 { margin: 0; font-size: 24px; line-height: 1.2; overflow-wrap: anywhere; }
+.decor-shop .shop-catalog__actions { flex-shrink: 0; margin: 0; justify-content: flex-end; }
+.decor-shop .shop-categories button { min-height: 44px; }
+.decor-shop .decor-product { grid-template-rows: 140px 44px; min-height: 208px; align-items: center; padding: 8px 8px 12px; }
+.decor-shop .decor-product .shop-product__art { height: 132px; }
+.decor-shop .shop-product__buy { margin: 0; height: 44px; gap: 8px; }
+.decor-shop .shop-product__buy > button { width: 44px; height: 44px; flex: 0 0 44px; }
+@container (max-width: 420px) {
+  .decor-shop .shop-catalog__header { grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; }
+  .decor-shop .shop-catalog__actions { grid-column: 1 / -1; }
+  .decor-shop .decor-shop__heading h1 { font-size: 22px; }
+}

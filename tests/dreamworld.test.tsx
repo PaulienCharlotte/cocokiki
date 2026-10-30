@@ -3,10 +3,10 @@ import test from 'node:test';
 import { existsSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { DREAM_ISLANDS, DREAMWORLD_IMAGE, ISLANDS_BY_ID, WORLD_SHOPS, islandForActivity } from '../platform/dreamworld';
+import { DREAM_ISLANDS, DREAMWORLD_IMAGE, ISLANDS_BY_ID, WORLD_SHOPS, WORLD_DESTINATIONS, islandForActivity } from '../platform/dreamworld';
 import { resolveRoute } from '../platform/routes';
 import { MATH_GAMES } from '../games/math/config';
-import { clampWorldView, worldImageSize } from '../services/worldViewport';
+import { clampWorldView, worldImageSize, worldMinimumScale } from '../services/worldViewport';
 import IslandEnvironment from '../pages/IslandEnvironment';
 import ShopScreen from '../pages/ShopScreen';
 import ShopMenu from '../components/dreamworld/ShopMenu';
@@ -17,6 +17,7 @@ import LocationMemoryGame from '../components/LocationMemoryGame';
 import FlagsMemory from '../pages/FlagsMemory';
 import { FLAG_CONTINENTS, FLAG_COUNTRIES, continentFlagPairs, nextFlagRound } from '../data/flagCatalog';
 import { COUNTRY_FLAGS } from '../data/flags';
+import { islandIconLayoutKey, loadIslandIconPositions, saveIslandIconPosition } from '../services/islandIconLayout';
 import type { Progress } from '../services/localProgress';
 import { ISLAND_ICONS_IMAGE, ISLAND_ICON_POSITIONS } from '../components/dreamworld/IslandIcon';
 
@@ -45,6 +46,29 @@ test('Dreamworld has six unique islands, real assets and addressable activities'
       assert.ok(existsSync(`public${item.image}`), item.image);
       assert.equal(islandForActivity(item.path)?.id, island.id);
     }
+  }
+});
+
+test('island icon positions persist separately and reject corrupt or invalid coordinates', () => {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const values = new Map<string, string>();
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+  } });
+  try {
+    assert.equal(saveIslandIconPosition('math', 'multiply', { x: 40, y: 70 }), true);
+    assert.equal(saveIslandIconPosition('math', 'divide', { x: 60, y: 30 }), true);
+    assert.equal(loadIslandIconPositions('math').multiply.x, 40);
+    assert.deepEqual(loadIslandIconPositions('discovery'), {});
+    assert.equal(saveIslandIconPosition('math', 'multiply', { x: -1, y: 50 }), false);
+    assert.equal(saveIslandIconPosition('math', 'multiply', { x: NaN, y: 50 }), false);
+    assert.equal(loadIslandIconPositions('math').multiply.x, 40);
+    values.set(islandIconLayoutKey('math'), '{broken');
+    assert.deepEqual(loadIslandIconPositions('math'), {});
+  } finally {
+    if (previous) Object.defineProperty(globalThis, 'localStorage', previous);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
   }
 });
 test('every actual math module has one island entry and preserves its identity', () => {
@@ -122,7 +146,8 @@ test('three global shops are addressable without cluttering island activities', 
 test('world map has no visible name pills and shops stay available in the shared menu', () => {
   const world = renderToStaticMarkup(<WorldHub coins={20} onNavigate={() => undefined} />);
   assert.doesNotMatch(world, /dream-map__index/);
-  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 6);
+  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 0);
+  assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 6);
   assert.doesNotMatch(world, /dream-hotspot__label/);
   assert.ok(existsSync(`public${ISLAND_ICONS_IMAGE}`));
   assert.deepEqual(Object.keys(ISLAND_ICON_POSITIONS).sort(), DREAM_ISLANDS.map(island => island.id).sort());
@@ -136,6 +161,14 @@ test('world map has no visible name pills and shops stay available in the shared
   for (const shop of WORLD_SHOPS) assert.ok(menu.includes(shop.label));
 });
 test('map panning and zoom stay bounded at desktop and mobile dimensions', () => {
+  for (const [width, height] of [[375, 900], [1440, 900]]) {
+    const image = worldImageSize(width, height, 1672 / 940);
+    const minimum = worldMinimumScale(width, height, image.width, image.height);
+    assert.ok(minimum < 1);
+    assert.ok(image.width * minimum <= width + .001);
+    assert.ok(image.height * minimum <= height + .001);
+    assert.deepEqual(clampWorldView({ scale: 0, x: 9999, y: -9999 }, width, height, image.width, image.height), { scale: minimum, x: 0, y: 0 });
+  }
   const wide = worldImageSize(2400, 800, 16 / 9);
   assert.ok(wide.width >= 2400 && wide.height >= 800);
   assert.equal(wide.width / wide.height, 16 / 9);
@@ -146,6 +179,24 @@ test('map panning and zoom stay bounded at desktop and mobile dimensions', () =>
   assert.deepEqual(clampWorldView({ scale: 9, x: 9999, y: -9999 }, 360, 700, 1240, 700), { scale: 2.5, x: 1370, y: -525 });
   const mobile = clampWorldView({ scale: 1, x: -999, y: 999 }, 360, 700, 1240, 700);
   assert.deepEqual(mobile, { scale: 1, x: -440, y: 0 });
+});
+
+test('painted island buttons use normalized positions and existing canonical routes', () => {
+  assert.equal(WORLD_DESTINATIONS.length, 6);
+  assert.equal(new Set(WORLD_DESTINATIONS.map(destination => destination.id)).size, 6);
+  for (const destination of WORLD_DESTINATIONS) {
+    assert.equal(destination.enabled, true);
+    assert.equal(resolveRoute(destination.route).redirect, false);
+    const { x, y, width, height } = destination.position;
+    assert.ok(x > width / 2 && x < 1 - width / 2);
+    assert.ok(y > height / 2 && y < 1 - height / 2);
+  }
+  const byId = Object.fromEntries(WORLD_DESTINATIONS.map(destination => [destination.id, destination]));
+  assert.ok(byId.cooking.position.x < byId.home.position.x);
+  assert.ok(byId.math.position.x > byId.home.position.x);
+  assert.ok(byId.plants.position.y > byId.cooking.position.y);
+  assert.ok(byId.discovery.position.y > byId.math.position.y);
+  assert.equal(byId.language.route, '/islands/language');
 });
 test('direct supermarket links retain recipe requirements and reject unknown recipe IDs', () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'window');
@@ -163,7 +214,7 @@ test('direct supermarket links retain recipe requirements and reject unknown rec
 });
 test('language stays honest about future functionality and no games disappear', () => {
   const html = renderToStaticMarkup(<IslandEnvironment island={ISLANDS_BY_ID.language} onNavigate={() => undefined} />);
-  assert.match(html, /Binnenkort kun je hier nieuwe talen ontdekken!/);
+  assert.match(html, /Binnenkort kun je hier op taalavontuur!/);
   assert.match(html, /Terug naar Dreamworld/);
   assert.doesNotMatch(html, /dream-location/);
   assert.equal(ISLANDS_BY_ID.discovery.modules.includes('world-times'), true);

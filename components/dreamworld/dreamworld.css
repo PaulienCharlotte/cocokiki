@@ -3,6 +3,11 @@
 .dreamworld .world-hud { top: var(--space-3); }
 .dream-map { position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab; }
 .dream-map.is-dragging { cursor: grabbing; }
+.dream-map:not(.is-dragging) .dream-map__image-plane { transition: transform 120ms ease-out; }
+.dream-map .dream-hotspot { transform: translate(-50%, -50%); border-radius: 50%; padding: 0; }
+.dream-map .dream-hotspot:hover, .dream-map .dream-hotspot:active { box-shadow: 0 0 0 3px #fff8, 0 0 20px #fff6; background: #ffffff12; }
+.dream-map__fallback { position: absolute; z-index: 3; inset: 100px 16px 90px; margin: auto; max-width: 420px; max-height: 460px; overflow: auto; display: grid; gap: 8px; padding: 20px; background: var(--color-surface); border-radius: 8px; }
+.dream-map__fallback button { min-height: 44px; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); border-radius: 8px; }
 .dream-map__image-plane { position: absolute; left: 50%; top: 50%; transform-origin: center; user-select: none; }
 .dream-map__image-plane > img { display: block; width: 100%; height: 100%; pointer-events: none; }
 .dream-hotspot { position: absolute; display: flex; align-items: center; justify-content: center; min-width: var(--touch-target); min-height: var(--touch-target); padding: var(--space-2); border: 0; border-radius: var(--radius-card); background: transparent; color: var(--color-text); cursor: pointer; }
@@ -18,6 +23,16 @@
 .dream-island__scene { position: absolute; inset: calc(var(--space-12) * 3) 0 var(--space-6); }
 .dream-location { position: absolute; left: var(--location-x); top: var(--location-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: min(22%, 220px); height: min(32%, 210px); min-height: var(--touch-target); min-width: var(--touch-target); padding: var(--space-2); border: 0; background: transparent; color: var(--color-text); cursor: pointer; }
 .dream-location img { min-height: 0; max-height: 80%; width: 100%; object-fit: contain; filter: drop-shadow(0 8px 10px #3b241a30); transition: transform var(--motion-default) var(--ease-storybook); }
+.dream-location { touch-action: none; user-select: none; -webkit-touch-callout: none; }
+.dream-location.is-moving { z-index: 5; cursor: grabbing; }
+.dream-location.is-moving img { transform: scale(1.06) rotate(-3deg); filter: drop-shadow(0 12px 14px #3b241a55); transition: none; }
+.dream-island__scene.is-editing .dream-location:not(.is-moving) img { animation: island-icon-wiggle .28s ease-in-out infinite alternate; transform-origin: 50% 65%; }
+.dream-island__scene.is-editing .dream-location:nth-child(even) img { animation-delay: -.14s; }
+.dream-island__edit-done { position: fixed; z-index: 6; right: 16px; top: 96px; }
+@keyframes island-icon-wiggle { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .dream-island__scene.is-editing .dream-location:not(.is-moving) img { animation: none; filter: drop-shadow(0 0 7px #fff9); }
+}
 .dream-location:hover img, .dream-location:focus-visible img { transform: translateY(calc(var(--space-2) * -1)); }
 .dream-location:focus-visible { outline: 3px solid var(--color-focus); border-radius: var(--radius-control); }
 .dream-location__flags { display: flex; align-items: center; justify-content: center; width: 100%; height: 80%; }
@@ -59,7 +74,7 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
   .dream-island--math .dream-location:nth-child(n+5) { top: 78%; }
   .dream-app .topo-app.in-test .session-page { padding-top: calc(var(--space-12) + var(--space-6)); }
 }
-@media (prefers-reduced-motion: reduce) { .dream-location img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .dream-location img, .dream-map:not(.is-dragging) .dream-map__image-plane { transition: none; } }
 
 /* De wereld en spellen gebruiken het hele venster; het vaste menu ligt erboven. */
 .dream-island__scene { top: calc(var(--space-12) * 2); }
