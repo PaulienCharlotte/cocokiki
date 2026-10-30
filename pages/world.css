@@ -65,6 +65,18 @@
 .treehouse-overview__background, .treehouse-interior__background { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
 .treehouse-overview::after, .treehouse-interior::after { content: ''; position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg, #25150c16, transparent 30%, #25150c25); pointer-events: none; }
 .treehouse-interior__scene { position: relative; width: 100%; min-height: 100dvh; }
+/* Een kamer is een brede tekening van 16:9. Op elk scherm zie je hem op volle
+   hoogte en schuif je naar links en rechts; anders staat de helft buiten beeld
+   en lijkt de kamer veel kleiner dan hij is. */
+.treehouse-interior { width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
+.treehouse-interior::-webkit-scrollbar { display: none; }
+.treehouse-interior::after { position: fixed; }
+.treehouse-interior__scene { width: max(100vw, calc(100dvh * 1.7768)); height: 100dvh; min-height: 0; }
+.treehouse-interior__background { object-position: center; }
+.treehouse-interior__pan-controls { position: fixed; z-index: 4; top: 48%; right: 8px; left: 8px; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(-50%); }
+.treehouse-interior__pan-controls button { width: 46px; height: 46px; display: grid; place-items: center; padding: 4px; border: 1px solid #fff7e8d9; border-radius: 50%; background: #fff8eddb; box-shadow: 0 7px 18px #3a25154a; pointer-events: auto; backdrop-filter: blur(8px); }
+.treehouse-interior__pan-controls button:disabled { opacity: .28; pointer-events: none; }
+.treehouse-interior__pan-controls img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .treehouse-interior--kitchen { width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
 .treehouse-interior--kitchen::-webkit-scrollbar { display: none; }
 .treehouse-interior--kitchen .treehouse-interior__scene { width: max(100vw, calc(100dvh * 1516 / 1038)); height: max(100dvh, calc(100vw * 1038 / 1516)); min-height: 0; }
@@ -779,15 +791,6 @@
   .treehouse-overview__room--living-room { bottom: 22%; left: 19%; }
   .treehouse-overview__room--kitchen { right: 13%; bottom: 22%; }
   .treehouse-overview__room span { padding: 4px 7px; font-size: .64rem; }
-  .treehouse-interior { width: 100%; height: 100dvh; min-height: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
-  .treehouse-interior::-webkit-scrollbar { display: none; }
-  .treehouse-interior::after { position: fixed; }
-  .treehouse-interior__scene { width: max(100vw, calc(100dvh * 1.7768)); height: 100dvh; min-height: 0; }
-  .treehouse-interior__background { object-position: center; }
-  .treehouse-interior__pan-controls { position: fixed; z-index: 4; top: 48%; right: 8px; left: 8px; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(-50%); }
-  .treehouse-interior__pan-controls button { width: 46px; height: 46px; display: grid; place-items: center; padding: 4px; border: 1px solid #fff7e8d9; border-radius: 50%; background: #fff8eddb; box-shadow: 0 7px 18px #3a25154a; pointer-events: auto; backdrop-filter: blur(8px); }
-  .treehouse-interior__pan-controls button:disabled { opacity: .28; pointer-events: none; }
-  .treehouse-interior__pan-controls img { width: 100%; height: 100%; display: block; object-fit: contain; }
   .treehouse-kitchen-furnishing--fridge { bottom: 1%; left: 0; width: 27%; }
   .treehouse-kitchen-furnishing--oven { bottom: 3%; left: 66%; width: 20%; }
   .treehouse-kitchen-furnishing--pantry { top: 10%; right: 2%; width: 23%; }
@@ -1181,11 +1184,18 @@
 .room-placed-object__tools button { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--color-background-soft); color: var(--color-primary); }
 .room-placed-object__tools button:hover { background: var(--color-success-soft); }
 .room-placed-object__tools button:disabled { opacity: .4; }
-.room-placed-object__tools button:last-child { background: var(--color-primary); color: var(--color-on-primary); }
+/* Alleen de laatste knop van de balk zelf is groen, niet die in een groepje. */
+.room-placed-object__tools > button:last-child { background: var(--color-primary); color: var(--color-on-primary); }
 .room-placed-object__tools svg { width: 20px; }
+/* Voor en achter zijn de enige knoppen waarvan het plaatje niets zegt; die
+   krijgen hun woord erbij. Zie .claude/skills/cocokiki-ui, sectie 5. */
+.room-placement-toolbar__laag { display: flex; gap: var(--space-1); padding-right: var(--space-2); border-right: 1px solid var(--color-border); }
+.room-placed-object__tools .room-placement-toolbar__laag button { width: auto; min-width: var(--touch-target); padding: 0 var(--space-3); border-radius: var(--radius-pill); gap: var(--space-1); grid-auto-flow: column; }
+.room-placement-toolbar__laag span { font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); }
 @media (max-width: 700px) {
   .room-placed-object__tools { gap: 3px; padding: 4px; }
   .room-placed-object__tools button { width: 40px; height: 40px; }
+  .room-placed-object__tools .room-placement-toolbar__laag button { width: auto; padding: 0 var(--space-2); }
   .room-placed-object__tools svg { width: 18px; }
 }
 

@@ -11,7 +11,10 @@ function shuffled<T>(items: T[], random: () => number): T[] {
 }
 
 function tableFor(choice: TableChoice, random: () => number): number {
-  return choice === 'mix' ? 1 + Math.floor(random() * 10) : choice;
+  // Koos je meerdere tafels, dan komt elke vraag uit een van die tafels.
+  const gekozen = Array.isArray(choice) ? choice.filter(table => Number.isInteger(table) && table >= 1 && table <= 12) : [];
+  if (gekozen.length) return pick(gekozen, random);
+  return choice === 'mix' || Array.isArray(choice) ? 1 + Math.floor(random() * 10) : choice;
 }
 
 function numericChoices(answer: number, random: () => number): number[] {

@@ -38,6 +38,12 @@ export function answerChoices(answer: number, suggestions: number[], random: Ran
   return shuffled([...choices], random);
 }
 
+/** Per niveau: over hoeveel mandjes je verdeelt, en hoe vaak er in één past. */
+const DIVIDE_GROUPS: readonly number[][] = [[2, 3], [2, 3, 4, 5], [2, 3, 4, 5, 10], [2, 3, 4, 5, 6, 7, 8, 9, 10], [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]];
+const DIVIDE_QUOTIENT_MAX = [6, 6, 10, 12, 12];
+/** Boven deze oogst wordt slepen werk in plaats van spel. */
+export const DISTRIBUTION_MAX = 24;
+
 function arithmetic(level: MathLevel, random: Random): { op: Operation; a: number; b: number } {
   const max = [10, 20, 100, 1_000, 1_000][level - 1];
   const op: Operation = level === 1 || random() < .5 ? '+' : '-';
@@ -57,11 +63,15 @@ export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, 
   const times = [[1, 2, 5, 10], [3, 4], [6, 7], [8, 9, 11, 12], Array.from({ length: 12 }, (_, i) => i + 1)];
   if (game === 'multiply') { op = '*'; a = pick(times[level - 1], random); b = integer(1, level >= 4 ? 12 : 10, random); }
   else if (game === 'divide') {
-    kind = 'distribution';
-    b = level === 1 ? 2 : level === 3 ? pick([2, 5, 10], random) : integer(level === 2 ? 2 : 1, level === 2 ? 5 : level === 5 ? 12 : 10, random);
-    const smallHarvest = level <= 2 || index % 2 === 0;
-    const quotientMax = level === 1 ? 5 : level === 2 ? Math.floor(20 / b) : smallHarvest ? Math.min(level === 5 ? 12 : 10, Math.floor(24 / b)) : level === 5 ? 12 : 10;
-    a = b * integer(1, quotientMax, random); op = '/';
+    // Hoeveel mandjes er zijn en hoe groot de oogst mag worden. Niveau 1 had
+    // maar vijf sommen (2÷2 tot 10÷2); nu zijn het er twaalf, en elk niveau
+    // erboven telt er tientallen.
+    b = pick(DIVIDE_GROUPS[level - 1], random);
+    a = b * integer(1, DIVIDE_QUOTIENT_MAX[level - 1], random);
+    op = '/';
+    // Een kleine oogst sleep je bes voor bes in de mandjes. Bij een grote
+    // oogst zou dat honderd keer slepen worden, dus daar kies je het aantal.
+    kind = a <= DISTRIBUTION_MAX ? 'distribution' : 'choice';
   } else if (game === 'missing') {
     op = level === 5 ? pick(['+', '-', '*', '/'] as const, random) : (['+', '-', '*', '/'] as const)[level - 1];
     if (op === '*') { a = integer(1, level === 5 ? 12 : 10, random); b = integer(1, 12, random); }
@@ -83,7 +93,7 @@ export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, 
   const total = answer;
   let prompt = game === 'multiply' ? 'Hoeveel is het samen?' : game === 'add-subtract' ? op === '+' ? `Je hebt ${a} appels en krijgt er ${b} bij. Hoeveel zijn het samen?` : `Je hebt ${a} appels en geeft er ${b} weg. Hoeveel blijven er over?` : 'Welk getal past hier?';
   let hint = op === '*' ? `${a} × ${b} betekent ${a} groepjes van ${b}.` : op === '/' ? `Verdeel ${a} eerlijk over ${b} groepjes.` : op === '-' ? `Begin bij ${a} en tel ${b} terug.` : `Begin bij ${a} en tel ${b} erbij.`;
-  if (game === 'divide') prompt = `Verdeel ${a} ${index % 2 ? 'blauwe bessen' : 'aardbeien'} over ${b} mandjes.`;
+  if (game === 'divide') prompt = `Verdeel ${a} ${index % 2 ? 'blauwe bessen' : 'aardbeien'} over ${b} mandjes.${kind === 'choice' ? ' Hoeveel komen er in elk mandje?' : ''}`;
   if (game === 'add-subtract') prompt = op === '+' ? `${a} eikels. De eekhoorn vindt er ${b} bij.` : `${a} eikels. De vogel neemt er ${b} mee.`;
   if (game === 'missing') {
     const missingLeft = random() < .5;
@@ -155,20 +165,6 @@ export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, 
 }
 
 export function createQuestionDeck(game: MathGameId, level: MathLevel, count = 10, random: Random = Math.random): MathQuestion[] {
-  // Level one has only five positive divisions into two groups; exhaust them before repeating.
-  if (game === 'divide' && level === 1) {
-    const deck: MathQuestion[] = [];
-    while (deck.length < count) {
-      let cycle = shuffled([1, 2, 3, 4, 5], random);
-      if (deck.at(-1)?.answer === cycle[0]) [cycle[0], cycle[1]] = [cycle[1], cycle[0]];
-      for (const quotient of cycle) {
-        if (deck.length === count) break;
-        const question = generateQuestion(game, level, deck.length, () => (quotient - .5) / 5);
-        deck.push({ ...question, id: `${question.id}:challenge:${deck.length}` });
-      }
-    }
-    return deck;
-  }
   const questions: MathQuestion[] = [], seen = new Set<string>();
   let seed = 17;
   const fallback = () => ((seed = seed * 16807 % 2147483647) - 1) / 2147483646;

@@ -9,12 +9,17 @@
 .treehouse-interior > .treehouse-interior__pan-controls button { width: 46px; height: 46px; display: grid; place-items: center; padding: 4px; border: 1px solid #dce0d6; border-radius: 50%; background: #fffef9eb; color: #465e43; pointer-events: auto; box-shadow: 0 3px 12px #24372d24; }
 .treehouse-interior > .treehouse-interior__pan-controls button:disabled { opacity: .28; pointer-events: none; }
 .treehouse-room-unavailable { min-height: 100dvh; display: grid; align-content: center; justify-items: center; gap: 24px; padding: 24px; }
-.room-placed-object__tools.room-placement-toolbar { position: fixed; z-index: 7050; top: auto; left: 50%; bottom: max(16px,calc(env(safe-area-inset-bottom) + 12px)); translate: -50% 0; width: max-content; max-width: calc(100vw - 24px); flex-wrap: wrap; justify-content: center; border: 1px solid #dce0d6; border-radius: 8px; }
+/* De balk is een rij met één scheiding erin: voor en achter staan apart. */
+.room-placed-object__tools.room-placement-toolbar { align-items: center; position: fixed; z-index: 7050; top: auto; left: 50%; bottom: max(16px,calc(env(safe-area-inset-bottom) + 12px)); translate: -50% 0; width: max-content; max-width: calc(100vw - 24px); flex-wrap: wrap; justify-content: center; border: 1px solid #dce0d6; border-radius: 8px; }
 .room-decor-layer .room-placed-object.is-selected { outline-offset: 3px; }
 .room-decor-layer .room-placed-object__move:focus-visible { outline: 2px solid #607754; }
 .room-inventory-trigger { z-index: 30; }
 @media (max-width: 900px) {
   .treehouse-interior[class*="treehouse-interior--extra-"] .treehouse-interior__scene { width: max(100vw,calc(100dvh * 1.6)); }
   .room-placed-object__tools.room-placement-toolbar button { width: 44px; height: 44px; }
+  /* Op een smal scherm krijgen voor en achter hun eigen regel; dan staat de
+     balk netjes in twee rijen in plaats van vijf en twee. */
+  .room-placed-object__tools .room-placement-toolbar__laag { flex-basis: 100%; justify-content: center; padding: 0 0 var(--space-1); border-right: 0; border-bottom: 1px solid var(--color-border); }
+  .room-placed-object__tools .room-placement-toolbar__laag button { width: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .treehouse-interior { scroll-behavior: auto; } }

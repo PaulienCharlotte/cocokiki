@@ -5,9 +5,10 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ROOM_TEMPLATES, ROOM_MODULE_INTERIORS, ROOM_TEMPLATE_ASSETS, TREEHOUSE_ROOMS_BY_ID } from '../data/treehouse';
 import { buyRoom, loadRoomExpansions, migrateRoomExpansions, nextRoomPrice, roomTemplatePrice, ownedRooms, ROOM_EXPANSIONS_KEY } from '../services/roomExpansions';
+import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
 import { loadCurrency, saveCurrency } from '../services/currency';
 import { LOCAL_STATE_KEY } from '../services/localState';
-import { addRoomPurchasesOnce, createEmptyRoomInventory, layerRoomItem, migrateRoomInventory, moveRoomItem, placeRoomItem, roomItemDepth } from '../services/roomInventory';
+import { MAX_PLACEMENT_SCALE, addRoomPurchasesOnce, createEmptyRoomInventory, layerRoomItem, migrateRoomInventory, moveRoomItem, placeRoomItem, resizeRoomItem, roomItemDepth } from '../services/roomInventory';
 import TreehouseInterior from '../pages/TreehouseInterior';
 import RoomExpansionDialog from '../components/treehouse/RoomExpansionDialog';
 import RoomNavigation from '../components/treehouse/RoomNavigation';
@@ -283,3 +284,48 @@ test('all sixteen cells can persist and the full grid refuses further purchases'
   assert.equal(buyRoom('blush-room', 'Te veel', 'too-many').status, 'full');
   assert.equal(loadCurrency(), 20000);
 }));
+
+test('een tandenborstelbeker kun je voor het plankje zetten, en weer erachter', () => {
+  // Het plankje hangt hoog, de beker staat er net boven. Zonder ingrijpen ligt
+  // wat hoger hangt achteraan, dus de beker zou achter het plankje verdwijnen.
+  let state = addRoomPurchasesOnce(createEmptyRoomInventory(), 'badkamer', { 'cloud-shelf': 1, 'toothbrush-cup': 1 });
+  const plek = { room: 'bathroom' as const, x: 50, view: 0, scale: 1 };
+  state = placeRoomItem(state, { ...plek, id: 'plankje', productId: 'cloud-shelf', y: 30 });
+  state = placeRoomItem(state, { ...plek, id: 'beker', productId: 'toothbrush-cup', y: 28 });
+  const [plankje, beker] = ['plankje', 'beker'].map(id => state.placements.find(item => item.id === id)!);
+  assert.ok(roomItemDepth(beker) < roomItemDepth(plankje), 'de beker begint achter het plankje');
+
+  const voor = layerRoomItem(state, 'beker', 1);
+  const [plankje2, beker2] = ['plankje', 'beker'].map(id => voor.placements.find(item => item.id === id)!);
+  assert.ok(roomItemDepth(beker2) > roomItemDepth(plankje2), 'na "Voor" staat de beker erop');
+  assert.equal(beker2.y, 28, 'de beker blijft staan waar hij stond');
+
+  const achter = layerRoomItem(voor, 'beker', -1);
+  const [plankje3, beker3] = ['plankje', 'beker'].map(id => achter.placements.find(item => item.id === id)!);
+  assert.ok(roomItemDepth(beker3) < roomItemDepth(plankje3), 'en met "Achter" gaat hij er weer achter');
+
+  // De knoppen zeggen met zoveel woorden wat ze doen; de iconen alleen niet.
+  const bron = readFileSync('components/treehouse/RoomInventoryDrawer.tsx', 'utf8');
+  assert.match(bron, /room-placement-toolbar__laag/);
+  assert.match(bron, /<span>Voor<\/span>/);
+  assert.match(bron, /<span>Achter<\/span>/);
+});
+
+test('een kamer is op elk scherm even breed als de tekening, en meubels mogen flink groter', () => {
+  // De regels die een kamer breed en schuifbaar maken stonden alleen in de
+  // mobiele media query; daardoor zag je op een laptop maar een deel.
+  const css = readFileSync('pages/world.css', 'utf8');
+  const regel = '.treehouse-interior__scene { width: max(100vw, calc(100dvh * 1.7768));';
+  assert.ok(css.includes(regel), 'de brede scène bestaat');
+  const binnenMedia = css.slice(0, css.indexOf(regel)).lastIndexOf('@media') > css.slice(0, css.indexOf(regel)).lastIndexOf('\n}');
+  assert.equal(binnenMedia, false, 'en staat niet meer in een media query');
+
+  // De douchecabine stond al op het oude maximum; die moet verder kunnen.
+  const douche = DECOR_PRODUCTS_BY_ID['glass-shower'];
+  assert.ok(douche.roomWidth * MAX_PLACEMENT_SCALE >= 50, 'een douche mag een halve muur vullen');
+  let state = addRoomPurchasesOnce(createEmptyRoomInventory(), 'badkamer', { 'glass-shower': 1 });
+  state = placeRoomItem(state, { id: 'douche', productId: 'glass-shower', room: 'bathroom', x: 20, y: 60, view: 0, scale: 1.8 });
+  for (let keer = 0; keer < 20; keer++) state = resizeRoomItem(state, 'douche', 1);
+  assert.equal(state.placements[0].scale, MAX_PLACEMENT_SCALE);
+  assert.ok(state.placements[0].scale > 1.8, 'voorbij het oude maximum');
+});

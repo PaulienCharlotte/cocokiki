@@ -98,6 +98,9 @@ de regels, geen rand of schaduw om de losse antwoorden. Het moet lezen als
 pillen naast elkaar, geen raster van kaartjes.
 
 - Twee tot vier antwoorden. Meer kan een kind niet overzien.
+- **Getallen zijn de uitzondering.** Vier losse cijfers lezen slecht onder
+  elkaar; die staan naast elkaar als tegels (`.math-answers`), groot genoeg om
+  te raken. Woorden en zinnen blijven een `ChoiceList`.
 - Een icoon vóór het antwoord (`icoon`) is beter dan een woord erbij.
   Zegt het plaatje het al, laat de uitleg dan weg.
 - Na het kiezen kleurt de regel zelf: goed is `--color-success-soft`, mis is
@@ -164,6 +167,40 @@ rustige achtergrond (--color-background)
     └── de keuze: `ChoiceList` (zie sectie 3)
 ```
 
+**Een spel staat op zijn eigen achtergrond.** De tekening van de plek vult
+het scherm. Nooit een wit vel over het hele venster: dan is de achtergrond weg.
+
+Daarboven zijn er twee vormen, en je kiest er één per spel:
+
+- **Een flashcard** als er iets te lezen valt — een verhaal, een bestelling,
+  een vraag in woorden. Eén witte kaart: `--color-surface`, `--radius-card`,
+  `--shadow-raised`, maximaal ~720px breed.
+- **Een toneel** als het plaatje de vraag al stelt, zoals de honingpotten of
+  de lopende band. Dan ligt er geen kaart overheen en zie je het spel zelf.
+  Losse dingen die erop liggen (streepjes, een som, een knop) krijgen een
+  rustig vlakje van `--color-surface-glass`, geen eigen kleur.
+
+Op een toneel staat **geen vaste uitleg**. Lua's spraakwolk komt pas als je op
+de tipknop drukt, en zegt het dan in één keer goed. In de rekenspellen regelt
+`.math-session.is-toneel` dat.
+
+Ook op een toneel **zweeft niets los**. Alles wat niet bij het spel zelf hoort
+staat in hoogstens twee rustige vlakken van `--color-surface-glass`: wat je
+moet weten bovenaan, wat je moet kiezen onderaan. Daartussen zie je de potten,
+de band of het mandje. Losse chips over de hele foto verspreid lezen als rommel,
+ook als ze elk op zich netjes zijn.
+
+**De uitgang staat in elk spel op dezelfde plek.** Links in de balk boven het
+spel, als rond icoon van `--touch-target` groot, met de bestemming in
+`aria-label` en `title`. Daarnaast de instellingen, rechts het geluid: drie
+dingen op één lijn, even hoog, in elk spel dezelfde volgorde. Een knop die per
+scherm verspringt moet je elke keer opnieuw zoeken.
+
+**Moeilijkheid is een schuifbalk, geen slot.** Een kind dat al verder is hoeft
+zich niet eerst door niveau 1 te werken. De balk staat in de balk boven het
+spel; wat je op dat niveau oefent staat in `aria-valuetext`, niet op het
+scherm. Zie `games/math/MathControls.tsx`.
+
 Harde regels:
 
 - **Eén kaart, niet drie blokken.** Losse tekstvakken naast elkaar maken het
@@ -171,7 +208,9 @@ Harde regels:
 - **Eén stem per scherm.** De uitleg komt van het personage, niet van een kopje
   erboven dat hetzelfde zegt.
 - **Iconen in plaats van tekst** op een actie, zodra het icoon duidelijk is.
-  Houd het label in `aria-label`.
+  Houd het label in `aria-label`. Is het icoon níét duidelijk — "naar voren" en
+  "naar achteren" zijn twee bijna gelijke vierkantjes — dan zet je het woord er
+  gewoon bij. Een icoon dat je moet uitproberen is geen icoon.
 - **Alle uitleg in een `Dialog`**, niet in een `<details>` in het overzicht.
   Een overzicht blijft een overzicht.
 - Raakvlak minstens `--touch-target` (44px).

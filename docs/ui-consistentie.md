@@ -109,7 +109,32 @@ rekeneiland stuurt je rechtstreeks naar een spel, dus het menu staat er wel
 maar niemand ziet het. Het is nu wel in de nieuwe vorm, klaar voor het moment
 dat het terugkomt.
 
+## 8. De rekenspellen delen nu wel de vorm, nog niet de sommen
+
+Alle zes de rekenspellen staan nu op hun achtergrond met één witte flashcard,
+en de moeilijkheid is overal dezelfde schuifbalk. Wat er nog niet is:
+
+- De sommen komen uit één functie van ruim honderd regels
+  (`games/math/engine.ts`, `generateQuestion`). Elk nieuw soort som is daar een
+  if-tak bij. Zolang dat zo is durft niemand er veel aan toe te voegen.
+- `games/math/math.css` heeft nog harde kleuren in de spelonderdelen zelf
+  (de honingpotten, de koekjes, de boomholte). Alleen de schil is omgezet.
+- De Winkelgekte heeft zijn eigen `checkout.css` met eigen hexes.
+
+**Doen:** eerst de sommen uit elkaar trekken in losse soorten met een eigen
+moeilijkheid, dan pas de rest van de CSS.
+
 ## Al opgelost
+
+- Een kamer in de boomhut werd alleen op een telefoon op volle breedte getoond
+  met schuiven naar links en rechts; op een laptop zag je het midden van de
+  tekening en voelde de kamer klein. Die regels staan nu buiten de media query,
+  dus overal.
+- Meubels konden tot 1,8 keer hun maat; de douchecabine stond daar al op. Dat
+  maximum is 3 geworden.
+- In de boomhut kon je al kiezen wat vooraan staat, maar de twee knoppen waren
+  twee bijna identieke iconen van overlappende vierkantjes zonder woord erbij.
+  Niemand vond ze. Ze heten nu "Voor" en "Achter" en staan apart in de balk.
 
 - `--color-text-soft` werd zeventien keer gebruikt maar bestond niet, dus al
   die "zachte" teksten stonden op volle sterkte. Staat nu als alias van
@@ -119,6 +144,39 @@ dat het terugkomt.
 - De vraag van de dag had eerst een eigen kop en eigen keuzeknoppen. Die zijn
   nu `SpeechBubble` en `ChoiceList`, en `components/tip-coach.css` is van zes
   regels naar één teruggebracht omdat de wolk daar nu ook vandaan komt.
+- De rekenspellen hadden elk een eigen schil: het ene spel een wit vel over
+  het hele venster, het andere losse tekstbalkjes op een foto. Nu is het overal
+  de achtergrond van het spel met één witte flashcard erop. De vraag komt uit
+  de spraakwolk van Baby Lua, net als Kiki in het spreekuur.
+- Je moest je bij elk rekenspel door niveau 1 heen werken. Nu kies je met een
+  schuifbalk hoe moeilijk je het wilt; de sterren onthouden wat je gehaald hebt.
+- De Bessenplukkers had op niveau 1 vijf sommen (2÷2 tot 10÷2) en gaf die twee
+  keer per ronde. Nu zijn het er twaalf, en boven de 24 vruchten kies je het
+  antwoord in plaats van honderd bessen te slepen.
+- De redactiesommen toonden een bes, een mandje met een vraagteken en een
+  stappenbalk met puntjes. Dat is weg: het verhaal staat in de spraakwolk, en
+  eronder staat één som met één invoervak. Wat je al uitgerekend hebt blijft
+  als kleine kaartjes staan.
+- Op het toneel zweefde daarna alles los over de achtergrond: streepjes, een
+  tipknop, twee sommen en vier tegels, elk op hun eigen vlakje. Nu staan ze in
+  twee vlakken, boven en onder, met het spel ertussen.
+- De terugknop was alleen een pijl in de balk van de app, die op elk scherm
+  hetzelfde is. Elk rekenspel heeft nu een eigen ronde knop, links in de balk
+  boven het spel, op dezelfde plek en even groot als het geluidsknopje.
+- De winkel had een doos in een doos: een balk met de klok, en daaronder nog
+  een vlak met de vraag. Dat is één vlak geworden. En de vraag in woorden stond
+  los van de som die hetzelfde zei; die twee staan nu samen in het vak bij de
+  antwoorden, zodat boven de band alleen de tijd overblijft.
+- De honingpotten en de lopende band verdwenen onder een witte kaart. Die twee
+  zijn nu een toneel: je ziet het spel, en Lua legt pas uit als je om een tip
+  vraagt. De andere vier spellen houden hun flashcard.
+- Munten waren overal twee per opgave, hoe moeilijk de som ook was. Nu komt er
+  per niveau één bij, en in de winkel nog één zodra je zoveel klanten hebt
+  geholpen dat de band hard loopt. Dat rekent de app zelf uit uit het aantal
+  goede antwoorden, zodat het spel er niets over hoeft te melden.
+- De Winkelgekte duurde een vaste minuut en je koos vooraf een snelheid. Nu
+  begint de band rustig en gaat hij bij elke klant een stukje sneller, tot er
+  een klant van de band valt. Dan sluit de winkel.
 - Het vlaggenmemory koos een werelddeel met zes paarse `secondary`-knoppen in
   een raster, en het rekenmenu had zes kaarten met een eigen pastelkleur, een
   rand én een schaduw, in harde hexes en px. Beide gebruiken nu `CardGrid`;

@@ -1,6 +1,7 @@
 import { commitLocalState, readDocument, readLocalState, subscribeLocalState } from '../../services/localState';
 import { resultStatus } from './engine';
 import { RACE_DAILY_COIN_CAP } from './config';
+import { CHECKOUT_FAST_AFTER } from './checkoutTiming';
 import { MATH_GAME_IDS, MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
 import { learningReward } from '../../services/learningReward';
 
@@ -21,6 +22,17 @@ export function raceDayKey(now = new Date()) {
 export function raceCoinsAvailable(now = new Date()): number {
   try { return Math.max(0, RACE_DAILY_COIN_CAP - (loadRaceEarnings().days[raceDayKey(now)] ?? 0)); } catch { return 0; }
 }
+/**
+ * Wat je per opgave extra verdient omdat het moeilijker was.
+ *
+ * Niveau 1 levert niets extra's op, niveau 5 vier munten erbij. In de winkel
+ * komt daar één munt bij zodra je zoveel klanten hebt geholpen dat de band
+ * hard loopt; dat rekenen we hier zelf uit, uit het aantal goede antwoorden.
+ */
+export function difficultyBonus(level: MathLevel, snel = false): number {
+  return (MATH_LEVELS.includes(level) ? level - 1 : 0) + (snel ? 1 : 0);
+}
+
 export function emptyMathProgress(): MathProgress {
   return { version: 1, games: Object.fromEntries(MATH_GAME_IDS.map(id => [id, { completed: [], best: {} }])) as MathProgress['games'] };
 }
@@ -42,8 +54,15 @@ export function loadMathProgress(): MathProgress {
   try { return migrateMathProgress(JSON.parse(readDocument(MATH_PROGRESS_KEY) ?? 'null')); } catch { return emptyMathProgress(); }
 }
 export const subscribeMathProgress = (listener: () => void) => subscribeLocalState(listener, MATH_PROGRESS_KEY);
-export function levelUnlocked(progress: MathProgress, game: MathGameId, level: MathLevel): boolean {
-  return level === 1 || progress.games[game].completed.includes(level) || progress.games[game].completed.includes((level - 1) as MathLevel);
+/**
+ * Elk niveau staat open.
+ *
+ * Eerst moest je je door niveau 1 heen werken, ook als je allang verder was.
+ * Nu kies je zelf met de schuifbalk hoe moeilijk je het wilt; de sterren
+ * laten zien wat je al gehaald hebt.
+ */
+export function levelUnlocked(_progress: MathProgress, _game: MathGameId, level: MathLevel): boolean {
+  return MATH_LEVELS.includes(level);
 }
 export function nextMathLevel(progress: MathProgress, game: MathGameId): MathLevel {
   return MATH_LEVELS.find(level => !progress.games[game].completed.includes(level)) ?? 5;
@@ -65,7 +84,7 @@ export function finishMathLevel(game: MathGameId, level: MathLevel, result: Math
       if (previousRun) return { ok: previousRun.signature === signature, reward: 0, progress };
       const day = raceDayKey(now), earned = earnings.days[day] ?? 0;
       if (!Number.isSafeInteger(earned) || earned < 0) return { ok: false, reward: 0, progress };
-      const reward = learningReward(result.correct);
+      const reward = learningReward(result.correct, false, difficultyBonus(level, result.correct >= CHECKOUT_FAST_AFTER));
       earnings.days[day] = earned + reward;
       earnings.runs[result.raceId] = { reward, signature };
       const saved = commitLocalState({ [MATH_PROGRESS_KEY]: JSON.stringify(next), [RACE_EARNINGS_KEY]: JSON.stringify(earnings) }, [{ id: `math:checkout:${result.raceId}`, amount: reward }]);
@@ -76,7 +95,7 @@ export function finishMathLevel(game: MathGameId, level: MathLevel, result: Math
   if (!Number.isSafeInteger(solved) || solved < result.correct || solved > result.total) return { ok: false, reward: 0, progress };
   const roundId = result.roundId ?? `legacy:${game}:${level}:${JSON.stringify(result)}`;
   if (!roundId || roundId.length > 500) return { ok: false, reward: 0, progress };
-  const operations = [{ id: `math:round:${game}:${roundId}`, amount: learningReward(solved) }];
+  const operations = [{ id: `math:round:${game}:${roundId}`, amount: learningReward(solved, false, difficultyBonus(level)) }];
   // Read the receipt before committing so replays can report only newly earned coins.
   const before = loadRewardLedger();
   const reward = operations.filter(operation => !Object.prototype.hasOwnProperty.call(before, operation.id)).reduce((sum, operation) => sum + operation.amount, 0);

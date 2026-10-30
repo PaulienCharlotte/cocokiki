@@ -1,4 +1,5 @@
-export type TableChoice = number | 'mix';
+/** Eén tafel, een eigen rijtje tafels, of alles door elkaar. */
+export type TableChoice = number | 'mix' | number[];
 export type LuaGameMode = 'calm' | 'adventure' | 'challenge';
 export type QuestionType = 'classic' | 'division' | 'missing' | 'check' | 'bigger' | 'factor';
 export type GamePhase = 'menu' | 'tutorial' | 'active' | 'resolving' | 'results';

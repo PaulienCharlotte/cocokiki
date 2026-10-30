@@ -82,8 +82,10 @@ svg { flex-shrink: 0; }
 .lua-modes button[aria-pressed="true"] { border-color: #5c3d78; background: #5c3d78; color: #fff; box-shadow: 0 3px 10px #34244125; }
 .lua-modes button[aria-pressed="true"] small { color: #f2eaf5; }
 .lua-tables { margin-top: 12px; }
+/* Twaalf tafels in twee rijen van zes; Mix pakt de hele breedte eronder. */
 .lua-tables > div { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-.lua-tables button { min-width: 0; min-height: 36px; padding: 4px; border: 1px solid #d4cbd8; border-radius: 10px; background: #fff; color: #55465d; font-weight: 800; }
+.lua-tables button:last-child { grid-column: 1 / -1; }
+.lua-tables button { min-width: 0; min-height: var(--touch-target); padding: 4px; border: 1px solid #d4cbd8; border-radius: var(--radius-control-sm); background: #fff; color: #55465d; font-weight: 800; }
 .lua-tables button:hover { border-color: #a890b5; background: #f4eff7; }
 .lua-tables button[aria-pressed="true"] { border-color: #5c3d78; background: #5c3d78; color: #fff; }
 .lua-menu-actions { display: flex; gap: 9px; }
@@ -460,7 +462,7 @@ progress::-moz-progress-bar { background: #508669; }
   .lua-modes button small { font-size: 9px; }
   .lua-tables { margin-top: 10px; }
   .lua-tables > div { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .lua-tables button { min-height: 36px; }
+  .lua-tables button { min-height: var(--touch-target); }
   .lua-menu-actions .lua-play { flex: 1; }
   .lua-hud { top: 72px; width: calc(100% - 16px); min-height: 42px; padding: 5px 8px; gap: 7px; border-radius: 12px; font-size: 12px; }
   .lua-hud button { width: 32px; height: 32px; }

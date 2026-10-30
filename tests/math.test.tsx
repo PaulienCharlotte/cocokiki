@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { checkoutGroceries } from '../games/math/checkoutCatalog';
-import { checkoutOrderSeconds, checkoutTravel } from '../games/math/checkoutTiming';
+import { CHECKOUT_FAST_AFTER, CHECKOUT_MIN_SECONDS, checkoutOrderSeconds, checkoutTravel } from '../games/math/checkoutTiming';
 import { createCheckoutQuestion } from '../games/math/checkoutQuestions';
 import CheckoutConveyor from '../games/math/CheckoutConveyor';
 import test from 'node:test';
@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MATH_GAME_IDS, MATH_LEVELS, type Expression, type MathResult } from '../games/math/types';
-import { answerChoices, balanceAngle, createQuestionDeck, distributionCorrect, evaluate, expressionText, generateQuestion, resultStatus, validAnswer } from '../games/math/engine';
+import { DISTRIBUTION_MAX, answerChoices, balanceAngle, createQuestionDeck, distributionCorrect, evaluate, expressionText, generateQuestion, resultStatus, validAnswer } from '../games/math/engine';
 import { emptyMathProgress, finishMathLevel, levelUnlocked, loadMathProgress, migrateMathProgress, MATH_PROGRESS_KEY, nextMathLevel } from '../games/math/progress';
 import { MATH_GAMES, mathIcon, RACE_TARGETS } from '../games/math/config';
 import { loadCurrency } from '../services/currency';
@@ -155,19 +155,16 @@ test('division remains integral, starts small and keeps every fruit individually
     const deck = createQuestionDeck('divide', level, 10, randomSeed(level * 10));
     for (const [index, q] of deck.entries()) {
       assert.equal(q.a % q.b, 0);
-      if (level === 1) assert.ok(q.a <= 10 && q.b === 2);
-      if (level === 2) assert.ok(q.a <= 20 && q.b >= 2 && q.b <= 5);
-      if (level === 3) assert.ok([2, 5, 10].includes(q.b));
-      if (index % 2 === 0 || level <= 2) assert.ok(q.a <= 24);
-      else assert.ok(q.a <= (level === 5 ? 144 : 100));
+      if (level === 1) assert.ok(q.a <= 18 && [2, 3].includes(q.b));
+      if (level === 2) assert.ok(q.a <= 30 && q.b >= 2 && q.b <= 5);
+      if (level === 3) assert.ok([2, 3, 4, 5, 10].includes(q.b));
+      assert.ok(q.a <= (level === 5 ? 144 : level === 4 ? 120 : 100));
+      // Slepen mag alleen bij een oogst die je nog kunt overzien.
+      assert.equal(q.kind, q.a <= DISTRIBUTION_MAX ? 'distribution' : 'choice');
       assert.equal(distributionCorrect(Array(q.b).fill(q.answer), q.a), true);
     }
-    assert.ok(deck.every(q => q.kind === 'distribution'));
-    if (level === 1) {
-      assert.equal(new Set(deck.slice(0, 5).map(q => q.a)).size, 5);
-      assert.equal(new Set(deck.slice(5).map(q => q.a)).size, 5);
-      assert.notEqual(deck[4].a, deck[5].a);
-    }
+    // Niveau 1 had maar vijf sommen en herhaalde ze; nu is elke ronde uniek.
+    assert.equal(new Set(deck.map(question => question.id)).size, 10);
   }
   assert.equal(distributionCorrect([3, 5, 4], 12), false);
   assert.equal(distributionCorrect([4, 4, 3], 12), false);
@@ -243,9 +240,9 @@ test('eight first attempts unlock a level and perfect scores have separate eligi
 
 test('math rewards solved answers, repeats and prevents duplicate settlement', () => storage(() => {
   const empty = loadMathProgress();
+  // Elk niveau staat open: je kiest zelf met de schuifbalk waar je begint.
   assert.equal(levelUnlocked(empty, 'multiply', 1), true);
-  assert.equal(levelUnlocked(empty, 'multiply', 2), false);
-  assert.equal(finishMathLevel('multiply', 2, perfect).ok, false);
+  assert.equal(levelUnlocked(empty, 'multiply', 2), true);
   assert.equal(loadCurrency(), 0);
   const first = finishMathLevel('multiply', 1, { correct: 8, total: 10, score: 8, mistakes: 2 });
   assert.equal(first.reward, 16);
@@ -254,11 +251,12 @@ test('math rewards solved answers, repeats and prevents duplicate settlement', (
   assert.equal(nextMathLevel(loadMathProgress(), 'multiply'), 2);
   assert.equal(finishMathLevel('multiply', 1, perfect).reward, 20);
   assert.equal(finishMathLevel('multiply', 1, perfect).reward, 0);
-  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, 20);
-  assert.equal(loadCurrency(), 116);
+  // Moeilijker werk levert meer op: per opgave één munt extra per niveau.
+  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, 10 * (2 + level - 1));
+  assert.equal(loadCurrency(), 216);
   assert.equal(finishMathLevel('multiply', 5, perfect).reward, 0);
   assert.equal(finishMathLevel('multiply', 1, { correct: 2, total: 10, score: 2, mistakes: 8 }).reward, 4);
-  assert.equal(loadCurrency(), 120);
+  assert.equal(loadCurrency(), 220);
   assert.deepEqual(loadMathProgress().games.multiply.completed, [1, 2, 3, 4, 5]);
   assert.deepEqual(loadMathProgress().games.divide.completed, []);
   assert.equal(loadMathProgress().games.multiply.best[1]?.correct, 10);
@@ -306,10 +304,14 @@ test('interactive math views expose real controls for mouse, touch and keyboard'
   assert.match(header, /aria-label="Naar de wereld"/);
   const hubHeader = renderToStaticMarkup(<MathHeader game={null} level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
   assert.match(hubHeader, /alt="CocoKiki"/);
-  assert.equal((header.match(/disabled=""/g) ?? []).length, 4);
+  // De moeilijkheid is een schuifbalk; niets staat meer op slot.
+  assert.match(header, /type="range"/);
+  assert.match(header, /Niveau 1/);
+  assert.doesNotMatch(header, /disabled=""/);
   const race = renderToStaticMarkup(<RaceGame level={1} onFinish={() => undefined} />);
   assert.match(race, /Open de winkel/);
-  assert.match(race, /60/);
+  // De klok telt af voor de klant op de band, dus start hij op diens tijd.
+  assert.match(race, new RegExp(`${checkoutOrderSeconds(1)} s`));
   const drag = readFileSync('games/math/DragChoice.tsx', 'utf8');
   assert.match(drag, /setPointerCapture/);
   assert.match(drag, /onPointerCancel/);
@@ -321,22 +323,49 @@ test('race uses shared coins without a game-specific daily cap and preserves old
   const run = (score: number, raceId: string): MathResult => ({ score, correct: score, total: score, mistakes: 0, raceId });
   finishMathLevel('multiply', 1, perfect);
   const before = loadCurrency();
-  assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 46);
+  // 23 klanten op niveau 1: de band liep allang hard, dus drie munten per klant.
+  assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 69);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 0);
   assert.equal(finishMathLevel('race', 1, run(24, 'run-one'), day).ok, false);
-  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, 200);
-  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 300);
+  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, 400);
+  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 750);
   assert.equal(loadMathProgress().games.race.best[3]?.score, 150);
-  assert.equal(loadCurrency(), before + 546);
+  assert.equal(loadCurrency(), before + 1219);
   assert.equal(raceCoinsAvailable(day), 0);
   assert.equal(raceCoinsAvailable(tomorrow), RACE_DAILY_COIN_CAP);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), tomorrow).reward, 0);
-  assert.equal(finishMathLevel('race', 1, run(12, 'run-four'), tomorrow).reward, 24);
+  assert.equal(finishMathLevel('race', 1, run(12, 'run-four'), tomorrow).reward, 36);
   assert.deepEqual(loadMathProgress().games.multiply.completed, [1]);
   assert.equal(loadMathProgress().games.multiply.best[1]?.score, 10);
   assert.equal(finishMathLevel('race', 1, { ...run(2, 'invalid-bonus'), score: 3 }, tomorrow).ok, false);
   assert.equal(finishMathLevel('race', 1, { correct: 1, total: 1, score: 1, mistakes: 0 }, tomorrow).ok, false);
+  // Houd je het zo lang vol dat de band hard loopt, dan telt dat als moeite:
+  // één munt extra per klant. Dat rekent de app zelf uit, uit het aantal goed.
+  assert.equal(finishMathLevel('race', 1, run(CHECKOUT_FAST_AFTER, 'run-snel'), tomorrow).reward, CHECKOUT_FAST_AFTER * 3);
+  assert.equal(finishMathLevel('race', 1, run(CHECKOUT_FAST_AFTER - 1, 'run-kort'), tomorrow).reward, (CHECKOUT_FAST_AFTER - 1) * 2);
 }));
+
+test('de band gaat bij elke klant sneller, tot een grens die te doen blijft', () => {
+  for (const level of MATH_LEVELS) {
+    const eerste = checkoutOrderSeconds(level);
+    assert.equal(checkoutOrderSeconds(level, 0), eerste);
+    // Elke klant maakt het krapper, nooit ruimer.
+    let vorige = eerste;
+    for (let klant = 1; klant <= 40; klant++) {
+      const nu = checkoutOrderSeconds(level, klant);
+      assert.ok(nu <= vorige, `klant ${klant} kreeg meer tijd dan klant ${klant - 1}`);
+      vorige = nu;
+    }
+    assert.equal(vorige, CHECKOUT_MIN_SECONDS);
+    assert.ok(checkoutOrderSeconds(level, CHECKOUT_FAST_AFTER) < eerste);
+    // Een onzinnig aantal klanten mag de tijd niet opblazen.
+    assert.equal(checkoutOrderSeconds(level, -5), eerste);
+  }
+  // Je kiest vooraf niets meer; de band versnelt vanzelf.
+  const start = renderToStaticMarkup(<RaceGame level={1} onFinish={() => undefined} />);
+  assert.doesNotMatch(start, /Hoe snel loopt de band/);
+  assert.match(start, /bij elke klant een beetje sneller/);
+});
 
 test('race settlement retries atomically after storage failure, including zero scores', () => storage(() => {
   const actual = globalThis.localStorage, result: MathResult = { correct: 18, total: 20, score: 18, mistakes: 2, raceId: 'retry-race' };
@@ -345,10 +374,10 @@ test('race settlement retries atomically after storage failure, including zero s
   assert.equal(loadCurrency(), 0);
   assert.deepEqual(loadMathProgress().games.race.completed, []);
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: actual });
-  assert.equal(finishMathLevel('race', 1, result).reward, 36);
+  assert.equal(finishMathLevel('race', 1, result).reward, 54);
   assert.equal(finishMathLevel('race', 1, result).reward, 0);
   assert.equal(finishMathLevel('race', 1, { correct: 0, total: 0, score: 0, mistakes: 0, raceId: 'zero-race' }).ok, true);
-  assert.equal(loadCurrency(), 36);
+  assert.equal(loadCurrency(), 54);
 }));
 
 test('old race combo scores survive migration without retroactive payment or lost unlocks', () => {
@@ -470,4 +499,71 @@ test('checkout levels alternate at least five task forms with consistent equatio
   const combined = createCheckoutQuestion(5, 0, () => .5);
   assert.match(combined.prompt, /bezorgkosten/);
   assert.match(combined.hint, /eerst.*daarna/);
+});
+
+test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en een schuifbalk', () => {
+  // De kaart wordt op één plek gemaakt, niet per spel opnieuw.
+  const schil = readFileSync('components/dreamworld/dreamworld.css', 'utf8');
+  assert.match(schil, /\.dream-app \.math-adventure \.math-session \{[^}]*--radius-card/);
+  assert.match(schil, /\.dream-app \.math-adventure \.math-session \{[^}]*--color-surface/);
+  // Geen uitzondering meer die de kaart voor één spel weghaalt.
+  assert.doesNotMatch(schil, /math-adventure--balance .math-session \{ background: transparent/);
+  assert.doesNotMatch(readFileSync('games/math/checkout.css', 'utf8'), /math-session \{ background: transparent/);
+
+  // Baby Lua stelt de vraag, en doet dat niet twee keer op hetzelfde scherm.
+  const session = readFileSync('games/math/MathSession.tsx', 'utf8');
+  assert.match(session, /SpeechBubble character="lua"/);
+  assert.doesNotMatch(readFileSync('games/math/MathHelp.tsx', 'utf8'), /luiaard\.webp|TipCoach/);
+
+  // De moeilijkheid is een schuifbalk, voor elk spel even ver open.
+  for (const game of MATH_GAMES) for (const level of MATH_LEVELS) assert.equal(levelUnlocked(emptyMathProgress(), game.id, level), true);
+  const header = renderToStaticMarkup(<MathHeader game="balance" level={3} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
+  assert.match(header, /type="range"/);
+  assert.match(header, /Niveau 3/);
+});
+
+test('een spel met een eigen toneel houdt zijn achtergrond, en de uitleg komt pas bij de tip', () => {
+  const schil = readFileSync('components/dreamworld/dreamworld.css', 'utf8');
+  assert.match(schil, /math-session\.is-toneel,\n\.dream-app \.math-adventure--race \.math-session \{ background: transparent/);
+  // De vraag staat niet vast in beeld bij de honingpotten; Lua zegt hem pas
+  // als je om een tip vraagt, en dan in haar eigen spraakwolk.
+  const session = readFileSync('games/math/MathSession.tsx', 'utf8');
+  assert.match(session, /const toneel = game === 'balance'/);
+  assert.match(session, /\{!toneel && <SpeechBubble/);
+  assert.match(readFileSync('games/math/MathHelp.tsx', 'utf8'), /SpeechBubble character="lua" label="tip"/);
+});
+
+test('je kiest zelf welke tafels je oefent, ook meerdere tegelijk', () => {
+  const tafels = [3, 7, 8];
+  for (let trek = 0; trek < 1; trek += .05) {
+    const vraag = createLuaQuestion(tafels, '', () => trek, 1, 'classic');
+    assert.ok(vraag.tables.some(table => tafels.includes(table)), `${vraag.prompt} hoort niet bij ${tafels}`);
+  }
+  // Een leeg rijtje valt terug op alles door elkaar in plaats van te breken.
+  assert.ok(createLuaQuestion([], '', () => .5, 1, 'classic').answer >= 0);
+  // Het spel zelf laadt Phaser, dus hier kijken we naar de bron: de keuze
+  // staat er ook als je via het rekeneiland binnenkomt (geen !mathAdventure).
+  const menu = readFileSync('games/red-baby-lua/RedBabyLuaGame.tsx', 'utf8');
+  assert.match(menu, /Welke tafels wil je oefenen/);
+  assert.doesNotMatch(menu, /\{!mathAdventure && <><fieldset className="lua-modes"/);
+  assert.match(menu, /table: \[\.\.\.LUA_LEVEL_TABLES\[mathAdventure\.level - 1\]\]/);
+});
+
+test('op een toneel staat niets los: twee vlakken, en een uitgang met een woord erbij', () => {
+  // De streepjes en de tip staan samen in één balk, niet elk op een eigen chip.
+  assert.match(readFileSync('games/math/MathSession.tsx', 'utf8'), /<div className="math-balk">/);
+  assert.match(readFileSync('games/math/RaceGame.tsx', 'utf8'), /checkout-paneel--boven/);
+  assert.match(readFileSync('games/math/RaceGame.tsx', 'utf8'), /checkout-paneel--onder/);
+  // De uitgang is een rond icoon dat in elk spel op dezelfde plek staat.
+  const header = renderToStaticMarkup(<MathHeader game="balance" level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
+  assert.match(header, /aria-label="Terug naar het rekeneiland"/);
+  assert.match(header, /class="math-icon-tool math-terug"/);
+});
+
+test('de winkel sluit zodra er een klant van de band valt', () => {
+  // De ronde heeft geen vaste lengte meer: hij duurt tot je hem niet bijhoudt.
+  const bron = readFileSync('games/math/RaceGame.tsx', 'utf8');
+  assert.match(bron, /fallTimer\.current = setTimeout\(finish, CHECKOUT_FALL_MS\)/);
+  assert.doesNotMatch(bron, /RACE_SECONDS/);
+  assert.doesNotMatch(readFileSync('games/math/config.ts', 'utf8'), /RACE_SECONDS/);
 });

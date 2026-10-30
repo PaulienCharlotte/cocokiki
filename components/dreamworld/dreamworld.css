@@ -78,36 +78,37 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
 
 /* De wereld en spellen gebruiken het hele venster; het vaste menu ligt erboven. */
 .dream-island__scene { top: calc(var(--space-12) * 2); }
-.dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 3 + var(--space-4)); padding: var(--math-top) 0 0; min-height: 100dvh; }
-.dream-app .math-adventure .math-game { width: 100%; min-height: calc(100dvh - var(--math-top)); margin: 0; align-items: stretch; }
-.dream-app .math-adventure .math-session { min-height: calc(100dvh - var(--math-top)); border: 0; border-radius: 0; box-shadow: none; padding: var(--space-6); background: var(--color-surface); }
+.dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 3 + var(--space-4)); padding: var(--math-top) var(--space-4) var(--space-8); min-height: 100dvh; }
+/* Elk rekenspel laat zijn achtergrond zien; de opdracht staat op één witte
+   flashcard die erop ligt. Zie `.claude/skills/cocokiki-ui`, sectie 6. */
+.dream-app .math-adventure .math-game { width: min(720px, 100%); min-height: calc(100dvh - var(--math-top)); margin: 0 auto; align-items: center; }
+.dream-app .math-adventure .math-session { width: 100%; min-height: 0; border: 0; border-radius: var(--radius-card); box-shadow: var(--shadow-raised); padding: var(--space-6); background: var(--color-surface); }
+/* De honingpotten en de winkel hebben hun eigen toneel; daar geen kaart. */
+.dream-app .math-adventure .math-session.is-toneel,
+.dream-app .math-adventure--race .math-session { background: transparent; box-shadow: none; }
+.dream-app .math-adventure--race .math-game { width: min(960px, 100%); }
 .dream-app .math-adventure .math-game-header { top: calc(var(--space-12) * 2); width: 100%; min-height: var(--space-12); display: flex; flex-wrap: nowrap; gap: var(--space-2); padding: var(--space-1) var(--space-4); border: 0; border-radius: 0; box-shadow: none; }
-.dream-app .math-game-header > .math-icon-tool:first-child { display: none; }
+
 .dream-app .math-adventure .math-game-header h1 { flex: 1; width: auto; font-size: var(--font-size-md); }
-.dream-app .math-adventure .math-game-header .math-level-select { flex: 0 0 auto; width: calc(var(--space-12) * 2 + var(--space-6)); max-width: none; margin: 0; }
-.dream-app .math-adventure:not(.math-adventure--multiply) .math-game-header { left: auto; right: var(--space-4); transform: none; width: auto; background: transparent; backdrop-filter: none; }
+.dream-app .math-adventure .math-game-header .math-level-select { flex: 0 0 auto; width: auto; max-width: none; margin: 0; }
+.dream-app .math-adventure:not(.math-adventure--multiply) .math-game-header { left: auto; right: var(--space-4); transform: none; width: auto; align-items: center; gap: var(--space-2); background: transparent; backdrop-filter: none; }
 .dream-app .math-adventure:not(.math-adventure--multiply) .math-game-header h1 { display: none; }
-.dream-app .math-adventure:not(.math-adventure--multiply) .math-game { position: fixed; inset: 0; height: 100dvh; overflow-y: auto; background: var(--color-surface); }
-.dream-app .math-adventure:not(.math-adventure--multiply) .math-session { min-height: 100dvh; padding-top: var(--math-top); }
 .dream-app .math-module.math-adventure--multiply { padding: 0; }
 .dream-app .math-adventure--multiply .math-game { position: fixed; inset: 0; height: 100dvh; min-height: 0; }
 .dream-app .math-adventure--multiply .math-lua { width: 100%; height: 100dvh; padding: 0; border: 0; border-radius: 0; }
 .dream-app .math-lua .lua-game-shell { height: 100%; min-height: 0; border-radius: 0; }
 .dream-app .math-lua .lua-hud { top: calc(var(--space-12) * 2 + var(--space-3)); }
 .dream-app .math-lua .lua-timer { top: calc(var(--space-12) * 3 + var(--space-6)); }
-.dream-app .math-lua .lua-setup-controls .math-game-header { position: static; transform: none; width: 100%; padding: var(--space-2) 0; margin: 0 0 var(--space-2); background: transparent; backdrop-filter: none; justify-content: flex-end; }
-.dream-app .lua-setup-controls .math-game-header h1, .dream-app .lua-setup-controls .math-header-brand, .dream-app .lua-setup-controls .math-wallet, .dream-app .lua-setup-controls .math-icon-tool:first-child { display: none; }
+/* De uitgang links, de instellingen rechts — net als in de andere spellen. */
+.dream-app .math-lua .lua-setup-controls .math-game-header { position: static; transform: none; width: 100%; padding: var(--space-2) 0; margin: 0 0 var(--space-2); background: transparent; backdrop-filter: none; justify-content: space-between; }
+.dream-app .lua-setup-controls .math-game-header h1, .dream-app .lua-setup-controls .math-header-brand, .dream-app .lua-setup-controls .math-wallet { display: none; }
 .dream-app .lua-game-page { padding: 0; }
 .dream-flags-memory { min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-6)) var(--space-4) var(--space-4); background: var(--color-background); }
-.dream-app .math-module.math-adventure--balance .math-game,
-.dream-app .math-adventure--balance .math-session { background: transparent; }
-.dream-app .math-adventure--balance .math-prompt,
-.dream-app .math-adventure--balance .math-progress-dots,
-.dream-app .math-adventure--balance .honey-jar__glass > span { background: rgb(255 250 241 / 88%); border-radius: 8px; padding: 8px 12px; }
 @media (max-width: 600px) {
   .dream-island__scene { top: calc(var(--space-12) + var(--space-6)); }
   .dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 2 + var(--space-8)); }
   .dream-app .math-adventure .math-game-header { top: calc(var(--space-12) + var(--space-6)); padding-inline: var(--space-2); }
+  .dream-app .math-adventure .math-level-select input { width: calc(var(--space-12) + var(--space-6)); }
   .dream-app .math-adventure .math-session { padding: var(--space-4) var(--space-3); }
   .dream-app .math-adventure .cookie-order { gap: var(--space-3); margin: var(--space-2) auto; }
   .dream-app .math-adventure .cookie-order > img { width: calc(var(--space-12) + var(--space-8)); height: calc(var(--space-12) + var(--space-8)); }

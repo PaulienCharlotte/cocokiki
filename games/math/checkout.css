@@ -1,16 +1,30 @@
-.dream-app .math-module.math-adventure.math-adventure--race .math-game,
-.dream-app .math-module.math-adventure--race .math-session { background: transparent; }
+.dream-app .math-module.math-adventure.math-adventure--race .math-game { background: transparent; }
 .math-adventure--race::before { display: none; }
-.dream-app .math-adventure--race .checkout-game { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 154px 20px 16px; gap: 8px; }
-.checkout-game .checkout-hud { flex: none; width: min(580px, 100%); min-height: 40px; padding: 6px 16px; border: 1px solid #fff9; border-radius: 8px; background: #fffaf1d9; }
-.checkout-game .checkout-start { flex: none; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding-top: 24px; }
-.checkout-game .checkout-start > svg { color: #4f694f; padding: 10px; border-radius: 50%; background: #fffaf1db; }
-.checkout-game .checkout-start h2 { font-size: 24px; border-radius: 8px; background: #fffaf1eb; }
-.checkout-game .math-prompt { margin: 0; padding: 8px 14px; background: #fffaf1eb; font-size: 20px; }
-.checkout-game .math-equation { margin: 0; background: #fffaf1eb; font-size: 26px; }
+/* Eén vlak, niet een vlak in een vlak: de klok, de vraag en de tip horen bij
+   dezelfde klant en staan dus ook in hetzelfde kader. */
+.checkout-paneel { display: grid; justify-items: center; gap: var(--space-2); width: min(640px, 100%); margin: 0 auto; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--color-surface-glass); }
+.checkout-paneel--onder { margin-top: var(--space-3); padding: var(--space-3) var(--space-4); }
+/* Boven de band hoef je alleen te weten hoeveel tijd je nog hebt. */
+.checkout-paneel--boven:has(.checkout-order-time) { gap: var(--space-2); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); }
+.checkout-paneel .checkout-hud { width: 100%; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.checkout-paneel .math-prompt { margin: var(--space-2) 0 0; }
+.checkout-paneel .checkout-start h2 { margin: 0; background: none; }
+.checkout-paneel .checkout-start > svg { background: none; padding: 0; }
+.checkout-game .math-help { background: none; }
+.checkout-uitleg { max-width: 34ch; margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); text-align: center; }
+/* Hoe snel de band nu loopt; dat verandert tijdens het spel. */
+.checkout-tempo-nu { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+/* Drie tempo's naast elkaar, ook op een telefoon: één rij leest rustiger. */
+.dream-app .math-adventure--race .checkout-game { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: var(--space-2); }
+
+.checkout-game .checkout-start { flex: none; min-height: 0; display: grid; justify-items: center; gap: var(--space-3); padding-top: var(--space-2); }
+.checkout-game .checkout-start > svg { color: var(--color-primary); }
+.checkout-game .checkout-start h2 { font-size: var(--font-size-xl); background: none; }
+.checkout-game .math-prompt { margin: 0; padding: 0; background: none; color: var(--color-text-muted); font-size: var(--font-size-md); font-weight: var(--font-weight-medium); line-height: var(--line-height-default); }
+.checkout-game .math-equation { margin: 0; background: var(--color-background-soft); }
 .checkout-game .math-help { margin: 0; }
-.checkout-order-time { flex: none; width: min(480px, 90%); height: 7px; overflow: hidden; border-radius: 4px; background: #fffaf1ac; }
-.checkout-order-time > span { display: block; height: 100%; background: #53724f; }
+.checkout-order-time { flex: none; width: 100%; height: 6px; overflow: hidden; border-radius: var(--radius-pill); background: var(--color-background-soft); }
+.checkout-order-time > span { display: block; height: 100%; background: var(--color-primary); }
 .checkout-conveyor { position: relative; flex: none; width: min(1000px, 100%); aspect-ratio: 3.2; overflow: hidden; isolation: isolate; container-type: inline-size; }
 .checkout-conveyor__belt { position: absolute; top: 48%; left: 0; width: 100%; aspect-ratio: 6.2; overflow: hidden; z-index: 1; }
 .checkout-conveyor__belt > img { position: absolute; width: 100%; height: auto; top: -60%; left: 0; pointer-events: none; }
@@ -20,14 +34,15 @@
 .checkout-conveyor__product { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .checkout-conveyor__product > img { display: block; width: 100%; height: 110px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 5px 3px #231c2538); }
 .checkout-conveyor.is-falling .checkout-conveyor__goods { animation: checkout-fall .75s ease-in forwards; }
-.checkout-game .checkout-answers { width: min(520px, 100%); }
+.checkout-game .checkout-answers { width: 100%; }
 .checkout-game .math-answers { width: 100%; margin: 0; }
 .checkout-game .adventure-feedback { min-height: 30px; margin: 0; }
 @keyframes checkout-belt-turn { to { background-position-x: 51px; } }
 @keyframes checkout-fall { 30% { translate: 16cqw 0; rotate: 0deg; opacity: 1; } to { translate: 28cqw 150px; rotate: 15deg; opacity: 0; } }
 @media (max-width: 600px) {
-  .dream-app .math-adventure--race .checkout-game { padding: 132px 10px 16px; gap: 10px; }
-  .checkout-game .math-prompt { font-size: 17px; }
+  .dream-app .math-adventure--race .checkout-game { gap: var(--space-2); }
+  .checkout-paneel { padding: var(--space-2) var(--space-3); }
+  .checkout-game .math-prompt { font-size: var(--font-size-sm); }
   .checkout-conveyor { width: calc(100% + 20px); aspect-ratio: 1.9; }
   .checkout-conveyor__belt { top: 64%; }
   .checkout-conveyor__goods { width: 34%; bottom: 24%; gap: 6px; }

@@ -138,7 +138,7 @@ test('room swipes change rooms only for deliberate horizontal gestures at an edg
 
 test('cookie hints give the inverse calculation and coaches use distinct avatars', () => {
   const closed = renderToStaticMarkup(<MathHelp open={false} onToggle={() => undefined}>Doe 42 − 16</MathHelp>);
-  assert.match(closed, /Vraag Baby Lua om een tip/);
+  assert.match(closed, /Tip van Baby Lua/);
   assert.match(closed, /aria-expanded="false"/);
   assert.ok(!closed.includes('Doe 42'));
   const opened = renderToStaticMarkup(<MathHelp open onToggle={() => undefined}>Doe 42 − 16</MathHelp>);

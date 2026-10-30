@@ -249,8 +249,12 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
             </>;
           })()}
           {isSelected && !preview && !open && !plantCard && typeof document !== 'undefined' && createPortal(<div className="room-placed-object__tools room-placement-toolbar" role="toolbar" aria-label={`${product.name} aanpassen`}>
-            <button type="button" title="Naar voren" aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}><BringToFront /></button>
-            <button type="button" title="Naar achteren" aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}><SendToBack /></button>
+            {/* Wat voor en wat achter staat is het enige wat je niet kunt zien
+                aan het icoon, dus staan die twee met zoveel woorden. */}
+            <span className="room-placement-toolbar__laag">
+              <button type="button" title="Naar voren" aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}><BringToFront aria-hidden="true" /><span>Voor</span></button>
+              <button type="button" title="Naar achteren" aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}><SendToBack aria-hidden="true" /><span>Achter</span></button>
+            </span>
             {plantOf(item) && <button type="button" title="Water geven" aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}><Droplet /></button>}
             {PLANT_SPECIES_BY_ID[product.id] && <button type="button" title="Meer over deze plant" aria-label={`Meer weten over ${plantOf(item)?.nickname ?? product.name}`} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })}><Info /></button>}
             {product.views > 1 && <>
