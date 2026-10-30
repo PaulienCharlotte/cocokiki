@@ -201,6 +201,48 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:kit:batter-chocolate-top",
+      "path": "/assets/library/cooking/kit/batter-chocolate-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-mix-1-top",
+      "path": "/assets/library/cooking/kit/batter-mix-1-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-mix-2-top",
+      "path": "/assets/library/cooking/kit/batter-mix-2-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-mix-3-top",
+      "path": "/assets/library/cooking/kit/batter-mix-3-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-mix-4-top",
+      "path": "/assets/library/cooking/kit/batter-mix-4-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-smooth-top",
+      "path": "/assets/library/cooking/kit/batter-smooth-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:batter-thick-top",
+      "path": "/assets/library/cooking/kit/batter-thick-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:cooking:kit:bowl-batter",
       "path": "/assets/library/cooking/kit/bowl-batter.webp",
       "category": "cooking",
@@ -225,8 +267,20 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:kit:bowl-top",
+      "path": "/assets/library/cooking/kit/bowl-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:cooking:kit:butter",
       "path": "/assets/library/cooking/kit/butter.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:dough-ball-top",
+      "path": "/assets/library/cooking/kit/dough-ball-top.webp",
       "category": "cooking",
       "format": "webp"
     },
@@ -249,6 +303,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:kit:flour-heap-top",
+      "path": "/assets/library/cooking/kit/flour-heap-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:cooking:kit:flour",
       "path": "/assets/library/cooking/kit/flour.webp",
       "category": "cooking",
@@ -261,8 +321,26 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:kit:liner-batter-top",
+      "path": "/assets/library/cooking/kit/liner-batter-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:liner-top",
+      "path": "/assets/library/cooking/kit/liner-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:cooking:kit:milk",
       "path": "/assets/library/cooking/kit/milk.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:muffin-pan-top",
+      "path": "/assets/library/cooking/kit/muffin-pan-top.webp",
       "category": "cooking",
       "format": "webp"
     },
@@ -303,8 +381,20 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:kit:spatula-top",
+      "path": "/assets/library/cooking/kit/spatula-top.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:cooking:kit:spatula",
       "path": "/assets/library/cooking/kit/spatula.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:spoon-top",
+      "path": "/assets/library/cooking/kit/spoon-top.webp",
       "category": "cooking",
       "format": "webp"
     },
@@ -317,6 +407,12 @@
     {
       "id": "assets:library:cooking:kit:sugar",
       "path": "/assets/library/cooking/kit/sugar.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:kit:whisk-top",
+      "path": "/assets/library/cooking/kit/whisk-top.webp",
       "category": "cooking",
       "format": "webp"
     },

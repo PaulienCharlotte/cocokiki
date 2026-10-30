@@ -60,7 +60,10 @@ test('muffin registration, education and real asset paths are complete', () => {
   assert.equal(recipe.level, 2);
   assert.equal(recipe.rewardCoins, 10);
   assert.equal(recipe.education?.math.length, 3);
-  assert.equal(recipe.cookingTips?.length, 3);
+  assert.equal(recipe.cookingTips?.length, 5);
+  // Eentje valt tijdens het bakken, want dan staat een kind te wachten.
+  assert.ok(recipe.cookingTips?.some(tip => tip.id === 'muffin-geschiedenis' && tip.triggerStepId === 'fill'));
+  assert.ok(recipe.cookingTips?.every(tip => tip.character === 'coco'), 'in de keuken praat Coco');
   assert.equal(recipe.education?.nutrientMemory?.pairCount, 6);
   assert.ok(recipe.ingredients.every(i => INGREDIENTS_BY_ID[i.ingredientId].contentStatus === 'ready'));
   for (const path of getRecipeAssetPaths(recipe)) assert.ok(readFileSync(`public${path.split('?')[0]}`).length > 0, path);

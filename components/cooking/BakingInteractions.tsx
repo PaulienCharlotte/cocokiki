@@ -22,12 +22,14 @@ export function MeasureInteraction({ step, state, onChange, onComplete }: {
 }) {
   const reduced = useReducedMotion();
   const vesselRef = useRef<HTMLDivElement>(null);
-  const level = ((step.baseVolume ?? 0) + state.quantity) / (step.capacity ?? step.maximum);
+  const level = Math.min(1, ((step.baseVolume ?? 0) + state.quantity) / (step.capacity ?? step.maximum));
   const add = (n: number) => onChange({ quantity: Math.max(0, Math.min(step.maximum, state.quantity + n)) });
   return <div className="baking-interaction">
     <div className={`baking-measure baking-measure--${step.vessel}`} ref={vesselRef}>
       <CookingAssetImage src={step.vesselAsset} />
-      <span className="baking-measure__liquid" style={{ height: `${Math.min(82, level * 72)}%` }} aria-hidden="true" />
+      <span className="baking-measure__fluid" style={{ ['--vessel' as string]: `url(${step.vesselAsset})` }} aria-hidden="true">
+        <span className={`baking-measure__liquid${step.liquid ? ` is-${step.liquid}` : ''}`} style={{ height: `${Math.min(82, level * 72)}%` }} />
+      </span>
       {step.vessel === 'jug' && <div className="baking-measure__marks" aria-hidden="true">{[0, .25, .5, .75, 1].map(n => <span key={n} style={{ bottom: `${n * 100}%` }}>{Math.round((step.capacity ?? step.maximum) * n)}</span>)}</div>}
       <motion.button type="button" className="baking-measure__source" drag dragSnapToOrigin dragMomentum={false}
         whileTap={reduced ? undefined : { rotate: -20 }} onClick={() => add(step.increments[0])}
@@ -36,8 +38,8 @@ export function MeasureInteraction({ step, state, onChange, onComplete }: {
     </div>
     <output className="baking-amount" aria-live="polite">{state.quantity} / {step.target} {step.unitLabel}</output>
     {step.baseVolume !== undefined && <span className="baking-caption">Samen ongeveer {step.baseVolume + state.quantity} ml · vul tot de lijn</span>}
-    <div className="baking-controls">{step.increments.map(n => <Button key={n} variant="quiet" startIcon={<Plus />} onClick={() => add(n)}>{n} {step.unitLabel}</Button>)}
-      <IconButton label="Een maatje terug" icon={<Minus />} onClick={() => add(-step.increments[0])} />
+    <div className="baking-controls">{step.increments.map(n => <Button key={n} variant="quiet" startIcon={<Plus />} onClick={() => add(n)}>{n} {step.unitLabel}</Button>)}</div>
+    <div className="baking-controls">{step.increments.map(n => <Button key={`min${n}`} variant="quiet" startIcon={<Minus />} disabled={state.quantity === 0} onClick={() => add(-n)}>{n} {step.unitLabel}</Button>)}
       <IconButton label="Opnieuw afmeten" icon={<RotateCcw />} onClick={() => onChange({ quantity: 0 })} />
     </div>
     <Button disabled={state.quantity !== step.target} startIcon={<Check />} onClick={onComplete}>Toevoegen</Button>
@@ -78,7 +80,9 @@ export function PortionInteraction({ step, state, onChange, onComplete }: {
         {portions.map((value, i) => <button key={i} type="button" data-portion={i} className={`baking-pan__slot${value ? ' is-filled' : ''}`} onClick={() => fill(i)}
           style={step.positions?.[i] ? { left: `${step.positions[i].x}%`, top: `${step.positions[i].y}%` } : undefined}
           aria-label={`Vormpje ${i + 1}: ${value ? 'gevuld' : lined.includes(i) ? 'beslag toevoegen' : 'papier plaatsen'}`} disabled={value === 1}>
-          {lined.includes(i) && <img src={step.linerAsset} alt="" />}{value === 1 && <span className="baking-pan__batter"><i /><i /><i />{state.choice === 'sugar' && <b className="baking-pan__sugar" />}</span>}
+          {lined.includes(i) && <img src={value === 1 && step.linerFilledAsset ? step.linerFilledAsset : step.linerAsset} alt="" />}
+          {value === 1 && !step.linerFilledAsset && <span className="baking-pan__batter"><i /><i /><i /></span>}
+          {value === 1 && state.choice === 'sugar' && <b className="baking-pan__sugar" />}
         </button>)}
       </div>
     </div>
@@ -101,7 +105,6 @@ export function OvenInteraction({ step, oven, onOvenChange, onComplete }: {
     <div className={`baking-oven${oven.powered ? ' is-warm' : ''}`}>
       <img src={`/assets/library/treehouse/furnishings/oven${oven.doorOpen ? '-open' : ''}.webp`} alt={oven.doorOpen ? 'Open oven' : 'Gesloten oven'} />
       {oven.trayPlaced && <div className="baking-oven__tray"><img src={step.panAsset} alt="Bakvorm in de oven" /><span className="baking-oven__food" style={{ gridTemplateColumns: `repeat(${Math.min(4, step.portions)}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${Math.ceil(step.portions / 4)}, minmax(0, 1fr))`, transform: `scaleY(${.45 + progress * .55})`, filter: `brightness(${oven.result === 'dark' ? .55 : .85 + progress * .15})` }}>{Array.from({ length: step.portions }, (_, i) => <span key={i} className="baking-oven__piece"><i style={{ opacity: 1 - progress }} /><img src={step.resultAsset} alt="" style={{ opacity: progress }} /></span>)}</span></div>}
-      <output className="baking-oven__temperature" aria-label="Actuele oventemperatuur">{Math.round(oven.actualTemperature)} °C</output>
     </div>
     {step.action !== 'cool' && <label className="baking-slider"><Thermometer aria-hidden="true" /> Oven: {oven.temperature} °C
       <input type="range" min={c.minimumTemperature} max={c.maximumTemperature} step={c.temperatureStep} value={Math.max(c.minimumTemperature, oven.temperature)} aria-label="Oventemperatuur" disabled={baking} onChange={e => onOvenChange({ temperature: Number(e.target.value), preheated: false, ...(oven.powered ? { status: 'preheating' } : {}) })} />
@@ -114,8 +117,8 @@ export function OvenInteraction({ step, oven, onOvenChange, onComplete }: {
     </>}
     {step.action === 'bake' && <>
       <p role="status">{finished ? feedback : oven.preheated ? 'De oven is warm.' : 'De oven warmt op.'}</p>
-      <div className="baking-controls"><Button variant="quiet" startIcon={<DoorOpen />} disabled={baking} onClick={() => onOvenChange({ doorOpen: !oven.doorOpen })}>{oven.doorOpen ? 'Deur sluiten' : 'Deur openen'}</Button>
-        {oven.doorOpen && <Button variant="quiet" disabled={oven.trayPlaced} onClick={() => onOvenChange({ trayPlaced: true })}>Bakvorm plaatsen</Button>}</div>
+      {!(finished && oven.result === 'good') && <div className="baking-controls"><Button variant="quiet" startIcon={<DoorOpen />} disabled={baking} onClick={() => onOvenChange({ doorOpen: !oven.doorOpen })}>{oven.doorOpen ? 'Deur sluiten' : 'Deur openen'}</Button>
+        {oven.doorOpen && <Button variant="quiet" disabled={oven.trayPlaced} onClick={() => onOvenChange({ trayPlaced: true })}>Bakvorm plaatsen</Button>}</div>}
       {!finished && <label className="baking-slider"><Timer aria-hidden="true" /> Baktijd: {oven.chosenMinutes} minuten
         <input type="range" min={c.minimumSelectableMinutes} max={c.maximumSelectableMinutes} step="1" aria-label="Baktijd in minuten" value={oven.chosenMinutes || c.minimumMinutes} disabled={baking} onChange={e => onOvenChange({ chosenMinutes: Number(e.target.value) })} />
       </label>}

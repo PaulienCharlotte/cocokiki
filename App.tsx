@@ -4,7 +4,7 @@ import AppShell from './components/platform/AppShell';
 import { DESTINATIONS_BY_ID } from './platform/destinationRegistry';
 import { GAMES_BY_ID } from './platform/gameRegistry';
 import { resolveRoute, type AppRoute } from './platform/routes';
-import { CURRENCY_CHANGE_EVENT, loadCurrency } from './services/currency';
+import { CURRENCY_CHANGE_EVENT, loadCurrency, saveCurrency } from './services/currency';
 import './components/cooking/foundation.css';
 import { guardedNavigation, hasNavigationGuard } from './services/navigationGuard';
 import { ISLANDS_BY_ID, islandForActivity } from './platform/dreamworld';
@@ -37,9 +37,28 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   clock: { path: '/challenges', label: 'Terug naar School' },
 };
 
+/**
+ * Testmunten: open de wereld met ?munten=1000 om een saldo klaar te zetten.
+ *
+ * Dit werkt alleen op de ontwikkelversie; in de gepubliceerde game bestaat het
+ * niet, zodat niemand zichzelf rijk kan klikken. Het is er voor Charlotte, die
+ * anders eerst een half uur moet rekenen voor ze iets in de winkel kan proberen.
+ */
+function pasTestmuntenToe(): boolean {
+  if (!import.meta.env.DEV) return false;
+  const gevraagd = new URLSearchParams(window.location.search).get('munten');
+  if (gevraagd === null) return false;
+  const bedrag = Math.min(99999, Math.max(0, Math.floor(Number(gevraagd))));
+  const gelukt = Number.isFinite(bedrag) && saveCurrency(bedrag);
+  const url = new URL(window.location.href);
+  url.searchParams.delete('munten');
+  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  return gelukt;
+}
+
 const App: React.FC = () => {
   const [current, setCurrent] = useState(() => resolveRoute(window.location.pathname));
-  const [coins, setCoins] = useState(loadCurrency);
+  const [coins, setCoins] = useState(() => { pasTestmuntenToe(); return loadCurrency(); });
 
   useEffect(() => {
     if (current.redirect) window.history.replaceState({}, '', `${current.route.path}${window.location.search}`);

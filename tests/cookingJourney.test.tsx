@@ -6,6 +6,7 @@ import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
 import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFlow';
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
+import { createCookingSession, goBackPreparation, migrateCookingSession, resumePreparation } from '../data/cooking/session';
 import { EQUIPMENT, INGREDIENTS, RECIPES, RECIPES_BY_ID, getCompletedRecipes } from '../data/cooking/catalog';
 import { getRecipeAccess } from '../data/cooking/availability';
 import { INGREDIENT_DISCOVERIES, INGREDIENT_DISCOVERIES_BY_ID } from '../data/cooking/discovery';
@@ -534,4 +535,34 @@ test('free and recipe shopping sessions persist independently with their price s
   } finally {
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: original });
   }
+});
+
+test('terugbladeren verzet alleen waar je kijkt', () => {
+  const recept = RECIPES.find(item => item.id === 'blueberry-muffins')!;
+  const stappen = recept.preparation!.steps;
+  const start = createCookingSession(recept, 'a', '2026-10-29T10:00:00.000Z');
+
+  // Doe alsof de eerste drie stappen af zijn en je bij de vierde staat.
+  const onderweg = { ...start, stepId: stappen[3].id, completedStepIds: stappen.slice(0, 3).map(stap => stap.id) };
+
+  const terug = goBackPreparation(onderweg, recept);
+  assert.equal(terug.viewStepId, stappen[2].id);
+  // Waar je echt bent blijft staan, net als wat je al af hebt.
+  assert.equal(terug.stepId, onderweg.stepId);
+  assert.deepEqual(terug.completedStepIds, onderweg.completedStepIds);
+
+  // Twee keer terug, en dan in één keer weer naar waar je was.
+  const nogVerderTerug = goBackPreparation(terug, recept);
+  assert.equal(nogVerderTerug.viewStepId, stappen[1].id);
+  assert.equal(resumePreparation(nogVerderTerug).viewStepId, undefined);
+  assert.equal(resumePreparation(nogVerderTerug).stepId, stappen[3].id);
+
+  // Bij de eerste stap valt er niets terug te bladeren.
+  assert.equal(goBackPreparation(start, recept), start);
+
+  // En het terugkijken overleeft een rondje door de opslag, want dáár ging het
+  // mis: de stap werd bij het inlezen teruggezet en het scherm liep vast.
+  const bewaard = migrateCookingSession(JSON.parse(JSON.stringify(terug)), recept);
+  assert.equal(bewaard.viewStepId, stappen[2].id);
+  assert.equal(bewaard.stepId, stappen[3].id);
 });
