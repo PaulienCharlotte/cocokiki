@@ -104,3 +104,30 @@ Mapje: `public/assets/library/plants/`
 Het spreekuur staat nu helemaal op tekeningen: geen enkel lijn-icoon meer op
 een diagnosekaartje of een behandelknop. Wat nog ontbreekt is sfeer in plaats
 van uitleg: Kiki als dokter, de stempel en het paspoort, en de spreekkamer.
+
+---
+
+## Erbij gekomen op 30 oktober 2026: zieke planten voor droge lucht en kou
+
+Het spreekuur kent nu zes oorzaken in plaats van vier. Droge lucht en kou
+hebben geen eigen tekening, dus ze lenen er een:
+
+| Oorzaak | Leent nu | Zou moeten zijn |
+|---|---|---|
+| Te droge lucht | `<plant>/dry-1.webp` | bruine knisperende puntjes aan verder groen blad, aarde donker en vochtig |
+| Te koud | `<plant>/wet-1.webp` | glazige, doorweekte zachte plekken, blad slap maar niet geel |
+
+Het is geen noodgreep die het spel kapotmaakt: de aarde en de plek vertellen
+het verschil, en dat is precies wat een kind moet leren. Maar het blad liegt
+nu een beetje mee, en dat is zonde.
+
+**Per plant met ziektetekenwerk**, in dezelfde stijl en maat als de bestaande
+`dry-1` en `wet-1`:
+
+- `air-1.webp` — droge lucht
+- `cold-1.webp` — kou
+
+De planten die het hardst nodig zijn, omdat ze deze oorzaken ook echt vaak
+krijgen: de varen, de twee palmen, de monstera, de lepelplant (`white-flower`)
+en de orchidee voor droge lucht; de sansevieria, het citrusboompje en de twee
+cactussen voor kou.

@@ -1,0 +1,22 @@
+/* De spraakwolk. Zie components/ui/SpeechBubble.tsx; maak hier geen tweede variant bij. */
+.ck-zegt { display: flex; align-items: flex-start; gap: var(--space-2); text-align: left; }
+.ck-zegt__gids { flex: none; width: calc(var(--space-6) * 2); height: calc(var(--space-6) * 2); border-radius: 50%; background: var(--color-background-soft); object-fit: cover; object-position: 50% 6%; }
+.ck-zegt__wolk { position: relative; min-width: 0; flex: 1; padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); background: var(--color-background-soft); }
+/* Het puntje naar het personage; daarom is het een wolk en geen vakje. */
+.ck-zegt__wolk::before { content: ''; position: absolute; top: var(--space-5); left: -5px; width: 11px; height: 11px; background: inherit; transform: rotate(45deg); }
+/* De wolk zegt zelf hoe het ging; dat scheelt een regel eronder. */
+.ck-zegt.is-goed .ck-zegt__wolk { background: var(--color-success-soft); }
+.ck-zegt.is-alert .ck-zegt__wolk { background: var(--color-peach); }
+
+/* Op een smal scherm valt het label naar de volgende regel in plaats van
+   midden in een woord af te breken. */
+.ck-zegt__naam { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); color: var(--color-text-soft); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; letter-spacing: .04em; }
+.ck-zegt__erbij, .ck-zegt__uitslag { white-space: nowrap; }
+.ck-zegt__naam strong { color: var(--color-primary); font-weight: inherit; }
+.ck-zegt.is-alert .ck-zegt__naam strong { color: var(--color-error); }
+.ck-zegt__uitslag { display: inline-flex; align-items: center; gap: 3px; }
+.ck-zegt__uitslag img { width: var(--space-4); height: var(--space-4); }
+.ck-zegt.is-goed .ck-zegt__uitslag { color: var(--color-primary); }
+.ck-zegt.is-alert .ck-zegt__uitslag { color: var(--color-error); }
+.ck-zegt__erbij { margin-left: auto; font-variant-numeric: tabular-nums; }
+.ck-zegt__tekst { margin: var(--space-1) 0 0; color: var(--color-text); font-size: var(--font-size-md); line-height: var(--line-height-default); overflow-wrap: anywhere; }

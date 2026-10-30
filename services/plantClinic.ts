@@ -1,4 +1,4 @@
-import { PATIENT_KINDS, type PatientKind } from '../data/plants/clinic';
+import { PATIENT_KINDS, maakGeval, type Geval } from '../data/plants/clinic';
 import { PLANT_SPECIES_BY_ID } from '../data/plants/species';
 import { commitLocalState, readDocument } from './localState';
 import { learningReward } from './learningReward';
@@ -61,7 +61,7 @@ export function saveClinic(state: ClinicState): boolean {
   }
 }
 
-export interface Patient extends PatientKind {
+export interface Patient extends Geval {
   /** Eigen nummer van dit consult, zodat de beloning maar één keer telt. */
   consultId: string;
 }
@@ -79,7 +79,9 @@ export function nextPatient(
   const nogGeenStempel = PATIENT_KINDS.filter(kind => (state.correct[kind.speciesId] ?? 0) < STAMPS_NEEDED);
   const keuze = nogGeenStempel.length > 0 ? nogGeenStempel : PATIENT_KINDS;
   const index = Math.min(keuze.length - 1, Math.max(0, Math.floor(kiesGetal() * keuze.length)));
-  return { ...keuze[index], consultId: makeId() };
+  // De omstandigheden horen bij het consult, niet bij de soort: dezelfde plant
+  // kan de ene keer bij de verwarming staan en de andere keer in de hoek.
+  return { ...maakGeval(keuze[index], kiesGetal), consultId: makeId() };
 }
 
 export interface ConsultResult {

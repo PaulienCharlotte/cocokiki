@@ -1602,3 +1602,17 @@
   .decor-shop .shop-catalog__actions { grid-column: 1 / -1; }
   .decor-shop .decor-shop__heading h1 { font-size: 22px; }
 }
+/* ---------------------------------------------------------------------------
+   De vraag van de dag: één vraag, gemaakt uit wat de app al weet.
+
+   Twee dingen op de kaart: de spraakwolk die de vraag stelt, en één blok met
+   de antwoorden (`.ck-keuzes`). Beide vormen staan in components/ui, zodat
+   elke meerkeuzevraag in de app er hetzelfde uitziet. Hier staat alleen wat
+   van deze kaart zelf is. Kiki vraagt over planten, Coco over eten.
+   --------------------------------------------------------------------------- */
+.vraagdag { display: grid; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-soft); }
+.vraagdag .ck-zegt__erbij { color: var(--color-text-soft); font-size: var(--font-size-sm); }
+.vraagdag .ck-zegt__erbij i { font-style: normal; opacity: .5; }
+.vraagdag.is-goed .ck-zegt__erbij { color: var(--color-primary); }
+
+.vraagdag__na { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); line-height: 1.45; }

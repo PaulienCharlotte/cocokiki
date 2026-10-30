@@ -1,10 +1,11 @@
 import React from 'react';
+import SpeechBubble from './ui/SpeechBubble';
 import './tip-coach.css';
 
+/**
+ * Een tip in het reken- en topospel: de spraakwolk, op de breedte van die
+ * schermen. De vorm zelf staat in components/ui/SpeechBubble.tsx.
+ */
 export default function TipCoach({ coach, children }: { coach: 'lua' | 'seb'; children: React.ReactNode }) {
-  const name = coach === 'lua' ? 'Baby Lua' : 'Seb';
-  return <aside className="tip-coach" aria-label={`Tip van ${name}`} role="status">
-    <img src={coach === 'lua' ? '/images/avatars/luiaard.webp' : '/images/avatars/lua.webp'} alt={name} />
-    <div><strong>{name}</strong><p>{children}</p></div>
-  </aside>;
+  return <SpeechBubble character={coach} label="tip" className="tip-coach">{children}</SpeechBubble>;
 }

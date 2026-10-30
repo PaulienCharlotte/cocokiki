@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Leaf, Lock, Stamp } from 'lucide-react';
 import CookingAssetImage from '../components/cooking/CookingAssetImage';
+import VraagVanDeDag from '../components/quiz/VraagVanDeDag';
 import { Button, Dialog } from '../design-system';
 import { INGREDIENTS } from '../data/cooking/catalog';
 import type { IngredientEntry } from '../data/cooking/types';
@@ -47,6 +48,8 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
           <h1 id="encyclopedie-titel">Encyclopedie</h1>
         </div>
       </header>
+
+      <VraagVanDeDag />
 
       <div className="encyclopedie__tabs" role="tablist" aria-label="Afdelingen">
         <Tab id="planten" actief={afdeling} op={setAfdeling} label="Planten" teller={`${stand.open}/${stand.totaal}`} />

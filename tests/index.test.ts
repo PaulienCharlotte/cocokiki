@@ -19,3 +19,4 @@ import './baking.test';
 import './shoppingPractice.test';
 import './learningReward.test';
 import './treehouseUnits.test';
+import './quiz.test';
