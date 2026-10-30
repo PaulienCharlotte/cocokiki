@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ArrowLeft, Globe2 } from 'lucide-react';
 import { Button } from '../design-system';
+import CardGrid from '../components/ui/CardGrid';
 import LocationMemoryGame from '../components/LocationMemoryGame';
 import { FLAG_CONTINENTS, FLAG_MEMORY_PAIRS, continentFlagPairs, nextFlagRound, type FlagContinent } from '../data/flagCatalog';
 import type { MemoryPair } from '../data/learning';
@@ -25,7 +26,17 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
   if (!continent) return <main className="dream-flags-memory" aria-label="Vlaggenmemory">
     <section className="flag-continents" aria-labelledby="flag-continents-title">
       <h1 id="flag-continents-title">Vlaggenmemory</h1>
-      <div className="flag-continents__grid">{FLAG_CONTINENTS.map(item => <Button key={item.id} variant="secondary" startIcon={<Globe2 size={22} />} aria-label={`${item.label}, ${continentFlagPairs(item.id).length} vlaggen`} onClick={() => choose(item.id)}><span>{item.label}</span><small>{continentFlagPairs(item.id).length} vlaggen</small></Button>)}</div>
+      {/* Hetzelfde keuzeraster als het rekenmenu; zie components/ui/CardGrid. */}
+      <CardGrid
+        label="Kies een werelddeel"
+        cards={FLAG_CONTINENTS.map(item => ({
+          id: item.id,
+          titel: item.label,
+          icoon: <Globe2 size={32} aria-hidden="true" />,
+          meta: `${continentFlagPairs(item.id).length} vlaggen`,
+        }))}
+        onChoose={id => choose(id as FlagContinent)}
+      />
       <Button variant="quiet" startIcon={<ArrowLeft size={20} />} onClick={onBack}>Terug naar het eiland</Button>
     </section>
   </main>;
