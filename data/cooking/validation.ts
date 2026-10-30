@@ -26,7 +26,7 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
     if (step.mechanic === 'heat') paths.push(step.addition.asset);
     if (step.mechanic === 'timed') paths.push(step.pouredAsset, step.cookedAsset);
     if (step.mechanic === 'measure') paths.push(step.vesselAsset);
-    if (step.mechanic === 'portion') paths.push(step.panAsset, step.linerAsset, step.toppingAsset);
+    if (step.mechanic === 'portion') paths.push(step.panAsset, step.linerAsset, step.toppingAsset, ...(step.linerFilledAsset ? [step.linerFilledAsset] : []));
     if (step.mechanic === 'oven') paths.push(step.panAsset, step.resultAsset, '/assets/library/treehouse/furnishings/oven.webp', '/assets/library/treehouse/furnishings/oven-open.webp');
   }
   return [...new Set(paths)];

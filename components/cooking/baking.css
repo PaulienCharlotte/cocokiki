@@ -19,25 +19,40 @@
 .cooking-card__scene--weigh .cooking-button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 .cooking-card__scene--weigh:has(.cooking-weighing[data-layered="true"]) { background-image: none !important; background-color: var(--color-background-soft); box-shadow: none; }
 .cooking-weighing__controls .ck-button { max-width: 100%; }
-.baking-scale-fill { position: absolute; inset: 15% 24% 62%; z-index: 1; display: grid; place-items: center; overflow: hidden; border-radius: 50%; }
-.baking-scale-fill img { width: 76%; height: 76%; object-fit: contain; transition: transform var(--motion-default) var(--ease-storybook), opacity var(--motion-default) ease; }
+.baking-scale-fill { position: absolute; inset: 15% 24% 62%; z-index: 1; }
+.baking-scale-fill img { position: absolute; width: 26%; height: 26%; object-fit: contain; animation: baking-korrel 260ms var(--ease-storybook) both; }
+@keyframes baking-korrel { from { opacity: 0; translate: 0 -40%; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .baking-scale-fill img { animation: none; } }
 .baking-measure { position: relative; width: min(68%, 16rem); aspect-ratio: 1; isolation: isolate; margin-right: 18%; }
 .baking-measure > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; pointer-events: none; }
-.baking-measure__liquid { position: absolute; bottom: 12%; left: 26%; width: 59%; max-height: 70%; background: var(--color-honey); border-radius: 0 0 32% 32%; opacity: .75; transition: height var(--motion-gentle); z-index: 3; mix-blend-mode: multiply; pointer-events: none; }
-.baking-measure--spoon .baking-measure__liquid { left: 28%; bottom: 58%; width: 45%; max-height: 28%; border-radius: 50%; background: var(--color-cream); }
+/* Het masker is de beker zelf, dus de vloeistof kan er niet buiten lopen. */
+/* Het masker van de beker zelf werkte niet: glas is doorzichtig, dus daar is
+   bijna geen dekking om op te maskeren en verdween de vloeistof. Tot er
+   tekeningen zijn van een volle en halfvolle beker houden we het bij een vlak
+   dat de binnenwand volgt. Zie docs/kook-assets.md. */
+.baking-measure__fluid { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.baking-measure__liquid { position: absolute; bottom: 13%; left: 27%; width: 57%; max-height: 68%; background: var(--color-honey); opacity: .8; border-radius: 0 0 26% 26%; clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%); transition: height var(--motion-gentle); }
+.baking-measure__liquid.is-oil { background: #e8c96a; }
+.baking-measure__liquid.is-milk { background: #fbf7ef; opacity: .95; }
+.baking-measure__liquid.is-water { background: #cfe6f2; }
+.baking-measure__liquid.is-vanilla { background: #cDA86a; }
+/* In de lepel ligt het poeder als een rond bergje in de holte, niet als een
+   balk over het hele plaatje: dat was de witte streep dwars door de steel. */
+.baking-measure--spoon .baking-measure__liquid { left: 29%; width: 43%; bottom: 57%; max-height: 26%; border-radius: 50%; clip-path: none; background: var(--color-cream); opacity: 1; }
 .baking-measure__marks { position: absolute; left: 52%; top: 22%; bottom: 16%; width: 24%; z-index: 4; font-size: var(--font-size-xs); color: var(--color-text); }
 .baking-measure__marks span { position: absolute; width: 100%; border-bottom: 1px solid var(--color-text-muted); text-align: right; }
 .baking-measure__source { position: absolute; right: -38%; top: 4%; width: 42%; aspect-ratio: 1; padding: var(--space-2); border: 0; background: transparent; touch-action: none; cursor: grab; z-index: 5; }
 .baking-measure__source img { width: 100%; height: 100%; object-fit: contain; }
 .baking-portion-source { width: 6rem; height: 6rem; border: 0; background: transparent; cursor: grab; touch-action: none; z-index: 3; }
 .baking-portion-source img { width: 100%; height: 100%; object-fit: contain; }
-.baking-pan { width: 100%; position: relative; aspect-ratio: 1.65; }
+.baking-pan { width: 100%; position: relative; aspect-ratio: 1.456; }
 .baking-pan > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
 .baking-pan__slots { position: absolute; inset: 11% 9% 14%; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: var(--space-1); }
 .baking-pan__slots.is-positioned { inset: 0; display: block; }
-.baking-pan__slots.is-positioned .baking-pan__slot { position: absolute; width: 19%; height: 25%; transform: translate(-50%, -50%); }
+.baking-pan__slots.is-positioned .baking-pan__slot { position: absolute; width: 20%; height: 29%; transform: translate(-50%, -50%); }
 .baking-pan__sugar { position: absolute; inset: 8%; border: 3px dotted var(--color-cream); border-radius: 50%; }
-.baking-pan__slot { position: relative; min-width: 0; min-height: var(--touch-target); padding: 0; border: 1px dashed var(--color-border); border-radius: 50%; background: var(--color-overlay); cursor: pointer; }
+.baking-pan__slot { position: relative; min-width: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.baking-pan__slots.is-positioned .baking-pan__slot:not(.is-filled):empty { border: 2px dashed #fffdf780; }
 .baking-pan__slot > img { position: absolute; width: 100%; height: 100%; inset: 0; object-fit: contain; }
 .baking-pan__batter { position: absolute; inset: 12% 10% 22%; border-radius: 50%; background: var(--color-honey); }
 .baking-pan__batter i:nth-child(1) { left: 20%; top: 20%; }.baking-pan__batter i:nth-child(2) { left: 60%; top: 35%; }.baking-pan__batter i:nth-child(3) { left: 40%; top: 60%; }
@@ -59,5 +74,5 @@
 .baking-cooling svg { position: absolute; inset: 15% 0 0; width: 100%; height: 80%; color: var(--color-border-strong); }
 .baking-cooling .baking-cooled { z-index: 1; }
 @keyframes baking-cool { from { transform: translateY(0); } to { transform: translateY(-3px); } }
-@media (max-width: 400px) { .baking-interaction { padding: var(--space-2); gap: var(--space-3); } .baking-oven { max-width: 17rem; } .baking-pan { aspect-ratio: 1.35; } .baking-controls .ck-button { padding-inline: var(--space-2); } }
+@media (max-width: 400px) { .baking-interaction { padding: var(--space-2); gap: var(--space-3); } .baking-oven { max-width: 17rem; } .baking-controls .ck-button { padding-inline: var(--space-2); } }
 @media (prefers-reduced-motion: reduce) { .baking-interaction *, .baking-vessel * { animation: none !important; transition: none !important; } }

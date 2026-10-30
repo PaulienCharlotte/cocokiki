@@ -1,11 +1,11 @@
 import React from 'react';
-import { BookOpen, Calculator, Check, CookingPot, ShoppingBasket, Sprout, Trophy } from 'lucide-react';
+import { Apple, BookOpen, Calculator, Check, CookingPot, Search, ShoppingBasket, Trophy } from 'lucide-react';
 import type { JourneyProgress, JourneyStage } from '../../data/cooking/types';
 
 const STAGES: Array<{ id: JourneyStage; label: string; icon: React.ReactNode }> = [
   { id: 'overview', label: 'Recept', icon: <BookOpen /> },
-  { id: 'discovery', label: 'Ontdekken', icon: <Sprout /> },
-  { id: 'nutrient-memory', label: 'Voedingsstoffen', icon: <Sprout /> },
+  { id: 'discovery', label: 'Ontdekken', icon: <Search /> },
+  { id: 'nutrient-memory', label: 'Voedingsstoffen', icon: <Apple /> },
   { id: 'challenges', label: 'Rekenen', icon: <Calculator /> },
   { id: 'shopping', label: 'Winkelen', icon: <ShoppingBasket /> },
   { id: 'cooking', label: 'Koken', icon: <CookingPot /> },

@@ -71,7 +71,8 @@ export default function CookingExperience(props: Props) {
   const persist = (next: CookingProgressState, presentationOnly = false) => {
     const nextSession = next.preparationSessions[recipe.id];
     const nextStep = recipe.preparation?.steps.find(item => item.id === nextSession?.stepId);
-    const tip = nextSession && !visibleTip && !(nextStep?.mechanic === 'oven') && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
+    const ovenWacht = nextStep?.mechanic === 'oven' && nextSession?.oven?.status === 'baking';
+    const tip = nextSession && !visibleTip && (ovenWacht || !(nextStep?.mechanic === 'oven')) && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
     if (tip) next = { ...next, preparationSessions: { ...next.preparationSessions, [recipe.id]: presentCookingTip(nextSession, tip) } };
     if (!saveCookingProgress(next, undefined, presentationOnly ? { rewards: false } : undefined)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
     accept(next);
@@ -89,19 +90,19 @@ export default function CookingExperience(props: Props) {
     <h1>Dit recept is nog niet helemaal klaar</h1><p>Je voorraad en voortgang blijven bewaard.</p><button className="cooking-button" onClick={onClose}>Terug naar de keuken</button>
   </article></div></section>;
   const preparation = recipe.preparation!;
-  const step = preparation.steps.find(item => item.id === session.stepId) ?? preparation.steps[0];
+  const liveStep = preparation.steps.find(item => item.id === session.stepId) ?? preparation.steps[0];
+  const step = preparation.steps.find(item => item.id === (session.viewStepId ?? session.stepId)) ?? liveStep;
   const index = preparation.steps.indexOf(step);
   const state = session.steps[step.id] ?? emptyStepState();
-  /** Je kijkt terug als deze stap al af is maar er verderop nog werk ligt. */
-  const kijktTerug = session.completedStepIds.includes(step.id)
-    && preparation.steps.some(item => !session.completedStepIds.includes(item.id));
+  /** Terugkijken is kijken: de stap staat er zoals je hem achterliet. */
+  const kijktTerug = Boolean(session.viewStepId) && step.id !== liveStep.id;
   const background = step.station === 'kitchen' ? ASSET_LIBRARY.treehouse.rooms.kitchen : ASSET_LIBRARY.treehouse.stations[step.station === 'oven' ? 'worktop' : step.station];
 
   const change = (patch: Partial<CookingStepState>, advance = false) => {
     const current = loadCookingProgress();
     const saved = current.preparationSessions[recipe.id];
     const live = sessionRef.current;
-    if (!saved || !live || saved.attemptId !== live.attemptId || saved.stepId !== step.id || saved.completed) {
+    if (!saved || !live || saved.attemptId !== live.attemptId || saved.stepId !== liveStep.id || saved.completed) {
       setMessage('Je kookpoging is veranderd. Sluit dit scherm en open het recept opnieuw.'); return;
     }
     if (advance && step.mechanic === 'oven') {
@@ -125,7 +126,7 @@ export default function CookingExperience(props: Props) {
     const current = loadCookingProgress();
     const saved = current.preparationSessions[recipe.id];
     if (!saved || saved.completed) return;
-    const nextSession = richting === 'terug' ? goBackPreparation(saved, recipe) : resumePreparation(saved, recipe);
+    const nextSession = richting === 'terug' ? goBackPreparation(saved, recipe) : resumePreparation(saved);
     if (nextSession === saved) return;
     setMessage(null);
     persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } }, true);
@@ -134,7 +135,7 @@ export default function CookingExperience(props: Props) {
   const changeOven = (patch: Partial<OvenState>) => {
     const current = loadCookingProgress();
     const saved = current.preparationSessions[recipe.id];
-    if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || saved.stepId !== step.id) return;
+    if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || saved.stepId !== liveStep.id) return;
     const oven = restoreOven({ ...restoreOven(saved.oven), ...patch });
     persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: { ...saved, oven } } }, true);
   };
@@ -167,8 +168,9 @@ export default function CookingExperience(props: Props) {
     <img className="cooking-stage__background" src={background} alt="" />
     <div className="cooking-stage__shell"><header className="cooking-stage__bar">
       <button type="button" className="cooking-stage__icon" onClick={onClose} aria-label="Terug naar de keuken"><ArrowLeft /></button>
-      <button type="button" className="cooking-stage__icon" onClick={() => blader('terug')} disabled={index === 0} aria-label="Een stap terugkijken"><ChevronLeft /></button>
+      <button type="button" className="cooking-stage__icon" onClick={() => blader('terug')} disabled={index === 0 || !session.completedStepIds.includes(preparation.steps[index - 1]?.id ?? '')} aria-label="Een stap terugkijken"><ChevronLeft /></button>
       <div className="cooking-stage__progress"><span>Stap {index + 1} van {preparation.steps.length}</span><i><b style={{ width: `${(index + 1) / preparation.steps.length * 100}%` }} /></i></div>
+      {kijktTerug && <button type="button" className="cooking-stage__icon" onClick={() => blader('verder')} aria-label="Terug naar waar je was"><ChevronRight /></button>}
       <button type="button" className="cooking-stage__icon" onClick={() => setBookOpen(value => !value)} aria-label="Recept bekijken" aria-expanded={bookOpen}><BookOpen /></button>
     </header>
       {bookOpen && <aside className="cooking-recipe-card" aria-label="Het recept"><header><div><small>Recept</small><h2>{recipe.name}</h2></div><button onClick={() => setBookOpen(false)} aria-label="Recept sluiten"><X /></button></header>
@@ -179,9 +181,8 @@ export default function CookingExperience(props: Props) {
       <article className="cooking-card"><h1 id="cooking-step-title">{step.title}</h1>
         {uitleg(step.title, step.instruction) && <p className="cooking-card__instruction">{uitleg(step.title, step.instruction)}</p>}
         {session.oven?.powered && step.mechanic !== 'oven' && <output className="baking-oven-status">{Math.round(session.oven.actualTemperature)} °C · {session.oven.preheated ? 'oven klaar' : 'oven warmt op'}</output>}
-        {kijktTerug && <Button className="cooking-card__verder" variant="quiet" size="small" pill endIcon={<ChevronRight size={16} />} onClick={() => blader('verder')}>Verder waar je was</Button>}
         {(message || stockMessage) && <div className="cooking-card__hint is-nudge" role="alert"><p>{message ?? stockMessage}</p>{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</div>}
-        <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${step.station === 'kitchen' ? '' : ' has-surface'}`} style={step.station === 'kitchen' ? undefined : { backgroundImage: `url(${background})` }}>
+        <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${step.station === 'kitchen' ? '' : ' has-surface'}${kijktTerug ? ' is-terugblik' : ''}`} inert={kijktTerug || undefined} style={step.station === 'kitchen' ? undefined : { backgroundImage: `url(${background})` }}>
           <React.Fragment key={`${session.attemptId}:${step.id}:${retry}`}><CookingInteraction step={step} state={state} oven={session.oven} onOvenChange={changeOven} onChange={patch => change(patch)} onComplete={patch => change(patch ?? {}, true)} onMiss={setMessage} /></React.Fragment>
         </div>{step.hint && <p className="cooking-card__hint">{step.hint}</p>}
       </article>

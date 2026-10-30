@@ -27,7 +27,9 @@ export function migrateCookingSession(value: unknown, recipe: RecipeConfig): Coo
       ...(step.mechanic === 'portion' ? { portions: Array.from({ length: step.target }, (_, i) => integer(state.portions?.[i], 1)), lined: Array.isArray(state.lined) ? [...new Set(state.lined.filter(i => Number.isInteger(i) && i >= 0 && i < step.target))] : [] } : {}) };
   }
   const completedStepIds = Array.isArray(source.completedStepIds) ? [...new Set(source.completedStepIds.filter(id => ids.has(id)))] : [];
-  return { ...empty, attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
+  // Terugkijken mag alleen naar een stap die je al gehad hebt.
+  const viewStepId = typeof source.viewStepId === 'string' && completedStepIds.includes(source.viewStepId) ? source.viewStepId : undefined;
+  return { ...empty, ...(viewStepId ? { viewStepId } : {}), attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
     stepId: steps.find(step => !completedStepIds.includes(step.id))?.id ?? steps[steps.length - 1].id,
     completedStepIds, steps: states, ...(empty.oven ? { oven: restoreOven(source.oven ?? empty.oven) } : {}), completed: source.completed === true && steps.every(step => completedStepIds.includes(step.id)),
     seenTipIds: Array.isArray(source.seenTipIds) ? [...new Set(source.seenTipIds.filter(id => typeof id === 'string'))] : [],
@@ -96,17 +98,16 @@ export function advancePreparation(session: CookingSession, recipe: RecipeConfig
 export function goBackPreparation(session: CookingSession, recipe: RecipeConfig): CookingSession {
   if (session.completed) return session;
   const steps = recipe.preparation!.steps;
-  const index = steps.findIndex(step => step.id === session.stepId);
+  const index = steps.findIndex(step => step.id === (session.viewStepId ?? session.stepId));
   const vorige = steps[index - 1];
-  if (!vorige) return session;
-  return { ...session, stepId: vorige.id };
+  // Alleen terug naar wat je al gedaan hebt; verder terug valt niets te zien.
+  if (!vorige || !session.completedStepIds.includes(vorige.id)) return session;
+  return { ...session, viewStepId: vorige.id };
 }
 
-/** Terug naar de eerste stap die nog niet af is: waar je gebleven was. */
-export function resumePreparation(session: CookingSession, recipe: RecipeConfig): CookingSession {
-  if (session.completed) return session;
-  const steps = recipe.preparation!.steps;
-  const verder = steps.find(step => !session.completedStepIds.includes(step.id)) ?? steps[steps.length - 1];
-  if (!verder || verder.id === session.stepId) return session;
-  return { ...session, stepId: verder.id };
+/** Terug naar waar je gebleven was: het terugkijken stopt, de voortgang blijft. */
+export function resumePreparation(session: CookingSession): CookingSession {
+  if (!session.viewStepId) return session;
+  const { viewStepId, ...rest } = session;
+  return rest;
 }
