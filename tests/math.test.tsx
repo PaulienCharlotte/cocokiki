@@ -115,6 +115,12 @@ test('math routes and six supplied icons are integrated without replacing clock 
   assert.match(renderToStaticMarkup(<ChallengesScreen onNavigate={() => undefined} />), /Rekenen openen/);
 });
 
+test('het rekenmenu gebruikt het gedeelde keuzeraster, niet eigen kaarten', () => {
+  const hub = renderToStaticMarkup(<MathHub progress={emptyMathProgress()} onPlay={() => undefined} />);
+  assert.ok(hub.includes('ck-kaarten'), 'het raster komt uit components/ui/CardGrid');
+  assert.ok(!hub.includes('math-mode'), 'de oude eigen kaarten zijn weg');
+});
+
 test('all thirty math difficulties generate valid whole-number equations with one answer', () => {
   const random = randomSeed();
   for (const game of MATH_GAME_IDS) for (const level of MATH_LEVELS) for (let index = 0; index < 220; index++) {

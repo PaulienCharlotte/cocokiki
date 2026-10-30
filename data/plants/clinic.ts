@@ -112,7 +112,7 @@ export const SEIZOEN_TEKST: Record<Seizoen, string> = {
   lente: 'het is lente',
   zomer: 'het is hartje zomer',
   herfst: 'het is herfst',
-  winter: 'het is winter en de verwarming staat aan',
+  winter: 'het is winter en buiten vriest het',
 };
 
 export const PLEK_TEKST: Record<Plek, string> = {

@@ -66,12 +66,14 @@ Naast het design system staan er twee gedeelde vormen in `components/ui`.
 Die zijn niet optioneel: ze zijn de reden dat de spellen familie blijven.
 
 ```tsx
+import CardGrid from '../ui/CardGrid';
 import ChoiceList from '../ui/ChoiceList';
 import SpeechBubble from '../ui/SpeechBubble';
 ```
 
 - `SpeechBubble` — de spraakwolk. Hierin praat de app.
 - `ChoiceList` — de meerkeuzelijst. Hierin kies je een antwoord.
+- `CardGrid` — het keuzeraster. Hiermee kies je waar je heen gaat.
 
 ## 3. Hoe een vraag eruitziet
 
@@ -108,7 +110,33 @@ pillen naast elkaar, geen raster van kaartjes.
 Wil je iets wat hier niet in past, dan is het antwoord niet een nieuw paneel
 maar een `Dialog`, of een stap minder.
 
-## 4. Minder is de regel, niet de smaak
+## 4. Hoe een keuzescherm eruitziet
+
+"Welk spel?", "welk werelddeel?", "welk niveau?" is geen vraag met een goed
+antwoord, dus geen `ChoiceList`. Het is een raster van kaarten: `CardGrid`.
+
+```tsx
+<CardGrid label="Kies een rekenspel" cards={…} onChoose={…} />
+```
+
+Eén vorm voor alle menu's in de app, zodat het rekenmenu en het vlaggenmemory
+familie blijven:
+
+- **Schone witte kaarten.** `--color-surface`, `--radius-card`, één
+  `--shadow-soft`. Geen rand *en* een schaduw; geen eigen achtergrondkleur
+  per spel of per onderdeel.
+- **Lucht.** `--space-5` tussen de kaarten, `--space-4` erbinnen. Liever vier
+  kaarten met ruimte dan zes die tegen elkaar aan staan.
+- **Het plaatje is de kop.** De tekening vult het bovenvlak op een rustig
+  `--color-background-soft`. Is er geen tekening, dan een icoon in een klein
+  vierkantje — niet een leeg groot vlak.
+- **Hoogstens drie regels tekst:** een titel, eventueel één korte regel
+  eronder (`onder`), en één kort ding rechtsonder (`meta`, bijvoorbeeld
+  "2/5 niveaus"). Geen knop ín de kaart: de kaart zelf is de knop.
+- Drie kolommen breed, twee op een tablet, één op een telefoon. Kaarten
+  zonder tekening blijven op een telefoon met twee naast elkaar staan.
+
+## 5. Minder is de regel, niet de smaak
 
 Charlotte's voorkeur, en de maat waaraan een scherm wordt afgemeten:
 
@@ -121,7 +149,7 @@ Charlotte's voorkeur, en de maat waaraan een scherm wordt afgemeten:
   rust, niet met een lijstje lijnen.
 - **Eén ding tegelijk.** Eén vraag, één stem, één primaire actie.
 
-## 5. De opbouw van een scherm
+## 6. De opbouw van een scherm
 
 Het spreekuur (`pages/PlantClinicScreen.tsx`) en de encyclopedie
 (`pages/EncyclopediaScreen.tsx`) zijn de twee voorbeelden om na te doen:
@@ -150,7 +178,7 @@ Harde regels:
 - Werkt op 360px breed. Test dat.
 - Elke animatie heeft een `@media (prefers-reduced-motion: reduce)`-uitzondering.
 
-## 6. De personages
+## 7. De personages
 
 `data/characters.ts` is de lijst: naam, plaatje en gebied. Kies een
 personage met zijn id (`kiki | coco | lua | seb`), nooit met een pad naar een
@@ -164,7 +192,7 @@ plaatje. Zo kan een scherm ze niet verwisselen.
 Verwissel ze nooit, ook niet "even" voor een tip. Een vraag over eten is van
 Coco, ook als hij in het plantenboek staat.
 
-## 7. Per spel mag de dynamiek verschillen, de vorm niet
+## 8. Per spel mag de dynamiek verschillen, de vorm niet
 
 Verschillend mag: hoe je speelt, welke beweging erbij hoort, welke
 achtergrond, hoe je scoort.
@@ -173,13 +201,13 @@ Hetzelfde moet: tokens, de knoppen uit het design system, de opbouw van
 hierboven, het topmenu (`AppShell`), de munten, de taal, en waar overkoepelende
 dingen staan (de encyclopedie zit in het topmenu, niet in een kamer).
 
-## 8. Taal
+## 9. Taal
 
 Nederlands, tegen een kind van negen. Korte zinnen, geen schoolse termen.
 Variabelen en commentaar in de code ook Nederlands, zoals in de rest van de
 repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 
-## 9. Voor je klaar bent
+## 10. Voor je klaar bent
 
 1. `npm test` — alles groen (de tests zijn ook de plek waar botsingen met de
    andere agent opvallen).
@@ -189,7 +217,7 @@ repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 4. Kijk er in de browser naar op 360px en op desktop.
 5. Commit en push alleen als Charlotte erom vraagt.
 
-## 10. Wat nu nog niet klopt
+## 11. Wat nu nog niet klopt
 
 `docs/ui-consistentie.md` houdt bij welke oude stukken nog niet aan dit
 bestand voldoen, en in welke volgorde ze opgeruimd worden. Bouw niets nieuws

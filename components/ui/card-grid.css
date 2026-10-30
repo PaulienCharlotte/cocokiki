@@ -1,0 +1,70 @@
+/* Het keuzeraster: schone witte kaarten met lucht ertussen. Zie CardGrid.tsx. */
+
+.ck-kaarten {
+  display: grid;
+  grid-template-columns: repeat(var(--kolommen, 3), minmax(0, 1fr));
+  gap: var(--space-5);
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.ck-kaarten.is-2 { --kolommen: 2; width: min(100%, 680px); }
+
+.ck-kaart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  height: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--motion-fast) var(--ease-storybook), box-shadow var(--motion-fast) var(--ease-storybook);
+}
+.ck-kaart:hover { box-shadow: var(--shadow-raised); transform: translateY(-2px); }
+.ck-kaart:active { transform: translateY(0); }
+.ck-kaart:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+/* Het plaatje krijgt een rustig vlak, zodat een losse tekening niet zweeft. */
+.ck-kaart__beeld {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+  color: var(--color-primary);
+}
+.ck-kaart__beeld.is-icoon {
+  aspect-ratio: 1;
+  width: calc(var(--space-12) + var(--space-2));
+  border-radius: var(--radius-control);
+}
+.ck-kaart__beeld img { width: 100%; height: 100%; object-fit: contain; padding: var(--space-3); }
+
+.ck-kaart__tekst { display: grid; gap: var(--space-1); min-width: 0; }
+.ck-kaart__tekst strong { font-size: var(--font-size-lg); line-height: var(--line-height-tight); overflow-wrap: anywhere; }
+.ck-kaart__tekst small { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+.ck-kaart__meta {
+  margin-top: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 860px) { .ck-kaarten { --kolommen: 2; gap: var(--space-4); } }
+@media (max-width: 560px) {
+  .ck-kaarten, .ck-kaarten.is-2 { --kolommen: 1; }
+  .ck-kaarten.is-compact { --kolommen: 2; gap: var(--space-3); }
+  .ck-kaart__beeld { aspect-ratio: 16 / 7; }
+  .ck-kaart__beeld.is-icoon { aspect-ratio: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .ck-kaart:hover { transform: none; } }

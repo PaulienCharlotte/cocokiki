@@ -88,6 +88,27 @@ pak. De plantenwereld gebruikt de krullen, het topmenu de knot.
 
 **Doen:** Charlotte kiest welke de echte is, dan gaat de ander eruit.
 
+## 7. De menu's zijn nog niet allemaal hetzelfde
+
+Het rekenmenu en het vlaggenmemory gebruiken nu `components/ui/CardGrid`:
+witte kaarten, lucht ertussen, één zachte schaduw. De rest van de app kiest
+nog op andere manieren.
+
+| Scherm | Hoe het nu kiest |
+|---|---|
+| `pages/ShopScreen.tsx` | eigen productraster in `app.css`, met harde hexes |
+| `pages/CookbookScreen.tsx` | eigen receptkaarten |
+| `pages/EncyclopediaScreen.tsx` | eigen lijst met plantkaarten |
+| `pages/ChallengesScreen.tsx` | losse plaatjes op een achtergrond (met opzet) |
+
+**Doen:** per gebied, niet allemaal tegelijk. Eerst de winkel, dan het
+kookboek. De school blijft een kamer met plaatjes; dat is geen menu.
+
+Let op: `games/math/MathHub.tsx` is op dit moment niet te bereiken. Het
+rekeneiland stuurt je rechtstreeks naar een spel, dus het menu staat er wel
+maar niemand ziet het. Het is nu wel in de nieuwe vorm, klaar voor het moment
+dat het terugkomt.
+
 ## Al opgelost
 
 - `--color-text-soft` werd zeventien keer gebruikt maar bestond niet, dus al
@@ -98,6 +119,10 @@ pak. De plantenwereld gebruikt de krullen, het topmenu de knot.
 - De vraag van de dag had eerst een eigen kop en eigen keuzeknoppen. Die zijn
   nu `SpeechBubble` en `ChoiceList`, en `components/tip-coach.css` is van zes
   regels naar één teruggebracht omdat de wolk daar nu ook vandaan komt.
+- Het vlaggenmemory koos een werelddeel met zes paarse `secondary`-knoppen in
+  een raster, en het rekenmenu had zes kaarten met een eigen pastelkleur, een
+  rand én een schaduw, in harde hexes en px. Beide gebruiken nu `CardGrid`;
+  de oude `.math-mode`- en `.flag-continents__grid`-regels zijn weg.
 - De plaatjes van de personages stonden los in drie bestanden. Ze staan nu in
   `data/characters.ts`, met hun gebied erbij, en een test let erop dat Kiki
   bij de planten blijft.
