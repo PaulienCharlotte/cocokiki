@@ -1,0 +1,23 @@
+/* De meerkeuzelijst. Zie components/ui/ChoiceList.tsx; elke vraag gebruikt deze. */
+.ck-keuzes { margin: 0; padding: 0; list-style: none; border-radius: var(--radius-control); background: var(--color-background-soft); overflow: hidden; }
+.ck-keuzes li + li { border-top: 1px solid #0000000f; }
+
+.ck-keuze {
+  width: 100%; min-height: var(--touch-target);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); border: 0; background: transparent;
+  color: var(--color-text); font-family: var(--font-family-friendly); font-size: var(--font-size-md); font-weight: var(--font-weight-bold);
+  text-align: left; transition: background var(--motion-fast) ease;
+}
+.ck-keuze > span { flex: 1; min-width: 0; }
+/* Het icoon staat vóór het antwoord en vervangt uitleg, dus het mag groot. */
+.ck-keuze > img { flex: none; width: var(--space-8); height: var(--space-8); object-fit: contain; }
+.ck-keuze > svg { flex: none; }
+.ck-keuze:hover:not(:disabled), .ck-keuze:focus-visible { outline: none; background: #0000000a; }
+.ck-keuze:focus-visible { box-shadow: inset 0 0 0 3px var(--color-focus-ring); }
+.ck-keuze:disabled { color: var(--color-text-soft); }
+/* Het streepje links maakt in één oogopslag duidelijk welke regel het is. */
+.ck-keuze.is-goed { background: var(--color-success-soft); box-shadow: inset 3px 0 0 var(--color-primary); color: var(--color-text); font-weight: var(--font-weight-heavy); }
+.ck-keuze.is-goed > svg { color: var(--color-primary); }
+.ck-keuze.is-mis { background: var(--color-error-soft); box-shadow: inset 3px 0 0 var(--color-error); color: var(--color-error); }
+.ck-keuze:disabled.is-goed, .ck-keuze:disabled.is-mis { opacity: 1; }

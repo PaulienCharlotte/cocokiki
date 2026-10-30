@@ -62,7 +62,66 @@ een eigen klasse en gebruik gewoon de tokens.
 
 Zie `/design-system` in de app voor alles naast elkaar.
 
-## 3. De opbouw van een scherm
+Naast het design system staan er twee gedeelde vormen in `components/ui`.
+Die zijn niet optioneel: ze zijn de reden dat de spellen familie blijven.
+
+```tsx
+import ChoiceList from '../ui/ChoiceList';
+import SpeechBubble from '../ui/SpeechBubble';
+```
+
+- `SpeechBubble` — de spraakwolk. Hierin praat de app.
+- `ChoiceList` — de meerkeuzelijst. Hierin kies je een antwoord.
+
+## 3. Hoe een vraag eruitziet
+
+Elke meerkeuzevraag in de app heeft dezelfde twee onderdelen, in deze
+volgorde, en niets ertussen:
+
+```
+<SpeechBubble character="kiki" label="vraag van de dag">   ← wie vraagt het
+<ChoiceList choices={…} />                                 ← de antwoorden
+```
+
+**De spraakwolk.** Het personage staat links, de wolk ernaast met een puntje
+naar hem toe. Op de naamregel staat in kapitalen waar het over gaat
+(`label`), en rechts mag één kort getal staan (`aside`, bijvoorbeeld een
+stand). Het personage *is* de kop: zet er nooit een titel boven die hetzelfde
+zegt. Eén wolk per scherm. Hoort er een ander personage bij een ander stuk,
+dan is dat een ander scherm.
+
+**De antwoorden.** Eén blok met `--color-background-soft`, haarlijnen tussen
+de regels, geen rand of schaduw om de losse antwoorden. Het moet lezen als
+één keuze, niet als drie knoppen. Dus: geen `Button` voor antwoorden, geen
+pillen naast elkaar, geen raster van kaartjes.
+
+- Twee tot vier antwoorden. Meer kan een kind niet overzien.
+- Een icoon vóór het antwoord (`icoon`) is beter dan een woord erbij.
+  Zegt het plaatje het al, laat de uitleg dan weg.
+- Na het kiezen kleurt de regel zelf: goed is `--color-success-soft`, mis is
+  `--color-error-soft`, met een vinkje of kruisje rechts. Geen extra
+  uitslagregel eronder die hetzelfde nog eens zegt.
+- Hoort er een weetje bij, dan komt dat ná het kiezen als één rustige regel
+  (`--color-text-soft`, `--font-size-sm`). Eén zin, geen alinea.
+- Gekozen is klaar: `disabled`, niet opnieuw proberen in dezelfde vraag.
+
+Wil je iets wat hier niet in past, dan is het antwoord niet een nieuw paneel
+maar een `Dialog`, of een stap minder.
+
+## 4. Minder is de regel, niet de smaak
+
+Charlotte's voorkeur, en de maat waaraan een scherm wordt afgemeten:
+
+- **Schoon en simpel.** Twee elementen op een kaart is beter dan vijf. Kun je
+  iets weghalen zonder dat de vraag onduidelijk wordt, haal het weg.
+- **Iconen waar het kan, tekst waar het moet.** Een icoon met `aria-label`
+  boven een woord; een plaatje boven een uitleg.
+- **Niet zwaar.** Geen zware randen, geen dubbele schaduwen, geen kaders om
+  dingen die al in een kaart staan. Vlakken scheiden met een haarlijn of met
+  rust, niet met een lijstje lijnen.
+- **Eén ding tegelijk.** Eén vraag, één stem, één primaire actie.
+
+## 5. De opbouw van een scherm
 
 Het spreekuur (`pages/PlantClinicScreen.tsx`) en de encyclopedie
 (`pages/EncyclopediaScreen.tsx`) zijn de twee voorbeelden om na te doen:
@@ -73,8 +132,8 @@ rustige achtergrond (--color-background)
     ├── kop: klein label in kapitalen + één titel
     ├── voortgang: streepjes of stipjes, geen "stap 2 van 3"
     ├── het ding zelf: groot plaatje, raakbaar
-    ├── één stem: Kiki in een tekstballon, die de vraag stelt
-    └── de keuze: een rij chips of een raster van maximaal 4 kaartjes
+    ├── één stem: `SpeechBubble`, die de vraag stelt
+    └── de keuze: `ChoiceList` (zie sectie 3)
 ```
 
 Harde regels:
@@ -91,14 +150,21 @@ Harde regels:
 - Werkt op 360px breed. Test dat.
 - Elke animatie heeft een `@media (prefers-reduced-motion: reduce)`-uitzondering.
 
-## 4. De personages
+## 6. De personages
 
-- **Kiki** hoort bij de planten. De plaatjes met bruine krullen
-  (`avatars/kiki/kiki-*`) zijn de goede.
+`data/characters.ts` is de lijst: naam, plaatje en gebied. Kies een
+personage met zijn id (`kiki | coco | lua | seb`), nooit met een pad naar een
+plaatje. Zo kan een scherm ze niet verwisselen.
+
+- **Kiki** hoort bij de planten (de plaatjes met bruine krullen).
 - **Coco** hoort bij het koken.
-- Verwissel ze nooit, ook niet "even" voor een tip.
+- **Baby Lua** hoort bij het rekenen.
+- **Seb het stokstaartje** hoort bij de topografie.
 
-## 5. Per spel mag de dynamiek verschillen, de vorm niet
+Verwissel ze nooit, ook niet "even" voor een tip. Een vraag over eten is van
+Coco, ook als hij in het plantenboek staat.
+
+## 7. Per spel mag de dynamiek verschillen, de vorm niet
 
 Verschillend mag: hoe je speelt, welke beweging erbij hoort, welke
 achtergrond, hoe je scoort.
@@ -107,13 +173,13 @@ Hetzelfde moet: tokens, de knoppen uit het design system, de opbouw van
 hierboven, het topmenu (`AppShell`), de munten, de taal, en waar overkoepelende
 dingen staan (de encyclopedie zit in het topmenu, niet in een kamer).
 
-## 6. Taal
+## 8. Taal
 
 Nederlands, tegen een kind van negen. Korte zinnen, geen schoolse termen.
 Variabelen en commentaar in de code ook Nederlands, zoals in de rest van de
 repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 
-## 7. Voor je klaar bent
+## 9. Voor je klaar bent
 
 1. `npm test` — alles groen (de tests zijn ook de plek waar botsingen met de
    andere agent opvallen).
@@ -123,7 +189,7 @@ repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 4. Kijk er in de browser naar op 360px en op desktop.
 5. Commit en push alleen als Charlotte erom vraagt.
 
-## 8. Wat nu nog niet klopt
+## 10. Wat nu nog niet klopt
 
 `docs/ui-consistentie.md` houdt bij welke oude stukken nog niet aan dit
 bestand voldoen, en in welke volgorde ze opgeruimd worden. Bouw niets nieuws
