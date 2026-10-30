@@ -94,41 +94,104 @@ export function helperIntro(): string {
   return 'Deze plant is net binnengebracht. Er is iets mis, maar wat?';
 }
 
-/** Wat de aarde en de standplaats verraden; dat is bij elke plant hetzelfde. */
-const ALGEMENE_AANWIJZING: Record<PlantProblemCause, { aarde: string; plek: string }> = {
-  'te-weinig-water': {
-    aarde: 'De aarde is kurkdroog en laat los van de pot.',
-    plek: 'Hij stond gewoon binnen, maar er is lang geen water gegeven.',
-  },
-  'te-veel-water': {
-    aarde: 'De aarde is drijfnat en er staat water in de schotel.',
-    plek: 'Hij stond binnen en kreeg elke dag een scheutje.',
-  },
-  'te-veel-zon': {
-    aarde: 'De aarde voelt normaal: niet te nat, niet te droog.',
-    plek: 'Hij stond de hele dag pal voor het zuidraam, in de volle zon.',
-  },
-  'te-weinig-licht': {
-    aarde: 'De aarde voelt normaal: niet te nat, niet te droog.',
-    plek: 'Hij stond achterin de kamer, ver bij het raam vandaan.',
-  },
-  'droge-lucht': {
-    aarde: 'De aarde is vochtig genoeg.',
-    plek: 'Hij stond vlak boven de verwarming.',
-  },
-  'te-koud': {
-    aarde: 'De aarde voelt koud en klam aan.',
-    plek: 'Hij stond ’s nachts achter het gordijn tegen het koude glas.',
-  },
+/**
+ * De omstandigheden van een geval.
+ *
+ * Hiervóór hoorde bij elke oorzaak één vaste zin ("hij stond vlak boven de
+ * verwarming"), en die zin wás het antwoord. Een kind dat hem één keer gelezen
+ * had, hoefde daarna niet meer te kijken. Nu krijgt een patiënt losse feiten —
+ * waar hij staat, welk seizoen het is, hoe lang geleden hij water kreeg — en
+ * pas de combinatie wijst één oorzaak aan. Bij de verwarming in de winter met
+ * vochtige aarde is het droge lucht; bij diezelfde verwarming met kurkdroge
+ * aarde is het gewoon dorst.
+ */
+export type Seizoen = 'lente' | 'zomer' | 'herfst' | 'winter';
+export type Plek = 'kamer' | 'zuidraam' | 'verwarming' | 'hoek' | 'badkamer' | 'koud-glas';
+
+export const SEIZOEN_TEKST: Record<Seizoen, string> = {
+  lente: 'het is lente',
+  zomer: 'het is hartje zomer',
+  herfst: 'het is herfst',
+  winter: 'het is winter en de verwarming staat aan',
 };
 
+export const PLEK_TEKST: Record<Plek, string> = {
+  kamer: 'hij staat midden in de kamer',
+  zuidraam: 'hij staat pal voor het zuidraam, in de volle zon',
+  verwarming: 'hij staat vlak boven de verwarming',
+  hoek: 'hij staat achterin de hoek, ver bij het raam vandaan',
+  badkamer: 'hij staat in de badkamer, waar het altijd een beetje dampig is',
+  'koud-glas': 'hij staat \u2019s nachts tussen het gordijn en het koude glas',
+};
+
+/** Hoe nat de aarde is. Dit is het feit dat de meeste oorzaken uit elkaar houdt. */
+export type Aarde = 'kurkdroog' | 'gewoon' | 'drijfnat';
+
+export const AARDE_TEKST: Record<Aarde, string> = {
+  kurkdroog: 'De aarde is kurkdroog en laat los van de pot.',
+  gewoon: 'De aarde is gewoon vochtig: niet te nat, niet te droog.',
+  drijfnat: 'De aarde is drijfnat en er staat water in de schotel.',
+};
+
+/** Welke omstandigheden bij een oorzaak kunnen horen. */
+interface Omstandigheden {
+  plekken: Plek[];
+  seizoenen: Seizoen[];
+  aarde: Aarde;
+}
+
+const ALLE_SEIZOENEN: Seizoen[] = ['lente', 'zomer', 'herfst', 'winter'];
+
+/**
+ * Let op de overlap: droge lucht en dorst delen de verwarming, te veel water en
+ * te weinig licht delen de hoek. Dat is geen slordigheid maar het hele punt —
+ * de aarde en het seizoen beslissen welke van de twee het is.
+ */
+const OMSTANDIGHEDEN: Record<PlantProblemCause, Omstandigheden> = {
+  'te-weinig-water': { plekken: ['kamer', 'zuidraam', 'verwarming', 'hoek'], seizoenen: ALLE_SEIZOENEN, aarde: 'kurkdroog' },
+  'te-veel-water': { plekken: ['kamer', 'hoek', 'badkamer'], seizoenen: ALLE_SEIZOENEN, aarde: 'drijfnat' },
+  'te-veel-zon': { plekken: ['zuidraam'], seizoenen: ['lente', 'zomer'], aarde: 'gewoon' },
+  'te-weinig-licht': { plekken: ['hoek', 'badkamer'], seizoenen: ALLE_SEIZOENEN, aarde: 'gewoon' },
+  'droge-lucht': { plekken: ['verwarming'], seizoenen: ['herfst', 'winter'], aarde: 'gewoon' },
+  'te-koud': { plekken: ['koud-glas'], seizoenen: ['winter'], aarde: 'gewoon' },
+};
+
+/** Een patiënt met zijn omstandigheden erbij. */
+export interface Geval extends PatientKind {
+  seizoen: Seizoen;
+  plek: Plek;
+  aarde: Aarde;
+  /** Hoeveel dagen geleden hij voor het laatst water kreeg. */
+  dagenGeleden: number;
+}
+
+/**
+ * Maak de omstandigheden bij een patiënt. `kiesGetal` is injecteerbaar zodat
+ * een test altijd hetzelfde geval krijgt.
+ */
+export function maakGeval(kind: PatientKind, kiesGetal: () => number = Math.random): Geval {
+  const regels = OMSTANDIGHEDEN[kind.cause];
+  const pak = <T,>(opties: T[]): T => opties[Math.min(opties.length - 1, Math.max(0, Math.floor(kiesGetal() * opties.length)))];
+  const species = PLANT_SPECIES_BY_ID[kind.speciesId];
+  const normaal = species?.waterDays ?? 7;
+  // Dorst hoort bij lang geleden, natte voeten bij gisteren, de rest zit ertussen.
+  const dagenGeleden = regels.aarde === 'kurkdroog' ? normaal * 2 + 2
+    : regels.aarde === 'drijfnat' ? 1
+    : Math.max(1, Math.round(normaal / 2));
+  return { ...kind, seizoen: pak(regels.seizoenen), plek: pak(regels.plekken), aarde: regels.aarde, dagenGeleden };
+}
+
 /** Wat je bij déze plant aan de bladeren ziet; dat verschilt per soort. */
-export function clueText(species: PlantSpecies, cause: PlantProblemCause, spot: ClueSpot): string {
+export function clueText(species: PlantSpecies, geval: Geval, spot: ClueSpot): string {
   if (spot === 'blad') {
-    return plantFirstAid(species.id).find(probleem => probleem.cause === cause)?.signs
+    return plantFirstAid(species.id).find(probleem => probleem.cause === geval.cause)?.signs
       ?? 'Er is iets met de bladeren, maar wat precies is lastig te zeggen.';
   }
-  return ALGEMENE_AANWIJZING[cause][spot];
+  if (spot === 'aarde') {
+    return `${AARDE_TEKST[geval.aarde]} Hij kreeg ${geval.dagenGeleden} dagen geleden voor het laatst water.`;
+  }
+  // Kiki noemt alleen feiten; welke oorzaak het is zegt ze niet.
+  return `Het baasje zegt: ${PLEK_TEKST[geval.plek]}, en ${SEIZOEN_TEKST[geval.seizoen]}.`;
 }
 
 /** Het gereedschap in de dokterstas. */
@@ -217,11 +280,19 @@ export interface PatientKind {
 export const PATIENT_KINDS: PatientKind[] = PLANT_SPECIES.flatMap(species => {
   const art = species.art;
   if (!art) return [];
+  const pad = (naam: string) => `/assets/library/plants/${species.id}/${naam}`;
   const map: Array<[PlantProblemCause, string | null]> = [
-    ['te-weinig-water', art.dry ? `/assets/library/plants/${species.id}/dry-1.webp` : null],
-    ['te-veel-water', art.wet ? `/assets/library/plants/${species.id}/wet-1.webp` : null],
-    ['te-veel-zon', art.sun ? `/assets/library/plants/${species.id}/sun-1.webp` : null],
-    ['te-weinig-licht', art.dark ? `/assets/library/plants/${species.id}/dark-1.webp` : null],
+    ['te-weinig-water', art.dry ? pad('dry-1.webp') : null],
+    ['te-veel-water', art.wet ? pad('wet-1.webp') : null],
+    ['te-veel-zon', art.sun ? pad('sun-1.webp') : null],
+    ['te-weinig-licht', art.dark ? pad('dark-1.webp') : null],
+    // Droge lucht en kou hebben nog geen eigen tekening. Ze lenen het plaatje
+    // waar ze het meest op lijken: bruine knisperpunten bij droogteschade,
+    // zachte plekken bij natschade. Het blad alléén zegt dan niets meer, en
+    // dat klopt ook — de aarde en het seizoen moeten het verschil maken.
+    // docs/plantendokter-assets.md vraagt het echte tekenwerk aan.
+    ['droge-lucht', art.dry ? pad('dry-1.webp') : null],
+    ['te-koud', art.wet ? pad('wet-1.webp') : null],
   ];
   // Zonder EHBO-tekst zou het bladspoor nietszeggend zijn; zo'n patiënt komt niet.
   const beschreven = new Set(plantFirstAid(species.id).map(probleem => probleem.cause));
@@ -230,12 +301,45 @@ export const PATIENT_KINDS: PatientKind[] = PLANT_SPECIES.flatMap(species => {
     .map(([cause, image]) => ({ speciesId: species.id, cause, image }));
 });
 
-/** De vier oorzaken waar een kind uit kiest, in vaste volgorde. */
+/** Alle oorzaken die het spreekuur kent, in vaste volgorde. */
 export const DIAGNOSE_CHOICES: PlantProblemCause[] = [
   'te-weinig-water',
   'te-veel-water',
   'te-veel-zon',
   'te-weinig-licht',
+  'droge-lucht',
+  'te-koud',
 ];
+
+/**
+ * Waarmee een oorzaak het makkelijkst verward wordt.
+ *
+ * Droge lucht en dorst geven allebei bruine punten; te veel water en kou geven
+ * allebei zachte plekken. Juist díé moeten naast elkaar staan, want daar leert
+ * een kind van. Een rijtje met drie antwoorden die er niets mee te maken hebben
+ * is geen vraag maar een cadeautje.
+ */
+const VERWARRING: Record<PlantProblemCause, [PlantProblemCause, PlantProblemCause]> = {
+  'te-weinig-water': ['droge-lucht', 'te-veel-water'],
+  'te-veel-water': ['te-weinig-water', 'te-koud'],
+  'te-veel-zon': ['te-weinig-water', 'droge-lucht'],
+  'te-weinig-licht': ['te-veel-water', 'te-koud'],
+  'droge-lucht': ['te-weinig-water', 'te-veel-zon'],
+  'te-koud': ['te-veel-water', 'te-weinig-licht'],
+};
+
+/**
+ * Vier antwoorden per patiënt: het juiste, de twee waar het op lijkt, en één
+ * vierde die van het geval afhangt. Alle zes tegelijk is te veel om te
+ * overzien; altijd dezelfde vier leer je uit je hoofd. Dezelfde patiënt geeft
+ * wel altijd hetzelfde rijtje, anders wordt terugkomen stiekem makkelijker.
+ */
+export function diagnoseKeuzes(geval: Geval): PlantProblemCause[] {
+  const kern = [geval.cause, ...VERWARRING[geval.cause]];
+  const rest = DIAGNOSE_CHOICES.filter(cause => !kern.includes(cause));
+  const zaad = [...`${geval.speciesId}:${geval.cause}:${geval.plek}`].reduce((som, teken) => som + teken.charCodeAt(0), 0);
+  const vierde = rest[zaad % rest.length];
+  return DIAGNOSE_CHOICES.filter(cause => kern.includes(cause) || cause === vierde);
+}
 
 export { PLANT_PROBLEM_LABEL, PLANT_SPECIES_BY_ID };

@@ -8,11 +8,14 @@ import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../d
 import { PLANTENWIJZER, WIJZER_BY_CAUSE } from '../data/plants/wijzer';
 import {
   clueText,
+  diagnoseKeuzes,
+  maakGeval,
   GEREEDSCHAP_PLAATJE,
   OORZAAK_PLAATJE,
   naamKeuzes,
   DIAGNOSE_CHOICES,
   PATIENT_KINDS,
+  type Geval,
   treatmentFor,
   TREATMENTS_BY_ID,
 } from '../data/plants/clinic';
@@ -37,36 +40,92 @@ test('er komen alleen patiënten waar ook echt een ziek plaatje van is', () => {
     assert.ok(kind.image.includes(kind.speciesId));
     assert.ok(TREATMENTS_BY_ID[treatmentFor(species, kind.cause)], `geen behandeling voor ${kind.cause}`);
     // Het bladspoor moet over déze soort gaan, niet terugvallen op een vaag zinnetje.
-    const blad = clueText(species, kind.cause, 'blad');
+    const blad = clueText(species, maakGeval(kind, () => 0), 'blad');
     assert.doesNotMatch(blad, /lastig te zeggen/, `${kind.speciesId} mist een EHBO-tekst voor ${kind.cause}`);
   }
-  // Alle vier de oorzaken komen voor, anders leert een kind er maar twee.
+  // Alle zes de oorzaken komen voor, anders leert een kind er maar een paar.
   for (const cause of DIAGNOSE_CHOICES) {
     assert.ok(PATIENT_KINDS.some(kind => kind.cause === cause), `geen patiënt met ${cause}`);
   }
 });
 
+/** Een geval maken zonder toeval, zodat een test altijd hetzelfde ziet. */
+function geval(speciesId: string, cause: PlantProblemCause, trek = 0): Geval {
+  const kind = PATIENT_KINDS.find(k => k.speciesId === speciesId && k.cause === cause);
+  assert.ok(kind, `geen patiënt ${speciesId}/${cause}`);
+  return maakGeval(kind, () => trek);
+}
+
 test('de aanwijzingen verschillen per soort en per oorzaak', () => {
   const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
   const cactus = PLANT_SPECIES_BY_ID['small-cactus'];
   // Het blad vertelt het verhaal van díé soort.
-  assert.notEqual(clueText(varen, 'te-weinig-water', 'blad'), clueText(cactus, 'te-weinig-water', 'blad'));
-  // De aarde en de standplaats verraden de oorzaak, bij elke plant hetzelfde.
-  assert.equal(clueText(varen, 'te-veel-water', 'aarde'), clueText(cactus, 'te-veel-water', 'aarde'));
-  assert.match(clueText(varen, 'te-weinig-water', 'aarde'), /droog/i);
-  assert.match(clueText(varen, 'te-veel-water', 'aarde'), /nat/i);
-  assert.match(clueText(varen, 'te-veel-zon', 'plek'), /zon/i);
-  assert.match(clueText(varen, 'te-weinig-licht', 'plek'), /raam/i);
+  assert.notEqual(
+    clueText(varen, geval('hanging-fern', 'te-weinig-water'), 'blad'),
+    clueText(cactus, geval('small-cactus', 'te-weinig-water'), 'blad'),
+  );
+  assert.match(clueText(varen, geval('hanging-fern', 'te-weinig-water'), 'aarde'), /droog/i);
+  assert.match(clueText(varen, geval('hanging-fern', 'te-veel-water'), 'aarde'), /nat/i);
+  assert.match(clueText(varen, geval('hanging-fern', 'te-veel-zon'), 'plek'), /zon/i);
   for (const spot of ['blad', 'aarde', 'plek'] as const) {
-    for (const cause of DIAGNOSE_CHOICES) {
-      assert.ok(clueText(cactus, cause, spot).trim().length > 0, `${cause}/${spot} mist tekst`);
+    for (const kind of PATIENT_KINDS.filter(k => k.speciesId === 'small-cactus')) {
+      assert.ok(clueText(cactus, maakGeval(kind, () => 0), spot).trim().length > 0, `${kind.cause}/${spot} mist tekst`);
     }
   }
 });
 
+test('de omstandigheden passen bij de oorzaak en verraden hem niet alleen', () => {
+  for (const kind of PATIENT_KINDS) {
+    for (const trek of [0, 0.5, 0.99]) {
+      const g = maakGeval(kind, () => trek);
+      assert.ok(g.dagenGeleden >= 1, `${kind.speciesId}/${kind.cause}: onzinnig aantal dagen`);
+      // Dorst hoort bij droge aarde, natte voeten bij natte aarde. Anders klopt het verhaal niet.
+      if (kind.cause === 'te-weinig-water') assert.equal(g.aarde, 'kurkdroog');
+      if (kind.cause === 'te-veel-water') assert.equal(g.aarde, 'drijfnat');
+      if (kind.cause === 'droge-lucht') { assert.equal(g.aarde, 'gewoon'); assert.equal(g.plek, 'verwarming'); }
+      if (kind.cause === 'te-koud') assert.equal(g.seizoen, 'winter');
+      if (kind.cause === 'te-veel-zon') assert.equal(g.plek, 'zuidraam');
+    }
+  }
+});
+
+test('dezelfde plek betekent niet dezelfde oorzaak', () => {
+  // Dit is de hele verdieping: bij de verwarming kan het droge lucht zijn of
+  // gewoon dorst, en alleen de aarde zegt welke van de twee.
+  const varen = PLANT_SPECIES_BY_ID['hanging-fern'];
+  const droogteBijVerwarming = { ...geval('hanging-fern', 'te-weinig-water'), plek: 'verwarming' as const };
+  const drogeLucht = geval('hanging-fern', 'droge-lucht');
+  assert.equal(drogeLucht.plek, 'verwarming');
+  assert.equal(
+    clueText(varen, droogteBijVerwarming, 'plek').replace(/winter|lente|zomer|herfst.*/, ''),
+    clueText(varen, { ...drogeLucht, seizoen: droogteBijVerwarming.seizoen }, 'plek').replace(/winter|lente|zomer|herfst.*/, ''),
+    'dezelfde plek hoort hetzelfde te klinken',
+  );
+  // De aarde is wat ze uit elkaar houdt.
+  assert.notEqual(clueText(varen, droogteBijVerwarming, 'aarde'), clueText(varen, drogeLucht, 'aarde'));
+});
+
+test('elke patiënt krijgt vier antwoorden met het juiste ertussen', () => {
+  for (const kind of PATIENT_KINDS) {
+    const g = maakGeval(kind, () => 0);
+    const keuzes = diagnoseKeuzes(g);
+    assert.equal(keuzes.length, 4, `${kind.speciesId}/${kind.cause} geeft ${keuzes.length} antwoorden`);
+    assert.equal(new Set(keuzes).size, 4, 'een antwoord staat er dubbel in');
+    assert.ok(keuzes.includes(kind.cause), 'het juiste antwoord ontbreekt');
+    // De bijna-goede antwoorden horen erbij; daar zit de les in.
+    if (kind.cause === 'droge-lucht') assert.ok(keuzes.includes('te-weinig-water'), 'dorst hoort naast droge lucht te staan');
+    if (kind.cause === 'te-koud') assert.ok(keuzes.includes('te-veel-water'), 'natte voeten horen naast kou te staan');
+    // Dezelfde patiënt geeft dezelfde vier; anders wordt terugkomen makkelijker.
+    assert.deepEqual(diagnoseKeuzes(g), keuzes);
+  }
+  // Niet elke patiënt krijgt hetzelfde rijtje, anders leer je het uit je hoofd.
+  const rijtjes = new Set(PATIENT_KINDS.map(kind => diagnoseKeuzes(maakGeval(kind, () => 0)).join(',')));
+  assert.ok(rijtjes.size > 1, 'alle patiënten krijgen hetzelfde rijtje antwoorden');
+});
+
 test('een stempel kost drie goede diagnoses en telt maar één keer per consult', () => {
   let staat = createEmptyClinic();
-  const patient = { ...PATIENT_KINDS[0], consultId: 'consult-1' };
+  const patient = { ...maakGeval(PATIENT_KINDS[0], () => 0), consultId: 'consult-1' };
 
   const eerste = finishConsult(staat, patient, 0, false);
   assert.equal(eerste.coins, 2);
@@ -104,7 +163,7 @@ test('soorten zonder stempel komen eerst aan de beurt', () => {
 });
 
 test('het spreekuur overleeft een herstart en beschadigde opslag', () => {
-  const staat = finishConsult(createEmptyClinic(), { ...PATIENT_KINDS[0], consultId: 'c' }, 0, false).state;
+  const staat = finishConsult(createEmptyClinic(), { ...maakGeval(PATIENT_KINDS[0], () => 0), consultId: 'c' }, 0, false).state;
   assert.deepEqual(migrateClinic(JSON.parse(JSON.stringify(staat))), staat);
   assert.deepEqual(migrateClinic(null), createEmptyClinic());
   assert.deepEqual(migrateClinic({ version: 7 }), createEmptyClinic());
@@ -226,4 +285,23 @@ test('elke oorzaak en elke behandeling heeft een eigen tekening', () => {
   // Twee knoppen met hetzelfde plaatje zijn niet uit elkaar te houden.
   const alle = [...Object.values(GEREEDSCHAP_PLAATJE), ...Object.values(OORZAAK_PLAATJE)];
   assert.equal(new Set(alle).size, alle.length);
+});
+
+test('elk geval is op te lossen: de drie aanwijzingen samen wijzen één oorzaak aan', () => {
+  // Zonder dit is het spreekuur gokken. De aarde, de plek en het seizoen samen
+  // mogen nooit bij twee oorzaken tegelijk passen, anders kan een kind het
+  // goed beredeneren en toch fout hebben.
+  const gezien = new Map<string, PlantProblemCause>();
+  for (const kind of PATIENT_KINDS) {
+    for (const trek of [0, 0.2, 0.4, 0.6, 0.8, 0.99]) {
+      const g = maakGeval(kind, () => trek);
+      const sleutel = `${g.aarde}|${g.plek}|${g.seizoen}`;
+      const eerder = gezien.get(sleutel);
+      assert.ok(
+        eerder === undefined || eerder === g.cause,
+        `${sleutel} past zowel bij ${eerder} als bij ${g.cause}`,
+      );
+      gezien.set(sleutel, g.cause);
+    }
+  }
 });

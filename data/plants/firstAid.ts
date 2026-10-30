@@ -39,6 +39,7 @@ export const PLANT_FIRST_AID: Record<string, PlantProblem[]> = {
     { cause: 'te-veel-water', signs: 'Gele bladeren met bruine zachte plekken, terwijl de aarde nat blijft.', fix: 'Giet de schotel leeg en wacht tot de aarde bovenin droog is.' },
     { cause: 'te-veel-zon', signs: 'Bleke bladeren met witgele verbrande vlekken.', fix: 'Zet hem een meter verder van het raam of achter een dun gordijn.' },
     { cause: 'te-weinig-licht', signs: 'Nieuwe bladeren blijven klein en krijgen geen gaten.', fix: 'Zet hem lichter neer. De gaten komen pas bij genoeg licht.' },
+    { cause: 'droge-lucht', signs: 'Droge bruine randjes langs het blad, terwijl de aarde nog vochtig is.', fix: 'Sproei hem af of zet hem weg bij de verwarming. In het regenwoud is de lucht altijd vochtig.' },
   ],
   'palm-white-pot': [
     { cause: 'droge-lucht', signs: 'Bruine knisperende puntjes, terwijl de aarde gewoon vochtig is.', fix: 'Sproei de bladeren af of zet hem weg bij de verwarming.' },
@@ -76,12 +77,14 @@ export const PLANT_FIRST_AID: Record<string, PlantProblem[]> = {
     { cause: 'te-veel-water', signs: 'Gele bladeren met bruine slappe punten bij natte aarde.', fix: 'Laat hem eerst opdrogen. Hij mag nooit in een laagje water staan.' },
     { cause: 'te-veel-zon', signs: 'Bleke strepen en droge bruine randen.', fix: 'Hij komt van de donkere bosbodem. Halfschaduw is zijn plek.' },
     { cause: 'te-weinig-licht', signs: 'Hij blijft groen maar maakt geen witte bloemen meer.', fix: 'Iets lichter zetten, dan komen de bloemen terug.' },
+    { cause: 'droge-lucht', signs: 'Bruine droge punten aan de bladeren, bij aarde die gewoon vochtig is.', fix: 'Sproei hem af. Bij de verwarming droogt de lucht uit en dat voelt hij meteen.' },
   ],
   'pink-flower': [
     { cause: 'te-veel-water', signs: 'Gele onderbladeren en aarde die nat blijft en zuur ruikt.', fix: 'Giet de schotel leeg. Zijn wortels willen lucht, net als bij een orchidee.' },
     { cause: 'te-weinig-water', signs: 'De bladeren verliezen hun glans en gaan hangen.', fix: 'Houd de aarde licht vochtig.' },
     { cause: 'te-weinig-licht', signs: 'Er komen geen nieuwe roze schutbladen bij.', fix: 'Zet hem lichter, maar niet in de volle zon.' },
     { cause: 'te-veel-zon', signs: 'Bruine verbrande plekken midden op het blad.', fix: 'Uit het directe zonlicht halen.' },
+    { cause: 'droge-lucht', signs: 'Droge bruine randen rond het hele blad, terwijl de aarde vochtig is.', fix: 'Sproei hem af of zet hem in een lichte badkamer.' },
   ],
   'orange-tree': [
     { cause: 'te-weinig-water', signs: 'De blaadjes vouwen omhoog als bootjes en vallen daarna af.', fix: 'In de zomer flink water geven, in de winter veel minder.' },
@@ -95,6 +98,7 @@ export const PLANT_FIRST_AID: Record<string, PlantProblem[]> = {
     { cause: 'te-weinig-water', signs: 'De bladeren rimpelen en de wortels zijn zilvergrijs.', fix: 'Dompel de pot tien minuten in water. Groene wortels betekent genoeg.' },
     { cause: 'te-veel-zon', signs: 'Een gele of roodachtige verbrande plek op het blad.', fix: 'Licht, maar nooit in de volle middagzon.' },
     { cause: 'te-weinig-licht', signs: 'Donkergroene slappe bladeren en geen nieuwe bloemtak.', fix: 'Zet hem bij een lichter raam, dan komt er een nieuwe tak.' },
+    { cause: 'droge-lucht', signs: 'De knoppen vallen eraf voordat ze opengaan, bij wortels die er goed uitzien.', fix: 'Weg bij de verwarming. Droge lucht laat hem zijn knoppen loslaten.' },
   ],
   succulent: [
     { cause: 'te-veel-water', signs: 'Doorschijnende geelbruine slappe blaadjes die er zomaar afvallen.', fix: 'Pot hem om in verse droge aarde; de wortels zijn al aan het rotten. Hier gaat hij aan dood.' },

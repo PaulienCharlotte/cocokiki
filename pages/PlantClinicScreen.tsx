@@ -16,7 +16,7 @@ import {
   naamKeuzes,
   OORZAAK_PLAATJE,
   clueText,
-  DIAGNOSE_CHOICES,
+  diagnoseKeuzes,
   HELPER_NAME,
   helperIntro,
   KIKI_VRAAG,
@@ -46,8 +46,8 @@ const SPOTS: ClueSpot[] = ['blad', 'aarde', 'plek'];
 /** Waaróm je daar moet kijken. Zonder die reden is "kijk daar" geen hint. */
 const ONDERZOEK_WAAROM: Record<ClueSpot, string> = {
   blad: 'Aan het blad zie je wát er mis is: slap, geel, bruine randjes of bleke plekken.',
-  aarde: 'Aan de aarde voel je of hij te veel of juist te weinig water heeft gehad.',
-  plek: 'Aan de plek zie je of het aan de zon, het donker of de kou kan liggen.',
+  aarde: 'Aan de aarde voel je of het aan het water ligt. Droge punten bij vochtige aarde is iets anders dan dorst.',
+  plek: 'Aan de plek en het seizoen zie je of het aan de zon, het donker, de kou of de droge lucht kan liggen.',
 };
 const STAPPEN: Fase[] = ['onderzoek', 'diagnose', 'behandeling'];
 
@@ -221,7 +221,7 @@ export default function PlantClinicScreen() {
       : naamGoed ? `Goed onthouden, dit is inderdaad een ${species.commonName.toLowerCase()}.`
       : `Dit was een ${species.commonName.toLowerCase()}. Nu weet je het voor de volgende keer.`)
     : fase !== 'onderzoek' ? KIKI_VRAAG[fase]
-    : getoond ? clueText(species, patient.cause, getoond)
+    : getoond ? clueText(species, patient, getoond)
     : gevonden.length === 0 ? `${helperIntro()} ${KIKI_VRAAG.onderzoek}`
     : KIKI_VRAAG.onderzoek;
 
@@ -301,7 +301,7 @@ export default function PlantClinicScreen() {
 
       {fase === 'diagnose' && <>
         <div className="clinic__kaarten">
-          {DIAGNOSE_CHOICES.map(keuze => <button key={keuze} type="button" className={`clinic__kaart is-${keuze}`} onClick={() => stelDiagnose(keuze)}>
+          {diagnoseKeuzes(patient).map(keuze => <button key={keuze} type="button" className={`clinic__kaart is-${keuze}`} onClick={() => stelDiagnose(keuze)}>
             <Tekentje bron={OORZAAK_PLAATJE[keuze]} terugval={OORZAAK_ICOON[keuze]} naam={PLANT_PROBLEM_LABEL[keuze]} />
             {PLANT_PROBLEM_LABEL[keuze]}
           </button>)}
