@@ -99,6 +99,11 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
 .dream-app .lua-setup-controls .math-game-header h1, .dream-app .lua-setup-controls .math-header-brand, .dream-app .lua-setup-controls .math-wallet, .dream-app .lua-setup-controls .math-icon-tool:first-child { display: none; }
 .dream-app .lua-game-page { padding: 0; }
 .dream-flags-memory { min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-6)) var(--space-4) var(--space-4); background: var(--color-background); }
+.dream-app .math-module.math-adventure--balance .math-game,
+.dream-app .math-adventure--balance .math-session { background: transparent; }
+.dream-app .math-adventure--balance .math-prompt,
+.dream-app .math-adventure--balance .math-progress-dots,
+.dream-app .math-adventure--balance .honey-jar__glass > span { background: rgb(255 250 241 / 88%); border-radius: 8px; padding: 8px 12px; }
 @media (max-width: 600px) {
   .dream-island__scene { top: calc(var(--space-12) + var(--space-6)); }
   .dream-app .math-module.math-adventure { --math-top: calc(var(--space-12) * 2 + var(--space-8)); }

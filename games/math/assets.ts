@@ -1,4 +1,5 @@
 import type { MathGameId } from './types';
+import { ASSET_LIBRARY } from '../../data/assetLibrary';
 
 const supplied = '/games/school/math/adventures';
 export const mathAssets = {
@@ -15,8 +16,8 @@ export const mathAssets = {
   kitchen: '/assets/library/treehouse/rooms/kitchen-furnished.webp', shop: '/games/destinations/shop-interior.webp',
 };
 export const mathEnvironments: Record<MathGameId, string> = {
-  multiply: mathAssets.forest, divide: mathAssets.garden, 'add-subtract': mathAssets.forest,
-  missing: mathAssets.kitchen, balance: mathAssets.garden, race: mathAssets.shop,
+  multiply: ASSET_LIBRARY.games.babyLua.background, divide: mathAssets.garden, 'add-subtract': mathAssets.forest,
+  missing: mathAssets.kitchen, balance: `${supplied}/honey-room.png`, race: `${supplied}/checkout-room.png`,
 };
 export { checkoutProducts } from './checkoutCatalog';
 export const missingMathAssets: readonly string[] = [];

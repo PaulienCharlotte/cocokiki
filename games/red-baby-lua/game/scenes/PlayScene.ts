@@ -18,9 +18,9 @@ function luaAnchor(width: number, height: number) {
   return {
     narrow,
     x: width * (narrow ? .47 : .52),
-    y: height * (narrow ? .70 : .745),
+    y: height * (narrow ? .59 : .60),
     scale: narrow ? .35 : .43,
-    shadowY: height * (narrow ? .735 : .775),
+    shadowY: height * (narrow ? .625 : .635),
   };
 }
 
@@ -45,7 +45,7 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/jungle.webp');
+    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/waterfall-cliff.png');
     this.load.spritesheet('lua-new', '/assets/baby-lua/characters/lua-poses.webp', { frameWidth: 384, frameHeight: 512 });
     this.load.spritesheet('lua-rocks', '/games/red-baby-lua/rocks.webp', { frameWidth: 512, frameHeight: 512 });
   }

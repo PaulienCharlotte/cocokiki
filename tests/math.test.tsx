@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import { checkoutGroceries } from '../games/math/checkoutCatalog';
+import { checkoutOrderSeconds, checkoutTravel } from '../games/math/checkoutTiming';
+import { createCheckoutQuestion } from '../games/math/checkoutQuestions';
+import CheckoutConveyor from '../games/math/CheckoutConveyor';
 import test from 'node:test';
 import { existsSync, readFileSync } from 'node:fs';
 import React from 'react';
@@ -406,4 +410,58 @@ test('Lua reuses its existing question engine for all five math levels without a
     assert.deepEqual([...found], [...LUA_LEVEL_TABLES[level - 1]]);
   }
   assert.deepEqual(luaMathResult({ firstTry: 8, eventual: 10, missed: 0, streak: 3, bestStreak: 5, score: 50 }), { correct: 8, total: 10, score: 8, mistakes: 2, solved: 10 });
+});
+
+test('conveyor questions use varied supermarket groceries and valid arithmetic at all levels', () => {
+  assert.ok(checkoutGroceries.length > 30);
+  assert.equal(new Set(checkoutGroceries.map(product => product.id)).size, checkoutGroceries.length);
+  for (const product of checkoutGroceries) {
+    assert.equal(product.category, 'food');
+    assert.ok(Number.isSafeInteger(product.price) && product.price > 0);
+    assert.ok(existsSync(`public${product.image.split('?')[0]}`));
+  }
+  for (const level of MATH_LEVELS) for (let index = 0; index < 100; index++) {
+    const question = generateQuestion('race', level, index, Math.random, checkoutGroceries);
+    assert.equal(validAnswer(question, question.answer), true);
+    assert.ok(question.checkout?.products.every(product => checkoutGroceries.some(item => item.id === product.id)));
+    assert.ok(question.checkout?.products.every(product => product.category === 'food'));
+  }
+});
+
+test('checkout travel is bounded and each level gives a predictable customer deadline', () => {
+  assert.equal(checkoutOrderSeconds(1), 16);
+  assert.equal(checkoutOrderSeconds(5), 10);
+  assert.equal(checkoutTravel(0, 16000, 16000), 0);
+  assert.equal(checkoutTravel(8000, 16000, 16000), .5);
+  assert.equal(checkoutTravel(16000, 16000, 16000), 1);
+  assert.equal(checkoutTravel(20000, 16000, 16000), 1);
+  assert.equal(checkoutTravel(-100, 16000, 16000), 0);
+});
+
+test('checkout levels alternate at least five task forms with consistent equations and choices', () => {
+  for (const level of MATH_LEVELS) {
+    const forms = new Set<string>();
+    for (let index = 0; index < 200; index++) {
+      const question = createCheckoutQuestion(level, index);
+      forms.add(question.id.split(':')[1]);
+      assert.equal(validAnswer(question, question.answer), true, question.id);
+      assert.equal(evaluate(question.left, question.answer), evaluate(question.right, question.answer));
+      assert.ok(Number.isSafeInteger(question.answer) && question.answer >= 0);
+      assert.equal(question.options.length, 4);
+      assert.equal(new Set(question.options).size, 4);
+      assert.equal(question.options.filter(answer => validAnswer(question, answer)).length, 1);
+      assert.ok(question.checkout?.products.every(product => product.category === 'food'));
+      const html = renderToStaticMarkup(<CheckoutConveyor question={question} progress={.5} running={true} falling={false} />);
+      assert.doesNotMatch(html, /€|<span/);
+      if (level === 1) assert.ok(evaluate(question.left, question.answer) <= 20);
+    }
+    assert.ok(forms.size >= 5);
+  }
+  const missing = createCheckoutQuestion(1, 4, () => .5);
+  assert.equal(missing.kind, 'puzzle');
+  assert.match(missing.prompt, /Hoeveel moeten erbij/);
+  assert.match(missing.hint, /Haal/);
+  const combined = createCheckoutQuestion(5, 0, () => .5);
+  assert.match(combined.prompt, /bezorgkosten/);
+  assert.match(combined.hint, /eerst.*daarna/);
 });

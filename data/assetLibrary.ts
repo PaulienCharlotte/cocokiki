@@ -132,7 +132,7 @@ export const ASSET_LIBRARY = {
   },
   games: {
     babyLua: {
-      background: '/assets/baby-lua/backgrounds/jungle.webp',
+      background: '/assets/baby-lua/backgrounds/waterfall-cliff.png',
       poses: '/assets/baby-lua/characters/lua-poses.webp',
       rocks: '/games/red-baby-lua/rocks.webp',
     },

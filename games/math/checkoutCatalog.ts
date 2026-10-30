@@ -1,4 +1,4 @@
-import { SHOP_PRODUCTS_BY_ID } from '../../data/shopCatalog';
+import { SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID } from '../../data/shopCatalog';
 import { DECOR_PRODUCTS_BY_ID } from '../../data/decorCatalog';
 
 export interface CheckoutProduct {
@@ -30,6 +30,12 @@ export const checkoutProducts: readonly CheckoutProduct[] = [
   furniture('daisy-armchair', 250), furniture('cream-two-seater', 600),
   furniture('cream-corner-sofa', 900),
 ];
+
+export const checkoutGroceries: readonly CheckoutProduct[] = SHOP_PRODUCTS.map(product => ({
+  id: product.id, name: product.name, image: product.image, category: 'food',
+  price: checkoutProducts.find(item => item.id === product.id)?.price ?? Math.max(1, Math.min(9, Math.round(product.price / 5))),
+  unit: product.unit === 'piece' ? ['stuk', 'stuks'] : ['verpakking', 'verpakkingen'],
+}));
 
 export interface CheckoutDetails {
   products: CheckoutProduct[];

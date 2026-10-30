@@ -1,5 +1,5 @@
 import { RACE_TARGETS } from './config';
-import { checkoutProducts, type CheckoutDetails } from './checkoutCatalog';
+import { checkoutProducts, type CheckoutDetails, type CheckoutProduct } from './checkoutCatalog';
 import type { Expression, MathGameId, MathLevel, MathQuestion, MathResult, Operation } from './types';
 
 type Random = () => number;
@@ -50,7 +50,7 @@ function arithmetic(level: MathLevel, random: Random): { op: Operation; a: numbe
   return { op, a, b: integer(0, op === '+' ? max - a : a, random) };
 }
 
-export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, random: Random = Math.random): MathQuestion {
+export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, random: Random = Math.random, checkoutPool?: readonly CheckoutProduct[]): MathQuestion {
   let checkout: CheckoutDetails | undefined;
   let op: Operation = '+', a = 0, b = 0;
   let kind: MathQuestion['kind'] = game === 'missing' ? 'puzzle' : game === 'balance' ? 'balance' : 'choice';
@@ -122,8 +122,8 @@ export function generateQuestion(game: MathGameId, level: MathLevel, index = 0, 
     hint = `Reken links eerst uit: ${expressionText(left)}. Rechts moet evenveel komen: trek ${'op' in right ? expressionText('blank' in right.left ? right.right : right.left) : '0'} daarvan af.`;
   }
   if (game === 'race') {
-    const expensive = level === 5 ? index % 2 === 0 : level === 4 && index % 4 === 3;
-    const pool = checkoutProducts.filter(product => expensive ? product.category === 'furniture' : product.category === 'food');
+    const expensive = !checkoutPool && (level === 5 ? index % 2 === 0 : level === 4 && index % 4 === 3);
+    const pool = checkoutPool ?? checkoutProducts.filter(product => expensive ? product.category === 'furniture' : product.category === 'food');
     const product = pick(pool, random);
     checkout = { products: [product], quantity: 1 };
     if (level === 5) op = pick(['+', '-'] as const, random);
