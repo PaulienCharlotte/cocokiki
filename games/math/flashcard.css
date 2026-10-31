@@ -43,8 +43,9 @@
 .math-balk { display: grid; justify-items: center; gap: var(--space-3); width: 100%; }
 /* Op een toneel is de balk één regel: links hoe ver je bent, rechts de tip.
    Vraag je om een tip, dan schuift de wolk er onder in hetzelfde vlak. */
+.math-session.is-toneel .honey-game + .math-balk, .math-session.is-toneel .math-challenge + .math-balk { margin-top: 0; border-radius: 0 0 var(--radius-card) var(--radius-card); }
 .math-session.is-toneel .math-balk { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); width: min(640px, 100%); margin: 0 auto; padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); background: var(--color-surface-glass); }
-.math-session.is-toneel .math-balk:has(.math-tip) { border-radius: var(--radius-card); padding-bottom: var(--space-3); }
+.math-session.is-toneel .math-balk:has(.math-tip) { padding-bottom: var(--space-3); }
 .math-session.is-toneel .math-progress-dots { flex: 1 1 140px; }
 .math-session.is-toneel .math-help { flex: 0 0 auto; width: auto; }
 .math-session.is-toneel .math-help:has(.math-tip) { flex: 1 1 100%; }
@@ -52,13 +53,19 @@
 .checkout-game .math-help { width: fit-content; background: var(--color-surface-glass); border-radius: var(--radius-pill); padding: 0 var(--space-2); }
 .checkout-game .math-help:has(.math-tip) { width: min(100%, 560px); border-radius: var(--radius-card); padding: var(--space-2); }
 
-/* En de antwoorden staan samen op één vlak onderaan, niet los op de foto. */
-.math-session.is-toneel .math-answers, .math-session.is-toneel .math-number-tiles {
+/* De sommen en de antwoorden horen bij elkaar en liggen tegen de balk aan:
+   samen één wit vlak onder de potten, in plaats van drie losse vakjes. */
+.honey-paneel { width: min(640px, 100%); margin: var(--space-4) auto 0; padding: var(--space-3) var(--space-4) var(--space-2); border-radius: var(--radius-card) var(--radius-card) 0 0; background: var(--color-surface-glass); }
+.honey-sommen { display: flex; align-items: center; justify-content: center; gap: var(--space-4); margin: 0 0 var(--space-2); font-size: var(--font-size-xl); font-weight: var(--font-weight-heavy); }
+.honey-sommen b { color: var(--color-primary); font-weight: inherit; }
+.math-session.is-toneel .math-number-tiles { width: 100%; margin: 0; }
+.math-session.is-toneel .math-answers {
   width: min(640px, 100%); margin: var(--space-4) auto 0; padding: var(--space-3);
   border-radius: var(--radius-card); background: var(--color-surface-glass);
 }
-/* Beide potten krijgen even brede labels, anders staat de som scheef. */
-.math-session.is-toneel .honey-jar__glass > span { justify-self: center; width: 100%; padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); background: var(--color-surface-glass); }
+/* Zonder losse som boven de pot heeft het glas maar één rij nodig; anders
+   krimpt de pot tot een kraaltje. */
+.math-session.is-toneel .honey-jar__glass { grid-template-rows: 1fr; }
 .math-help__button { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text-muted); font: inherit; font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); cursor: pointer; }
 .math-help__button:hover { background: var(--color-background-soft); }
 .math-help__button svg { flex-shrink: 0; color: var(--color-reward-strong); }
@@ -182,16 +189,22 @@
 .story-scene__harvest > .story-scene__fruit { position: absolute; width: 24%; left: 38%; top: 18%; }
 .story-unit { display: block; margin-bottom: 12px; color: #52694c; font-size: 15px; font-weight: 700; }
 .story-explanation { margin-top: var(--space-5); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); }
-/* De stappen die je al gedaan hebt; die getallen heb je straks nog nodig. */
-.story-gedaan { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); list-style: none; margin: 0 0 var(--space-4); padding: 0; }
-.story-gedaan li { padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); background: var(--color-success-soft); color: var(--color-text-muted); font-size: var(--font-size-sm); }
-.story-gedaan strong { color: var(--color-text); }
+/* Alle stappen staan meteen in beeld, elk in een eigen vak. Het vak waar je
+   mee bezig bent springt eruit; de stap erna wacht met een vraagteken. */
+.story-stappen { display: grid; gap: var(--space-3); width: 100%; list-style: none; margin: 0; padding: 0; }
+.story-stappen li { display: grid; gap: var(--space-2); justify-items: center; padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); background: var(--color-background-soft); }
+.story-stappen li.is-nu { background: var(--color-success-soft); box-shadow: inset 3px 0 0 var(--color-primary); }
+.story-stappen li.is-later { opacity: .55; }
+.story-stappen__kop { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+.story-stappen output { min-width: calc(var(--space-12) + var(--space-5)); padding: var(--space-1) var(--space-3); border-radius: var(--radius-control); background: var(--color-surface); text-align: center; }
+.story-stappen li.is-klaar output { color: var(--color-primary); }
 @media (max-width: 600px) {
   .math-adventure--add-subtract .math-prompt { font-size: 18px; line-height: 1.45; }
   .story-scene { height: 145px; gap: 12px; margin: 8px 0 16px; }
   .story-explanation { font-size: 16px; }
 }
 .math-workbench { display: grid; justify-items: center; gap: var(--space-4); margin: var(--space-5) auto; width: min(100%,480px); }
+.story-challenge.math-workbench { width: min(100%, 420px); }
 .math-workbench label { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); text-align: center; }
 .math-workbench input { width: calc(var(--space-12) * 2); min-height: calc(var(--space-12) + var(--space-5)); border: 2px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--font-size-2xl); font-weight: var(--font-weight-heavy); text-align: center; }
 .math-workbench__equation { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-3); font-size: var(--font-size-2xl); font-weight: var(--font-weight-heavy); }

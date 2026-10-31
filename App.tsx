@@ -156,7 +156,7 @@ const App: React.FC = () => {
 };
 
 function LoadingScreen() {
-  return <div className="platform-loading" role="status"><img src="/images/cocokiki-logo.png" alt="" />Spellenwereld laden...</div>;
+  return <div className="platform-loading" role="status"><img src="/images/cocokiki-logo.webp" alt="" />Spellenwereld laden...</div>;
 }
 
 export default App;

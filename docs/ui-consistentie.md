@@ -124,6 +124,14 @@ en de moeilijkheid is overal dezelfde schuifbalk. Wat er nog niet is:
 **Doen:** eerst de sommen uit elkaar trekken in losse soorten met een eigen
 moeilijkheid, dan pas de rest van de CSS.
 
+## 9. Honderd megabyte aan tekeningen
+
+`public` was 152 MB, waarvan 102 MB in 57 PNG-bestanden van gemiddeld 1,8 MB.
+Die zijn omgezet naar WebP: 11,7 MB, dezelfde tekeningen. De map is nu 62 MB.
+
+**Doen:** nieuwe tekeningen altijd als WebP aanleveren. Een PNG van twee
+megabyte laat een kind seconden naar een leeg scherm kijken.
+
 ## Al opgelost
 
 - Een kamer in de boomhut werd alleen op een telefoon op volle breedte getoond
@@ -132,6 +140,18 @@ moeilijkheid, dan pas de rest van de CSS.
   dus overal.
 - Meubels konden tot 1,8 keer hun maat; de douchecabine stond daar al op. Dat
   maximum is 3 geworden.
+- De tekeningen van Baby Lua en van de rotsen liepen over de rand van hun
+  vakje in het sprite-vel. Daardoor stond er een streepje van de pose erboven
+  boven Lua's hoofd. Die randen zijn weggehaald.
+- Een fout antwoord bij Baby Lua kostte niets: je kon alle antwoorden afgaan
+  tot de goede. Nu kost een fout een hartje.
+- De redactiesommen toonden één stap tegelijk. Nu staan alle stappen in beeld,
+  elk in een eigen vak; de volgende wacht met een vraagteken op jouw getal.
+- Het honingspel had drie losse witte vakjes. De potten staan nu vrij boven,
+  met daaronder één vlak met de som, de antwoorden en de voortgang.
+- Een bes die net op de rand van een mandje landde kaatste terug: er werd
+  gemikt met de vinger in plaats van met de bes, en de oogstbalk erboven won
+  van het mandje. Allebei rechtgezet, met een marge van 96px.
 - In de boomhut kon je al kiezen wat vooraan staat, maar de twee knoppen waren
   twee bijna identieke iconen van overlappende vierkantjes zonder woord erbij.
   Niemand vond ze. Ze heten nu "Voor" en "Achter" en staan apart in de balk.

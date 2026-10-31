@@ -28,8 +28,12 @@ export default function DragChoice({ value, label, selected, disabled, targetRef
       if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
       if (dragged) {
         suppressClick.current = true;
+        // Mik met het midden van het voorwerp zelf, niet met de vinger. Je
+        // pakt een bes vaak aan de rand beet, en dan mist hij het mandje.
+        const tegel = event.currentTarget.getBoundingClientRect();
+        const midX = tegel.left + tegel.width / 2, midY = tegel.top + tegel.height / 2;
         const rect = targetRef.current?.getBoundingClientRect();
-        if (rect && event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom) onDrop(value, event.clientX, event.clientY);
+        if (rect && midX >= rect.left && midX <= rect.right && midY >= rect.top && midY <= rect.bottom) onDrop(value, midX, midY);
       }
     }} onPointerCancel={() => { origin.current = null; suppressClick.current = true; setOffset({ x: 0, y: 0 }); }}
     onLostPointerCapture={() => { if (origin.current) { origin.current = null; suppressClick.current = true; setOffset({ x: 0, y: 0 }); } }}

@@ -1,27 +1,27 @@
-export const ROOM_UNIT_ASSET = '/assets/library/treehouse/units/room-prototype.png';
+export const ROOM_UNIT_ASSET = '/assets/library/treehouse/units/room-prototype.webp';
 
 // Alleen de zichtbare houten constructie telt mee, niet de transparante canvasmarge.
 export const ROOM_UNIT_FRAME = { sourceWidth: 1448, sourceHeight: 1086, x: 48, y: 162, width: 1354, height: 780 };
 
 export const TREEHOUSE_UNIT_ASSETS = {
   room: { src: ROOM_UNIT_ASSET, label: 'Houten kamer', frame: ROOM_UNIT_FRAME },
-  bedroom: { src: '/assets/library/treehouse/units/bedroom.png', label: 'Slaapkamer', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 32, y: 158, width: 1384, height: 784 } },
-  bathroom: { src: '/assets/library/treehouse/units/bathroom-empty.png', label: 'Badkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 26, y: 54, width: 1485, height: 903 } },
-  blush: { src: '/assets/library/treehouse/units/blush-room.png', label: 'Roze kamer', frame: { sourceWidth: 1672, sourceHeight: 941, x: 30, y: 50, width: 1610, height: 855 } },
-  garden: { src: '/assets/library/treehouse/units/garden-room.png', label: 'Tuinkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 78, y: 20, width: 1378, height: 942 } },
-  roofBlue: { src: '/assets/library/treehouse/units/roof-blue.png', label: 'Blauw dak', frame: { sourceWidth: 1883, sourceHeight: 835, x: 14, y: 70, width: 1855, height: 700 } },
-  roofFlowers: { src: '/assets/library/treehouse/units/roof-flowers.png', label: 'Bloemendak', frame: { sourceWidth: 2112, sourceHeight: 744, x: 0, y: 0, width: 2112, height: 735 } },
-  kitchen: { src: '/assets/library/treehouse/units/kitchen.png', label: 'Keuken', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 50, y: 99, width: 1438, height: 787 } },
-  terrace: { src: '/assets/library/treehouse/units/terrace.png', label: 'Terras', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 0, y: 374, width: 1448, height: 548 } },
-  roof: { src: '/assets/library/treehouse/units/roof.png', label: 'Dak', frame: { sourceWidth: 2172, sourceHeight: 724, x: 0, y: 0, width: 2172, height: 704 } },
-  trunk: { src: '/assets/library/treehouse/units/trunk.png', label: 'Boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 8, y: 4, width: 1008, height: 1524 } },
-  platform: { src: '/assets/library/treehouse/units/platform.png', label: 'Draagplatform', frame: { sourceWidth: 2172, sourceHeight: 724, x: 50, y: 286, width: 2072, height: 340 } },
-  ladder: { src: '/assets/library/treehouse/units/ladder.png', label: 'Ladder', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 278, y: 20, width: 472, height: 1504 } },
-  canopy: { src: '/assets/library/treehouse/units/canopy.png', label: 'Bladerkroon', frame: { sourceWidth: 1774, sourceHeight: 887, x: 10, y: 4, width: 1752, height: 850 } },
-  trunkLeft: { src: '/assets/library/treehouse/units/trunk-left.png', label: 'Linker boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 26, y: 4, width: 984, height: 1530 } },
-  trunkRight: { src: '/assets/library/treehouse/units/trunk-right.png', label: 'Rechter boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 22, y: 10, width: 980, height: 1514 } },
-  canopyWide: { src: '/assets/library/treehouse/units/canopy-wide.png', label: 'Brede boomtop', frame: { sourceWidth: 1774, sourceHeight: 887, x: 14, y: 14, width: 1752, height: 860 } },
-  canopyTall: { src: '/assets/library/treehouse/units/canopy-tall.png', label: 'Luchtige boomtop', frame: { sourceWidth: 1774, sourceHeight: 887, x: 42, y: 4, width: 1710, height: 874 } },
+  bedroom: { src: '/assets/library/treehouse/units/bedroom.webp', label: 'Slaapkamer', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 32, y: 158, width: 1384, height: 784 } },
+  bathroom: { src: '/assets/library/treehouse/units/bathroom-empty.webp', label: 'Badkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 26, y: 54, width: 1485, height: 903 } },
+  blush: { src: '/assets/library/treehouse/units/blush-room.webp', label: 'Roze kamer', frame: { sourceWidth: 1672, sourceHeight: 941, x: 30, y: 50, width: 1610, height: 855 } },
+  garden: { src: '/assets/library/treehouse/units/garden-room.webp', label: 'Tuinkamer', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 78, y: 20, width: 1378, height: 942 } },
+  roofBlue: { src: '/assets/library/treehouse/units/roof-blue.webp', label: 'Blauw dak', frame: { sourceWidth: 1883, sourceHeight: 835, x: 14, y: 70, width: 1855, height: 700 } },
+  roofFlowers: { src: '/assets/library/treehouse/units/roof-flowers.webp', label: 'Bloemendak', frame: { sourceWidth: 2112, sourceHeight: 744, x: 0, y: 0, width: 2112, height: 735 } },
+  kitchen: { src: '/assets/library/treehouse/units/kitchen.webp', label: 'Keuken', frame: { sourceWidth: 1536, sourceHeight: 1024, x: 50, y: 99, width: 1438, height: 787 } },
+  terrace: { src: '/assets/library/treehouse/units/terrace.webp', label: 'Terras', frame: { sourceWidth: 1448, sourceHeight: 1086, x: 0, y: 374, width: 1448, height: 548 } },
+  roof: { src: '/assets/library/treehouse/units/roof.webp', label: 'Dak', frame: { sourceWidth: 2172, sourceHeight: 724, x: 0, y: 0, width: 2172, height: 704 } },
+  trunk: { src: '/assets/library/treehouse/units/trunk.webp', label: 'Boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 8, y: 4, width: 1008, height: 1524 } },
+  platform: { src: '/assets/library/treehouse/units/platform.webp', label: 'Draagplatform', frame: { sourceWidth: 2172, sourceHeight: 724, x: 50, y: 286, width: 2072, height: 340 } },
+  ladder: { src: '/assets/library/treehouse/units/ladder.webp', label: 'Ladder', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 278, y: 20, width: 472, height: 1504 } },
+  canopy: { src: '/assets/library/treehouse/units/canopy.webp', label: 'Bladerkroon', frame: { sourceWidth: 1774, sourceHeight: 887, x: 10, y: 4, width: 1752, height: 850 } },
+  trunkLeft: { src: '/assets/library/treehouse/units/trunk-left.webp', label: 'Linker boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 26, y: 4, width: 984, height: 1530 } },
+  trunkRight: { src: '/assets/library/treehouse/units/trunk-right.webp', label: 'Rechter boomstam', frame: { sourceWidth: 1024, sourceHeight: 1536, x: 22, y: 10, width: 980, height: 1514 } },
+  canopyWide: { src: '/assets/library/treehouse/units/canopy-wide.webp', label: 'Brede boomtop', frame: { sourceWidth: 1774, sourceHeight: 887, x: 14, y: 14, width: 1752, height: 860 } },
+  canopyTall: { src: '/assets/library/treehouse/units/canopy-tall.webp', label: 'Luchtige boomtop', frame: { sourceWidth: 1774, sourceHeight: 887, x: 42, y: 4, width: 1710, height: 874 } },
 };
 export type TreehouseUnitAssetId = keyof typeof TREEHOUSE_UNIT_ASSETS;
 export const TREE_TRUNK_ASSETS: readonly TreehouseUnitAssetId[] = ['trunk', 'trunkLeft', 'trunkRight'];

@@ -48,16 +48,15 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
       if (!hadMistake.current) { stats.current.correct++; stats.current.score++; }
     } else { hadMistake.current = true; stats.current.mistakes++; setFeedback('wrong'); setHint(true); }
   };
+  const balk = <div className="math-balk">
+    <div className="math-progress-dots" role="img" aria-label={`Opdracht ${index + 1} van 10, ${index + (feedback === 'correct' ? 1 : 0)} klaar`}>{Array.from({ length: 10 }, (_, i) => <i key={i} className={i < index + (feedback === 'correct' ? 1 : 0) ? 'is-klaar' : undefined} />)}</div>
+    {!toneel && <SpeechBubble character="lua" className="math-vraag" tone={feedback === 'correct' ? 'goed' : feedback === 'wrong' ? 'alert' : 'default'} textId="math-vraag">{game === 'missing' ? cookieOrder(question) : question.prompt}</SpeechBubble>}
+    {feedback !== 'correct' && <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{techniqueHint(question)}</MathHelp>}
+  </div>;
   return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }} className={`math-session adventure-session${toneel ? ' is-toneel' : ''}${feedback ? ` is-${feedback}` : ''}`} aria-label="Rekenavontuur">
-    {/* Op een toneel horen de streepjes en de tip bij elkaar in één balk,
-        anders zweven ze los over de achtergrond. */}
-    <div className="math-balk">
-      {/* Eén streepje per opdracht: je ziet hoe ver je bent zonder "3 van 10". */}
-      <div className="math-progress-dots" role="img" aria-label={`Opdracht ${index + 1} van 10, ${index + (feedback === 'correct' ? 1 : 0)} klaar`}>{Array.from({ length: 10 }, (_, i) => <i key={i} className={i < index + (feedback === 'correct' ? 1 : 0) ? 'is-klaar' : undefined} />)}</div>
-      {/* Baby Lua stelt de vraag, net zoals Kiki dat in het spreekuur doet. */}
-      {!toneel && <SpeechBubble character="lua" className="math-vraag" tone={feedback === 'correct' ? 'goed' : feedback === 'wrong' ? 'alert' : 'default'} textId="math-vraag">{game === 'missing' ? cookieOrder(question) : question.prompt}</SpeechBubble>}
-      {feedback !== 'correct' && <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{techniqueHint(question)}</MathHelp>}
-    </div>
+    {/* Op een toneel komt de balk onder de opdracht, zodat hij tegen het
+        vak met de antwoorden aan ligt en het één wit vlak wordt. */}
+    {!toneel && balk}
     <div className={`math-challenge math-challenge--${question.kind}`} key={question.id}>
       {game === 'divide' && question.kind === 'distribution' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
         : game === 'add-subtract' ? <StoryChallenge question={question as StoryQuestion} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />
@@ -65,6 +64,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
         : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
         : <ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />}
     </div>
+    {toneel && balk}
     <div className="adventure-feedback" role="status">{feedback === 'correct' ? game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld!` : 'Goed zo!' : feedback === 'wrong' ? game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : 'Bijna! Probeer nog eens.' : ''}</div>
   </section>;
 }

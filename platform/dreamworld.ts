@@ -60,13 +60,13 @@ export const DREAM_ISLANDS: DreamIsland[] = [
   { id: 'cooking', label: 'Kookeiland', path: '/islands/cooking', spot: { x: .805, y: .31, width: .25, height: .30 }, background: A.destinations.cookingStudio, backgroundAlt: 'Een gezellige kookstudio met houten werkbladen', modules: ['cooking', 'groceries', 'recipes', 'nutrition'], status: 'available', future: [], activities: [
     activity('recipes', 'Mijn kookboek', '/treehouse/cookbook', A.treehouse.collections.cookbook, 50, 50),
   ] },
-  { id: 'plants', label: 'Planteneiland', path: '/islands/plants', spot: { x: .825, y: .76, width: .27, height: .31 }, background: '/dreamworld/plant-clinic.png', backgroundAlt: 'Een zonnige plantenkas met een ronde werktafel en groene planten', modules: ['plant-family', 'plant-clinic', 'plant-shop', 'plant-knowledge'], status: 'available', future: [], activities: [
+  { id: 'plants', label: 'Planteneiland', path: '/islands/plants', spot: { x: .825, y: .76, width: .27, height: .31 }, background: '/dreamworld/plant-clinic.webp', backgroundAlt: 'Een zonnige plantenkas met een ronde werktafel en groene planten', modules: ['plant-family', 'plant-clinic', 'plant-shop', 'plant-knowledge'], status: 'available', future: [], activities: [
     activity('clinic', 'Plantendokter', '/plantendokter', A.avatars.kikiPoses.plant, 26, 44),
   ] },
-  { id: 'discovery', label: 'Ontdekkingseiland', path: '/islands/discovery', spot: { x: .24, y: .75, width: .31, height: .28 }, background: '/dreamworld/topo-interior.png', backgroundAlt: 'Een zonnige ontdekkingskamer met wereldkaarten, wereldbollen en een telescoop met uitzicht op bergen en water', modules: ['topo', 'clock', 'world-times', 'travel'], status: 'available', future: ['journeys'], activities: [
+  { id: 'discovery', label: 'Ontdekkingseiland', path: '/islands/discovery', spot: { x: .24, y: .75, width: .31, height: .28 }, background: '/dreamworld/topo-interior.webp', backgroundAlt: 'Een zonnige ontdekkingskamer met wereldkaarten, wereldbollen en een telescoop met uitzicht op bergen en water', modules: ['topo', 'clock', 'world-times', 'travel'], status: 'available', future: ['journeys'], activities: [
     activity('topo', 'Topografie', '/games/topo', A.games.schoolActions.topo, 26, 47),
     activity('clock', 'Kloklezen', '/school/clock', '/games/school/clock/clock-set.webp', 73, 47),
-    activity('flags', 'Vlaggenmemory', '/games/flags-memory', '/games/flags-memory/navigation.png', 50, 76),
+    activity('flags', 'Vlaggenmemory', '/games/flags-memory', '/games/flags-memory/navigation.webp', 50, 76),
   ] },
   { id: 'language', label: 'Taleneiland', path: '/islands/language', spot: { x: .13, y: .49, width: .24, height: .24 }, background: A.destinations.school, backgroundAlt: 'Een rustige plek om samen nieuwe dingen te ontdekken', modules: [], status: 'coming-soon', future: ['languages'], activities: [] },
 ];

@@ -128,7 +128,9 @@
 .math-lua .lua-game-shell { min-height: calc(100dvh - 115px); }
 .math-lua .lua-menu { max-width: 480px; }
 .math-lua .lua-menu-balance, .math-lua .lua-coins { display: none; }
-.math-lua .lua-play { background: #526b4f; }
+/* Lua's eigen paars, ook als je via het rekeneiland binnenkomt. */
+.math-lua .lua-play { background: #5c3d78; border-color: #5c3d78; }
+.math-lua .lua-play:hover { background: #49315f; }
 .math-lua .lua-results { display: none; }
 .math-completion.ck-dialog { width: min(360px,calc(100% - 24px)); max-height: calc(100svh - 32px); overflow-y: auto; border-radius: 8px; text-align: center; }
 .math-completion .ck-dialog__actions { display: grid; grid-template-columns: 1fr; }

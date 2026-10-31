@@ -1,6 +1,6 @@
 export const ASSET_LIBRARY = {
   brand: {
-    logo: '/images/cocokiki-logo.png',
+    logo: '/images/cocokiki-logo.webp',
     compass: '/images/logo-compas.svg',
     coinCompass: '/images/logo-compas-geel.svg',
   },
@@ -132,7 +132,7 @@ export const ASSET_LIBRARY = {
   },
   games: {
     babyLua: {
-      background: '/assets/baby-lua/backgrounds/waterfall-cliff.png',
+      background: '/assets/baby-lua/backgrounds/waterfall-cliff.webp',
       poses: '/assets/baby-lua/characters/lua-poses.webp',
       rocks: '/games/red-baby-lua/rocks.webp',
     },

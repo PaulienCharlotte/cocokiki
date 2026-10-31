@@ -132,8 +132,19 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
     if (phaseRef.current !== 'active' || !activeQuestion || wrongChoices.includes(choice)) return;
     audioRef.current.unlock(); audioRef.current.play('tap');
     if (choice !== activeQuestion.answer) {
+      // Een fout antwoord kost een hartje. Anders kun je alle antwoorden
+      // afgaan tot je de goede hebt, en dan is er niets te redden.
       audioRef.current.play('wrong'); setWrongChoices(previous => [...previous, choice]); setFeedback('Bijna. Kijk nog eens goed!');
       difficultyRef.current = nextDifficulty(difficultyRef.current, 0, true);
+      if (calm) return;
+      const resterend = hearts - 1;
+      setHearts(resterend);
+      if (resterend <= 0) {
+        setGamePhase('resolving'); sceneRef.current?.resolveTimeout(); audioRef.current.play('impact');
+        const laatste = recordTimeout(stats);
+        setStats(laatste); setFeedback(`Oeps! ${activeQuestion.explanation}`);
+        transitionRef.current = window.setTimeout(() => finish(laatste, round), 2200);
+      }
       return;
     }
     setGamePhase('resolving'); sceneRef.current?.resolveSuccess(); audioRef.current.play('success');
@@ -147,7 +158,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
     setFeedback(`${FEEDBACK[round % FEEDBACK.length]} ${activeQuestion.explanation}${comboBonus ? ` · Combo +${comboBonus}` : ''}`);
     const calmFinished = (mathAdventure || preferences.mode === 'calm') && round >= ROUND_COUNT;
     transitionRef.current = window.setTimeout(() => calmFinished ? finish(nextStats, round) : beginRound(round + 1, nextStats, activeQuestion.id), mathAdventure ? 750 : 1350);
-  }, [beginRound, finish, preferences.mode, preferences.table, round, stats, wrongChoices, mathAdventure]);
+  }, [beginRound, calm, finish, hearts, preferences.mode, preferences.table, round, stats, wrongChoices, mathAdventure]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -178,7 +189,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
         <div className="lua-menu-balance"><CocoCoin size={20} /><strong>{coins}</strong><span>CocoCoins</span></div>
         <div className="lua-menu-actions"><button className="lua-play" disabled={!sceneReady} onClick={startSession}><Play size={21} />{sceneReady ? 'Start avontuur' : 'Even laden...'}</button>{!mathAdventure && <button className="lua-icon-button" aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 /> : <VolumeX />}</button>}</div>
       </section>}
-      {phase === 'tutorial' && <section className="lua-dialog"><h2>Help Lua!</h2><p>Kies het goede antwoord. Je krijgt verschillende soorten tafelvragen en mag na een fout nog eens proberen.</p><button className="lua-play" onClick={() => { updatePreference('tutorialSeen', true); beginRound(1, EMPTY_STATS); }}>Op avontuur</button></section>}
+      {phase === 'tutorial' && <section className="lua-dialog"><h2>Help Lua!</h2><p>Kies het goede antwoord. Je krijgt verschillende soorten tafelvragen. Een fout kost een hartje, dus kijk goed voor je kiest.</p><button className="lua-play" onClick={() => { updatePreference('tutorialSeen', true); beginRound(1, EMPTY_STATS); }}>Op avontuur</button></section>}
       {(phase === 'active' || phase === 'resolving') && question && <>
         <div className="lua-hud">{!calm && <span className="lua-hearts">{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={21} fill={index < hearts ? 'currentColor' : 'none'} />)}</span>}<strong>{calm ? `${round}/${ROUND_COUNT}` : `Som ${round}`}</strong><span className="lua-stage">{stage}</span>{stats.streak >= 2 && <span className="lua-combo">Combo {stats.streak}×</span>}<span className="lua-coins" aria-label={`${coins} CocoCoins`}><CocoCoin size={18} />{coins}</span>{!calm && <button aria-label={paused ? 'Doorgaan' : 'Pauzeren'} onClick={() => setPaused(value => !value)}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>}</div>
         {!calm && <div className="lua-timer" aria-label={`${Math.ceil(remaining * 100)} procent tijd over`}><span style={{ width: `${remaining * 100}%` }} /></div>}

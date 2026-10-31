@@ -3,13 +3,16 @@ import { ArrowRight } from 'lucide-react';
 import type { StoryQuestion } from './storyProblems';
 import { storySteps } from './storySteps';
 
+const SYMBOOL = { '+': '+', '-': '−', '*': '×', '/': '÷' } as const;
+const ACTIE = { '+': 'Samenvoegen', '-': 'Apart zetten', '*': 'Oogst verzamelen', '/': 'Eerlijk verdelen' } as const;
+
 /**
  * Een redactiesom: een verhaal dat je in stappen uitrekent.
  *
- * Het verhaal staat al in de spraakwolk van Baby Lua, dus hier staat alleen
- * waar je nú mee bezig bent: één som, één invoervak, één knop. De stappen die
- * je al gedaan hebt blijven als kleine kaartjes staan, want die getallen heb
- * je straks weer nodig. Zie `.claude/skills/cocokiki-ui`.
+ * Je ziet alle stappen meteen staan, elk in een eigen vak, zodat je weet
+ * hoeveel werk er komt. In het vak waar je mee bezig bent kun je typen; de
+ * stap erna wacht met een vraagteken op het getal dat jij uitrekent, anders
+ * zou die het antwoord al verklappen. Zie `.claude/skills/cocokiki-ui`.
  */
 export default function StoryChallenge({ question, locked, onAnswer }: {
   question: StoryQuestion; locked: boolean; selected?: number; onAnswer: (value: number, valid?: boolean) => void;
@@ -19,8 +22,6 @@ export default function StoryChallenge({ question, locked, onAnswer }: {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState(false);
   const step = steps[index];
-  const symbol = { '+': '+', '-': '−', '*': '×', '/': '÷' }[step.operation];
-  const action = { '+': 'Samenvoegen', '-': 'Apart zetten', '*': 'Oogst verzamelen', '/': 'Eerlijk verdelen' }[step.operation];
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (locked || amount === '') return;
@@ -30,19 +31,26 @@ export default function StoryChallenge({ question, locked, onAnswer }: {
     if (index === steps.length - 1) onAnswer(value);
     else { setIndex(index + 1); setAmount(''); }
   };
-  return <div className="story-challenge">
-    {index > 0 && <ol className="story-gedaan" aria-label="Wat je al hebt uitgerekend">
-      {steps.slice(0, index).map((item, i) => <li key={i}>{item.left} {{ '+': '+', '-': '−', '*': '×', '/': '÷' }[item.operation]} {item.right} = <strong>{item.answer}</strong></li>)}
-    </ol>}
-    <form className="math-workbench" onSubmit={submit}>
-      <label htmlFor="harvest-answer">{steps.length > 1 ? `${action} · stap ${index + 1} van ${steps.length}` : action}</label>
-      <div className="math-workbench__equation">
-        <span>{step.left} {symbol} {step.right} =</span>
-        <input id="harvest-answer" aria-label="Hoeveelheid" type="number" min="0" step="1" inputMode="numeric" value={amount} disabled={locked} onChange={event => { setAmount(event.target.value); setError(false); }} required />
-      </div>
-      <button type="submit" disabled={locked || amount === ''}>{locked ? 'Klaar!' : index === steps.length - 1 ? 'Dit is het antwoord' : action}<ArrowRight size={18} aria-hidden="true" /></button>
-      {error && <p role="status">Deze hoeveelheid klopt nog niet. Probeer nog eens.</p>}
-    </form>
+  return <form className="story-challenge math-workbench" onSubmit={submit}>
+    <ol className="story-stappen">
+      {steps.map((item, i) => {
+        const klaar = locked || i < index;
+        const nu = !klaar && i === index;
+        return <li key={i} className={klaar ? 'is-klaar' : nu ? 'is-nu' : 'is-later'}>
+          <span className="story-stappen__kop">Stap {i + 1}{steps.length > 1 ? '' : ''} · {ACTIE[item.operation]}</span>
+          <span className="math-workbench__equation">
+            <span>{i === 0 || klaar || nu ? item.left : '?'} {SYMBOOL[item.operation]} {item.right} =</span>
+            {klaar
+              ? <output>{item.answer}</output>
+              : nu
+                ? <input id="harvest-answer" aria-label={`Uitkomst van stap ${i + 1}`} type="number" min="0" step="1" inputMode="numeric" autoFocus value={amount} onChange={event => { setAmount(event.target.value); setError(false); }} required />
+                : <output aria-label="nog niet aan de beurt">?</output>}
+          </span>
+        </li>;
+      })}
+    </ol>
+    <button type="submit" disabled={locked || amount === ''}>{locked ? 'Klaar!' : index === steps.length - 1 ? 'Dit is het antwoord' : ACTIE[step.operation]}<ArrowRight size={18} aria-hidden="true" /></button>
+    {error && <p role="status">Deze hoeveelheid klopt nog niet. Probeer nog eens.</p>}
     {locked && <p className="story-explanation">{question.explanation}</p>}
-  </div>;
+  </form>;
 }

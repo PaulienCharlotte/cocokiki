@@ -8,6 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MATH_GAME_IDS, MATH_LEVELS, type Expression, type MathResult } from '../games/math/types';
+import { DROP_MARGE, dropDoel } from '../games/math/dropTarget';
 import { DISTRIBUTION_MAX, answerChoices, balanceAngle, createQuestionDeck, distributionCorrect, evaluate, expressionText, generateQuestion, resultStatus, validAnswer } from '../games/math/engine';
 import { emptyMathProgress, finishMathLevel, levelUnlocked, loadMathProgress, migrateMathProgress, MATH_PROGRESS_KEY, nextMathLevel } from '../games/math/progress';
 import { MATH_GAMES, mathIcon, RACE_TARGETS } from '../games/math/config';
@@ -566,4 +567,39 @@ test('de winkel sluit zodra er een klant van de band valt', () => {
   assert.match(bron, /fallTimer\.current = setTimeout\(finish, CHECKOUT_FALL_MS\)/);
   assert.doesNotMatch(bron, /RACE_SECONDS/);
   assert.doesNotMatch(readFileSync('games/math/config.ts', 'utf8'), /RACE_SECONDS/);
+});
+
+test('een bes die net op de rand van een mandje landt gaat in dat mandje', () => {
+  // De oogstbalk ligt vlak boven de mandjes. Hij mag niet winnen van een
+  // mandje, want dan kaatst een bes terug terwijl je hem er duidelijk in legde.
+  const oogst = { id: -1, rect: { left: 0, right: 600, top: 300, bottom: 440 } };
+  const links = { id: 0, rect: { left: 60, right: 260, top: 450, bottom: 640 } };
+  const rechts = { id: 1, rect: { left: 320, right: 520, top: 450, bottom: 640 } };
+  const vakken = [oogst, links, rechts];
+  assert.equal(dropDoel(160, 455, vakken), 0, 'net binnen de bovenrand van het linkermandje');
+  assert.equal(dropDoel(160, 445, vakken), 0, 'net erboven, tussen de balk en het mandje in');
+  assert.equal(dropDoel(420, 500, vakken), 1, 'midden in het rechtermandje');
+  assert.equal(dropDoel(300, 350, vakken), -1, 'midden op de oogstbalk');
+  assert.equal(dropDoel(290, 520, vakken), 0, `tussen de mandjes blijft binnen ${DROP_MARGE}px`);
+  assert.equal(dropDoel(160, 900, vakken), -1, 'ver onder alles gaat terug naar de oogst');
+  // De oogstbalk telt alleen als je er echt op loslaat, nooit als dichtstbijzijnde.
+  assert.equal(dropDoel(160, 448, [oogst, links]), 0);
+});
+
+test('de tekeningen van Lua en de rotsen blijven binnen hun eigen vakje', () => {
+  // Een sprite die over de rand van zijn vakje loopt, komt als streepje boven
+  // de tekening eronder tevoorschijn. Boven Lua's hoofd zag je dat gebeuren.
+  const vellen = [
+    { pad: 'public/assets/baby-lua/characters/lua-poses.webp', kolommen: 4, rijen: 2 },
+    { pad: 'public/games/red-baby-lua/rocks.webp', kolommen: 3, rijen: 2 },
+  ];
+  for (const vel of vellen) {
+    const data = readFileSync(vel.pad);
+    assert.equal(data.subarray(8, 12).toString(), 'WEBP', vel.pad);
+    assert.ok(data.subarray(0, 200).includes('ALPH'), `${vel.pad} mist doorzichtigheid`);
+  }
+  // De spelcode knipt ze in vakken van deze maat; dat moet blijven kloppen.
+  const scene = readFileSync('games/red-baby-lua/game/scenes/PlayScene.ts', 'utf8');
+  assert.match(scene, /lua-poses\.webp', \{ frameWidth: 384, frameHeight: 512 \}/);
+  assert.match(scene, /rocks\.webp', \{ frameWidth: 512, frameHeight: 512 \}/);
 });

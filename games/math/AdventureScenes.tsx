@@ -34,11 +34,11 @@ export function CookieScene({ question, success }: { question: MathQuestion; suc
     <strong className="scene-caption">{caption}</strong>
   </div>;
 }
-export function HoneyJars({ question, placed }: { question: MathQuestion; placed?: number }) {
+export function HoneyJars({ question, placed, labels = true }: { question: MathQuestion; placed?: number; labels?: boolean }) {
   const left = evaluate(question.left), right = evaluate(question.right, placed ?? 0);
   const maximum = Math.max(left, ...question.options.map(value => evaluate(question.right, value)), 1);
   return <div className={`honey-jars${placed === question.answer ? ' is-success' : ''}`} role="img" aria-label={`Honing: links ${left}, rechts ${right}${left === right ? ', evenveel' : ''}`}>
-    {[left, right].map((amount, index) => <div className="honey-jar" key={index}><div className="honey-jar__glass"><span>{index === 0 ? expressionText(question.left) : expressionText(question.right, placed)}</span><img className="honey-jar__art" src={mathAssets.honeyJar} alt="" /><div className="honey-meter" aria-hidden="true"><div className="honey-meter__fill" style={{ height: `${amount / maximum * 100}%` }} /></div></div></div>)}
+    {[left, right].map((amount, index) => <div className="honey-jar" key={index}><div className="honey-jar__glass">{labels && <span>{index === 0 ? expressionText(question.left) : expressionText(question.right, placed)}</span>}<img className="honey-jar__art" src={mathAssets.honeyJar} alt="" /><div className="honey-meter" aria-hidden="true"><div className="honey-meter__fill" style={{ height: `${amount / maximum * 100}%` }} /></div></div></div>)}
     <div className="honey-bees" aria-hidden="true">{[0, 1].map(i => <img className="honey-bee" src={mathAssets.bee} alt="" key={i} />)}</div>
   </div>;
 }

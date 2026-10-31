@@ -2,12 +2,12 @@ import { ASSET_LIBRARY } from './assetLibrary';
 
 export const ROOM_MODULE_INTERIORS = {
   room: ASSET_LIBRARY.treehouse.rooms.livingRoom,
-  bedroom: '/assets/library/treehouse/rooms/green-bedroom-interior.png',
+  bedroom: '/assets/library/treehouse/rooms/green-bedroom-interior.webp',
   kitchen: ASSET_LIBRARY.treehouse.rooms.kitchen,
   terrace: ASSET_LIBRARY.treehouse.rooms.terrace,
-  bathroom: '/assets/library/treehouse/rooms/bathroom-interior.png',
-  blush: '/assets/library/treehouse/rooms/blush-interior.png',
-  garden: '/assets/library/treehouse/expansions/greenhouse.png',
+  bathroom: '/assets/library/treehouse/rooms/bathroom-interior.webp',
+  blush: '/assets/library/treehouse/rooms/blush-interior.webp',
+  garden: '/assets/library/treehouse/expansions/greenhouse.webp',
 } as const;
 
 export type BaseRoomId = 'living-room' | 'kitchen' | 'bathroom' | 'bedroom' | 'terrace';

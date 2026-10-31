@@ -22,7 +22,7 @@ test('mobile treehouse keeps rooms readable while desktop and preview still fit 
   assert.ok(mobile * layout.height / layout.width <= 760);
   assert.ok(treehouseViewWidth(1200, 760, layout.width, layout.height, true) <= 1200);
   assert.ok(treehouseViewWidth(375, 760, layout.width, layout.height, false) <= 375);
-  assert.match(TREEHOUSE_UNIT_ASSETS.bathroom.src, /bathroom-empty.png$/);
+  assert.match(TREEHOUSE_UNIT_ASSETS.bathroom.src, /bathroom-empty.webp$/);
 });
 
 test('room prototype has an isolated route without replacing the actual treehouse', () => {

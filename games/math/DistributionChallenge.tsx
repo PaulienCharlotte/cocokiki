@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Hand, Undo2 } from 'lucide-react';
 import DragChoice from './DragChoice';
 import { distributionCorrect } from './engine';
+import { dropDoel } from './dropTarget';
 import { mathAssets } from './assets';
 import type { MathQuestion } from './types';
 
@@ -25,18 +26,16 @@ export default function DistributionChallenge({ question, locked, onAnswer, tuto
       notify.current(question.answer, distributionCorrect(Array.from({ length: question.groups! }, (_, i) => locations.filter(place => place === i).length), question.a));
     }
   }, [locations, locked, question]);
+  const mandjeBij = (x: number, y: number) => dropDoel(x, y, [...(targets.current?.querySelectorAll<HTMLElement>('[data-fruit-target]') ?? [])]
+    .map(vak => ({ id: Number(vak.dataset.fruitTarget), rect: vak.getBoundingClientRect() })));
+
   const place = (id: number, basket: number) => {
     if (locked || locations[id] === basket) return;
     setDemo(false); setHistory(previous => [...previous, locations]);
     setLocations(previous => previous.map((location, i) => i === id ? basket : location)); setSelected(undefined);
   };
   const fruitButton = (id: number) => <React.Fragment key={id}><DragChoice value={id} label={`${name} ${id + 1}${locations[id] >= 0 ? `, in mandje ${locations[id] + 1}` : ', in de oogst'}`} selected={selected === id} disabled={locked} targetRef={targets}
-    onChoose={() => { setSelected(id); setDemo(false); }} onDrop={(_, x, y) => {
-      targets.current?.querySelectorAll<HTMLElement>('[data-fruit-target]').forEach(target => {
-        const rect = target.getBoundingClientRect();
-        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) place(id, Number(target.dataset.fruitTarget));
-      });
-    }}><img src={fruit} alt="" draggable={false} /></DragChoice></React.Fragment>;
+    onChoose={() => { setSelected(id); setDemo(false); }} onDrop={(_, x, y) => place(id, mandjeBij(x, y))}><img src={fruit} alt="" draggable={false} /></DragChoice></React.Fragment>;
   return <div className="berry-game" ref={targets}>
     <div className="berry-harvest" data-fruit-target="-1" aria-label={`${remaining} bessen in de oogst`}>
       <div className="berry-harvest__label"><strong>{remaining} over</strong>{selected !== undefined && locations[selected] !== -1 && <button type="button" onClick={() => place(selected, -1)}>Terug naar de oogst</button>}</div>

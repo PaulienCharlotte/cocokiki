@@ -3,6 +3,13 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+
+/** De maat van een WebP met doorzichtigheid staat in het VP8X-blok. */
+function webpMaat(data: Buffer): { breedte: number; hoogte: number } {
+  assert.equal(data.subarray(12, 16).toString(), 'VP8X', 'geen VP8X-blok');
+  const lees = (offset: number) => data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16);
+  return { breedte: lees(24) + 1, hoogte: lees(27) + 1 };
+}
 import AppShell from '../components/platform/AppShell';
 import PlatformHeader from '../components/platform/PlatformHeader';
 import DestinationScreen from '../pages/DestinationScreen';
@@ -81,7 +88,7 @@ test('Dreamworld renders one intact world image, six hotspots and compact tools'
   assert.match(html, /aria-label="Profielmenu openen"/);
   assert.match(html, /dreamworld\/world-map-modern\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
-  assert.match(html, /images\/cocokiki-logo\.png/);
+  assert.match(html, /images\/cocokiki-logo\.webp/);
   assert.match(html, /images\/avatars\/coco\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/(coins|settings)-control\.webp/);
 });
@@ -156,21 +163,20 @@ test('purchase confirmation offers an overview exit alongside continued shopping
   for (const label of ['Naar de keuken', 'Terug naar het kookboek', 'Verder winkelen']) assert.ok(recipe.includes(label));
 });
 
-test('decor products have valid local PNG originals or transparent WebP assets', () => {
+test('decor products are transparent WebP assets of the right size', () => {
   for (const product of DECOR_PRODUCTS) {
     const filename = `public${product.image.split('?')[0]}`;
     const afbeelding = readFileSync(filename);
-    if (filename.endsWith('.png')) {
-      assert.deepEqual([...afbeelding.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], product.id);
-      if (product.sheet) {
-        assert.equal(afbeelding.readUInt32BE(16), product.sheet.width, product.id);
-        assert.equal(afbeelding.readUInt32BE(20), product.sheet.height, product.id);
-      }
-      continue;
-    }
     assert.equal(afbeelding.subarray(8, 12).toString(), 'WEBP', product.id);
     // VP8X met een ALPH-blok betekent dat de doorzichtigheid bewaard is.
     assert.ok(afbeelding.subarray(0, 200).includes('ALPH'), `${product.id} mist doorzichtigheid`);
+    // Een tekening met meerdere standen moet precies zo groot zijn als het
+    // raster waarmee we hem in stukjes knippen.
+    if (product.sheet) {
+      const maat = webpMaat(afbeelding);
+      assert.equal(maat.breedte, product.sheet.width, product.id);
+      assert.equal(maat.hoogte, product.sheet.height, product.id);
+    }
   }
 });
 

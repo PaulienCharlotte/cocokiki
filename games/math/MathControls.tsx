@@ -11,7 +11,7 @@ export function MathHeader({ game, level, progress, onBack, onHome = onBack, onL
   return <header className="math-game-header">
     {/* De uitgang staat in elk spel als eerste in de rij, als rond icoon. */}
     <button className="math-icon-tool math-terug" type="button" aria-label={game ? 'Terug naar het rekeneiland' : 'Terug naar School'} title={game ? 'Rekeneiland' : 'School'} onClick={onBack}><ArrowLeft size={20} aria-hidden="true" /></button>
-    <button className="math-header-brand" type="button" onClick={onHome} aria-label="Naar de wereld"><img src="/images/cocokiki-logo.png" alt="CocoKiki" /></button>
+    <button className="math-header-brand" type="button" onClick={onHome} aria-label="Naar de wereld"><img src="/images/cocokiki-logo.webp" alt="CocoKiki" /></button>
     <h1>{config?.title ?? 'Rekenavonturen'}</h1>
     {game && config && <MathLevelSlider game={game} level={level} progress={progress} onLevel={onLevel} />}
     <span className="math-wallet" aria-label={`${coins} CocoCoins`}><CocoCoin size={24} />{coins}</span>

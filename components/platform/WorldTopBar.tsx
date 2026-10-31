@@ -64,7 +64,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
       <div className="world-hud__leading">
         {onBack && <IconButton className="world-hud__back" size="small" label={backLabel} icon={<ArrowLeft size={19} />} onClick={onBack} />}
         <button className="world-hud__brand" type="button" onClick={onHome} aria-label="Naar de wereld">
-          <img src="/images/cocokiki-logo.png" alt="CocoKiki" />
+          <img src="/images/cocokiki-logo.webp" alt="CocoKiki" />
         </button>
       </div>
       <div className="world-hud__tools">

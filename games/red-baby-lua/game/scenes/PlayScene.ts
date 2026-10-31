@@ -45,7 +45,7 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/waterfall-cliff.png');
+    this.load.image('jungle-bg', '/assets/baby-lua/backgrounds/waterfall-cliff.webp');
     this.load.spritesheet('lua-new', '/assets/baby-lua/characters/lua-poses.webp', { frameWidth: 384, frameHeight: 512 });
     this.load.spritesheet('lua-rocks', '/games/red-baby-lua/rocks.webp', { frameWidth: 512, frameHeight: 512 });
   }

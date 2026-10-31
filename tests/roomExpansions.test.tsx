@@ -193,7 +193,7 @@ test('building shop shows illustrated modules, tabs and prices before the icon s
   assert.match(html, /Roze kamer/);
   assert.match(html, /role="tab"/);
   assert.match(html, /150 CocoCoins/);
-  assert.match(html, /garden-room.png/);
+  assert.match(html, /garden-room.webp/);
 }));
 
 test('new room modules retain their actual assets, name and icon on reload', () => memory(() => {

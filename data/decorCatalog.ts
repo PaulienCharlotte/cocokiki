@@ -150,7 +150,7 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
     { id: 'rolled-towels', name: 'Handdoekenset', price: 25, roomWidth: 12 },
   ].map(({ id, name, price, roomWidth, width = 1774, height = 887 }): DecorProduct => ({
     ...turnable(id, name, 'bathroom', price, roomWidth),
-    image: `/assets/library/shop/decor/products/bathroom/${id}.png`,
+    image: `/assets/library/shop/decor/products/bathroom/${id}.webp`,
     sheet: { columns: 4, rows: 2, width, height,
       ...(id === 'bathroom-vanity' ? { frames: [0, 1].flatMap(row => [
         { x: 0, y: row * 512, width: 430, height: 512 },
@@ -161,7 +161,7 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
     },
   })),
   { ...turnable('bath-tray', 'Badplankje', 'bathroom', 25, 24),
-    image: '/assets/library/shop/decor/products/bathroom/bath-tray.png',
+    image: '/assets/library/shop/decor/products/bathroom/bath-tray.webp',
     sheet: { columns: 4, rows: 2, width: 1774, height: 887,
       frames: [0, 1].flatMap(row => [
         { x: 0, y: row * 443.5, width: 525, height: 443.5 },
@@ -171,7 +171,7 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
       ]) },
   },
   { ...turnable('bath-wall-lamp', 'Wandlampje', 'bathroom', 35, 10), views: 2,
-    image: '/assets/library/shop/decor/products/bathroom/bath-wall-lamp.png',
+    image: '/assets/library/shop/decor/products/bathroom/bath-wall-lamp.webp',
     sheet: { columns: 2, rows: 1, width: 1774, height: 887 } },
   ...[
     { id: 'bath-sponge', name: 'Badspons', price: 10, roomWidth: 6 },
@@ -180,10 +180,10 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
     { id: 'toothbrush-cup', name: 'Tandenborstelbeker', price: 20, roomWidth: 7 },
   ].map(({ id, name, price, roomWidth }): DecorProduct => ({
     ...furniture(id, name, 'bathroom', price), roomWidth,
-    image: `/assets/library/shop/decor/products/bathroom/${id}.png`,
+    image: `/assets/library/shop/decor/products/bathroom/${id}.webp`,
   })),
   { ...furniture('hanging-towel', 'Handdoek aan haak', 'bathroom', 20),
-    image: '/assets/library/shop/decor/products/bathroom/hanging-towel.png', roomWidth: 8 },
+    image: '/assets/library/shop/decor/products/bathroom/hanging-towel.webp', roomWidth: 8 },
   turnable('plant-shelf', 'Plantenplank', 'storage', 55, 20),
   turnable('cloud-shelf', 'Wolkenplank', 'storage', 45, 20),
   furniture('pumpkin-pouf', 'Pompoenpoef', 'seating', 35),
