@@ -603,3 +603,20 @@ test('de tekeningen van Lua en de rotsen blijven binnen hun eigen vakje', () => 
   assert.match(scene, /lua-poses\.webp', \{ frameWidth: 384, frameHeight: 512 \}/);
   assert.match(scene, /rocks\.webp', \{ frameWidth: 512, frameHeight: 512 \}/);
 });
+
+test('elk spel gebruikt dezelfde terugknop en dezelfde memorykaart', () => {
+  // Eén soort terugknop: een rond pijltje met de bestemming in het label.
+  for (const bestand of ['pages/FlagsMemory.tsx', 'games/clock/ClockControls.tsx', 'games/clock/WorldTimes.tsx', 'components/cooking/IngredientDiscoveryFlow.tsx', 'components/shop/BasketPractice.tsx']) {
+    const bron = readFileSync(bestand, 'utf8');
+    assert.doesNotMatch(bron, /startIcon=\{<ArrowLeft[^}]*\}\s*onClick=\{on(Back|Exit)/, `${bestand} heeft nog een tekstknop om terug te gaan`);
+    assert.match(bron, /IconButton label="Terug naar/, `${bestand} mist de ronde terugknop`);
+  }
+  // Eén memorykaart voor alle memoryspellen.
+  const kaart = readFileSync('components/ui/memory-card.css', 'utf8');
+  assert.match(kaart, /\.card-back,\n\.clock-memory-card__back \{ background: var\(--color-primary\)/);
+  assert.doesNotMatch(readFileSync('games/clock/clock.css', 'utf8'), /clock-memory-card__back \{ background: linear-gradient/);
+  // De werelddelen tonen hun eigen vlaggen, niet zes keer dezelfde wereldbol.
+  const memory = readFileSync('pages/FlagsMemory.tsx', 'utf8');
+  assert.match(memory, /flag-continents__vlaggen/);
+  assert.doesNotMatch(memory, /Globe2/);
+});

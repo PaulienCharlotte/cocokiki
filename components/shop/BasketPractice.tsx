@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Check, ChevronRight } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Button, IconButton } from '../../design-system';
 import type { ShoppingSession } from '../../services/shopping';
 import { answerShoppingQuestion, loadShoppingPractice, shoppingQuestion, SHOPPING_QUESTION_REWARD } from '../../services/shoppingPractice';
 import CocoCoin from '../platform/CocoCoin';
@@ -25,7 +25,7 @@ export default function BasketPractice({ session, deficit, onBack, onBalance }: 
     setFeedback({ text: question.explanation, correct: true });
   };
   return <section className="basket-practice" aria-labelledby="basket-practice-title">
-    <Button variant="quiet" size="small" startIcon={<ArrowLeft />} onClick={onBack}>Jouw boodschappen</Button>
+    <IconButton label="Terug naar jouw boodschappen" icon={<ArrowLeft size={19} />} onClick={onBack} />
     <img className="basket-practice__coco" src="/assets/library/cooking/coco-chef-tip.webp" alt="Coco" />
     <h3 id="basket-practice-title" tabIndex={-1} ref={titleRef}>{deficit > 0 ? 'Verdien voor je mandje' : 'Je hebt genoeg!'}</h3>
     {deficit > 0 ? <>

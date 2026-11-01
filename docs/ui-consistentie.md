@@ -132,6 +132,16 @@ Die zijn omgezet naar WebP: 11,7 MB, dezelfde tekeningen. De map is nu 62 MB.
 **Doen:** nieuwe tekeningen altijd als WebP aanleveren. Een PNG van twee
 megabyte laat een kind seconden naar een leeg scherm kijken.
 
+## 10. De klokspellen hebben nog hun eigen vorm
+
+De memorykaarten zijn gelijkgetrokken, maar de rest van de klokspellen heeft
+nog een eigen schil: het overzicht met gekleurde vlakken links en een plaatje,
+de niveaukiezer met rondjes 1 tot 5, en een eigen kopbalk. Dat is iets anders
+dan het keuzeraster (`CardGrid`) en de schuifbalk die de rekenspellen gebruiken.
+
+**Doen:** het klokoverzicht naar `CardGrid`, en de niveaurondjes naar dezelfde
+schuifbalk als bij rekenen.
+
 ## Al opgelost
 
 - Een kamer in de boomhut werd alleen op een telefoon op volle breedte getoond
@@ -140,6 +150,16 @@ megabyte laat een kind seconden naar een leeg scherm kijken.
   dus overal.
 - Meubels konden tot 1,8 keer hun maat; de douchecabine stond daar al op. Dat
   maximum is 3 geworden.
+- Elk scherm had zijn eigen terugknop: "Stoppen", "Terug naar het eiland",
+  "Spellen", "Continenten", elk met een andere vorm op een andere plek. Overal
+  is het nu hetzelfde ronde pijltje, met de bestemming in het voorleeslabel.
+- Het klokmemory had oranje kaarten met een eigen rand en schaduw, het
+  vlaggenmemory donkergroene. Beide komen nu uit
+  `components/ui/memory-card.css`.
+- De zes werelddelen toonden zes keer dezelfde wereldbol. Nu staan er drie
+  vlaggen uit dat werelddeel op het kaartje.
+- De stappen van een redactiesom stonden op een breed scherm onder elkaar,
+  terwijl er ruimte naast was.
 - De tekeningen van Baby Lua en van de rotsen liepen over de rand van hun
   vakje in het sprite-vel. Daardoor stond er een streepje van de pose erboven
   boven Lua's hoofd. Die randen zijn weggehaald.

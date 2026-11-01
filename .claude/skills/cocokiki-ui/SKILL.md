@@ -98,6 +98,10 @@ de regels, geen rand of schaduw om de losse antwoorden. Het moet lezen als
 pillen naast elkaar, geen raster van kaartjes.
 
 - Twee tot vier antwoorden. Meer kan een kind niet overzien.
+- **Een icoon dat op elk kaartje hetzelfde is, zegt niets.** Zes werelddelen
+  met zes keer dezelfde wereldbol zijn zes keer niets. Laat iets zien dat per
+  kaartje verschilt: de eerste drie vlaggen van dat werelddeel, de tekening van
+  dat spel, het plaatje van die plant.
 - **Getallen zijn de uitzondering.** Vier losse cijfers lezen slecht onder
   elkaar; die staan naast elkaar als tegels (`.math-answers`), groot genoeg om
   te raken. Woorden en zinnen blijven een `ChoiceList`.
@@ -190,6 +194,13 @@ moet weten bovenaan, wat je moet kiezen onderaan. Daartussen zie je de potten,
 de band of het mandje. Losse chips over de hele foto verspreid lezen als rommel,
 ook als ze elk op zich netjes zijn.
 
+**Eén soort terugknop, overal.** Een rond pijltje (`IconButton` met
+`ArrowLeft`), met de bestemming in `label`. Nooit een knop met het woord
+"Stoppen" of "Terug naar het eiland" erin: die zien er per scherm anders uit en
+staan elke keer ergens anders. De balk bovenaan heeft er altijd één; zet er
+alleen een tweede in het scherm zelf als er echt een stap tussen zit, zoals van
+een memorybord terug naar de werelddelen.
+
 **De uitgang staat in elk spel op dezelfde plek.** Links in de balk boven het
 spel, als rond icoon van `--touch-target` groot, met de bestemming in
 `aria-label` en `title`. Daarnaast de instellingen, rechts het geluid: drie
@@ -231,7 +242,16 @@ plaatje. Zo kan een scherm ze niet verwisselen.
 Verwissel ze nooit, ook niet "even" voor een tip. Een vraag over eten is van
 Coco, ook als hij in het plantenboek staat.
 
-## 8. Per spel mag de dynamiek verschillen, de vorm niet
+## 8. Memory ziet er in elk spel hetzelfde uit
+
+`components/ui/memory-card.css` is de kaart: een donkergroene achterkant, een
+witte voorkant, `--radius-control` en `--shadow-soft`, en
+`--color-success-soft` zodra je een paar hebt. Het vlaggenmemory en het
+klokmemory delen die regels; een nieuw memoryspel zet zijn eigen klassen in
+datzelfde bestand erbij in plaats van een eigen kaart te tekenen. Alleen hoe
+de kaarten op het bord liggen hoort bij het spel.
+
+## 9. Per spel mag de dynamiek verschillen, de vorm niet
 
 Verschillend mag: hoe je speelt, welke beweging erbij hoort, welke
 achtergrond, hoe je scoort.
@@ -240,13 +260,13 @@ Hetzelfde moet: tokens, de knoppen uit het design system, de opbouw van
 hierboven, het topmenu (`AppShell`), de munten, de taal, en waar overkoepelende
 dingen staan (de encyclopedie zit in het topmenu, niet in een kamer).
 
-## 9. Taal
+## 10. Taal
 
 Nederlands, tegen een kind van negen. Korte zinnen, geen schoolse termen.
 Variabelen en commentaar in de code ook Nederlands, zoals in de rest van de
 repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 
-## 10. Voor je klaar bent
+## 11. Voor je klaar bent
 
 1. `npm test` — alles groen (de tests zijn ook de plek waar botsingen met de
    andere agent opvallen).
@@ -256,7 +276,7 @@ repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 4. Kijk er in de browser naar op 360px en op desktop.
 5. Commit en push alleen als Charlotte erom vraagt.
 
-## 11. Wat nu nog niet klopt
+## 12. Wat nu nog niet klopt
 
 `docs/ui-consistentie.md` houdt bij welke oude stukken nog niet aan dit
 bestand voldoen, en in welke volgorde ze opgeruimd worden. Bouw niets nieuws

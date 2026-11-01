@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, RotateCcw, SkipForward, Sparkles } from 'lucide-react';
-import { Button, ProgressIndicator } from '../../design-system';
+import { Button, ProgressIndicator, IconButton } from '../../design-system';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
@@ -91,7 +91,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     return <main className="discovery-stage">
       <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
       <section className="discovery-card discovery-card--completion" aria-labelledby="discovery-complete-title">
-        <div className="discovery-stage__topbar"><Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onExit}>Stoppen</Button></div>
+        <div className="discovery-stage__topbar"><IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} /></div>
         <JourneyStageProgress journey={journey} />
         <span className="discovery-card__success-icon" aria-hidden="true"><Sparkles /></span>
         <h1 id="discovery-complete-title">Alle ingrediënten ontdekt!</h1>
@@ -136,7 +136,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
       <div className="stage-chrome">
         <div className="discovery-stage__topbar">
-          <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onExit}>Stoppen</Button>
+          <IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} />
           <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)}><BookOpen size={17} />Bekijk recept</button>
         </div>
         <JourneyStageProgress journey={journey} />

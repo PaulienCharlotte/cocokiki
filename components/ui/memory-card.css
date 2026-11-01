@@ -1,0 +1,67 @@
+/*
+ * Hoe een memorykaart eruitziet, voor elk memoryspel tegelijk.
+ *
+ * De vorm komt van het vlaggenmemory: een donkergroene achterkant met het
+ * kompas erop, een witte voorkant, en groen zodra je een paar hebt. Elk nieuw
+ * memoryspel krijgt dezelfde kaart door deze klassen te gebruiken, of door
+ * zijn eigen klassen hieronder toe te voegen. Zie `.claude/skills/cocokiki-ui`.
+ */
+
+.memory-card,
+.clock-memory-card {
+  position: relative;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  aspect-ratio: 1.2;
+  perspective: 700px;
+}
+.memory-inner,
+.clock-memory-card__inner {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--motion-gentle) var(--ease-storybook);
+}
+.flipped .memory-inner,
+.clock-memory-card.is-open .clock-memory-card__inner { transform: rotateY(180deg); }
+
+.card-back, .card-front,
+.clock-memory-card__back, .clock-memory-card__front {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  backface-visibility: hidden;
+  box-shadow: var(--shadow-soft);
+}
+.card-back,
+.clock-memory-card__back { background: var(--color-primary); color: var(--color-on-primary); }
+.card-back img { width: calc(var(--space-12) + var(--space-2)); height: calc(var(--space-12) + var(--space-2)); }
+.card-back > span { position: absolute; right: var(--space-3); bottom: var(--space-2); font-size: var(--font-size-xs); }
+/* Het klokmemory heeft geen tekening op de rug; een wijzerplaatje volstaat. */
+.clock-memory-card__back i { display: block; width: 34%; aspect-ratio: 1; border: 3px solid var(--color-on-primary); border-radius: 50%; opacity: .7; }
+
+.card-front,
+.clock-memory-card__front { transform: rotateY(180deg); background: var(--color-surface); }
+.card-front small { color: var(--color-text-muted); font-size: var(--font-size-xs); }
+.clock-memory-card__front .analog-clock { width: 92%; }
+.clock-memory-card__front strong { padding: var(--space-1) var(--space-2); border-radius: var(--radius-control-sm); background: var(--color-background-soft); font-size: clamp(1rem, 3vw, 1.65rem); }
+
+.matched .card-front,
+.clock-memory-card.is-matched .clock-memory-card__front { background: var(--color-success-soft); }
+.memory-card:disabled, .clock-memory-card:disabled { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-inner, .clock-memory-card__inner { transition: none; }
+}

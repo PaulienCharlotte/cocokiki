@@ -191,7 +191,17 @@
 .story-explanation { margin-top: var(--space-5); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); }
 /* Alle stappen staan meteen in beeld, elk in een eigen vak. Het vak waar je
    mee bezig bent springt eruit; de stap erna wacht met een vraagteken. */
+/* Op een breed scherm staan de stappen naast elkaar: je ziet in één oogopslag
+   dat het er twee zijn. Op een telefoon onder elkaar, anders wordt het te smal. */
 .story-stappen { display: grid; gap: var(--space-3); width: 100%; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 560px) {
+  .story-stappen { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: stretch; }
+  .story-challenge.math-workbench { width: min(100%, 620px); }
+  /* Naast elkaar is elk vak smaller, dus mag de som ook wat kleiner. */
+  .story-stappen .math-workbench__equation { gap: var(--space-2); font-size: var(--font-size-xl); }
+  .story-stappen input { width: calc(var(--space-12) + var(--space-5)); min-height: var(--space-12); font-size: var(--font-size-xl); }
+  .story-stappen output { min-width: calc(var(--space-12) + var(--space-2)); }
+}
 .story-stappen li { display: grid; gap: var(--space-2); justify-items: center; padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); background: var(--color-background-soft); }
 .story-stappen li.is-nu { background: var(--color-success-soft); box-shadow: inset 3px 0 0 var(--color-primary); }
 .story-stappen li.is-later { opacity: .55; }

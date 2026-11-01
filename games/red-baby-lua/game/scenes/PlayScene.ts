@@ -6,6 +6,9 @@ export interface SceneCallbacks {
   onTimeout: () => void;
 }
 
+/** Hoe diep de steen in Lua's vacht zakt als hij hem raakt. */
+const ROCK_OVERLAP = .12;
+
 const POSE = { idle: 0, swing: 1, ready: 2, sleep: 3, jump: 4, alert: 5, celebrate: 6, sad: 7 } as const;
 
 /**
@@ -25,6 +28,8 @@ function luaAnchor(width: number, height: number) {
 }
 
 export default class PlayScene extends Phaser.Scene {
+  /** Eenmaal gemeten randen van de tekeningen, per vel en vakje. */
+  private static artRanden = new Map<string, number>();
   private background!: Phaser.GameObjects.Image;
   private groundShadow!: Phaser.GameObjects.Ellipse;
   private lua!: Phaser.GameObjects.Sprite;
@@ -79,15 +84,52 @@ export default class PlayScene extends Phaser.Scene {
   private setPose(frame: number) { this.lua.setFrame(frame); }
 
   /**
-   * De hoogte waarop de steen Lua raakt: zijn hoofd min de halve steen. Zo valt
-   * de steen niet langs hem heen, ook niet bij een ander schermformaat.
+   * Waar de onderkant van de getekende steen zit, en waar Lua's kruin.
+   *
+   * De vakjes van een sprite-vel zijn groter dan de tekening erin: boven de
+   * vacht en onder de steen zit lege ruimte. Rekenden we met het vakje, dan
+   * werd Lua platgedrukt terwijl de steen nog boven hem hing. Daarom meten we
+   * één keer hoe ver de tekening zelf reikt.
+   */
+  private artRand(sleutel: string, frame: number, kant: 'boven' | 'onder'): number {
+    const bekend = PlayScene.artRanden.get(`${sleutel}:${frame}:${kant}`);
+    if (bekend !== undefined) return bekend;
+    const textuur = this.textures.get(sleutel);
+    const vak = textuur.get(frame);
+    const doek = document.createElement('canvas');
+    doek.width = vak.width; doek.height = vak.height;
+    const penseel = doek.getContext('2d', { willReadFrequently: true });
+    let boven = 0, onder = vak.height;
+    if (penseel) {
+      penseel.drawImage(textuur.getSourceImage() as CanvasImageSource, vak.cutX, vak.cutY, vak.width, vak.height, 0, 0, vak.width, vak.height);
+      const pixels = penseel.getImageData(0, 0, vak.width, vak.height).data;
+      const rijHeeftInkt = (y: number) => {
+        for (let x = 3; x < vak.width * 4; x += 4) if (pixels[y * vak.width * 4 + x] > 24) return true;
+        return false;
+      };
+      while (boven < vak.height && !rijHeeftInkt(boven)) boven++;
+      while (onder > boven && !rijHeeftInkt(onder - 1)) onder--;
+    }
+    PlayScene.artRanden.set(`${sleutel}:${frame}:boven`, boven);
+    PlayScene.artRanden.set(`${sleutel}:${frame}:onder`, onder);
+    return kant === 'boven' ? boven : onder;
+  }
+
+  /**
+   * De hoogte waarop de steen Lua raakt: zijn kruin min het stuk steen dat
+   * onder het midden van de steen uitsteekt. Zo landt de steen echt op zijn
+   * hoofd, op elk schermformaat.
    */
   private rockContactY(scale: number) {
-    const luaBounds = this.lua.getBounds();
-    const rockHeight = this.rockArt.height * this.rockArt.scaleY * scale;
-    // De sprite heeft wat lege ruimte boven de vacht; die tellen we mee.
-    const headTop = luaBounds.top + luaBounds.height * .08;
-    return headTop - rockHeight / 2;
+    const kruin = this.lua.getBounds().top + this.artRand('lua-new', Number(this.lua.frame.name), 'boven') * Math.abs(this.lua.scaleY);
+    const vak = this.rockArt.frame;
+    const steenBoven = this.artRand('lua-rocks', Number(this.rockArt.frame.name), 'boven');
+    const steenOnder = this.artRand('lua-rocks', Number(this.rockArt.frame.name), 'onder');
+    const onderkant = (steenOnder - vak.height / 2) * this.rockArt.scaleY * scale;
+    // Laat de steen een stukje in de vacht zakken. Stopt hij precies op de
+    // kruin, dan lijkt hij te zweven terwijl Lua al plat ligt.
+    const inzakken = (steenOnder - steenBoven) * this.rockArt.scaleY * scale * ROCK_OVERLAP;
+    return kruin - onderkant + inzakken;
   }
   private setRock(index: number) { this.rockArt.setFrame(index); }
 
@@ -128,12 +170,18 @@ export default class PlayScene extends Phaser.Scene {
     const delay = this.reducedMotion ? 150 : 360;
     const narrow = this.scale.width < 640;
     const contactY = this.rockContactY(narrow ? .76 : 1);
-    this.tweens.add({ targets: this.rock, y: contactY, duration: delay, ease: 'Quad.in' });
+    // Recht boven Lua en niet meer tollend: zo zie je hem echt landen.
+    this.tweens.add({ targets: this.rock, x: luaAnchor(this.scale.width, this.scale.height).x, y: contactY, angle: 0, duration: delay, ease: 'Quad.in' });
     this.time.delayedCall(delay, () => {
       const anchor = luaAnchor(this.scale.width, this.scale.height);
       this.burst(0xe8c99a); this.makeImpactCloud(anchor.x, anchor.shadowY); this.setPose(POSE.sad);
       // Platgedrukt ligt hij op dezelfde grondlijn als waar hij stond.
       this.lua.setPosition(anchor.x, anchor.shadowY).setScale(narrow ? .39 : .48, narrow ? .15 : .18);
+      // En de steen zakt mee naar beneden. Bleef hij op de hoogte van zijn
+      // kruin hangen, dan zweefde hij boven een Lua die al plat lag. De oude
+      // tween moet eerst weg, anders zet die hem meteen weer terug.
+      this.tweens.killTweensOf(this.rock);
+      this.tweens.add({ targets: this.rock, y: this.rockContactY(narrow ? .76 : 1), duration: this.reducedMotion ? 0 : 90, ease: 'Quad.in' });
       this.cameras.main.shake(this.reducedMotion ? 0 : 110, .004);
       this.time.delayedCall(this.reducedMotion ? 120 : 520, () => {
         this.tweens.add({ targets: this.rock, x: this.scale.width * .32, y: this.scale.height * .7, angle: -22, duration: this.reducedMotion ? 120 : 340, ease: 'Back.out' });

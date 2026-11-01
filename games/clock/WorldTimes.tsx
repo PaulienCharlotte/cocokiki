@@ -70,7 +70,7 @@ export default function WorldTimes({ initialLevel, completedLevels, onBack, onCo
     setAnswer(''); setDay(0); setFeedback(null); setHint(false); answered.current = false; advancing.current = false;
   };
   return <main className="clock-game world-times" aria-labelledby="world-times-title">
-    <header className="world-times__header"><Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={onBack}>Spellen</Button><h1 id="world-times-title">Wereldtijden</h1></header>
+    <header className="world-times__header"><IconButton label="Terug naar de klokspellen" icon={<ArrowLeft size={19} />} onClick={onBack} /><h1 id="world-times-title">Wereldtijden</h1></header>
     <div className="world-times__modes" role="group" aria-label="Wereldtijden kiezen">
       <Button variant={mode === 'clock' ? 'secondary' : 'quiet'} aria-pressed={mode === 'clock'} onClick={() => setMode('clock')}>Wereldklok</Button>
       <Button variant={mode === 'practice' ? 'secondary' : 'quiet'} aria-pressed={mode === 'practice'} onClick={() => setMode('practice')}>Oefenen</Button>

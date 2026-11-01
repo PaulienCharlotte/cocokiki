@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from '../../design-system';
+import { Button, IconButton } from '../../design-system';
 import { EQUIPMENT_BY_ID, INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import type { CookingProgressState, MathChallengeConfig, RecipeConfig } from '../../data/cooking/types';
 import {
@@ -176,7 +176,7 @@ function MathShell({ journey, progress, onExit, children }: { journey: NonNullab
     <div className="math-stage__frame">
       <div className="stage-chrome">
         {(onExit || progress) && <header className="math-stage__topbar">
-          {onExit ? <button type="button" onClick={onExit}><ArrowLeft />Stoppen</button> : <span />}
+          {onExit ? <IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} /> : <span />}
           {progress && <strong>{progress}</strong>}
         </header>}
         <JourneyStageProgress journey={journey} />

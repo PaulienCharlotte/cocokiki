@@ -1,3 +1,4 @@
+@import './components/ui/memory-card.css';
 :root { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #302b3b; background: #f8f6fa; font-synthesis: none; --ink: #302b3b; --muted: #706a78; --accent: #5c3d78; --green: #176354; --gold: #e8ad2f; --line: #ddd7e2; --surface: #fbfaf6; --surface-soft: #f2f3ec; --surface-line: #d8d5ce; --surface-shadow: 0 18px 50px #24372d2e; --berry-soft: #eee6eb; --moss-soft: #e4eadf; }
 * { box-sizing: border-box; letter-spacing: 0; }
 body { margin: 0; font-family: inherit; background: #f8f6fa; min-width: 320px; }
@@ -321,20 +322,10 @@ progress::-moz-progress-bar { background: #508669; }
 .memory-heading h1 { font-size: 24px; }
 .memory-heading > span { font-size: 13px; }
 .memory-heading .muted { font-size: 12px; }
+/* De kaarten staan in components/ui/memory-card.css. */
 .memory-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
-.memory-card { position: relative; padding: 0; border: 0; background: transparent; aspect-ratio: 1.2; min-width: 0; perspective: 700px; border-radius: 8px; }
-.memory-inner { display: block; width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .35s ease; }
-.flipped .memory-inner { transform: rotateY(180deg); }
-.card-back, .card-front { position: absolute; inset: 0; border-radius: 8px; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 14px; }
-.card-back { background: #315d50; border: 1px solid #244e43; color: #a6c1b5; }
-.card-back img { width: 54px; height: 54px; }
-.card-back > span { position: absolute; bottom: 8px; right: 12px; font-size: 11px; }
-.card-front { transform: rotateY(180deg); border: 1px solid #d3dfd7; background: #fff; gap: 12px; }
-.card-front small { font-size: 11px; color: #647a6c; }
 .memory-text { font-size: 16px; line-height: 1.4; font-weight: 650; overflow-wrap: anywhere; }
 .memory-flag { font-size: 60px; line-height: 1; }
-.memory-card:disabled { opacity: 1; }
-.matched .card-front { background: #e5f1e7; border-color: #80a68b; }
 .match-check { position: absolute; top: 7px; right: 7px; color: #307447; }
 .memory-board[data-kind=fact] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .memory-board[data-kind=fact] .memory-card { aspect-ratio: auto; min-height: 210px; }

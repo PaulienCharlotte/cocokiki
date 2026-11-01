@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { ArrowLeft, Globe2 } from 'lucide-react';
-import { Button } from '../design-system';
+import { ArrowLeft } from 'lucide-react';
+import { IconButton } from '../design-system';
 import CardGrid from '../components/ui/CardGrid';
 import LocationMemoryGame from '../components/LocationMemoryGame';
 import { FLAG_CONTINENTS, FLAG_MEMORY_PAIRS, continentFlagPairs, nextFlagRound, type FlagContinent } from '../data/flagCatalog';
@@ -32,16 +32,17 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
         cards={FLAG_CONTINENTS.map(item => ({
           id: item.id,
           titel: item.label,
-          icoon: <Globe2 size={32} aria-hidden="true" />,
+          // Drie vlaggen uit dat werelddeel in plaats van overal dezelfde
+          // wereldbol: zo zie je meteen waar je naartoe gaat.
+          icoon: <span className="flag-continents__vlaggen" aria-hidden="true">{continentFlagPairs(item.id).slice(0, 3).map(pair => <i key={pair.id}>{pair.right}</i>)}</span>,
           meta: `${continentFlagPairs(item.id).length} vlaggen`,
         }))}
         onChoose={id => choose(id as FlagContinent)}
       />
-      <Button variant="quiet" startIcon={<ArrowLeft size={20} />} onClick={onBack}>Terug naar het eiland</Button>
     </section>
   </main>;
   return <main className="dream-flags-memory" aria-label="Vlaggenmemory">
-    <div className="flag-continents__toolbar"><Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={() => setContinent(null)}>Continenten</Button><strong>{FLAG_CONTINENTS.find(item => item.id === continent)?.label}</strong><span>{continentFlagPairs(continent).length} vlaggen</span></div>
+    <div className="flag-continents__toolbar"><IconButton label="Terug naar de werelddelen" icon={<ArrowLeft size={19} />} onClick={() => setContinent(null)} /><strong>{FLAG_CONTINENTS.find(item => item.id === continent)?.label}</strong><span>{continentFlagPairs(continent).length} vlaggen</span></div>
     <React.Fragment key={round}><LocationMemoryGame mode="memory" pairs={pairs} choicePool={FLAG_MEMORY_PAIRS} onAnswer={answer}
       onContinue={() => start(nextFlagRound(continent, readProgress()))}
       onRepeat={() => start(pairs)} onRetry={ids => start(pairs.filter(pair => ids.includes(pair.id)))} onExit={() => setContinent(null)} /></React.Fragment>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Check, RotateCcw } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Button, IconButton } from '../../design-system';
 import CocoCoin from '../../components/platform/CocoCoin';
 import type { ClockLevel } from './types';
 
@@ -32,7 +32,8 @@ export function LevelPicker({ level, onChange, completed = [] }: { level: ClockL
 
 export function ClockGameHeader({ title, level, onBack, onLevelChange, completed }: { title: string; level: ClockLevel; onBack: () => void; onLevelChange: (level: ClockLevel) => void; completed: ClockLevel[] }) {
   return <header className="clock-game-header">
-    <Button variant="quiet" size="small" startIcon={<ArrowLeft size={17} />} onClick={onBack}>Stoppen</Button>
+    {/* Eén soort terugknop in de hele app: een rond pijltje. Zie de skill. */}
+    <IconButton label="Terug naar de klokspellen" icon={<ArrowLeft size={19} />} onClick={onBack} />
     <h1>{title}</h1>
     <LevelPicker level={level} onChange={onLevelChange} completed={completed} />
   </header>;
