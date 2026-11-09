@@ -3,7 +3,6 @@ import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Gamepad2, Map, MousePoin
 import { Location } from '../types';
 import { areaName, availableModes, availableTopics, initialSelection, locationContext, locationProgressKey, memoryPairs, MemoryPair, MODE_LABELS, nextLearningGroup, PlayMode, Selection, studyLocations, TOPIC_LABELS, TopicId, validateSelection } from '../data/learning';
 import { COUNTRY_FLAGS } from '../data/flags';
-import { LOCATION_FACTS } from '../data/locationFacts';
 import { nextBatch, PROGRESS_KEY, readProgress, readLocal, recordAnswer, writeLocal } from '../services/localProgress';
 import { awardCurrencyOnce, CURRENCY_CHANGE_EVENT, loadCurrency } from '../services/currency';
 import LearningSelection from './LearningSelection';
@@ -11,6 +10,11 @@ import MapFactCard from './MapFactCard';
 import PlatformHeader from './platform/PlatformHeader';
 import { GameModuleProps } from '../platform/gameRegistry';
 import './topo-test.css';
+import './topography/topo-layout.css';
+import { useTopoHeaderBottom } from './topography/useTopoLayout';
+import TopoExitDialog from './topography/TopoExitDialog';
+import { registerNavigationGuard } from '../services/navigationGuard';
+import { locationFact } from '../data/topography/facts';
 
 const InteractiveMap = lazy(() => import('./InteractiveMap'));
 const GameEngine = lazy(() => import('./GameEngine'));
@@ -37,6 +41,17 @@ const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: st
 ];
 
 export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const headerBottom = useTopoHeaderBottom(rootRef);
+  const pendingExit = useRef<(() => void) | null>(null);
+  const [confirmExit, setConfirmExit] = useState(false);
+  const stay = useCallback(() => { pendingExit.current = null; setConfirmExit(false); }, []);
+  const leave = useCallback(() => {
+    const proceed = pendingExit.current; pendingExit.current = null; setConfirmExit(false); proceed?.();
+  }, []);
+  useEffect(() => registerNavigationGuard(proceed => {
+    pendingExit.current = proceed; setConfirmExit(true);
+  }, 1), []);
   const [savedTest] = useState(() => readLocal<{ selection?: Selection } | null>('cocokiki:active-topo-test:v1', null));
   const [selection, setSelection] = useState<Selection>(() => savedTest?.selection ? validateSelection(savedTest.selection) : initialSelection());
   const [timer, setTimer] = useState(false);
@@ -76,7 +91,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   const mapCategoryFilters = MAP_CATEGORY_FILTERS.filter(filter => topics.includes(filter.topic));
 
   const hasTimerModes = modes.some(mode => mode === 'find' || mode === 'spell' || mode === 'master');
-  const selectedFact = activeLocation ? LOCATION_FACTS[activeLocation.name] : undefined;
+  const selectedFact = activeLocation ? locationFact(activeLocation) : undefined;
 
   useEffect(() => {
     const savedProgress = writeLocal(PROGRESS_KEY, progress);
@@ -92,10 +107,11 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   useEffect(() => {
     if (!openPanel) return;
     const closeOnOutside = (event: PointerEvent) => {
+      if (confirmExit || (event.target as Element).closest?.('.world-hud, .ck-dialog-backdrop')) return;
       if (!toolbarRef.current?.contains(event.target as Node)) setOpenPanel(null);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenPanel(null);
+      if (event.key === 'Escape' && !confirmExit) setOpenPanel(null);
     };
     document.addEventListener('pointerdown', closeOnOutside);
     document.addEventListener('keydown', closeOnEscape);
@@ -103,7 +119,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       document.removeEventListener('pointerdown', closeOnOutside);
       document.removeEventListener('keydown', closeOnEscape);
     };
-  }, [openPanel]);
+  }, [openPanel, confirmExit]);
 
   const onAnswer = useCallback((id: string, correct: boolean, points: number) => {
     setProgress(previous => recordAnswer(previous, id, correct));
@@ -171,7 +187,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
 
   const discoveryDetail = activeLocation && selectedFact && <MapFactCard
     className="discovery-detail"
-    eyebrow="Coco vertelt"
+    eyebrow="Seb vertelt"
     name={activeLocation.name}
     context={locationContext(activeLocation)}
     text={selectedFact.fact}
@@ -218,7 +234,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     </section>}
   </div>;
 
-  return <div className={'topo-app view-discover' + (session ? ' in-session' : '') + (session?.mode === 'test' ? ' in-test' : '')} style={viewportHeight ? { '--topo-viewport': `${viewportHeight}px` } as React.CSSProperties : undefined}>
+  return <div ref={rootRef} className={'topo-app view-discover' + (session ? ' in-session' : '') + (session?.mode === 'test' ? ' in-test' : '')} style={{ ...(viewportHeight ? { '--topo-viewport': `${viewportHeight}px` } : {}), ...(headerBottom !== undefined ? { '--topo-header-bottom': `${headerBottom}px` } : {}) } as React.CSSProperties}>
     <PlatformHeader onHome={onHome} onBack={onBack} coins={score} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
@@ -260,5 +276,6 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
           </main>}
     </Suspense>
     {!storageAvailable && <p className="storage-warning" role="status">Je voortgang kan in deze browser niet worden bewaard.</p>}
+    <TopoExitDialog open={confirmExit} onStay={stay} onLeave={leave} />
   </div>;
 }

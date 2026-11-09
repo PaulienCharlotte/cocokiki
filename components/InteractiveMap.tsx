@@ -4,6 +4,8 @@ import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
 import { Location, GameMode } from '../types';
 import { Plus, Minus, LocateFixed } from 'lucide-react';
+import { drawWorksheetGeometry, needsAreaHandle, useWorksheetGeometry } from './topography/worksheetGeometry';
+import './topography/worksheet-map.css';
 
 export const UNLABELED_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}';
 const SCHOOL_TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
@@ -96,6 +98,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const [viewRevision, setViewRevision] = useState(0);
   const [tileError, setTileError] = useState(false);
   const isEuropeSelected = selectedProvince === 'europe';
+  const worksheet = useWorksheetGeometry(selectedProvince);
   const usesEuropeanBorders = isEuropeSelected || selectedProvince === 'benelux';
 
   const handleZoomIn = () => { if (mapRef.current) mapRef.current.zoomIn(); };
@@ -168,6 +171,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   useEffect(() => {
     if (!mapRef.current) return;
 
+    mapRef.current.options.zoomSnap = worksheet.dataset ? .25 : 1;
+    if (worksheet.dataset) {
+      mapRef.current.fitBounds(worksheet.dataset.bounds, { padding: [20, 20], maxZoom: 7, animate: false });
+      return;
+    }
     if (selectedProvince === 'europe') {
       mapRef.current.flyToBounds(EUROPE_BOUNDS, { padding: [16, 16], duration: 1.2 });
       return;
@@ -199,7 +207,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const prov = PROVINCES.find(p => p.id === selectedProvince);
       if (prov) mapRef.current.flyTo(prov.center as L.LatLngTuple, prov.zoom, { duration: 1.2 });
     }
-  }, [selectedProvince, locations]);
+  }, [selectedProvince, locations, worksheet.dataset]);
 
   useEffect(() => {
     if (!highlightedLocation || gameMode !== 'explore') return;
@@ -214,7 +222,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       contextLayerRef.current = null;
     }
 
-    if (!usesEuropeanBorders && europeGeoData) {
+    if (!worksheet.dataset && !usesEuropeanBorders && europeGeoData) {
       contextLayerRef.current = L.geoJSON(europeGeoData, {
         interactive: false,
         style: {
@@ -229,7 +237,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
 
     const shouldDrawNetherlands = selectedProvince === 'all' || selectedProvince === 'water-nl' || !WORLD_AREA_IDS.has(selectedProvince);
-    const activeGeoData = usesEuropeanBorders ? europeGeoData : shouldDrawNetherlands ? geoData : null;
+    const activeGeoData = worksheet.dataset ? null : usesEuropeanBorders ? europeGeoData : shouldDrawNetherlands ? geoData : null;
     if (provinceLayerRef.current) {
       mapRef.current.removeLayer(provinceLayerRef.current);
       provinceLayerRef.current = null;
@@ -291,7 +299,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       } : undefined
     }).addTo(mapRef.current);
     provinceLayerRef.current.bringToFront();
-  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, usesEuropeanBorders, onLocationClick, gameMode, isRevealed, locations]);
+  }, [geoData, europeGeoData, selectedProvince, highlightedLocation, activeGameLocation, showSchoolColors, isEuropeSelected, usesEuropeanBorders, onLocationClick, gameMode, isRevealed, locations, worksheet.dataset]);
+
+  useEffect(() => {
+    if (!mapRef.current || !worksheet.data) return;
+    const selected = gameMode === 'explore' ? highlightedLocation : gameMode === 'spell' || isRevealed ? activeGameLocation : null;
+    const layer = drawWorksheetGeometry(mapRef.current, worksheet.data, locations ?? [], selected, onLocationClick);
+    return () => { layer.remove(); };
+  }, [worksheet.data, locations, highlightedLocation, activeGameLocation, gameMode, isRevealed, onLocationClick]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -332,7 +347,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     const ordered = [...filteredLocations].sort((a, b) => Number(b.id === highlightedLocation || b.id === activeGameLocation) - Number(a.id === highlightedLocation || a.id === activeGameLocation));
     ordered.forEach((loc, index) => {
       const isTarget = loc.id === activeGameLocation;
-      const baseColor = getLocationColor(loc);
+      const baseColor = loc.datasetId ? `var(${loc.type === 'city' ? '--color-reward' : loc.type === 'water' ? '--color-sky' : loc.type === 'country' ? '--color-sage' : '--color-lilac'})` : getLocationColor(loc);
       const labelText = getDisplayLabel(loc, filteredLocations);
       let isHighlighted = false;
       let displayColor = baseColor;
@@ -347,6 +362,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
         isHighlighted = true;
         displayColor = '#d946ef'; 
       }
+      if (loc.datasetId && isHighlighted) displayColor = 'var(--color-reward-strong)';
 
       const point = mapRef.current!.latLngToContainerPoint([loc.lat, loc.lng]);
       const width = labelText.length * 7 + 20;
@@ -356,42 +372,49 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const shouldRenderLabel = (gameMode === 'explore' && ((showLabels && inside && !overlaps) || loc.id === highlightedLocation)) || (isTarget && revealAnswer);
       if (shouldRenderLabel) labelBounds.push(rect);
 
+      const isArea = loc.geometryType && loc.geometryType !== 'point';
+      const areaHandle = isArea && needsAreaHandle(loc);
+      if (isArea && !areaHandle && !shouldRenderLabel) return;
+
       const capitalStar = (loc as any).isCapital
         ? `<span style="position:absolute;top:-5px;right:-5px;font-size:9px;line-height:1;pointer-events:none;">★</span>`
         : '';
       const icon = L.divIcon({
-        className: 'custom-label-icon',
+        className: `custom-label-icon${isArea && !areaHandle ? ' worksheet-label-only' : ''}`,
         html: `
-          <div class="relative flex items-center justify-center">
-            <div class="marker-dot ${isHighlighted ? 'highlighted' : ''}" style="background-color: ${displayColor} !important; position:relative;">
+          <div class="relative flex items-center justify-center${loc.datasetId ? ' worksheet-point-handle' : ''}">
+            <div class="${isArea ? areaHandle ? `worksheet-area-handle${isHighlighted ? ' is-selected' : ''}` : '' : `marker-dot ${isHighlighted ? 'highlighted' : ''}`}" style="${isArea ? '' : `background-color: ${displayColor} !important;`} position:relative;">
               ${capitalStar}
             </div>
             ${shouldRenderLabel ? `<div class="marker-label" style="left:50%;bottom:24px;transform:translateX(-50%);">${labelText}</div>` : ''}
           </div>
         `,
-        iconSize: [26, 26],
-        iconAnchor: [13, 13]
+        iconSize: loc.datasetId ? [44, 44] : [26, 26],
+        iconAnchor: loc.datasetId ? [22, 22] : [13, 13]
       });
 
       const marker = L.marker([loc.lat, loc.lng], { 
         icon, 
-        title: shouldRenderLabel ? labelText : `Plek ${index + 1}`,
-        alt: shouldRenderLabel ? labelText : `Plek ${index + 1}`,
+        title: shouldRenderLabel ? labelText : loc.datasetId ? 'Plek op de kaart' : `Plek ${index + 1}`,
+        alt: shouldRenderLabel ? labelText : loc.datasetId ? 'Plek op de kaart' : `Plek ${index + 1}`,
         zIndexOffset: isHighlighted ? 10000 : 500 
       }).addTo(mapRef.current!).on('click', () => onLocationClick?.(loc));
       
       markersRef.current[loc.id] = marker;
+      if (loc.datasetId) marker.getElement()?.setAttribute('data-topo-marker', loc.id);
     });
   }, [selectedProvince, selectedCluster, highlightedLocation, activeGameLocation, showLabels, gameMode, isRevealed, onLocationClick, locations, viewRevision, revealAnswer]);
 
   return (
     <div className="interactive-map-shell">
       <div ref={mapContainerRef} className="interactive-map-canvas" />
+      {worksheet.dataset && !worksheet.data && <div className="worksheet-map-status" role="status">{worksheet.error ? 'De kaartvormen laden niet. Laad de pagina opnieuw.' : 'Kaartvormen laden…'}</div>}
       {tileError && <div className="map-error" role="status">De achtergrondkaart laadt niet. Controleer je verbinding.</div>}
       <div className="map-zoom-controls">
         <button onClick={handleZoomIn} aria-label="Inzoomen" title="Inzoomen"><Plus size={22} /></button>
         <button onClick={handleZoomOut} aria-label="Uitzoomen" title="Uitzoomen"><Minus size={22} /></button>
         <button onClick={() => {
+          if (worksheet.dataset) { mapRef.current?.fitBounds(worksheet.dataset.bounds, { padding: [20, 20], maxZoom: 7 }); return; }
           const points = (locations ?? []).map(l => [l.lat, l.lng] as [number, number]);
           const bounds = points.length ? L.latLngBounds(points).pad(selectedProvince === 'benelux' ? 0.02 : 0.15) : NL_BOUNDS;
           mapRef.current?.fitBounds(bounds, { maxZoom: 10, padding: selectedProvince === 'benelux' ? [8, 8] : [25, 25] });

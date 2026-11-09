@@ -1,6 +1,7 @@
 import React from 'react';
 import { PROVINCES } from '../constants';
 import { CONTINENT_IDS, DUTCH_PROVINCES, isDutchArea, learningGroups, Selection, studyLocations } from '../data/learning';
+import { TOPOGRAPHY_DATASETS } from '../data/topography/datasets';
 
 export default function LearningSelection({ selection, onChange }: { selection: Selection; onChange: (value: Selection) => void }) {
   const { areaId, clusterId } = selection;
@@ -13,7 +14,7 @@ export default function LearningSelection({ selection, onChange }: { selection: 
     <label className="field"><span>Gebied</span>
       <select aria-label="Gebied" value={usesDutchRegionSelector ? 'all' : areaId} onChange={e => chooseArea(e.target.value)}>
         <option value="all">Nederland</option>
-        <optgroup label="Leergebieden"><option value="benelux">Benelux</option></optgroup>
+        <optgroup label="Leergebieden"><option value="benelux">Benelux</option>{TOPOGRAPHY_DATASETS.map(dataset => <option key={dataset.id} value={dataset.id}>{dataset.title}</option>)}</optgroup>
         <optgroup label="Werelddelen">{CONTINENT_IDS.map(id => <option key={id} value={id}>{PROVINCES.find(p => p.id === id)?.name}</option>)}</optgroup>
         <optgroup label="Wereld en poolgebieden"><option value="world">Hele wereld</option><option value="arctic">Noordpoolgebied</option></optgroup>
       </select>

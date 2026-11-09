@@ -20,3 +20,5 @@ import './shoppingPractice.test';
 import './learningReward.test';
 import './treehouseUnits.test';
 import './quiz.test';
+import './geobas.test';
+import './topoExperience.test';

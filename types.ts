@@ -11,6 +11,9 @@ export interface Location {
   isCapital?: boolean;
   isoAlpha3?: string;
   geoName?: string;
+  datasetId?: string;
+  sourceNumber?: number;
+  geometryType?: 'point' | 'polygon' | 'line' | 'region';
 }
 
 export interface Cluster {

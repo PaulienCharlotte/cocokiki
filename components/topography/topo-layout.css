@@ -1,0 +1,37 @@
+.topo-app.view-discover:not(.in-session) .discover-page,
+.topo-app.view-discover .session-page {
+  padding-top: calc(var(--topo-header-bottom, calc(var(--space-12) * 2)) + var(--space-3));
+}
+.topo-app.view-discover:not(.in-session) { height: var(--topo-viewport, 100dvh); }
+.world-shell:has(> .topo-app:not(.in-session)) { height: 100dvh; min-height: 0; display: flex; flex-direction: column; }
+.world-shell > .topo-app.view-discover:not(.in-session) { flex: 1; height: auto; min-height: 0; }
+.topo-app .map-control-shell { position: sticky; top: calc(var(--topo-header-bottom, calc(var(--space-12) * 2)) + var(--space-3)); }
+.topo-app .map-control-panel {
+  max-height: calc(var(--topo-viewport, 100dvh) - var(--topo-header-bottom, calc(var(--space-12) * 2)) - var(--space-12) * 2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.topo-app.view-discover:not(.in-session) .explore-stage { flex-direction: column; }
+.topo-app.view-discover:not(.in-session) .explore-map { min-height: calc(var(--space-12) * 4); }
+.topo-app .map-fact-card.discovery-detail {
+  position: relative; inset: auto; flex: 0 0 auto; width: 100%; box-sizing: border-box;
+  max-height: min(40dvh, calc(var(--space-12) * 5)); overflow-y: auto;
+  margin: 0; padding: var(--space-3) var(--space-4);
+  grid-template-columns: var(--touch-target) minmax(0, 1fr) var(--touch-target);
+  gap: var(--space-3); border: 0; border-radius: 0;
+  background: var(--color-surface); box-shadow: none;
+  color: var(--color-text); animation: none;
+}
+.topo-app .discovery-detail h3 { color: var(--color-text); font-size: var(--font-size-md); }
+.topo-app .discovery-detail .fact-card-text { font-size: var(--font-size-sm); color: var(--color-text); }
+.topo-app .discovery-detail .icon-button { width: var(--touch-target); height: var(--touch-target); }
+.topo-app .map-fact-card > img { object-fit: contain; }
+.topo-app .map-panel-close { min-width: var(--touch-target); min-height: var(--touch-target); }
+.topo-app .map-legend button { min-width: var(--touch-target); min-height: var(--touch-target); }
+@media (max-width: 600px) {
+  .topo-app .map-control-panel { max-height: min(74dvh, calc(var(--topo-viewport, 100dvh) - var(--topo-header-bottom, calc(var(--space-12) * 2)) - var(--space-4))); }
+  .topo-app .map-fact-card.discovery-detail { padding: var(--space-2); gap: var(--space-2); }
+  .topo-app .map-legend { gap: var(--space-1); font-size: var(--font-size-xs); }
+  .topo-app .map-legend button { padding: var(--space-1); gap: var(--space-1); }
+  .topo-app .map-legend .legend-all { padding-inline: var(--space-2); }
+}
