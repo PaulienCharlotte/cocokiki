@@ -32,9 +32,7 @@ test('Dreamworld has six unique islands, real assets and addressable activities'
     assert.equal(overlapX && overlapY, false, `${DREAM_ISLANDS[i].id} overlaps ${DREAM_ISLANDS[j].id}`);
   }
   for (const island of DREAM_ISLANDS) {
-    if (island.id === 'plants') assert.equal(resolveRoute(island.path).route.page, 'plant-clinic');
-    else if (island.id === 'cooking') assert.equal(resolveRoute(island.path).route.path, '/treehouse/cookbook');
-    else if (island.id === 'home') assert.equal(resolveRoute(island.path).route.path, '/treehouse');
+    if (island.id === 'home') assert.equal(resolveRoute(island.path).route.path, '/treehouse');
     else assert.deepEqual(resolveRoute(island.path).route, { page: 'island', path: island.path, islandId: island.id });
     assert.ok(existsSync(`public${island.background}`), island.background);
     assert.ok(island.spot.x - island.spot.width / 2 >= 0);
@@ -118,12 +116,12 @@ test('successive flag rounds cover every country in the chosen continent before 
     assert.equal(Object.keys(progress).length, pool.length);
   }
 });
-test('cooking island opens only the cookbook directly', () => {
-  assert.deepEqual(resolveRoute('/islands/cooking'), { route: { page: 'treehouse-section', path: '/treehouse/cookbook', section: 'cookbook' }, redirect: true });
+test('cooking location is addressable while the original cookbook stays available', () => {
+  assert.deepEqual(resolveRoute('/islands/cooking'), { route: { page: 'island', path: '/islands/cooking', islandId: 'cooking' }, redirect: false });
   assert.deepEqual(ISLANDS_BY_ID.cooking.activities.map(item => item.path), ['/treehouse/cookbook']);
 });
-test('plant island opens the doctor directly and discovery offers real flag memory', () => {
-  assert.deepEqual(resolveRoute('/islands/plants'), { route: { page: 'plant-clinic', path: '/plantendokter' }, redirect: true });
+test('plant location is addressable and discovery offers real flag memory', () => {
+  assert.deepEqual(resolveRoute('/islands/plants'), { route: { page: 'island', path: '/islands/plants', islandId: 'plants' }, redirect: false });
   assert.deepEqual(ISLANDS_BY_ID.plants.activities.map(item => item.id), ['clinic']);
   assert.equal(resolveRoute('/games/flags-memory').route.page, 'flags-memory');
   assert.ok(ISLANDS_BY_ID.discovery.activities.some(item => item.path === '/games/flags-memory'));
@@ -149,7 +147,7 @@ test('three global shops are addressable without cluttering island activities', 
 test('world map has no visible name pills and shops stay available in the shared menu', () => {
   const world = renderToStaticMarkup(<WorldHub coins={20} onNavigate={() => undefined} />);
   assert.doesNotMatch(world, /dream-map__index/);
-  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 0);
+  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 6);
   assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 6);
   assert.doesNotMatch(world, /dream-hotspot__label/);
   assert.ok(existsSync(`public${ISLAND_ICONS_IMAGE}`));

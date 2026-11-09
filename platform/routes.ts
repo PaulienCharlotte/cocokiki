@@ -7,6 +7,7 @@ export type TreehouseSectionId = 'cookbook';
 
 export type AppRoute =
   | { page: 'home'; path: '/' }
+  | { page: 'nutrient-memory'; path: '/games/nutrient-memory' }
   | { page: 'island'; path: `/islands/${IslandId}`; islandId: IslandId }
   | { page: 'store'; path: string; store: 'furniture' | 'plants' | 'groceries' }
   | { page: 'plant-collection'; path: '/plants/collection' }
@@ -49,8 +50,6 @@ const GAME_ROUTES: Record<string, AppRoute> = {
 
 const LEGACY_ROUTES: Record<string, string> = {
   '/plantdokter': '/plantendokter',
-  '/islands/plants': '/plantendokter',
-  '/islands/cooking': '/treehouse/cookbook',
   '/islands/home': '/treehouse',
   '/treehouse/encyclopedia': '/encyclopedie',
   '/encyclopedia': '/encyclopedie',
@@ -75,6 +74,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   const canonical = LEGACY_ROUTES[normalized] ?? normalized;
   let route: AppRoute;
   if (canonical === '/') route = { page: 'home', path: '/' };
+  else if (canonical === '/games/nutrient-memory') route = { page: 'nutrient-memory', path: '/games/nutrient-memory' };
   else if (DREAM_ISLANDS.some(island => island.path === canonical)) route = { page: 'island', path: canonical as `/islands/${IslandId}`, islandId: canonical.slice('/islands/'.length) as IslandId };
   else if (['/shop/furniture', '/shop/plants', '/shop/groceries'].includes(canonical)) route = { page: 'store', path: canonical, store: canonical.slice('/shop/'.length) as 'furniture' | 'plants' | 'groceries' };
   else if (canonical === '/plants/collection') route = { page: 'plant-collection', path: '/plants/collection' };

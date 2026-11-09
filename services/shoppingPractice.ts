@@ -51,7 +51,7 @@ export function shoppingQuestion(session: ShoppingSession, index: number): Shopp
 
 export function answerShoppingQuestion(session: ShoppingSession, questionId: string, answerId: string) {
   const balance = loadCurrency();
-  const saved = loadShoppingSession(session.mode, session.recipeId);
+  const saved = loadShoppingSession(session.mode, session.recipeId, session.scope);
   const state = loadShoppingPractice(session);
   const question = shoppingQuestion(session, state.questionIndex);
   if (saved.id !== session.id || question.id !== questionId) return { status: 'stale' as const, balance, reward: 0, state };

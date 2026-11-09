@@ -15,6 +15,7 @@ import CocoCoin from '../components/platform/CocoCoin';
 import PurchaseSuccess from '../components/shop/PurchaseSuccess';
 import { Button } from '../design-system';
 import BasketPractice from '../components/shop/BasketPractice';
+import '../components/shop/shop-layout.css';
 
 type ActiveCategory = 'all' | ShopCategory;
 
@@ -32,6 +33,7 @@ function missingBadge(missing: number, unit: string): string {
 }
 
 interface ShopScreenProps {
+  ownerReturn?: { scope: string; label: string; onReturn: () => void };
   initialStore?: 'groceries';
   recipeId?: RecipeId;
   progress?: CookingProgressState;
@@ -40,14 +42,14 @@ interface ShopScreenProps {
   onNavigate?: (path: string) => void;
 }
 
-export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, progress: externalProgress, onProgressChange, onExit, onNavigate }: ShopScreenProps) {
+export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, progress: externalProgress, onProgressChange, onExit, onNavigate, ownerReturn }: ShopScreenProps) {
   const queryRecipe = initialStore && typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('recipe') : null;
   const recipeId = requestedRecipeId ?? (queryRecipe && Object.prototype.hasOwnProperty.call(RECIPES_BY_ID, queryRecipe) ? queryRecipe as RecipeId : undefined);
-  const overviewLabel = recipeId ? initialStore ? 'Terug naar de keuken' : 'Terug naar het kookboek' : initialStore ? 'Terug naar winkels' : 'Terug naar winkeloverzicht';
+  const overviewLabel = ownerReturn?.label ?? (recipeId ? initialStore ? 'Terug naar de keuken' : 'Terug naar het kookboek' : initialStore ? 'Terug naar winkels' : 'Terug naar winkeloverzicht');
   const mode = recipeId ? 'recipe' : 'free';
   const [activeStore, setActiveStore] = useState<'groceries' | DecorStoreId | null>(recipeId ? 'groceries' : initialStore ?? null);
   const [category, setCategory] = useState<ActiveCategory>('all');
-  const [session, setSession] = useState<ShoppingSession>(() => loadShoppingSession(mode, recipeId ?? null));
+  const [session, setSession] = useState<ShoppingSession>(() => loadShoppingSession(mode, recipeId ?? null, ownerReturn?.scope));
   const [progress, setProgress] = useState<CookingProgressState>(() => externalProgress ?? loadCookingProgress());
   const [coins, setCoins] = useState(loadCurrency);
   const [basketOpen, setBasketOpen] = useState(false);
@@ -63,7 +65,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
   const requirements = recipeId ? recipeRequirementStatus(progress, recipeId, session) : [];
   const completedRequirements = requirements.filter(item => item.collected).length;
   const missingRequirements = requirements.filter(item => !item.collected);
-  const journeyRecipeId = recipeId ?? progress.activeRecipeId;
+  const journeyRecipeId = ownerReturn ? null : recipeId ?? progress.activeRecipeId;
   const journey = journeyRecipeId ? progress.journeys[journeyRecipeId] : undefined;
   const journeyReady = !!journeyRecipeId && recipeRequirementsSatisfied(progress, journeyRecipeId);
 
@@ -79,7 +81,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
     setNotice('');
   };
   const commitProgress = (next: CookingProgressState, spend?: { id: string; amount: number }) => {
-    if (!saveCookingProgress(next, spend)) { setNotice('Opslaan lukt even niet. Je munten en boodschappen blijven bewaard. Probeer opnieuw.'); return false; }
+    if (!saveCookingProgress(next, spend, ownerReturn ? { rewards: false } : undefined)) { setNotice('Opslaan lukt even niet. Je munten en boodschappen blijven bewaard. Probeer opnieuw.'); return false; }
     setProgress(next);
     onProgressChange?.(next);
     return true;
@@ -96,11 +98,12 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
     setBasketOpen(false);
     setPracticeOpen(false);
     setCheckoutComplete(true);
-    const nextSession = createShoppingSession(mode, recipeId ?? null);
+    const nextSession = createShoppingSession(mode, recipeId ?? null, new Date(), undefined, undefined, ownerReturn?.scope);
     saveShoppingSession(nextSession);
     setSession(nextSession);
   };
   const returnToJourney = () => {
+    if (ownerReturn) return ownerReturn.onReturn();
     if (!journeyRecipeId || !journey) return;
     if (!journeyReady) return setCheckoutComplete(false);
     const next = journey.stage === 'shopping'
@@ -113,6 +116,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
   };
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
   const backToOverview = () => {
+    if (ownerReturn) return ownerReturn.onReturn();
     setCheckoutComplete(false);
     if (initialStore && recipeId && onNavigate) onNavigate('/treehouse/kitchen');
     else if ((recipeId || initialStore) && onExit) onExit();
@@ -208,7 +212,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
       description={journeyRecipeId && journey && journeyReady ? `Alles voor ${RECIPES_BY_ID[journeyRecipeId].name} zit in je voorraad.` : 'Je boodschappen staan in je voorraad.'}
       onContinue={() => setCheckoutComplete(false)} onOverview={backToOverview}
       overviewLabel={overviewLabel}
-      primaryAction={journeyRecipeId && journey && journeyReady ? <Button endIcon={<ChevronRight size={18} />} onClick={returnToJourney}>Naar de keuken</Button> : undefined}>
+      primaryAction={ownerReturn ? <Button endIcon={<ChevronRight size={18} />} onClick={returnToJourney}>{ownerReturn.label}</Button> : journeyRecipeId && journey && journeyReady ? <Button endIcon={<ChevronRight size={18} />} onClick={returnToJourney}>Naar de keuken</Button> : undefined}>
       {recipeId && missingRequirements.length > 0 && <>
         <p>Dit heb je nog nodig:</p>
         <ul className="shop-success__missing">

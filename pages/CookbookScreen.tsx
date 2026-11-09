@@ -24,7 +24,10 @@ interface CookbookScreenProps {
 
 export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const [category, setCategory] = useState<ActiveCategory>('all');
-  const [selected, setSelected] = useState<RecipeConfig | null>(null);
+  const [selected, setSelected] = useState<RecipeConfig | null>(() => {
+    const id = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('recipe');
+    return RECIPES.find(recipe => recipe.id === id) ?? null;
+  });
   const [progress, setProgress] = useState<CookingProgressState>(() => loadCookingProgress());
   const [playingRecipeId, setPlayingRecipeId] = useState<RecipeConfig['id'] | null>(() =>
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('resume') === '1'

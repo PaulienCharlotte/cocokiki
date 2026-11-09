@@ -57,9 +57,13 @@ test('de encyclopedie toont planten pas als je ze ontdekt hebt', () => {
   // Er staat een leeg vakje per soort, dus je ziet dat er iets te halen valt.
   assert.equal(scherm.split('is-slot').length - 1, PLANT_SPECIES.length);
   assert.match(scherm, new RegExp(`Planten<small>0/${PLANT_SPECIES.length}</small>`));
-  // Zonder ontdekking staat er geen enkele soortnaam of herkomst in.
+  // De dagquiz mag namen als antwoordopties tonen; alleen de kennisafdeling blijft gesloten.
+  const begin = scherm.indexOf('id="afdeling-planten"');
+  const einde = scherm.indexOf('</section>', begin);
+  assert.ok(begin >= 0 && einde > begin);
+  const raster = scherm.slice(begin, einde);
   for (const species of PLANT_SPECIES) {
-    assert.ok(!scherm.includes(species.origin), `${species.commonName} verklapt zijn herkomst`);
-    assert.ok(!scherm.includes(species.commonName), `${species.commonName} verklapt zijn naam`);
+    assert.ok(!raster.includes(species.origin), `${species.commonName} verklapt zijn herkomst`);
+    assert.ok(!raster.includes(species.commonName), `${species.commonName} verklapt zijn naam`);
   }
 });

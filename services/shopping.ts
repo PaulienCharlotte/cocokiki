@@ -6,8 +6,8 @@ import { canonicalQuantity } from '../data/cooking/quantities';
 
 export const SHOPPING_SESSION_KEY = 'cocokiki:shopping:v1';
 
-function storageKey(mode: ShoppingSession['mode'], recipeId: RecipeId | null): string {
-  return `${SHOPPING_SESSION_KEY}:${mode}:${recipeId ?? 'free'}`;
+function storageKey(mode: ShoppingSession['mode'], recipeId: RecipeId | null, scope?: string): string {
+  return `${SHOPPING_SESSION_KEY}:${mode}:${recipeId ?? 'free'}${scope ? `:owner:${encodeURIComponent(scope)}` : ''}`;
 }
 
 export interface ShoppingPriceSnapshot {
@@ -17,6 +17,7 @@ export interface ShoppingPriceSnapshot {
 }
 
 export interface ShoppingSession {
+  scope?: string;
   version: 1;
   id: string;
   mode: 'free' | 'recipe';
@@ -44,8 +45,9 @@ export function createShoppingSession(
   now = new Date(),
   season = getShopSeason(now),
   id = sessionId(now),
+  scope?: string,
 ): ShoppingSession {
-  return { version: 1, id, mode, recipeId, basket: {}, priceSnapshot: createPriceSnapshot(season), createdAt: now.toISOString() };
+  return { version: 1, id, mode, recipeId, basket: {}, priceSnapshot: createPriceSnapshot(season), createdAt: now.toISOString(), ...(scope ? { scope } : {}) };
 }
 
 function isSession(value: unknown): value is ShoppingSession {
@@ -59,10 +61,10 @@ function isSession(value: unknown): value is ShoppingSession {
     && !!item.basket && typeof item.basket === 'object';
 }
 
-export function loadShoppingSession(mode: ShoppingSession['mode'], recipeId: RecipeId | null = null): ShoppingSession {
+export function loadShoppingSession(mode: ShoppingSession['mode'], recipeId: RecipeId | null = null, scope?: string): ShoppingSession {
   try {
-    const parsed = JSON.parse(localStorage.getItem(storageKey(mode, recipeId)) ?? 'null');
-    if (isSession(parsed) && parsed.mode === mode && parsed.recipeId === recipeId) {
+    const parsed = JSON.parse(localStorage.getItem(storageKey(mode, recipeId, scope)) ?? 'null');
+    if (isSession(parsed) && parsed.mode === mode && parsed.recipeId === recipeId && parsed.scope === scope) {
       // Keep agreed basket prices; add prices only for newly introduced products.
       const added = SHOP_PRODUCTS.filter(product => !Object.prototype.hasOwnProperty.call(parsed.priceSnapshot.prices, product.id));
       if (!added.length) return parsed;
@@ -74,14 +76,14 @@ export function loadShoppingSession(mode: ShoppingSession['mode'], recipeId: Rec
   } catch {
     // A damaged session is replaced below.
   }
-  const created = createShoppingSession(mode, recipeId);
+  const created = createShoppingSession(mode, recipeId, new Date(), undefined, undefined, scope);
   saveShoppingSession(created);
   return created;
 }
 
 export function saveShoppingSession(session: ShoppingSession): boolean {
   try {
-    localStorage.setItem(storageKey(session.mode, session.recipeId), JSON.stringify(session));
+    localStorage.setItem(storageKey(session.mode, session.recipeId, session.scope), JSON.stringify(session));
     return true;
   } catch {
     return false;
