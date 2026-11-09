@@ -2,6 +2,7 @@ import { CLUSTERS, LOCATIONS, PROVINCES } from '../constants';
 import { Location } from '../types';
 import { COUNTRY_FLAGS } from './flags';
 import { LOCATION_FACTS } from './locationFacts';
+import { topographyDataset } from './topography/datasets';
 
 export type TopicId = 'provinces' | 'capitals' | 'cities' | 'waters' | 'regions' | 'countries' | 'flags' | 'facts' | 'all';
 export type PlayMode = 'find' | 'spell' | 'memory' | 'quiz' | 'master' | 'test';
@@ -19,7 +20,7 @@ export const MODE_LABELS: Record<PlayMode, string> = {
 };
 export const isDutchArea = (id: string) => id === 'all' || DUTCH_PROVINCES.some(p => p.id === id);
 export const isBeneluxArea = (id: string) => id === 'benelux';
-export const isMixedWorksheetArea = (id: string) => id === 'benelux' || id === 'midden-nederland';
+export const isMixedWorksheetArea = (id: string) => id === 'benelux' || id === 'midden-nederland' || !!topographyDataset(id);
 export const areaName = (id: string) => id === 'all' ? 'Nederland' : PROVINCES.find(p => p.id === id)?.name ?? 'Nederland';
 const uniqueLocations = (items: Location[]) => [...new Map(items.map(l => [`${l.type}:${l.name}`, l])).values()];
 const MAX_GROUP_SIZE = 6;
@@ -215,7 +216,7 @@ export function studyLocations({ areaId, topicId, clusterId }: Selection): Locat
 
 export function availableTopics(areaId: string): TopicId[] {
   const choices: TopicId[] = isMixedWorksheetArea(areaId)
-    ? ['cities', 'waters', 'regions', ...(isBeneluxArea(areaId) ? ['countries' as const, 'facts' as const] : []), 'all']
+    ? ['cities', 'waters', 'regions', ...(topographyDataset(areaId) ? ['countries' as const] : []), ...(isBeneluxArea(areaId) ? ['countries' as const, 'facts' as const] : []), 'all']
     : isDutchArea(areaId)
     ? ['provinces', 'capitals', 'cities', 'waters', 'regions', 'facts', 'all']
     : ['countries', 'capitals', 'flags', 'regions', 'all'];

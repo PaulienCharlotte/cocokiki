@@ -1,0 +1,7 @@
+.worksheet-feature:focus-visible { outline: none; stroke: var(--color-focus); stroke-width: 5; }
+.worksheet-area-handle { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; }
+.worksheet-area-handle::before { content: ''; width: var(--space-3); height: var(--space-3); border: 2px solid var(--color-primary); background: var(--color-sage); border-radius: var(--radius-control-sm); }
+.worksheet-area-handle.is-selected::before { background: var(--color-reward); outline: 2px solid var(--color-reward-strong); }
+.worksheet-label-only { pointer-events: none; }
+.worksheet-point-handle { width: var(--touch-target); height: var(--touch-target); display: grid; place-items: center; }
+.worksheet-map-status { position: absolute; z-index: 700; bottom: var(--space-6); left: var(--space-3); right: var(--space-3); padding: var(--space-2); background: var(--color-surface-glass); color: var(--color-text); border-radius: var(--radius-control); font-size: var(--font-size-sm); }

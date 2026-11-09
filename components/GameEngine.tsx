@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, Lightbulb, LoaderCircle, Timer } from 'lucide-react';
 import { Location } from '../types';
 import { locationProgressKey } from '../data/learning';
-import { LOCATION_FACTS } from '../data/locationFacts';
+import { locationFact } from '../data/topography/facts';
 import InteractiveMap from './InteractiveMap';
 import TipCoach from './TipCoach';
 import MapFactCard from './MapFactCard';
@@ -94,8 +94,8 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
     return () => window.clearTimeout(timeout);
   }, [index, mode, resolved]);
   if (!target) return <RoundResult total={locations.length} correct={correct} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={wrongIds.length ? () => onRetry(wrongIds) : undefined} />;
-  const fact = LOCATION_FACTS[target.name]?.fact;
-  const detourFact = detour ? LOCATION_FACTS[detour.name]?.fact : undefined;
+  const fact = locationFact(target).fact;
+  const detourFact = detour ? locationFact(detour).fact : undefined;
   const visibleFact = mode !== 'find' && !factDismissed
     ? resolved && fact
       ? { name: target.name, text: fact, kind: 'success' as const }
@@ -127,7 +127,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
       <InteractiveMap selectedProvince={areaId} locations={mapLocations} activeGameLocation={target.id} gameMode={step === 'spell' ? 'spell' : 'find'} showLabels={false} isRevealed={reveal} revealAnswer={resolved} onLocationClick={loc => { if (step === 'find') check(loc.id); }} />
       {visibleFact && <MapFactCard
         className="map-fact-dock"
-        eyebrow={visibleFact.kind === 'success' ? "Coco's weetje" : 'Onderweg ontdekt'}
+        eyebrow={visibleFact.kind === 'success' ? 'Seb vertelt' : 'Onderweg ontdekt'}
         name={visibleFact.name}
         text={visibleFact.text}
         tone={visibleFact.kind}

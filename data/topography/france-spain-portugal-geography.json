@@ -1,0 +1,263 @@
+{
+  "source": "Natural Earth v5.1.2",
+  "sha256": {
+    "admin_0_countries": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+    "geography_regions_polys": "b7b26e50ea917d3696aec87f932def2bf5f890f5770e441d59c162c6f4c92a77",
+    "geography_marine_polys": "53f865e8ffa966cdd402145c82c5cd14ee7ce974cd0eb9a3f59f03a4cfd2d66c",
+    "rivers_lake_centerlines": "bb854a900ecbd3b408df46d5e16e3e0f974ba55993f9d8b5c26e855273c0905a",
+    "populated_places": "9b8e3de09048ef00dfc70357dbb9fa324493f214b5e0ae4daf1aa79a8d10116b"
+  },
+  "cityChecks": [
+    {
+      "id": "fr-es-pt-01",
+      "reference": "Paris",
+      "distanceKm": 0.18
+    },
+    {
+      "id": "fr-es-pt-02",
+      "reference": "Lisbon",
+      "distanceKm": 0.7
+    },
+    {
+      "id": "fr-es-pt-03",
+      "reference": "Madrid",
+      "distanceKm": 2.28
+    },
+    {
+      "id": "fr-es-pt-04",
+      "reference": "Le Havre",
+      "distanceKm": 1.2
+    },
+    {
+      "id": "fr-es-pt-05",
+      "reference": "Reims",
+      "distanceKm": 0.89
+    },
+    {
+      "id": "fr-es-pt-06",
+      "reference": "Dijon",
+      "distanceKm": 1.28
+    },
+    {
+      "id": "fr-es-pt-07",
+      "reference": "Lyon",
+      "distanceKm": 1.06
+    },
+    {
+      "id": "fr-es-pt-08",
+      "reference": "Marseille",
+      "distanceKm": 0.57
+    },
+    {
+      "id": "fr-es-pt-09",
+      "reference": "Nice",
+      "distanceKm": 0.76
+    },
+    {
+      "id": "fr-es-pt-10",
+      "reference": "Toulouse",
+      "distanceKm": 1.94
+    },
+    {
+      "id": "fr-es-pt-11",
+      "reference": "Bordeaux",
+      "distanceKm": 2.11
+    },
+    {
+      "id": "fr-es-pt-12",
+      "reference": "Bilbao",
+      "distanceKm": 1.51
+    },
+    {
+      "id": "fr-es-pt-13",
+      "reference": "Barcelona",
+      "distanceKm": 1.1
+    },
+    {
+      "id": "fr-es-pt-14",
+      "reference": "Valencia",
+      "distanceKm": 2.91
+    },
+    {
+      "id": "fr-es-pt-15",
+      "reference": "M\u00e1laga",
+      "distanceKm": 0.16
+    },
+    {
+      "id": "fr-es-pt-16",
+      "reference": "Gibraltar",
+      "distanceKm": 1.55
+    },
+    {
+      "id": "fr-es-pt-17",
+      "reference": "Seville",
+      "distanceKm": 1.82
+    },
+    {
+      "id": "fr-es-pt-18",
+      "reference": "Porto",
+      "distanceKm": 0.89
+    },
+    {
+      "id": "fr-es-pt-19",
+      "reference": "Strasbourg",
+      "distanceKm": 0.75
+    },
+    {
+      "id": "fr-es-pt-35",
+      "reference": "Grenoble",
+      "distanceKm": 0.97
+    },
+    {
+      "id": "fr-es-pt-36",
+      "reference": "Lille",
+      "distanceKm": 2.92
+    }
+  ],
+  "anchors": {
+    "fr-es-pt-01": [
+      48.8566,
+      2.3522
+    ],
+    "fr-es-pt-02": [
+      38.7223,
+      -9.1393
+    ],
+    "fr-es-pt-03": [
+      40.4168,
+      -3.7038
+    ],
+    "fr-es-pt-04": [
+      49.4944,
+      0.1079
+    ],
+    "fr-es-pt-05": [
+      49.2583,
+      4.0317
+    ],
+    "fr-es-pt-06": [
+      47.322,
+      5.0415
+    ],
+    "fr-es-pt-07": [
+      45.764,
+      4.8357
+    ],
+    "fr-es-pt-08": [
+      43.2965,
+      5.3698
+    ],
+    "fr-es-pt-09": [
+      43.7102,
+      7.262
+    ],
+    "fr-es-pt-10": [
+      43.6047,
+      1.4442
+    ],
+    "fr-es-pt-11": [
+      44.8378,
+      -0.5792
+    ],
+    "fr-es-pt-12": [
+      43.263,
+      -2.935
+    ],
+    "fr-es-pt-13": [
+      41.3874,
+      2.1686
+    ],
+    "fr-es-pt-14": [
+      39.4699,
+      -0.3763
+    ],
+    "fr-es-pt-15": [
+      36.7213,
+      -4.4214
+    ],
+    "fr-es-pt-16": [
+      36.1408,
+      -5.3536
+    ],
+    "fr-es-pt-17": [
+      37.3891,
+      -5.9845
+    ],
+    "fr-es-pt-18": [
+      41.1579,
+      -8.6291
+    ],
+    "fr-es-pt-19": [
+      48.5734,
+      7.7521
+    ],
+    "fr-es-pt-20": [
+      39.6953,
+      3.0176
+    ],
+    "fr-es-pt-21": [
+      42.0396,
+      9.0129
+    ],
+    "fr-es-pt-22": [
+      42.5063,
+      1.5218
+    ],
+    "fr-es-pt-23": [
+      43.7384,
+      7.4246
+    ],
+    "fr-es-pt-24": [
+      39.8,
+      -3.7
+    ],
+    "fr-es-pt-25": [
+      39.5,
+      -8.0
+    ],
+    "fr-es-pt-26": [
+      46.6,
+      2.0
+    ],
+    "fr-es-pt-27": [
+      49.8,
+      6.1
+    ],
+    "fr-es-pt-28": [
+      50.7,
+      4.5
+    ],
+    "fr-es-pt-29": [
+      49.133002,
+      1.438975
+    ],
+    "fr-es-pt-30": [
+      44.40908,
+      4.671575
+    ],
+    "fr-es-pt-31": [
+      46.0,
+      -7.0
+    ],
+    "fr-es-pt-32": [
+      39.5,
+      5.0
+    ],
+    "fr-es-pt-33": [
+      42.7,
+      0.6
+    ],
+    "fr-es-pt-34": [
+      45.6,
+      7.5
+    ],
+    "fr-es-pt-35": [
+      45.1885,
+      5.7245
+    ],
+    "fr-es-pt-36": [
+      50.6292,
+      3.0573
+    ]
+  }
+}

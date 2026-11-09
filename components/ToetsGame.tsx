@@ -11,6 +11,8 @@ import './topo-test.css';
 import { loadTestDraft, saveTestDraft, TestDraft } from '../services/topoTestDraft';
 import { registerNavigationGuard } from '../services/navigationGuard';
 import { nextUnansweredTestId, shuffledTestIds } from '../services/testNumbering';
+import { drawWorksheetGeometry, useWorksheetGeometry } from './topography/worksheetGeometry';
+import './topography/worksheet-map.css';
 
 interface Props {
   studyPool?: Location[];
@@ -66,6 +68,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
   const [leaving, setLeaving] = useState(false);
   const pendingExit = useRef<(() => void) | null>(null);
   const isEuropeSelected = provinceId === 'europe';
+  const worksheet = useWorksheetGeometry(provinceId);
 
   const toggleFullscreen = () => setIsFullscreen(f => !f);
 
@@ -211,11 +214,11 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     const observer = new ResizeObserver(() => {
       map.invalidateSize({ pan: false });
       const pool = areaRef.current;
-      if (pool.length && element.clientHeight > 80) map.fitBounds(L.latLngBounds(pool.map(location => [location.lat, location.lng] as L.LatLngTuple)), { padding: [30, 30], maxZoom: 11, animate: false });
+      if (pool.length && element.clientHeight > 80) map.fitBounds(worksheet.dataset?.bounds ?? L.latLngBounds(pool.map(location => [location.lat, location.lng] as L.LatLngTuple)), { padding: [30, 30], maxZoom: 11, animate: false });
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [worksheet.dataset]);
 
   useEffect(() => {
     if (active && mapRef.current) mapRef.current.panInside([active.lat, active.lng], { padding: [44, 44], animate: false });
@@ -224,7 +227,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
   // GeoJSON province outlines
   useEffect(() => {
     if (!mapRef.current) return;
-    const activeGeoData = isEuropeSelected ? europeGeoData : geoData;
+    const activeGeoData = worksheet.dataset ? null : isEuropeSelected ? europeGeoData : geoData;
     if (!activeGeoData) return;
     mapRef.current.eachLayer(l => { if (l instanceof L.GeoJSON) mapRef.current?.removeLayer(l); });
     L.geoJSON(activeGeoData, {
@@ -253,7 +256,16 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
         };
       },
     }).addTo(mapRef.current);
-  }, [geoData, europeGeoData, isEuropeSelected]);
+  }, [geoData, europeGeoData, isEuropeSelected, worksheet.dataset]);
+
+  useEffect(() => {
+    if (!mapRef.current || !worksheet.data) return;
+    const layer = drawWorksheetGeometry(mapRef.current, worksheet.data, locations, active?.id, location => {
+      setActiveId(location.id);
+      if (!submitted) inputRef.current?.focus({ preventScroll: true });
+    });
+    return () => { layer.remove(); };
+  }, [worksheet.data, locations, active?.id, submitted]);
 
   // Markers (no names shown — it's a test)
   useEffect(() => {
@@ -281,6 +293,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       });
       const marker = L.marker([loc.lat, loc.lng], { icon, zIndexOffset: selected ? 1000 : 0 }).addTo(mapRef.current!);
       marker.getElement()?.setAttribute('aria-label', `${locationLabel(loc)}${answers[loc.id]?.trim() ? ', ingevuld' : ''}`);
+      if (loc.datasetId) marker.getElement()?.setAttribute('data-topo-marker', loc.id);
       marker.on('click', () => { setActiveId(loc.id); if (!submitted) inputRef.current?.focus({ preventScroll: true }); });
     });
   }, [locations, labelMap, active?.id, answers, submitted]);
@@ -290,12 +303,12 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     if (locations.length >= 1) {
       const lats = locations.map(l => l.lat);
       const lngs = locations.map(l => l.lng);
-      mapRef.current.fitBounds([
+      mapRef.current.fitBounds(worksheet.dataset?.bounds ?? [
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)],
       ], { padding: [30, 30], maxZoom: 11, animate: false });
     }
-  }, [locations]);
+  }, [locations, worksheet.dataset]);
 
   const result = useMemo(() => {
     if (!submitted) return null;
@@ -345,6 +358,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       {/* Map */}
       <div className="toets-map-stage">
         <div ref={mapContainerRef} className="toets-map" />
+        {worksheet.dataset && !worksheet.data && <div className="worksheet-map-status" role="status">{worksheet.error ? 'De kaartvormen laden niet. Laad de pagina opnieuw.' : 'Kaartvormen laden…'}</div>}
 
         {/* Fullscreen toggle — top-right of map */}
         <button
