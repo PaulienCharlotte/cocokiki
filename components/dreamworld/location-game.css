@@ -15,7 +15,7 @@
 .adventure-clipboard {
   position: relative; grid-column: 2; align-self: start; margin: var(--space-2) var(--space-4) 0;
   aspect-ratio: 1494 / 1008;
-  background: url('/assets/library/cooking/klembord.webp') center / 100% 100% no-repeat;
+  background: var(--location-clipboard) center / 100% 100% no-repeat;
 }
 /* Binnen de gestippelde rand van het vel, en midden op het papier. */
 .adventure-clipboard__paper {

@@ -21,7 +21,6 @@ export interface AdventurePreview {
   id: string;
   title: string;
   description: string;
-  icon: 'muffin' | 'cake' | 'secret' | 'ingredients' | 'delivery' | 'contest';
   image: string;
   tone: 'honey' | 'sage' | 'sky' | 'berry';
   status: 'available' | 'active' | 'completed' | 'locked';
@@ -34,6 +33,8 @@ export interface WorldLocation {
   name: string;
   background: string;
   backgroundPosition: { desktop: string; mobile: string };
+  /** De tekening van het klembord op deze plek. */
+  clipboard?: string;
   accentColor: string;
   character: { id: ResidentId; name: string };
   activities: LocationActivity[];
@@ -70,6 +71,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
     background: '/dreamworld/locations/coco-bakery.webp',
     backgroundPosition: { desktop: 'center', mobile: '28% center' },
+    clipboard: '/assets/library/cooking/klembord.webp',
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
     // Geen losse activiteitenkaarten: twee van de drie beloofden alleen
@@ -80,22 +82,27 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],
     adventurePreviews: [
-      { id: 'bestellingen', title: 'Bestellingen', description: 'Er staat iemand aan de toonbank met een wens. Zoek uit welk recept erbij past en hoe vaak je moet bakken.', icon: 'delivery', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'available' },
-      { id: 'birthday-cake', title: 'De verjaardagstaart', description: 'Er is iemand jarig! Coco wil een bijzondere taart maken, maar er moet nog veel worden voorbereid.', icon: 'cake', image: '/assets/library/cooking/kit/whisk.webp', tone: 'berry', status: 'locked' },
-      { id: 'secret-recipe', title: 'Het geheime recept', description: 'Coco heeft een oud recept gevonden. Wat zou er op de ontbrekende stukjes staan?', icon: 'secret', image: '/assets/library/cooking/baking/vanilla-extract.webp', tone: 'sage', status: 'locked' },
-      { id: 'missing-ingredients', title: 'De verdwenen ingrediënten', description: 'De bakkerij gaat bijna open, maar een paar ingrediënten zijn zoek. Waar zijn ze gebleven?', icon: 'ingredients', image: '/games/shop/products/blueberry.webp', tone: 'sky', status: 'locked' },
-      { id: 'delivery-chaos', title: 'De bezorgchaos', description: 'De bestellingen staan klaar. Alleen zijn de pakketjes door elkaar geraakt!', icon: 'delivery', image: '/assets/library/cooking/baking/muffin-pan.webp', tone: 'sage', status: 'locked' },
-      { id: 'baking-contest', title: 'De bakwedstrijd', description: 'Er komt een bakwedstrijd aan. Coco zoekt een bakmaatje voor een heerlijke inzending.', icon: 'contest', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
+      { id: 'bestellingen', title: 'Bestellingen', description: 'Er staat iemand aan de toonbank met een wens. Zoek uit welk recept erbij past en hoe vaak je moet bakken.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'available' },
+      { id: 'birthday-cake', title: 'De verjaardagstaart', description: 'Er is iemand jarig! Coco wil een bijzondere taart maken, maar er moet nog veel worden voorbereid.', image: '/assets/library/cooking/kit/whisk.webp', tone: 'berry', status: 'locked' },
+      { id: 'secret-recipe', title: 'Het geheime recept', description: 'Coco heeft een oud recept gevonden. Wat zou er op de ontbrekende stukjes staan?', image: '/assets/library/cooking/baking/vanilla-extract.webp', tone: 'sage', status: 'locked' },
+      { id: 'missing-ingredients', title: 'De verdwenen ingrediënten', description: 'De bakkerij gaat bijna open, maar een paar ingrediënten zijn zoek. Waar zijn ze gebleven?', image: '/games/shop/products/blueberry.webp', tone: 'sky', status: 'locked' },
+      { id: 'delivery-chaos', title: 'De bezorgchaos', description: 'De bestellingen staan klaar. Alleen zijn de pakketjes door elkaar geraakt!', image: '/assets/library/cooking/baking/muffin-pan.webp', tone: 'sage', status: 'locked' },
+      { id: 'baking-contest', title: 'De bakwedstrijd', description: 'Er komt een bakwedstrijd aan. Coco zoekt een bakmaatje voor een heerlijke inzending.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
     ],
   },
   {
     id: 'kiki', islandId: 'plants', path: '/islands/plants', name: 'Kiki’s Plantenkas',
     background: '/dreamworld/locations/kiki-greenhouse.webp',
-    backgroundPosition: { desktop: '32% center', mobile: '25% center' },
+    backgroundPosition: { desktop: 'center', mobile: '38% center' },
+    clipboard: '/assets/library/plants/klembord.webp',
     accentColor: 'var(--color-primary)', character: { id: 'kiki', name: CHARACTERS.kiki.naam },
-    // Eén raster, net als school en de bakkerij. De plantensoorten zelf
-    // staan in het plantenboek; op het eiland kies je wat je gaat doen.
-    activities: [],
-    featuredActivities: ['plant-clinic', 'plant-family', 'plant-book'], practiceActivities: [], adventures: [],
+    presentation: 'game',
+    // Alleen de plantendokter. Mijn planten en het plantenboek bestaan nog
+    // wel, maar staan hier niet: liever minimaal dan rommelig. De routes
+    // /plants/collection en /encyclopedie blijven gewoon werken.
+    activities: [], featuredActivities: [], practiceActivities: [], adventures: [],
+    adventurePreviews: [
+      { id: 'plantendokter', title: 'De plantendokter', description: 'Er staat een plant klaar die het niet goed doet. Kijk wat er mis is en bedenk wat hij nodig heeft.', image: '/assets/library/plants/gereedschap/plantenspuit.webp', tone: 'sage', status: 'available' },
+    ],
   },
 ];

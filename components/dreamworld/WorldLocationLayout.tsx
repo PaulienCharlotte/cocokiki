@@ -11,6 +11,12 @@ import CardGrid from '../ui/CardGrid';
 import AdventureRunner from '../adventures/AdventureRunner';
 import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
 
+/** Welke knop er op het klembord staat, per avontuur dat echt speelt. */
+const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
+  bestellingen: { label: 'Naar de toonbank', pad: '/treehouse/cookbook?toonbank=1' },
+  plantendokter: { label: 'Naar het spreekuur', pad: '/plantendokter' },
+};
+
 const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
   recipes: CookingPot, orders: ClipboardList, math: Calculator, nutrition: Leaf,
   clinic: HeartPulse, plants: Flower2, book: BookOpen, grow: Sprout, clock: Clock3,
@@ -47,6 +53,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
   if (location.presentation === 'game') return <main className="world-location world-location--game" aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
+    ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),
   } as React.CSSProperties}>
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
     {PLAYABLE_ADVENTURES.some(item => item.definition.locationId === location.id)
@@ -58,8 +65,8 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         // kookboek, zodat er één ingang is voor een bestelling.
         renderClipboard={preview => <AdventureClipboard
           adventure={preview}
-          action={preview.id === 'bestellingen'
-            ? { label: 'Naar de toonbank', onClick: () => onNavigate(withLocationOrigin('/treehouse/cookbook?toonbank=1', location.id)) }
+          action={KLEMBORD_ACTIES[preview.id]
+            ? { label: KLEMBORD_ACTIES[preview.id].label, onClick: () => onNavigate(withLocationOrigin(KLEMBORD_ACTIES[preview.id].pad, location.id)) }
             : undefined}
         />}
       />}
