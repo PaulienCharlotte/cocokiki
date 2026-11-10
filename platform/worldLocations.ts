@@ -4,7 +4,7 @@ import { MATH_GAMES } from '../games/math/config';
 import { CHARACTERS, type CharacterId } from '../data/characters';
 
 /** De bewoners zijn de personages uit `data/characters.ts`, geen eigen lijst. */
-export type ResidentId = Extract<CharacterId, 'coco' | 'kiki' | 'lua'>;
+export type ResidentId = Extract<CharacterId, 'coco' | 'kiki' | 'lua' | 'seb'>;
 export type LocationIcon = 'recipes' | 'orders' | 'math' | 'nutrition' | 'clinic' | 'plants' | 'book' | 'grow' | 'clock';
 export interface LocationActivity {
   id: string;
@@ -29,8 +29,8 @@ export interface AdventurePreview {
 }
 export interface WorldLocation {
   id: ResidentId;
-  islandId: 'cooking' | 'plants' | 'math';
-  path: '/islands/cooking' | '/islands/plants' | '/islands/math';
+  islandId: 'cooking' | 'plants' | 'math' | 'discovery';
+  path: '/islands/cooking' | '/islands/plants' | '/islands/math' | '/islands/discovery';
   name: string;
   background: string;
   backgroundPosition: { desktop: string; mobile: string };
@@ -44,6 +44,16 @@ export interface WorldLocation {
   adventurePreviews?: AdventurePreview[];
 }
 export const WORLD_LOCATIONS: WorldLocation[] = [
+  {
+    id: 'seb', islandId: 'discovery', path: '/islands/discovery', name: 'Seb’s Ontdekkingskamer',
+    background: '/dreamworld/topo-interior.webp',
+    backgroundPosition: { desktop: 'center', mobile: 'center' },
+    accentColor: 'var(--color-sky)', character: { id: 'seb', name: CHARACTERS.seb.naam },
+    // Geen losse iconen meer op de tekening: één raster kaarten, net als school.
+    activities: [],
+    featuredActivities: ['topo', 'flags-memory', 'clock'],
+    practiceActivities: [], adventures: [],
+  },
   {
     id: 'lua', islandId: 'math', path: '/islands/math', name: 'Baby Lua’s Rekenwerkplaats',
     // Rekenen hoort op school; de rekenspellen staan er al jaren in.

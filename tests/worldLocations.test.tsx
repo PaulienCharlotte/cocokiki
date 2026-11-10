@@ -24,7 +24,7 @@ test('activity index has unique IDs and retains all school entry routes', () => 
   }
 });
 test('resident locations use existing activities, not invented adventures or progress', () => {
-  assert.equal(WORLD_LOCATIONS.length, 3);
+  assert.equal(WORLD_LOCATIONS.length, 4);
   for (const location of WORLD_LOCATIONS) {
     assert.equal(location.adventures.length, 0);
     assert.ok(existsSync(`public${location.background}`));
