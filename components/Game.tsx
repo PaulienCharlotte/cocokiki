@@ -33,13 +33,6 @@ const ICONS: Record<PlayMode, React.ComponentType<{ size?: number }>> = {
   test: BookOpen,
 };
 
-const MAP_CATEGORY_FILTERS: Array<{ topic: TopicId; label: string; ariaLabel: string; className: string }> = [
-  { topic: 'cities', label: 'Plaats', ariaLabel: 'Toon alle plaatsen', className: 'legend-city' },
-  { topic: 'regions', label: 'Gebied', ariaLabel: 'Toon alle gebieden', className: 'legend-region' },
-  { topic: 'waters', label: 'Water', ariaLabel: 'Toon alle wateren', className: 'legend-water' },
-  { topic: 'countries', label: 'Land', ariaLabel: 'Toon alle landen', className: 'legend-country' },
-];
-
 export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   const rootRef = useRef<HTMLDivElement>(null);
   const headerBottom = useTopoHeaderBottom(rootRef);
@@ -88,7 +81,6 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     const available = availableTopics(selection.areaId);
     return ['all', ...available.filter(topic => topic !== 'all')] as TopicId[];
   }, [selection.areaId]);
-  const mapCategoryFilters = MAP_CATEGORY_FILTERS.filter(filter => topics.includes(filter.topic));
 
   const hasTimerModes = modes.some(mode => mode === 'find' || mode === 'spell' || mode === 'master');
   const selectedFact = activeLocation ? locationFact(activeLocation) : undefined;
@@ -131,11 +123,10 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     if (validated.areaId !== selection.areaId && validated.areaId === 'benelux') setShowLabels(false);
     setSelection(validated);
     setActiveLocation(null);
-    setOpenPanel(null);
-  };
-
-  const changeTopic = (topicId: TopicId) => {
-    changeSelection({ ...selection, topicId, clusterId: 'all' });
+    // Het paneel blijft open zolang je alleen sets aan- en uitvinkt; anders
+    // kun je er maar één kiezen voordat het scherm dichtklapt.
+    const alleenSets = validated.areaId === selection.areaId && validated.topicId === selection.topicId;
+    if (!alleenSets) setOpenPanel(null);
   };
 
   const start = (requestedMode: PlayMode, retryIds?: string[], sourceSelection = selection, focused = false) => {
@@ -223,10 +214,6 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
 
     {openPanel === 'settings' && <section className="map-control-panel settings-panel" aria-label="Kaartinstellingen">
       <div className="panel-heading"><div><small>Weergave</small><h2>Kaart instellen</h2></div>{panelClose}</div>
-      {topics.length > 1 && <fieldset className="setting-block">
-        <legend>Onderwerp</legend>
-        <div className="topic-options">{topics.map(topic => <button type="button" key={topic} aria-pressed={selection.topicId === topic} onClick={() => changeTopic(topic)}>{TOPIC_LABELS[topic]}</button>)}</div>
-      </fieldset>}
       <div className="settings-toggles">
         <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
         {hasTimerModes && <label className="switch-label"><input type="checkbox" role="switch" checked={timer} onChange={event => setTimer(event.target.checked)} /><span className="switch-track" /><span>Timer bij spellen</span></label>}
@@ -252,18 +239,6 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       </main> : <main className="discover-page">
             {mapControls()}
             <section className="map-zone" ref={exploreRef} aria-label="Vrij verkennen">
-              {mapCategoryFilters.length > 0 && <div className="map-legend" role="group" aria-label="Toon op de kaart">
-                <button type="button" className="legend-all" aria-pressed={selection.topicId === 'all'} onClick={() => changeTopic('all')}>Alles</button>
-                {mapCategoryFilters.map(filter => <button
-                  type="button"
-                  key={filter.topic}
-                  aria-label={filter.ariaLabel}
-                  aria-pressed={selection.topicId === filter.topic}
-                  onClick={() => changeTopic(filter.topic)}
-                >
-                  <i className={filter.className} />{filter.label}
-                </button>)}
-              </div>}
               {selection.topicId === 'flags' ? <>
                 <div className="flag-atlas">{locations.map(location => <button key={location.id} className="flag-item" onClick={() => setActiveLocation(location)}><span className="atlas-flag" role="img" aria-label={showLabels ? 'Vlag van ' + location.name : 'Vlag'}>{COUNTRY_FLAGS[location.name]}</span><span>{showLabels || activeLocation?.id === location.id ? location.name : '?'}</span></button>)}</div>
                 {discoveryDetail}

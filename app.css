@@ -219,17 +219,6 @@ summary { color: var(--muted); font-size: 13px; padding: 9px 0; }
 .icon-button:hover { background: #edf3ef; }
 .map-toolbar { display: flex; align-items: center; gap: 16px; padding-bottom: 12px; }
 .map-toolbar h1 { margin-right: auto; }
-.map-legend { display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 0 8px; color: #5f5865; font-size: 12px; font-weight: 650; overflow-x: auto; scrollbar-width: none; }
-.map-legend::-webkit-scrollbar { display: none; }
-.map-legend button { min-height: 30px; display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 5px 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: inherit; font: inherit; white-space: nowrap; }
-.map-legend button:hover { background: #f4eff7; }
-.map-legend button[aria-pressed="true"] { border-color: #c8b7d2; background: #eee6f3; color: #4e365d; }
-.map-legend .legend-all { padding-inline: 10px; }
-.map-legend i { width: 12px; height: 12px; flex: 0 0 auto; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #766d7b; }
-.map-legend .legend-city { background: #eab308; }
-.map-legend .legend-region { background: #7c3aed; }
-.map-legend .legend-water { background: #38bdf8; }
-.map-legend .legend-country { background: #22c55e; }
 .topic-filter { position: relative; z-index: 1900; }
 .topic-filter > summary { min-height: 42px; display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; list-style: none; border: 1px solid #cfc4d5; border-radius: 6px; background: #fff; color: #4e365d; font-size: 13px; font-weight: 700; }
 .topic-filter > summary::-webkit-details-marker { display: none; }
@@ -618,15 +607,11 @@ progress::-moz-progress-bar { background: #508669; }
 .map-control-panel .journey-mode { width: 100%; }
 .setting-block { padding-bottom: 14px; border-bottom: 1px solid #e4dfe6; }
 .setting-block legend, .compact-setting legend { margin-bottom: 8px; color: #5c5361; font-size: 12px; font-weight: 750; }
-.topic-options { display: flex; flex-wrap: wrap; gap: 6px; }
-.topic-options button { min-height: 36px; padding: 6px 10px; border: 1px solid #d4cbd8; border-radius: 5px; background: #fff; color: #55465d; font-size: 12px; }
-.topic-options button[aria-pressed="true"] { border-color: #6d4b84; background: #5c3d78; color: #fff; }
 .settings-toggles { display: flex; align-items: center; gap: 20px; padding: 10px 0 4px; flex-wrap: wrap; }
 .settings-panel .compact-setting { margin-top: 10px; }
 .settings-panel .segmented { margin-top: 0; }
 .settings-panel .segmented span { min-width: 48px; height: 38px; }
 .view-discover:not(.in-session) .map-zone { position: relative; }
-.view-discover:not(.in-session) .map-legend { position: absolute; z-index: 1000; top: 10px; left: max(12px, calc((100% - 1352px) / 2)); min-height: 38px; padding: 4px; border: 1px solid #d4d9d5; border-radius: 7px; background: #fffdf9e8; box-shadow: 0 4px 14px #29372f19; backdrop-filter: blur(6px); }
 .view-discover:not(.in-session) .explore-map { border: 0; }
 .view-discover:not(.in-session) .discovery-footer { min-height: 34px; padding: 8px max(20px, calc((100% - 1376px) / 2)); background: #f8f6fa; }
 
@@ -645,6 +630,5 @@ progress::-moz-progress-bar { background: #508669; }
   .map-control-panel .selection-fields { grid-template-columns: 1fr; }
   .map-control-panel .selection-fields .field:last-child:nth-child(3) { grid-column: auto; }
   .settings-toggles { align-items: flex-start; flex-direction: column; gap: 2px; }
-  .view-discover:not(.in-session) .map-legend { top: 8px; left: 8px; right: 8px; max-width: calc(100% - 16px); overflow-x: auto; }
   .view-discover:not(.in-session) .discovery-footer { padding-inline: 12px; }
 }
