@@ -16,7 +16,6 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
   const [dragging, setDragging] = useState(false);
   const gesture = useRef<{ id: number; x: number; y: number; view: WorldView; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
-  const vorigeMuispositie = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinch = useRef<{ distance: number; x: number; y: number; view: WorldView } | null>(null);
   const latest = useRef(view);
@@ -90,16 +89,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       suppressClick.current = false;
     }}
     onPointerMove={event => {
-      if (!pointers.current.has(event.pointerId)) {
-        if (event.pointerType !== 'mouse' || event.buttons !== 0) return;
-        const vorige = vorigeMuispositie.current;
-        vorigeMuispositie.current = { x: event.clientX, y: event.clientY };
-        if (!vorige || (event.target as HTMLElement).closest('.dream-map__controls, .dream-map__pan')) return;
-        // Met de muis verken je de kaart zonder eerst te hoeven grijpen.
-        setView(current => constrain({ ...current, x: current.x + event.clientX - vorige.x, y: current.y + event.clientY - vorige.y }));
-        return;
-      }
-      vorigeMuispositie.current = null;
+      if (!pointers.current.has(event.pointerId)) return;
       pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
       if (pinch.current && pointers.current.size === 2) {
         const [a, b] = [...pointers.current.values()];
@@ -121,7 +111,6 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       setView(constrain({ ...start.view, x: start.view.x + dx, y: start.view.y + dy }));
     }}
     onPointerUp={endPointer}
-    onPointerLeave={() => { vorigeMuispositie.current = null; }}
     onPointerCancel={event => { suppressClick.current = true; endPointer(event); }}
     onKeyDown={event => {
       if ((event.target as HTMLElement).closest('button')) return;

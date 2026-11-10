@@ -1,7 +1,7 @@
 .dreamworld { position: relative; height: 100dvh; overflow: hidden; background: var(--color-sky); }
 .dreamworld .world-hud, .dream-app > .world-shell > .world-shell__header .world-hud { width: calc(100% - var(--space-4) * 2); }
 .dreamworld .world-hud { top: var(--space-3); }
-.dream-map { position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: default; }
+.dream-map { position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab; }
 .dream-map.is-dragging { cursor: grabbing; }
 .dream-map:not(.is-dragging) .dream-map__image-plane { transition: transform 120ms ease-out; }
 .dream-map .dream-hotspot { transform: translate(-50%, -50%); border-radius: 50%; padding: 0; }
