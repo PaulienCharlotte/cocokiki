@@ -148,6 +148,26 @@ svg { flex-shrink: 0; }
 .selection-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 960px; }
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
 .field > span { display: flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 650; color: #52655e; }
+/* De sets zijn aanvinkbaar: meer dan één tegelijk mag. */
+.selection-fields .field--sets { grid-column: 1 / -1; }
+.set-keuze {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  /* Bij "Alles op de kaart" zijn het er ruim dertig; dan schuift het mee
+     in plaats van het hele menu weg te duwen. */
+  max-height: 136px; overflow-y: auto;
+}
+.set-keuze button {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 36px; padding: 6px 12px;
+  border: 1px solid #c9d6cf; border-radius: 999px;
+  background: #fff; color: var(--ink);
+  font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+}
+.set-keuze button small { font-weight: 500; color: #6b7d75; }
+.set-keuze button.is-actief { border-color: transparent; background: #3f5c48; color: #fff; }
+.set-keuze button.is-actief small { color: #d8e5dc; }
+.set-keuze__totaal { color: #52655e; font-size: 12px; }
+
 .field select { width: 100%; min-height: 44px; border: 1px solid #c9d6cf; border-radius: 6px; background: #fff; color: var(--ink); padding: 8px 32px 8px 12px; font-size: 15px; }
 .area-detail { margin-top: 10px; max-width: 420px; }
 summary { color: var(--muted); font-size: 13px; padding: 9px 0; }

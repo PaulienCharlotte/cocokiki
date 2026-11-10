@@ -1,6 +1,6 @@
 import React from 'react';
 import { PROVINCES } from '../constants';
-import { availableTopics, CONTINENT_IDS, DUTCH_PROVINCES, isDutchArea, learningGroups, Selection, studyLocations, TOPIC_LABELS, TopicId } from '../data/learning';
+import { availableTopics, CONTINENT_IDS, DUTCH_PROVINCES, isDutchArea, learningGroups, Selection, SET_SCHEIDING, setIds, studyLocations, TOPIC_LABELS, TopicId } from '../data/learning';
 import { TOPOGRAPHY_DATASETS } from '../data/topography/datasets';
 
 export default function LearningSelection({ selection, onChange }: { selection: Selection; onChange: (value: Selection) => void }) {
@@ -14,6 +14,7 @@ export default function LearningSelection({ selection, onChange }: { selection: 
   // Nederland is dat de provincies, en bleven de hoofdsteden, steden,
   // wateren en weetjes onbereikbaar terwijl ze er wel zijn.
   const topics = availableTopics(areaId);
+  const gekozenSets = clusterId === 'all' ? [] : setIds(clusterId);
   return <div className="selection-fields">
     <label className="field"><span>Gebied</span>
       <select aria-label="Gebied" value={usesDutchRegionSelector ? 'all' : areaId} onChange={e => chooseArea(e.target.value)}>
@@ -35,11 +36,25 @@ export default function LearningSelection({ selection, onChange }: { selection: 
         {topics.map(id => <option key={id} value={id}>{TOPIC_LABELS[id]}</option>)}
       </select>
     </label>}
-    {groups.length > 1 && <label className="field"><span>Set</span>
-      <select aria-label="Set" value={clusterId} onChange={event => onChange({ ...selection, clusterId: event.target.value })}>
-        <option value="all">Alles ({totalCount})</option>
-        {groups.map(group => <option key={group.id} value={group.id}>{group.name} ({group.count})</option>)}
-      </select>
-    </label>}
+    {groups.length > 1 && <div className="field field--sets">
+      <span id="set-keuze-label">Sets</span>
+      {/* Meer dan één set tegelijk mag: zo kun je bijvoorbeeld de onderste
+          drie groepjes samen leren zonder de hele kaart erbij te nemen. */}
+      <div className="set-keuze" role="group" aria-labelledby="set-keuze-label">
+        <button type="button" className={gekozenSets.length === 0 ? 'is-actief' : ''} aria-pressed={gekozenSets.length === 0}
+          onClick={() => onChange({ ...selection, clusterId: 'all' })}>Alles <small>{totalCount}</small></button>
+        {groups.map(group => {
+          const aan = gekozenSets.includes(group.id);
+          return <button key={group.id} type="button" className={aan ? 'is-actief' : ''} aria-pressed={aan}
+            title={group.locations.join(', ')}
+            onClick={() => {
+              const volgende = aan ? gekozenSets.filter(id => id !== group.id) : [...gekozenSets, group.id];
+              // Niets aangevinkt betekent de hele kaart, niet een leeg rijtje.
+              onChange({ ...selection, clusterId: volgende.length ? volgende.join(SET_SCHEIDING) : 'all' });
+            }}>{group.name} <small>{group.count}</small></button>;
+        })}
+      </div>
+      {gekozenSets.length > 1 && <small className="set-keuze__totaal">{gekozenSets.length} sets samen · {studyLocations(selection).length} plekken</small>}
+    </div>}
   </div>;
 }

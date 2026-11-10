@@ -174,9 +174,26 @@ function learningSetsFor(areaId: string, topicId: TopicId): Location[][] {
   return groups;
 }
 
+/**
+ * Meer dan één set tegelijk mag: de keuzes staan dan met een plus aan elkaar
+ * geplakt, bijvoorbeeld `learn-0+learn-2`. Zo blijft het één tekst, en blijft
+ * alles wat deze waarde bewaart of doorgeeft gewoon werken.
+ */
+export const SET_SCHEIDING = '+';
+export const setIds = (clusterId: string) => clusterId.split(SET_SCHEIDING).filter(Boolean);
+
 function groupSourceLocations(areaId: string, topicId: TopicId, clusterId: string): Location[] {
   const items = topicLocations(areaId, topicId);
   if (clusterId === 'all') return items;
+  const keuzes = setIds(clusterId);
+  if (keuzes.length > 1) {
+    const gekozen = new Map<string, Location>();
+    for (const keuze of keuzes) {
+      for (const item of groupSourceLocations(areaId, topicId, keuze)) gekozen.set(item.id, item);
+    }
+    // In de volgorde van het onderwerp, zodat het rijtje niet rondspringt.
+    return items.filter(item => gekozen.has(item.id));
+  }
   const match = clusterId.match(/^learn-(\d+)$/);
   if (match) return learningSetsFor(areaId, topicId)[Number(match[1])] ?? [];
   return items.filter(l => l.clusterId === clusterId);
@@ -238,7 +255,11 @@ export function validateSelection(value?: Partial<Selection> | null): Selection 
   const topics = availableTopics(areaId);
   const topicId = topics.includes(value?.topicId as TopicId) ? value!.topicId! : topics[0];
   const groupIds = learningGroups({ areaId, topicId, clusterId: 'all' }).map(group => group.id);
-  const clusterId = CLUSTERS.some(c => c.provinceId === areaId && c.id === value?.clusterId) || groupIds.includes(value?.clusterId ?? '') ? value!.clusterId! : 'all';
+  const geldig = (id: string) => CLUSTERS.some(c => c.provinceId === areaId && c.id === id) || groupIds.includes(id);
+  const gevraagd = setIds(value?.clusterId ?? '');
+  // Een combinatie telt alleen als elk onderdeel bestaat; anders terug naar
+  // alles, zodat een oude of half verouderde keuze nooit een leeg rijtje geeft.
+  const clusterId = gevraagd.length && gevraagd.every(geldig) ? gevraagd.join(SET_SCHEIDING) : 'all';
   const result = { areaId, topicId, clusterId };
   return studyLocations(result).length ? result : { ...result, clusterId: 'all' };
 }

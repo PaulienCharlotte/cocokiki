@@ -325,3 +325,18 @@ test('Nederland kent alle onderwerpen, inclusief provincies met hun hoofdsteden'
   assert.ok(!availableTopics('ut').includes('provinces'));
   assert.ok(!availableTopics('ut').includes('provinces-capitals'));
 });
+
+test('je kunt meer dan één set tegelijk leren', () => {
+  const basis = { areaId: 'topografie-frankrijk-spanje-portugal', topicId: 'all' as const };
+  const groepen = learningGroups({ ...basis, clusterId: 'all' });
+  assert.ok(groepen.length >= 3);
+  const [een, twee, drie] = groepen;
+  const samen = `${een.id}+${twee.id}+${drie.id}`;
+  const plekken = studyLocations({ ...basis, clusterId: samen });
+  assert.equal(plekken.length, een.count + twee.count + drie.count);
+  // Geen dubbele plekken, en de volgorde van het onderwerp blijft staan.
+  assert.equal(new Set(plekken.map(p => p.id)).size, plekken.length);
+  // Een combinatie met een verzonnen set valt terug op alles.
+  assert.equal(validateSelection({ ...basis, clusterId: `${een.id}+bestaat-niet` }).clusterId, 'all');
+  assert.equal(validateSelection({ ...basis, clusterId: samen }).clusterId, samen);
+});
