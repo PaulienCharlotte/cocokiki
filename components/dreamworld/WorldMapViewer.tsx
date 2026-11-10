@@ -16,6 +16,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
   const [dragging, setDragging] = useState(false);
   const gesture = useRef<{ id: number; x: number; y: number; view: WorldView; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
+  const vorigeMuispositie = useRef<{ x: number; y: number } | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinch = useRef<{ distance: number; x: number; y: number; view: WorldView } | null>(null);
   const latest = useRef(view);
@@ -35,9 +36,19 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
     if (!element) return;
     const wheel = (event: WheelEvent) => {
       event.preventDefault();
-      const rect = element.getBoundingClientRect();
-      const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.height : 1);
-      setView(current => zoomAt(current, current.scale * Math.exp(-delta * .002), event.clientX - rect.left - size.width / 2, event.clientY - rect.top - size.height / 2));
+      const eenheid = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.height : 1;
+      const dx = event.deltaX * eenheid;
+      const dy = event.deltaY * eenheid;
+      if (event.ctrlKey || event.metaKey) {
+        const rect = element.getBoundingClientRect();
+        setView(current => zoomAt(current, current.scale * Math.exp(-dy * .002), event.clientX - rect.left - size.width / 2, event.clientY - rect.top - size.height / 2));
+        return;
+      }
+      setView(current => {
+        // Een muiswiel kan ook langs de brede kaart als er verticaal geen ruimte is.
+        const horizontaal = event.shiftKey || height * current.scale <= size.height + 1;
+        return constrain({ ...current, x: current.x - dx - (horizontaal ? dy : 0), y: current.y - (horizontaal ? 0 : dy) });
+      });
     };
     element.addEventListener('wheel', wheel, { passive: false });
     return () => element.removeEventListener('wheel', wheel);
@@ -79,7 +90,16 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       suppressClick.current = false;
     }}
     onPointerMove={event => {
-      if (!pointers.current.has(event.pointerId)) return;
+      if (!pointers.current.has(event.pointerId)) {
+        if (event.pointerType !== 'mouse' || event.buttons !== 0) return;
+        const vorige = vorigeMuispositie.current;
+        vorigeMuispositie.current = { x: event.clientX, y: event.clientY };
+        if (!vorige || (event.target as HTMLElement).closest('.dream-map__controls, .dream-map__pan')) return;
+        // Met de muis verken je de kaart zonder eerst te hoeven grijpen.
+        setView(current => constrain({ ...current, x: current.x + event.clientX - vorige.x, y: current.y + event.clientY - vorige.y }));
+        return;
+      }
+      vorigeMuispositie.current = null;
       pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
       if (pinch.current && pointers.current.size === 2) {
         const [a, b] = [...pointers.current.values()];
@@ -101,6 +121,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       setView(constrain({ ...start.view, x: start.view.x + dx, y: start.view.y + dy }));
     }}
     onPointerUp={endPointer}
+    onPointerLeave={() => { vorigeMuispositie.current = null; }}
     onPointerCancel={event => { suppressClick.current = true; endPointer(event); }}
     onKeyDown={event => {
       if ((event.target as HTMLElement).closest('button')) return;

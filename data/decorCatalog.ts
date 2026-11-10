@@ -142,6 +142,25 @@ const turnable = (id: string, name: string, category: DecorCategory, price: numb
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  { ...furniture('japandi-toilet', 'Japandi toilet', 'bathroom', 90), roomWidth: 12 },
+  { ...furniture('japandi-round-mirror', 'Japandi badkamerspiegel', 'bathroom', 40), roomWidth: 13 },
+  { ...furniture('japandi-toilet-roll-holder', 'Japandi toiletrolhouder', 'bathroom', 20), roomWidth: 6 },
+  { ...furniture('japandi-bath-mat', 'Japandi badmat', 'bathroom', 25), roomWidth: 15 },
+  { ...furniture('japandi-woven-rug', 'Japandi vloerkleed', 'rugs', 35), roomWidth: 28 },
+  { ...furniture('japandi-ceramic-vase', 'Japandi keramieken vaas', 'lighting', 20), roomWidth: 6 },
+  { ...furniture('japandi-book-stack', 'Japandi boekenstapeltje', 'lighting', 15), roomWidth: 8 },
+  { ...furniture('japandi-linen-cushion', 'Japandi linnen kussen', 'lighting', 15), roomWidth: 7 },
+  { ...furniture('japandi-woven-basket', 'Japandi opbergmand', 'storage', 25), roomWidth: 10 },
+  { ...furniture('japandi-wall-art', 'Japandi wanddecoratie', 'lighting', 25), roomWidth: 10 },
+  { ...furniture('japandi-linen-sofa', 'Japandi linnenbank', 'seating', 100), roomWidth: 30 },
+  { ...furniture('japandi-oak-sideboard', 'Japandi dressoir', 'storage', 85), roomWidth: 28 },
+  { ...furniture('japandi-open-bookcase', 'Japandi open kast', 'storage', 75), roomWidth: 18 },
+  { ...furniture('japandi-dining-table', 'Japandi eettafel', 'tables', 80), roomWidth: 28 },
+  { ...furniture('japandi-dining-chair', 'Japandi eetkamerstoel', 'seating', 40), roomWidth: 10 },
+  { ...furniture('japandi-paper-floor-lamp', 'Japandi vloerlamp', 'lighting', 45), roomWidth: 10 },
+  { ...furniture('sofa-sage-front', 'Saliegroene tweezitsbank', 'seating', 90), roomWidth: 30 },
+  { ...furniture('armchair-clay-front', 'Terracotta fauteuil', 'seating', 60), roomWidth: 17 },
+  { ...furniture('coffee-table-oak-front', 'Eiken salontafel', 'tables', 50), roomWidth: 22 },
   ...[
     { id: 'bathroom-vanity', name: 'Wastafelmeubel', price: 100, roomWidth: 24, width: 1536, height: 1024 },
     { id: 'clawfoot-bathtub', name: 'Ligbad', price: 150, roomWidth: 32 },
