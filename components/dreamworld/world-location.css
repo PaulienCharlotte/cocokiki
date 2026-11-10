@@ -84,7 +84,9 @@
 .standalone-nutrients__result { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-4); }
 @media (max-width: 700px) {
   .world-location { grid-template-rows: minmax(34svh, 1fr) auto; }
-  .world-location__background { height: 66svh; object-position: var(--location-mobile-position); }
+  /* Geen afgekapte hoogte: de tekening loopt ook op een telefoon achter
+     de hele pagina door. Alleen het uitsnedepunt verschilt. */
+  .world-location__background { object-position: var(--location-mobile-position); }
   .world-location__dock { display: block; padding: 0; }
   .location-tabs { display: flex; background: var(--color-surface-glass); }
   .location-tabs button { flex: 1; min-height: var(--touch-target); padding: var(--space-3); border: 0; border-bottom: var(--space-1) solid transparent; background: transparent; color: var(--color-text-muted); font: inherit; font-weight: var(--font-weight-bold); }

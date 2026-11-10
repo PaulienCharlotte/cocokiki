@@ -40,7 +40,8 @@
   .location-game { display: flex; flex-direction: column; gap: 0; padding: 0; }
   .location-game__heading { min-height: 40svh; }
   .location-game__activities { padding: var(--space-4) var(--space-3) var(--space-6); }
-  .location-game__stories { display: flex; flex-direction: column; min-width: 0; padding-bottom: var(--space-6); background: var(--color-background-calm); }
+  /* Geen eigen vlak over de tekening heen; die loopt door tot onderaan. */
+  .location-game__stories { display: flex; flex-direction: column; min-width: 0; padding-bottom: var(--space-6); }
   .location-game--activities .location-game__stories, .location-game--adventures .location-game__activities { display: none; }
   .adventure-shelf { order: -1; margin-top: 0; }
   .adventure-shelf { padding: var(--space-4) var(--space-3) 0; }
