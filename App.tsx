@@ -39,7 +39,7 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
   clock: { path: '/challenges', label: 'Terug naar School' },
-  'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Milo' },
+  'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Coco' },
 };
 
 /**

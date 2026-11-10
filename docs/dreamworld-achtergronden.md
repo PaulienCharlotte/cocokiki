@@ -4,11 +4,15 @@ De nieuwe wereldkaart van Codex heeft drie locatieachtergronden, met daarop
 personages die niet van ons zijn: Milo in de bakkerij, Novi in de kas en Felix
 in de werkplaats. Die moeten vervangen worden door onze eigen personages:
 
-| Locatie | Bestand | Nu | Wordt |
+De bestanden hebben al hun nieuwe naam, maar **de tekeningen zijn nog de oude**:
+op `coco-bakery.png` staat nog Milo. In de app staat er dus "Coco's Bakkerij"
+boven een jongen met donker haar. Dat klopt pas als deze drie vervangen zijn.
+
+| Locatie | Bestand | Staat er nu op | Moet erop |
 |---|---|---|---|
-| Bakkerij | `public/dreamworld/locations/milo-bakery.png` | Milo, jongen met donker haar | **Coco** |
-| Plantenkas | `public/dreamworld/locations/novi-greenhouse.png` | Novi | **Kiki** |
-| Rekeneiland | `public/dreamworld/locations/felix-workshop.png` | Felix de Uitvinder | **Baby Lua** |
+| Bakkerij | `public/dreamworld/locations/coco-bakery.png` | Milo, jongen met donker haar | **Coco** |
+| Plantenkas | `public/dreamworld/locations/kiki-greenhouse.png` | Novi | **Kiki** |
+| Rekeneiland | `public/dreamworld/locations/lua-workshop.png` | Felix de Uitvinder | **Baby Lua** |
 
 Seb hoort bij topografie en heeft hier geen locatie; dat eiland zit niet in
 deze drie.
@@ -77,7 +81,7 @@ het licht en de lege rechterkant hetzelfde.
 ## Daarna
 
 Zet de nieuwe tekeningen als **WebP** in `public/dreamworld/locations/` onder
-dezelfde namen (met `.webp` in plaats van `.png`) en werk de paden bij in
+dezelfde namen (met `.webp` in plaats van `.png`) en werk de drie paden bij in
 `platform/worldLocations.ts`. De huidige PNG's zijn 2,3 tot 2,5 MB per stuk;
 als WebP gaat dat naar ongeveer een tiende. Zie `docs/cooking-engine.md` voor
 waarom alles in deze app WebP is.

@@ -176,10 +176,11 @@ export default function CookingExperience(props: Props) {
     bonus={bestelling.voortgang.misgrepen === 0 && bestelling.voortgang.aantalInEenKeer ? bestelling.bestelling.bonus : 0}
     inEenKeer={bestelling.voortgang.misgrepen === 0 && bestelling.voortgang.aantalInEenKeer}
     onClose={() => {
-      const current = loadCookingProgress();
-      const uitkomst = leverBestellingAf(current);
+      // Via de opslag van dit spel, niet rechtstreeks: een avontuur kan in
+      // een eigen opslag draaien en mag de gewone voortgang niet raken.
+      const uitkomst = leverBestellingAf(storage.load());
       if (uitkomst.bestelling) {
-        if (!saveCookingProgress(uitkomst.progress)) { setMessage('Afleveren lukt even niet. Probeer het nog eens.'); return; }
+        if (storage.save(uitkomst.progress) === false) { setMessage('Afleveren lukt even niet. Probeer het nog eens.'); return; }
         setProgress(uitkomst.progress);
         onProgressChange(uitkomst.progress);
       }

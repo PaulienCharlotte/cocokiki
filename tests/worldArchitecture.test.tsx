@@ -79,8 +79,8 @@ test('Dreamworld renders one intact world image, six hotspots and compact tools'
   assert.match(html, /aria-label="Mijn boomhut openen"/);
   assert.match(html, /aria-label="Rekenwerkplaats openen"/);
   assert.doesNotMatch(html, /aria-label="Koken openen"/);
-  assert.match(html, /aria-label="Novi’s Plantenkas openen"/);
-  assert.match(html, /aria-label="Milo’s Bakkerij openen"/);
+  assert.match(html, /aria-label="Kiki’s Plantenkas openen"/);
+  assert.match(html, /aria-label="Coco’s Bakkerij openen"/);
   assert.match(html, /aria-label="Reizen en topografie openen"/);
   assert.match(html, /aria-label="Taal · Binnenkort openen"/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);

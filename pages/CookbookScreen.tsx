@@ -41,7 +41,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const [notice, setNotice] = useState('');
   // De toonbank staat voor het kookboek, maar je kunt er altijd omheen: wie
   // gewoon iets wil bakken blijft in het kookboek bladeren.
-  const [atToonbank, setAtToonbank] = useState(false);
+  const [atToonbank, setAtToonbank] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('toonbank') === '1');
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   useEffect(() => {
     if (!import.meta.env.DEV) return;

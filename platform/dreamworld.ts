@@ -36,10 +36,10 @@ export interface WorldDestination {
 
 // Normalized image coordinates; navigation remains independent React controls.
 export const WORLD_DESTINATIONS: WorldDestination[] = [
-  { id: 'cooking', label: 'Milo’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .39, width: .058, height: .104 }, enabled: true },
+  { id: 'cooking', label: 'Coco’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .39, width: .058, height: .104 }, enabled: true },
   { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: .51, y: .40, width: .058, height: .104 }, enabled: true },
   { id: 'math', label: 'Rekenwerkplaats', route: '/islands/math', position: { x: .85, y: .40, width: .058, height: .104 }, enabled: true },
-  { id: 'plants', label: 'Novi’s Plantenkas', route: '/islands/plants', position: { x: .17, y: .65, width: .058, height: .104 }, enabled: true },
+  { id: 'plants', label: 'Kiki’s Plantenkas', route: '/islands/plants', position: { x: .17, y: .65, width: .058, height: .104 }, enabled: true },
   { id: 'discovery', label: 'Reizen en topografie', route: '/islands/discovery', position: { x: .85, y: .69, width: .058, height: .104 }, enabled: true },
   { id: 'language', label: 'Taal · Binnenkort', route: '/islands/language', position: { x: .51, y: .85, width: .058, height: .104 }, enabled: true },
 ];

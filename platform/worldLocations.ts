@@ -1,8 +1,10 @@
 import { RECIPES } from '../data/cooking/catalog';
 import { PLANT_SPECIES } from '../data/plants/species';
 import { MATH_GAMES } from '../games/math/config';
+import { CHARACTERS, type CharacterId } from '../data/characters';
 
-export type ResidentId = 'milo' | 'novi' | 'felix';
+/** De bewoners zijn de personages uit `data/characters.ts`, geen eigen lijst. */
+export type ResidentId = Extract<CharacterId, 'coco' | 'kiki' | 'lua'>;
 export type LocationIcon = 'recipes' | 'orders' | 'math' | 'nutrition' | 'clinic' | 'plants' | 'book' | 'grow' | 'clock';
 export interface LocationActivity {
   id: string;
@@ -43,10 +45,10 @@ export interface WorldLocation {
 }
 export const WORLD_LOCATIONS: WorldLocation[] = [
   {
-    id: 'felix', islandId: 'math', path: '/islands/math', name: 'Felix de Uitvinder',
-    background: '/dreamworld/locations/felix-workshop.png',
+    id: 'lua', islandId: 'math', path: '/islands/math', name: 'Baby Lua’s Rekenwerkplaats',
+    background: '/dreamworld/locations/lua-workshop.png',
     backgroundPosition: { desktop: '32% center', mobile: '25% center' },
-    accentColor: 'var(--color-primary)', character: { id: 'felix', name: 'Felix de Uitvinder' },
+    accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
     activities: [
       { id: 'multiply', label: 'Tafels oefenen', icon: 'math', target: { activity: 'math:multiply' } },
       { id: 'divide', label: 'Eerlijk delen', icon: 'math', target: { activity: 'math:divide' } },
@@ -57,10 +59,10 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     practiceActivities: [], adventures: [],
   },
   {
-    id: 'milo', islandId: 'cooking', path: '/islands/cooking', name: 'Milo’s Bakkerij',
-    background: '/dreamworld/locations/milo-bakery.png',
+    id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
+    background: '/dreamworld/locations/coco-bakery.png',
     backgroundPosition: { desktop: '32% center', mobile: '24% center' },
-    accentColor: 'var(--color-reward-strong)', character: { id: 'milo', name: 'Milo' },
+    accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
     activities: [
       { id: 'recipes', label: 'Recepten', icon: 'recipes', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', target: { activity: 'recipes' } },
@@ -72,19 +74,19 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],
     adventurePreviews: [
-      { id: 'muffin-order', title: 'De grote muffinbestelling', description: 'Milo heeft een grote bestelling gekregen. Wie helpt hem straks met rekenen, boodschappen en bakken?', icon: 'muffin', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
-      { id: 'birthday-cake', title: 'De verjaardagstaart', description: 'Er is iemand jarig! Milo wil een bijzondere taart maken, maar er moet nog veel worden voorbereid.', icon: 'cake', image: '/assets/library/cooking/kit/whisk.webp', tone: 'berry', status: 'locked' },
-      { id: 'secret-recipe', title: 'Het geheime recept', description: 'Milo heeft een oud recept gevonden. Wat zou er op de ontbrekende stukjes staan?', icon: 'secret', image: '/assets/library/cooking/baking/vanilla-extract.webp', tone: 'sage', status: 'locked' },
+      { id: 'bestellingen', title: 'Bestellingen', description: 'Er staat iemand aan de toonbank met een wens. Zoek uit welk recept erbij past en hoe vaak je moet bakken.', icon: 'delivery', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'available' },
+      { id: 'birthday-cake', title: 'De verjaardagstaart', description: 'Er is iemand jarig! Coco wil een bijzondere taart maken, maar er moet nog veel worden voorbereid.', icon: 'cake', image: '/assets/library/cooking/kit/whisk.webp', tone: 'berry', status: 'locked' },
+      { id: 'secret-recipe', title: 'Het geheime recept', description: 'Coco heeft een oud recept gevonden. Wat zou er op de ontbrekende stukjes staan?', icon: 'secret', image: '/assets/library/cooking/baking/vanilla-extract.webp', tone: 'sage', status: 'locked' },
       { id: 'missing-ingredients', title: 'De verdwenen ingrediënten', description: 'De bakkerij gaat bijna open, maar een paar ingrediënten zijn zoek. Waar zijn ze gebleven?', icon: 'ingredients', image: '/games/shop/products/blueberry.webp', tone: 'sky', status: 'locked' },
       { id: 'delivery-chaos', title: 'De bezorgchaos', description: 'De bestellingen staan klaar. Alleen zijn de pakketjes door elkaar geraakt!', icon: 'delivery', image: '/assets/library/cooking/baking/muffin-pan.webp', tone: 'sage', status: 'locked' },
-      { id: 'baking-contest', title: 'De bakwedstrijd', description: 'Er komt een bakwedstrijd aan. Milo zoekt een bakmaatje voor een heerlijke inzending.', icon: 'contest', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
+      { id: 'baking-contest', title: 'De bakwedstrijd', description: 'Er komt een bakwedstrijd aan. Coco zoekt een bakmaatje voor een heerlijke inzending.', icon: 'contest', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
     ],
   },
   {
-    id: 'novi', islandId: 'plants', path: '/islands/plants', name: 'Novi’s Plantenkas',
-    background: '/dreamworld/locations/novi-greenhouse.png',
+    id: 'kiki', islandId: 'plants', path: '/islands/plants', name: 'Kiki’s Plantenkas',
+    background: '/dreamworld/locations/kiki-greenhouse.png',
     backgroundPosition: { desktop: '32% center', mobile: '25% center' },
-    accentColor: 'var(--color-primary)', character: { id: 'novi', name: 'Novi' },
+    accentColor: 'var(--color-primary)', character: { id: 'kiki', name: CHARACTERS.kiki.naam },
     activities: [
       { id: 'clinic', label: 'Plantendokter', icon: 'clinic', target: { activity: 'plant-clinic' } },
       { id: 'plants', label: 'Mijn planten', icon: 'plants', target: { activity: 'plant-family' } },

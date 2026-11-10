@@ -6,7 +6,7 @@ import type { LocationIcon, WorldLocation } from '../../platform/worldLocations'
 import { withLocationOrigin } from '../../services/locationNavigation';
 import './world-location.css';
 import PlantFlashcard from '../plants/PlantFlashcard';
-import LocationGameView from './LocationAdventureWidgets';
+import LocationGameView, { AdventureClipboard } from './LocationAdventureWidgets';
 import AdventureRunner from '../adventures/AdventureRunner';
 import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
 
@@ -38,7 +38,18 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
     {PLAYABLE_ADVENTURES.some(item => item.definition.locationId === location.id)
       ? <AdventureRunner location={location} onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }} />
-      : <LocationGameView location={location} onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }} />}
+      : <LocationGameView
+        location={location}
+        onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
+        // De bestellingen van de bakkerij lopen via de toonbank in het
+        // kookboek, zodat er één ingang is voor een bestelling.
+        renderClipboard={preview => <AdventureClipboard
+          adventure={preview}
+          action={preview.id === 'bestellingen'
+            ? { label: 'Naar de toonbank', onClick: () => onNavigate(withLocationOrigin('/treehouse/cookbook?toonbank=1', location.id)) }
+            : undefined}
+        />}
+      />}
   </main>;
   return <main className={`world-location world-location--${location.id}`} aria-labelledby={`${id}-title`} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
@@ -69,7 +80,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
               }}><Icon size={24} /><span>{activity.label}</span>{'comingSoon' in target && <small>Binnenkort beschikbaar</small>}</button>;
             })}
           </nav>
-          <ul className="location-carousel" aria-label={location.id === 'milo' ? 'Recepten' : location.id === 'novi' ? 'Planten' : 'Rekenspellen'}>{cards(location.featuredActivities)}</ul>
+          <ul className="location-carousel" aria-label={location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : 'Rekenspellen'}>{cards(location.featuredActivities)}</ul>
         </> : <ul className="location-carousel location-carousel--practice" aria-label="Rekenspellen">{cards(location.practiceActivities)}</ul>}
       </section>
       <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>

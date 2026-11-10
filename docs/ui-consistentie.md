@@ -154,6 +154,19 @@ Doen: de bestelling als eerste rekenopgave meegeven aan `MathChallengeFlow`,
 en in de etappebalk (`JourneyStageProgress`) laten zien voor wie je bezig bent.
 Dat laatste is één kaartje in een component die op elk etappescherm al staat.
 
+## 12. Het muffinavontuur van Codex ligt er nog ongebruikt
+
+Codex bouwde een eigen vaste muffinbestelling met een avonturenloop:
+`data/adventures/catalog.ts`, `services/adventureRuntime.ts` en
+`components/adventures/AdventureRunner.tsx`. Charlotte koos voor de toonbank
+(`services/bakeryOrders.ts`), dus de bakkerij opent die nu. Zijn avontuur staat
+er nog wel, met zijn tests, maar niets verwijst er meer naar.
+
+Doen: als Charlotte zeker weet dat ze de toonbank houdt, die drie bestanden en
+`tests/muffinAdventure.test.ts` weghalen. De algemene motor
+(`data/adventures/types.ts`, `services/adventures.ts`) kan blijven voor een
+volgend avontuur. Niet zelf weggooien: het is het werk van een andere agent.
+
 ## Al opgelost
 
 - **Een kookavontuur was het recept uit het kookboek.** Zeven etappes die voor
