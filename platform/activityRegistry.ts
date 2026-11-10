@@ -5,6 +5,8 @@ import { PLANT_SPECIES, plantProduct } from '../data/plants/species';
 export interface ActivityDefinition {
   id: string;
   title: string;
+  /** Eén korte regel eronder. Alleen als hij per kaart verschilt. */
+  subtitle?: string;
   kind: 'game' | 'recipe' | 'plant' | 'collection';
   path: string;
   image?: string;
@@ -14,9 +16,9 @@ export interface ActivityDefinition {
 
 // Shared content index, not a new game engine or a second progress store.
 export const SCHOOL_ACTIVITIES: ActivityDefinition[] = [
-  ...MATH_GAMES.map(game => ({ id: `math:${game.id}`, title: game.title, kind: 'game' as const, path: `/school/math/${game.id}`, image: mathIcon(game.id), status: 'available' as const })),
+  ...MATH_GAMES.map(game => ({ id: `math:${game.id}`, title: game.title, subtitle: game.subtitle, kind: 'game' as const, path: `/school/math/${game.id}`, image: mathIcon(game.id), status: 'available' as const })),
   { id: 'topo', title: 'Topografie', kind: 'game', path: '/games/topo', status: 'available' },
-  { id: 'clock', title: 'Kloklezen en wereldtijden', kind: 'game', path: '/school/clock', status: 'available' },
+  { id: 'clock', title: 'Kloklezen', subtitle: 'Klokkijken en wereldtijden', kind: 'game', path: '/school/clock', image: '/games/school/clock/clock-school-navigation-v2.webp', status: 'available' },
   { id: 'flags-memory', title: 'Vlaggenmemory', kind: 'game', path: '/games/flags-memory', status: 'available' },
   { id: 'red-baby-lua', title: 'Red Baby Lua!', kind: 'game', path: '/games/red-baby-lua', status: 'available' },
 ];

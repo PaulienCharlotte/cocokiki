@@ -7,6 +7,7 @@ import { withLocationOrigin } from '../../services/locationNavigation';
 import './world-location.css';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import LocationGameView, { AdventureClipboard } from './LocationAdventureWidgets';
+import CardGrid from '../ui/CardGrid';
 import AdventureRunner from '../adventures/AdventureRunner';
 import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
 
@@ -25,13 +26,24 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     if (activity.kind === 'plant' && activity.contentId) setPlant(activity.contentId);
     else onNavigate(withLocationOrigin(activity.path, location.id));
   };
-  const cards = (ids: string[]) => ids.map(key => ACTIVITIES_BY_ID[key]).filter(Boolean).map(activity => <li key={activity.id}>
-    <button type="button" className="location-card" disabled={activity.status === 'coming-soon'} onClick={() => open(activity)}>
-      {activity.image && <img src={activity.image} alt="" loading="lazy" />}
-      <strong>{activity.title}</strong>
-      <small>{activity.status === 'coming-soon' ? 'Binnenkort beschikbaar' : activity.kind === 'recipe' ? 'Recept' : activity.kind === 'plant' ? 'Plantenboek' : 'Spelen'}</small>
-    </button>
-  </li>);
+  /*
+   * Eén raster witte kaarten, hetzelfde als het rekenmenu en het
+   * vlaggenmemory. Geen regel "Spelen" onder elke kaart: wat op elke kaart
+   * hetzelfde staat, zegt niets. Zie `.claude/skills/cocokiki-ui`.
+   */
+  const raster = (ids: string[], label: string) => {
+    const gekozen = ids.map(key => ACTIVITIES_BY_ID[key]).filter(Boolean);
+    return <CardGrid
+      label={label}
+      cards={gekozen.map(activity => ({
+        id: activity.id,
+        titel: activity.title,
+        onder: activity.status === 'coming-soon' ? 'Binnenkort beschikbaar' : activity.subtitle,
+        beeld: activity.image,
+      }))}
+      onChoose={id => open(ACTIVITIES_BY_ID[id])}
+    />;
+  };
   if (location.presentation === 'game') return <main className="world-location world-location--game" aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
@@ -57,7 +69,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     '--location-mobile-position': location.backgroundPosition.mobile,
   } as React.CSSProperties}>
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
-    <div className="world-location__scene"><h1 id={`${id}-title`}>{location.name}</h1></div>
+    <div className="world-location__scene"><h1 id={`${id}-title`} className="sr-only">{location.name}</h1></div>
     <div className="world-location__dock">
       {/* Een tabblad dat alleen "binnenkort" zegt, is een belofte en geen keuze.
           Zonder avonturen staan hier gewoon de activiteiten. */}
@@ -69,12 +81,15 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
             setTab(next); document.getElementById(`${id}-${next}-tab`)?.focus();
           }}>{value === 'activities' ? 'Activiteiten' : 'Avonturen'}</button>)}
       </div>}
-      <section id={`${id}-activities`} className={`location-panel location-panel--activities${!heeftAvonturen || tab === 'activities' ? ' is-selected' : ''}`} aria-labelledby={`${id}-activities-title`}>
-        <div className="location-panel__heading"><h2 id={`${id}-activities-title`}>{section === 'math' ? 'Bakrekenen' : 'Activiteiten'}</h2>
+      <section id={`${id}-activities`} className={`location-panel location-panel--activities${!heeftAvonturen || tab === 'activities' ? ' is-selected' : ''}${location.activities.length ? '' : ' is-kaal'}`} {...(location.activities.length ? { 'aria-labelledby': `${id}-activities-title` } : { 'aria-label': 'Activiteiten' })}>
+        {/* Een kop boven één raster zegt niets extra's. Alleen waar er ook
+            knoppen boven staan, scheidt hij de twee groepen. */}
+        {(location.activities.length > 0 || section === 'math') && <div className="location-panel__heading">
+          <h2 id={`${id}-activities-title`}>{section === 'math' ? 'Bakrekenen' : 'Activiteiten'}</h2>
           {section === 'math' && <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={() => setSection('main')}>Alles</Button>}
-        </div>
+        </div>}
         {section === 'main' ? <>
-          <nav className="location-actions" aria-label={`Activiteiten bij ${location.character.name}`}>
+          {location.activities.length > 0 && <nav className="location-actions" aria-label={`Activiteiten bij ${location.character.name}`}>
             {location.activities.map(activity => {
               const Icon = ICONS[activity.icon]; const target = activity.target;
               return <button type="button" key={activity.id} className="location-action" disabled={'comingSoon' in target} onClick={() => {
@@ -82,9 +97,9 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
                 else if ('section' in target) { if (target.section === 'adventures') setTab('adventures'); else setSection('math'); }
               }}><Icon size={24} /><span>{activity.label}</span>{'comingSoon' in target && <small>Binnenkort beschikbaar</small>}</button>;
             })}
-          </nav>
-          <ul className="location-carousel" aria-label={location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : 'Rekenspellen'}>{cards(location.featuredActivities)}</ul>
-        </> : <ul className="location-carousel location-carousel--practice" aria-label="Rekenspellen">{cards(location.practiceActivities)}</ul>}
+          </nav>}
+          {raster(location.featuredActivities, location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : 'Rekenspellen')}
+        </> : raster(location.practiceActivities, 'Rekenspellen')}
       </section>
       {heeftAvonturen && <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>
         <h2 id={`${id}-adventures-title`}>Avonturen</h2>

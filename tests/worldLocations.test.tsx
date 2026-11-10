@@ -35,6 +35,16 @@ test('resident locations use existing activities, not invented adventures or pro
     assert.ok(html.includes(location.name));
     // Tabbladen horen bij een locatie die ook echt avonturen heeft. Een
     // tabblad dat alleen "binnenkort" zegt, hoort er niet te staan.
+    // Een regel die onder elke kaart hetzelfde zegt, zegt niets.
+    assert.doesNotMatch(html, />Spelen</, `${location.id} zet geen "Spelen" onder elke kaart`);
+    // De kaarten komen uit het gedeelde raster, niet uit een eigen vorm.
+    // De bakkerij heeft een eigen speelvorm met badges; de rest gebruikt het raster.
+    if (location.presentation !== 'game' && location.featuredActivities.length) assert.match(html, /class="ck-kaarten/, `${location.id} gebruikt het gedeelde kaartraster`);
+    // Een knop die naar dezelfde plek gaat als een kaart eronder is dubbel.
+    const kaartIds = new Set(location.featuredActivities);
+    for (const knop of location.activities) {
+      if ('activity' in knop.target) assert.ok(!kaartIds.has(knop.target.activity), `${location.id}: ${knop.target.activity} staat zowel als knop als als kaart`);
+    }
     if (location.adventurePreviews?.length) assert.match(html, /Avonturen/, `${location.id} heeft avonturen om te tonen`);
     else {
       assert.doesNotMatch(html, /role="tablist"/, `${location.id} heeft geen avonturen, dus ook geen tabbladen`);

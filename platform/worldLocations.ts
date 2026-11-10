@@ -50,13 +50,10 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     background: '/games/school/school-interior.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
-    activities: [
-      { id: 'multiply', label: 'Tafels oefenen', icon: 'math', target: { activity: 'math:multiply' } },
-      { id: 'divide', label: 'Delen', icon: 'math', target: { activity: 'math:divide' } },
-      { id: 'balance', label: 'Vergelijken', icon: 'math', target: { activity: 'math:balance' } },
-      { id: 'clock', label: 'Kloklezen', icon: 'clock', target: { activity: 'clock' } },
-    ],
-    featuredActivities: MATH_GAMES.map(game => `math:${game.id}`),
+    // Geen knoppenrij: die wees naar dezelfde spellen als de kaarten eronder.
+    // Kloklezen stond er alleen in, en staat nu gewoon tussen de kaarten.
+    activities: [],
+    featuredActivities: [...MATH_GAMES.map(game => `math:${game.id}`), 'clock'],
     practiceActivities: [], adventures: [],
   },
   {
