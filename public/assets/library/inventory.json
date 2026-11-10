@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T08:17:52.763Z",
-  "count": 510,
+  "generatedAt": "2026-11-10T09:46:30.729Z",
+  "count": 570,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -431,6 +431,366 @@
     {
       "id": "assets:library:cooking:klembord",
       "path": "/assets/library/cooking/klembord.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:blauw-rand",
+      "path": "/assets/library/cooking/taarten/blauw-rand.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:blauw",
+      "path": "/assets/library/cooking/taarten/blauw.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:roze-rand",
+      "path": "/assets/library/cooking/taarten/roze-rand.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:roze",
+      "path": "/assets/library/cooking/taarten/roze.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:wit-rand",
+      "path": "/assets/library/cooking/taarten/wit-rand.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:taarten:wit",
+      "path": "/assets/library/cooking/taarten/wit.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:aardbei",
+      "path": "/assets/library/cooking/versieringen/aardbei.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:banaan",
+      "path": "/assets/library/cooking/versieringen/banaan.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:blaadjes",
+      "path": "/assets/library/cooking/versieringen/blaadjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:blauwe-bessen",
+      "path": "/assets/library/cooking/versieringen/blauwe-bessen.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:bloem-paars",
+      "path": "/assets/library/cooking/versieringen/bloem-paars.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:bloem-roze",
+      "path": "/assets/library/cooking/versieringen/bloem-roze.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:bloesem",
+      "path": "/assets/library/cooking/versieringen/bloesem.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladedruppels",
+      "path": "/assets/library/cooking/versieringen/chocoladedruppels.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladeglazuur",
+      "path": "/assets/library/cooking/versieringen/chocoladeglazuur.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladehart",
+      "path": "/assets/library/cooking/versieringen/chocoladehart.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladekruimels",
+      "path": "/assets/library/cooking/versieringen/chocoladekruimels.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladekrullen",
+      "path": "/assets/library/cooking/versieringen/chocoladekrullen.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:chocoladestukjes",
+      "path": "/assets/library/cooking/versieringen/chocoladestukjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:donut",
+      "path": "/assets/library/cooking/versieringen/donut.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:eenhoorn",
+      "path": "/assets/library/cooking/versieringen/eenhoorn.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:framboos",
+      "path": "/assets/library/cooking/versieringen/framboos.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:hartjes",
+      "path": "/assets/library/cooking/versieringen/hartjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:hartkoekje",
+      "path": "/assets/library/cooking/versieringen/hartkoekje.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:honingkorrels",
+      "path": "/assets/library/cooking/versieringen/honingkorrels.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kaars-blauw",
+      "path": "/assets/library/cooking/versieringen/kaars-blauw.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kaars-geel",
+      "path": "/assets/library/cooking/versieringen/kaars-geel.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kaars-paars",
+      "path": "/assets/library/cooking/versieringen/kaars-paars.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kaars-roze",
+      "path": "/assets/library/cooking/versieringen/kaars-roze.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kersen",
+      "path": "/assets/library/cooking/versieringen/kersen.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kiwi",
+      "path": "/assets/library/cooking/versieringen/kiwi.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:koekje-chocolade",
+      "path": "/assets/library/cooking/versieringen/koekje-chocolade.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:koekje-stukjes",
+      "path": "/assets/library/cooking/versieringen/koekje-stukjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:krokante-nootjes",
+      "path": "/assets/library/cooking/versieringen/krokante-nootjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:kroontje",
+      "path": "/assets/library/cooking/versieringen/kroontje.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:lolly-hart",
+      "path": "/assets/library/cooking/versieringen/lolly-hart.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:lolly-spiraal",
+      "path": "/assets/library/cooking/versieringen/lolly-spiraal.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:lolly-ster",
+      "path": "/assets/library/cooking/versieringen/lolly-ster.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:macarons",
+      "path": "/assets/library/cooking/versieringen/macarons.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:madeliefje",
+      "path": "/assets/library/cooking/versieringen/madeliefje.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:mandarijn",
+      "path": "/assets/library/cooking/versieringen/mandarijn.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:meringues",
+      "path": "/assets/library/cooking/versieringen/meringues.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:muntblaadjes",
+      "path": "/assets/library/cooking/versieringen/muntblaadjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:pareltjes",
+      "path": "/assets/library/cooking/versieringen/pareltjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:regenboog",
+      "path": "/assets/library/cooking/versieringen/regenboog.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:roos",
+      "path": "/assets/library/cooking/versieringen/roos.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:slagroom-chocolade",
+      "path": "/assets/library/cooking/versieringen/slagroom-chocolade.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:slagroom-roze",
+      "path": "/assets/library/cooking/versieringen/slagroom-roze.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:slagroom-wit",
+      "path": "/assets/library/cooking/versieringen/slagroom-wit.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:slinger",
+      "path": "/assets/library/cooking/versieringen/slinger.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:snoepdruppels",
+      "path": "/assets/library/cooking/versieringen/snoepdruppels.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:snoephartjes",
+      "path": "/assets/library/cooking/versieringen/snoephartjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:sprankel",
+      "path": "/assets/library/cooking/versieringen/sprankel.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:sprinkles",
+      "path": "/assets/library/cooking/versieringen/sprinkles.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:sterkoekje",
+      "path": "/assets/library/cooking/versieringen/sterkoekje.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:sterretjes",
+      "path": "/assets/library/cooking/versieringen/sterretjes.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:strik",
+      "path": "/assets/library/cooking/versieringen/strik.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:viooltje",
+      "path": "/assets/library/cooking/versieringen/viooltje.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:vlinder",
+      "path": "/assets/library/cooking/versieringen/vlinder.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:versieringen:wafelrolletjes",
+      "path": "/assets/library/cooking/versieringen/wafelrolletjes.webp",
       "category": "cooking",
       "format": "webp"
     },

@@ -93,7 +93,7 @@ test('recipe deep links open the existing overview without starting a journey', 
   }
 });
 
-test('de bakkerij begint bij de toonbank, met vijf avonturen die nog komen', () => {
+test('de bakkerij heeft de toonbank en het taartenatelier, met vier avonturen die nog komen', () => {
   const location = WORLD_LOCATIONS.find(item => item.id === 'coco')!;
   // Geen losse activiteitenkaarten meer: wat je hier doet begint bij een
   // bestelling, en voedingsstoffen staat in de encyclopedie in de bovenbalk.
@@ -101,10 +101,11 @@ test('de bakkerij begint bij de toonbank, met vijf avonturen die nog komen', () 
   const previews = location.adventurePreviews!;
   assert.equal(previews.length, 6);
   assert.equal(new Set(previews.map(item => item.id)).size, 6);
-  // De toonbank is het eerste avontuur dat echt speelt; de rest staat nog op slot.
-  assert.deepEqual(previews.filter(item => item.status !== 'locked').map(item => item.id), ['bestellingen']);
+  // Twee avonturen spelen echt; de rest staat nog op slot.
+  const speelbaar = ['bestellingen', 'taartenatelier'];
+  assert.deepEqual(previews.filter(item => item.status !== 'locked').map(item => item.id), speelbaar);
   for (const preview of previews) {
-    assert.equal(preview.status, preview.id === 'bestellingen' ? 'available' : 'locked');
+    assert.equal(preview.status, speelbaar.includes(preview.id) ? 'available' : 'locked');
     assert.equal(preview.progress, undefined);
     assert.ok(existsSync(`public${preview.image}`));
     const clipboard = renderToStaticMarkup(<AdventureClipboard adventure={preview} />);

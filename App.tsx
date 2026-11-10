@@ -29,6 +29,7 @@ const DecorShop = lazy(() => import('./components/shop/DecorShop'));
 const PlantFamilyPanel = lazy(() => import('./components/plants/PlantFamilyPanel'));
 const FlagsMemory = lazy(() => import('./pages/FlagsMemory'));
 const WorldLocationLayout = lazy(() => import('./components/dreamworld/WorldLocationLayout'));
+const CakeStudio = lazy(() => import('./components/cake/CakeStudio'));
 const NutrientMemoryScreen = lazy(() => import('./pages/NutrientMemoryScreen'));
 
 /** Waar de terugknop je brengt, per pagina. */
@@ -40,6 +41,7 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
   clock: { path: '/challenges', label: 'Terug naar School' },
   'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Coco' },
+  taartenatelier: { path: '/islands/cooking', label: 'Terug naar Coco' },
 };
 
 /**
@@ -120,6 +122,8 @@ const App: React.FC = () => {
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
       : current.route.page === 'nutrient-memory'
       ? <NutrientMemoryScreen onBack={back} />
+      : current.route.page === 'taartenatelier'
+      ? <CakeStudio onClose={sourceLocation ? back : () => navigate('/islands/cooking')} />
       : current.route.page === 'math'
       ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={sourceLocation ? back : () => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'

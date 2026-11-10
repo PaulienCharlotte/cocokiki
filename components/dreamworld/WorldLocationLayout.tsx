@@ -15,6 +15,7 @@ import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
 const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
   bestellingen: { label: 'Naar de toonbank', pad: '/treehouse/cookbook?toonbank=1' },
   plantendokter: { label: 'Naar het spreekuur', pad: '/plantendokter' },
+  taartenatelier: { label: 'Naar het atelier', pad: '/games/taartenatelier' },
 };
 
 const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
