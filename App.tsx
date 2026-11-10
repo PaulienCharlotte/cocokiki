@@ -10,6 +10,8 @@ import { guardedNavigation, hasNavigationGuard } from './services/navigationGuar
 import { ISLANDS_BY_ID, islandForActivity } from './platform/dreamworld';
 import './components/dreamworld/dreamworld.css';
 import './components/memory-compact.css';
+import { WORLD_LOCATIONS } from './platform/worldLocations';
+import { LOCATION_ORIGINS, locationOrigin, withLocationOrigin } from './services/locationNavigation';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
@@ -26,6 +28,8 @@ const IslandEnvironment = lazy(() => import('./pages/IslandEnvironment'));
 const DecorShop = lazy(() => import('./components/shop/DecorShop'));
 const PlantFamilyPanel = lazy(() => import('./components/plants/PlantFamilyPanel'));
 const FlagsMemory = lazy(() => import('./pages/FlagsMemory'));
+const WorldLocationLayout = lazy(() => import('./components/dreamworld/WorldLocationLayout'));
+const NutrientMemoryScreen = lazy(() => import('./pages/NutrientMemoryScreen'));
 
 /** Waar de terugknop je brengt, per pagina. */
 const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: string }>> = {
@@ -35,6 +39,7 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
   clock: { path: '/challenges', label: 'Terug naar School' },
+  'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Milo' },
 };
 
 /**
@@ -91,7 +96,8 @@ const App: React.FC = () => {
     guardedNavigation(() => {
       const requested = new URL(path, window.location.origin);
       const next = resolveRoute(requested.pathname);
-      window.history.pushState({}, '', `${next.route.path}${requested.search}`);
+      const source = locationOrigin(requested.search) ?? locationOrigin(window.location.search);
+      window.history.pushState({}, '', withLocationOrigin(`${next.route.path}${requested.search}`, source));
       setCurrent({ route: next.route, redirect: false });
       window.scrollTo({ top: 0 });
     });
@@ -105,16 +111,21 @@ const App: React.FC = () => {
   </Suspense>;
 
   const parentIsland = islandForActivity(current.route.path + window.location.search);
-  const backTarget = current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined);
+  const origin = locationOrigin(window.location.search, current.route.path);
+  const sourceLocation = origin ? LOCATION_ORIGINS[origin] : undefined;
+  const residentLocation = current.route.page === 'island' ? WORLD_LOCATIONS.find(location => location.islandId === current.route.islandId) : undefined;
+  const backTarget = sourceLocation ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
-      ? <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      : current.route.page === 'nutrient-memory'
+      ? <NutrientMemoryScreen onBack={back} />
       : current.route.page === 'math'
-      ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={() => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
+      ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={sourceLocation ? back : () => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'
       ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} onBack={back} onNavigate={navigate} />
       : current.route.page === 'plant-collection'
-      ? <div className="dream-plant-collection"><PlantFamilyPanel onNavigate={navigate} onClose={() => navigate('/')} /></div>
+      ? <div className="dream-plant-collection"><PlantFamilyPanel onNavigate={navigate} onClose={sourceLocation ? back : () => navigate('/')} /></div>
       : current.route.page === 'flags-memory'
       ? <FlagsMemory onBack={back} />
       : current.route.page === 'game' && GameModule
@@ -138,7 +149,7 @@ const App: React.FC = () => {
       : current.route.page === 'challenges'
         ? <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'clock'
-        ? <ClockModule onBack={() => navigate('/islands/discovery')} />
+        ? <ClockModule onBack={sourceLocation ? back : () => navigate('/islands/discovery')} />
         : null;
 
   if (worldContent) return <div className="dream-app"><AppShell

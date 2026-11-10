@@ -8,8 +8,7 @@ import { emptyStepState, type CookingStepState, type OvenState } from '../../dat
 import { restoreOven, tickOven } from '../../data/cooking/oven';
 import { advancePreparation, createCookingSession, goBackPreparation, resumePreparation, updateCookingStep } from '../../data/cooking/session';
 import { getRecipeIssues } from '../../data/cooking/validation';
-import { loadCookingProgress, saveCookingProgress } from '../../services/cookingProgress';
-import { beginCookingAttempt, completeCookingAttempt } from '../../services/cookingSession';
+import { defaultCookingStorage, type CookingStorageAdapter } from '../../services/cookingStorage';
 import { missingIngredientMessage } from '../../services/recipeInventory';
 import Confetti from './Confetti';
 import { Button } from '../../design-system';
@@ -27,6 +26,7 @@ interface Props {
   onProgressChange: (progress: CookingProgressState) => void;
   onClose: () => void;
   onShop?: () => void;
+  storageAdapter?: CookingStorageAdapter;
 }
 /**
  * De kop zegt al wat er moet gebeuren. Herhaalt de instructie die kop woord
@@ -40,7 +40,11 @@ function uitleg(titel: string, instructie: string): string {
 
 export default function CookingExperience(props: Props) {
   const { recipe, onProgressChange, onClose, onShop } = props;
-  const [progress, setProgress] = useState(props.progress);
+  const storage = props.storageAdapter ?? defaultCookingStorage;
+  const [progress, setProgress] = useState(() => {
+    if (!props.storageAdapter) return props.progress;
+    try { return storage.load(); } catch { return props.progress; }
+  });
   const [bookOpen, setBookOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
@@ -54,40 +58,46 @@ export default function CookingExperience(props: Props) {
   const clockPaused = useRef(false);
   clockPaused.current = bookOpen || !!visibleTip;
   const ovenStep = recipe.preparation?.steps.find(item => item.mechanic === 'oven');
+  const read = () => {
+    try { return storage.load(); } catch { setMessage('Je kookpoging kan niet veilig worden geladen. Sluit dit scherm en probeer opnieuw.'); return null; }
+  };
+  const write = async (next: CookingProgressState, presentationOnly = false) => {
+    try { return await storage.save(next, presentationOnly); } catch { return false; }
+  };
 
   useEffect(() => {
     if (ovenStep?.mechanic !== 'oven') return;
-    const timer = window.setInterval(() => {
+    const timer = window.setInterval(async () => {
       if (document.visibilityState !== 'visible' || clockPaused.current) return;
-      const current = loadCookingProgress();
+      const current = read(); if (!current) return;
       const saved = current.preparationSessions[recipe.id];
       if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || !saved.oven) return;
       const oven = tickOven(saved.oven, ovenStep.oven, 1);
       if (JSON.stringify(oven) === JSON.stringify(saved.oven)) return;
       const next = { ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: { ...saved, oven } } };
-      if (saveCookingProgress(next, undefined, { rewards: false })) accept(next);
+      if (await write(next, true)) accept(next);
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [recipe.id]);
+  }, [recipe.id, storage]);
 
   const accept = (next: CookingProgressState) => { sessionRef.current = next.preparationSessions[recipe.id]; setProgress(next); onProgressChange(next); };
-  const persist = (next: CookingProgressState, presentationOnly = false) => {
+  const persist = async (next: CookingProgressState, presentationOnly = false) => {
     const nextSession = next.preparationSessions[recipe.id];
     const nextStep = recipe.preparation?.steps.find(item => item.id === nextSession?.stepId);
     const ovenWacht = nextStep?.mechanic === 'oven' && nextSession?.oven?.status === 'baking';
     const tip = nextSession && !visibleTip && (ovenWacht || !(nextStep?.mechanic === 'oven')) && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
     if (tip) next = { ...next, preparationSessions: { ...next.preparationSessions, [recipe.id]: presentCookingTip(nextSession, tip) } };
-    if (!saveCookingProgress(next, undefined, presentationOnly ? { rewards: false } : undefined)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
+    if (!await write(next, presentationOnly)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
     accept(next);
     if (tip) setVisibleTip(tip);
     return true;
   };
   useEffect(() => {
     if (issues.length) { if (import.meta.env.DEV) console.warn(`Receptconfiguratie ${recipe.id}:`, issues); return; }
-    const current = loadCookingProgress();
-    const next = beginCookingAttempt(current, recipe);
+    const current = read(); if (!current) return;
+    const next = storage.begin(current, recipe);
     if (next !== current || (next.preparationSessions[recipe.id] && eligibleCookingTip(recipe.cookingTips ?? [], next.preparationSessions[recipe.id]))) persist(next, true); else accept(current);
-  }, [recipe.id]);
+  }, [recipe.id, storage]);
 
   if (issues.length || !session) return <section className="cooking-stage"><div className="cooking-stage__shell"><article className="cooking-card">
     <h1>Dit recept is nog niet helemaal klaar</h1><p>Je voorraad en voortgang blijven bewaard.</p><button className="cooking-button" onClick={onClose}>Terug naar de keuken</button>
@@ -101,8 +111,8 @@ export default function CookingExperience(props: Props) {
   const kijktTerug = Boolean(session.viewStepId) && step.id !== liveStep.id;
   const background = step.station === 'kitchen' ? ASSET_LIBRARY.treehouse.rooms.kitchen : ASSET_LIBRARY.treehouse.stations[step.station === 'oven' ? 'worktop' : step.station];
 
-  const change = (patch: Partial<CookingStepState>, advance = false) => {
-    const current = loadCookingProgress();
+  const change = async (patch: Partial<CookingStepState>, advance = false) => {
+    const current = read(); if (!current) return;
     const saved = current.preparationSessions[recipe.id];
     const live = sessionRef.current;
     if (!saved || !live || saved.attemptId !== live.attemptId || saved.stepId !== liveStep.id || saved.completed) {
@@ -117,16 +127,16 @@ export default function CookingExperience(props: Props) {
     let nextSession = updateCookingStep(saved, patch);
     if (advance) nextSession = advancePreparation(nextSession, recipe);
     if (advance && preparation.steps.every(item => nextSession.completedStepIds.includes(item.id))) {
-      const result = completeCookingAttempt(current, recipe, nextSession);
+      const result = storage.complete(current, recipe, nextSession);
       if (!result.ok) { setMessage(result.message); setRetry(value => value + 1); return; }
-      if (persist(result.progress)) setMessage(null);
+      if (await persist(result.progress)) setMessage(null);
       return;
     }
-    if (persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } })) setMessage(null);
+    if (await persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } })) setMessage(null);
   };
   /** Alleen waar je kijkt verschuift; wat af is blijft af. */
   const blader = (richting: 'terug' | 'verder') => {
-    const current = loadCookingProgress();
+    const current = read(); if (!current) return;
     const saved = current.preparationSessions[recipe.id];
     if (!saved || saved.completed) return;
     const nextSession = richting === 'terug' ? goBackPreparation(saved, recipe) : resumePreparation(saved);
@@ -136,23 +146,23 @@ export default function CookingExperience(props: Props) {
   };
 
   const changeOven = (patch: Partial<OvenState>) => {
-    const current = loadCookingProgress();
+    const current = read(); if (!current) return;
     const saved = current.preparationSessions[recipe.id];
     if (!saved || saved.completed || saved.attemptId !== sessionRef.current?.attemptId || saved.stepId !== liveStep.id) return;
     const oven = restoreOven({ ...restoreOven(saved.oven), ...patch });
     persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: { ...saved, oven } } }, true);
   };
-  const replay = () => {
-    const current = loadCookingProgress();
-    const next = beginCookingAttempt(current, recipe, true);
+  const replay = async () => {
+    const current = read(); if (!current) return;
+    const next = storage.begin(current, recipe, true);
     setVisibleTip(null);
-    if (persist(next)) { setBookOpen(false); setMessage(null); }
+    if (await persist(next)) { setBookOpen(false); setMessage(null); }
   };
   const closeTip = () => {
     if (!visibleTip) return;
-    const current = loadCookingProgress();
+    const current = read(); if (!current) return;
     const saved = current.preparationSessions[recipe.id];
-    if (saved?.attemptId === session.attemptId && persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: dismissCookingTip(saved, visibleTip) } }, true)) setVisibleTip(null);
+    if (saved?.attemptId === session.attemptId) void persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: dismissCookingTip(saved, visibleTip) } }, true).then(ok => { if (ok) setVisibleTip(null); });
   };
   const stockMessage = missingIngredientMessage(recipe, progress, progress.journeys[recipe.id]?.consumedIngredientIds);
 

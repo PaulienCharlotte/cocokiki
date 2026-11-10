@@ -111,7 +111,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       <img src={image} alt={alt} draggable={false} fetchPriority="high" onError={() => setImageFailed(true)} />
       <nav aria-label="Eilanden in Dreamworld">
         {locations.map(location => <button type="button" key={location.id} className="dream-hotspot" aria-label={`${location.label} openen`} title={`${location.label}${location.comingSoon ? ' · Binnenkort' : ''}`}
-          style={{ left: `${location.spot.x * 100}%`, top: `${location.spot.y * 100}%`, width: `${location.spot.width * 100}%`, height: `${location.spot.height * 100}%`, minWidth: 44 / view.scale, minHeight: 44 / view.scale }}
+          style={{ left: `${location.spot.x * 100}%`, top: `${location.spot.y * 100}%`, width: `${location.spot.width * 100}%`, height: `${location.spot.height * 100}%`, minWidth: (location.icon ? 64 : 44) / view.scale, minHeight: (location.icon ? 64 : 44) / view.scale }}
           onFocus={event => { if (event.currentTarget.matches(':focus-visible')) focus(location.spot); }}
           onClick={event => { if (event.detail === 0 || !suppressClick.current) onNavigate(location.path); }}>
           {location.icon}

@@ -23,8 +23,8 @@ export interface DreamIsland {
   activities: IslandActivity[];
   future: readonly string[];
 }
-export const DREAMWORLD_IMAGE = '/dreamworld/world-map-modern.webp';
-export const DREAMWORLD_RATIO = 1672 / 940;
+export const DREAMWORLD_IMAGE = '/dreamworld/world-map-v2.png';
+export const DREAMWORLD_RATIO = 1672 / 941;
 
 export interface WorldDestination {
   id: IslandId;
@@ -34,14 +34,14 @@ export interface WorldDestination {
   enabled: boolean;
 }
 
-// Coordinates refer to the centres of the six buttons painted into the map.
+// Normalized image coordinates; navigation remains independent React controls.
 export const WORLD_DESTINATIONS: WorldDestination[] = [
-  { id: 'cooking', label: 'Kookeiland', route: '/treehouse/cookbook', position: { x: 308 / 1672, y: 350 / 940, width: .056, height: .10 }, enabled: true },
-  { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: 835 / 1672, y: 434 / 940, width: .058, height: .104 }, enabled: true },
-  { id: 'math', label: 'Rekeneiland', route: '/islands/math', position: { x: 1392 / 1672, y: 361 / 940, width: .058, height: .104 }, enabled: true },
-  { id: 'plants', label: 'Planteneiland', route: '/plantendokter', position: { x: 301 / 1672, y: 633 / 940, width: .058, height: .104 }, enabled: true },
-  { id: 'discovery', label: 'Topo-eiland', route: '/islands/discovery', position: { x: 1385 / 1672, y: 662 / 940, width: .058, height: .104 }, enabled: true },
-  { id: 'language', label: 'Taaleiland', route: '/islands/language', position: { x: 828 / 1672, y: 713 / 940, width: .058, height: .104 }, enabled: true },
+  { id: 'cooking', label: 'Milo’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .39, width: .058, height: .104 }, enabled: true },
+  { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: .51, y: .40, width: .058, height: .104 }, enabled: true },
+  { id: 'math', label: 'Rekenwerkplaats', route: '/islands/math', position: { x: .85, y: .40, width: .058, height: .104 }, enabled: true },
+  { id: 'plants', label: 'Novi’s Plantenkas', route: '/islands/plants', position: { x: .17, y: .65, width: .058, height: .104 }, enabled: true },
+  { id: 'discovery', label: 'Reizen en topografie', route: '/islands/discovery', position: { x: .85, y: .69, width: .058, height: .104 }, enabled: true },
+  { id: 'language', label: 'Taal · Binnenkort', route: '/islands/language', position: { x: .51, y: .85, width: .058, height: .104 }, enabled: true },
 ];
 export const WORLD_SHOPS = [
   { id: 'groceries', label: 'Boodschappen', path: '/shop/groceries' },
