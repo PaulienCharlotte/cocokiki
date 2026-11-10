@@ -30,13 +30,17 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
  * tweede vormtaal naast het kaartraster dat de rest van de app gebruikt.
  * Zie `.claude/skills/cocokiki-ui`, sectie 4.
  */
-export default function LocationGameView({ location, onOpen, renderClipboard, initialTab = 'activities' }: { location: WorldLocation; onOpen: (activity: LocationActivity) => void; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
+export default function LocationGameView({ location, onOpen, onDirect, renderClipboard, initialTab = 'activities' }: { location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
   const previews = location.adventurePreviews ?? [];
   const [selectedId, setSelectedId] = useState(previews[0]?.id);
   // Zonder activiteiten valt er niets te kiezen; dan is er ook geen tabblad.
   const heeftActiviteiten = location.activities.length > 0;
   const [tab, setTab] = useState<'activities' | 'adventures'>(heeftActiviteiten ? initialTab : 'adventures');
-  const selected = previews.find(item => item.id === selectedId) ?? previews[0];
+  // Een avontuur dat gewoon een spel is, opent meteen. Alleen wat echt een
+  // opdracht aan de balie is, gaat via het klembord.
+  const kies = (id: string) => { if (onDirect?.(id)) return; setSelectedId(id); };
+  const opKlembord = previews.filter(item => !onDirect || !onDirect(item.id, true));
+  const selected = opKlembord.find(item => item.id === selectedId) ?? opKlembord[0];
   const id = useId();
   return <div className={`location-game location-game--${heeftActiviteiten ? tab : 'adventures'}`}>
     <header className="location-game__heading"><h1 id={`${id}-title`} className="sr-only">{location.name}</h1></header>
@@ -80,7 +84,7 @@ export default function LocationGameView({ location, onOpen, renderClipboard, in
               ? <span className="adventure-slot"><LockKeyhole size={14} aria-hidden="true" />{STATUS.locked}</span>
               : <span className="adventure-slot is-open">{STATUS[adventure.status]}</span>,
           }))}
-          onChoose={setSelectedId}
+          onChoose={kies}
         />
       </section>
     </div>

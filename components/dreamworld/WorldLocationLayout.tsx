@@ -11,11 +11,22 @@ import CardGrid from '../ui/CardGrid';
 import AdventureRunner from '../adventures/AdventureRunner';
 import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
 
-/** Welke knop er op het klembord staat, per avontuur dat echt speelt. */
+/**
+ * Het klembord is de opdracht die aan de balie binnenkomt: er staat iemand met
+ * een wens, en daar hoort een knop bij. Welke knop, staat hieronder.
+ */
 const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
   bestellingen: { label: 'Naar de toonbank', pad: '/treehouse/cookbook?toonbank=1' },
   plantendokter: { label: 'Naar het spreekuur', pad: '/plantendokter' },
-  taartenatelier: { label: 'Naar het atelier', pad: '/games/taartenatelier' },
+};
+
+/**
+ * Avonturen die gewoon een spel zijn. Die openen meteen als je op de kaart
+ * tikt, zonder omweg langs het klembord. Op een telefoon stond dat klembord
+ * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
+ */
+const DIRECTE_AVONTUREN: Record<string, string> = {
+  taartenatelier: '/games/taartenatelier',
 };
 
 const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
@@ -62,6 +73,12 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
       : <LocationGameView
         location={location}
         onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
+        onDirect={(adventureId, alleenVragen) => {
+          const pad = DIRECTE_AVONTUREN[adventureId];
+          if (!pad) return false;
+          if (!alleenVragen) onNavigate(withLocationOrigin(pad, location.id));
+          return true;
+        }}
         // De bestellingen van de bakkerij lopen via de toonbank in het
         // kookboek, zodat er één ingang is voor een bestelling.
         renderClipboard={preview => <AdventureClipboard

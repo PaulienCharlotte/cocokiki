@@ -43,8 +43,27 @@
   /* Geen eigen vlak over de tekening heen; die loopt door tot onderaan. */
   .location-game__stories { display: flex; flex-direction: column; min-width: 0; padding-bottom: var(--space-6); }
   .location-game--activities .location-game__stories, .location-game--adventures .location-game__activities { display: none; }
-  .adventure-shelf { order: -1; margin-top: 0; }
-  .adventure-shelf { padding: var(--space-4) var(--space-3) 0; }
-  .adventure-clipboard { margin: var(--space-5) var(--space-3) 0; }
+  /* Het klembord is de opdracht; die hoort bovenaan te staan en niet onder
+     een rij kaarten waar je eerst langs moet scrollen.
+     align-self: start komt uit de basisregel en betekent in deze kolom
+     "zo smal mogelijk". Daardoor werd het klembord nul breed, en dus ook
+     nul hoog: het leek verdwenen. Hier hoort hij de volle breedte te nemen. */
+  .adventure-clipboard {
+    order: -1;
+    align-self: stretch;
+    margin: var(--space-4) var(--space-3) 0;
+    /* Op een telefoon is het klembord te smal om de tekst in een vaste
+       verhouding kwijt te kunnen: de titel en de knop vielen eraf. Daarom
+       groeit het hier mee met de tekst. De marges staan in procenten van de
+       breedte, zodat het vel op zijn plek blijft in de tekening. */
+    aspect-ratio: auto;
+  }
+  .adventure-clipboard__paper {
+    position: static;
+    inset: auto;
+    padding: 24% 18% 16% 16%;
+    overflow: visible;
+  }
+  .adventure-shelf { margin-top: 0; padding: var(--space-4) var(--space-3) 0; }
 }
 
