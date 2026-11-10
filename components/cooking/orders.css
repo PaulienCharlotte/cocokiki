@@ -1,0 +1,159 @@
+/*
+ * De toonbank en de aflevering.
+ *
+ * Eén witte kaart op een rustige achtergrond, net als het spreekuur en de
+ * encyclopedie. Alles wat hier staat komt uit de gedeelde vormtaal: de
+ * spraakwolk praat, de keuzelijst kiest, het raster wijst aan. Deze regels
+ * gaan alleen over de ruimte eromheen.
+ */
+
+/*
+ * De balk van de wereld zweeft boven de pagina, dus de kaart begint eronder.
+ * Hetzelfde trucje als het spreekuur gebruikt; anders valt het terugpijltje
+ * achter de munten.
+ */
+.bestel-scherm {
+  min-height: 100dvh;
+  display: grid;
+  place-items: start center;
+  padding: max(var(--space-5), 76px) var(--space-4) var(--space-8);
+  background: var(--color-background);
+}
+.dream-app .bestel-scherm { padding-top: calc(var(--space-12) * 2 + var(--space-4)); }
+
+.bestel-kaart {
+  position: relative;
+  width: min(100%, 620px);
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+/* Het pijltje hoort linksboven in de kaart, op dezelfde plek als overal. */
+.bestel-kaart__terug { justify-self: start; }
+
+.bestel-melding { margin: 0; color: var(--color-error); font-size: var(--font-size-sm); }
+
+/* Het briefje onder de wens: waar je op moet letten, in twee woorden. */
+.bestel-briefje {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+}
+.bestel-briefje strong { font-size: var(--font-size-lg); }
+.bestel-briefje span { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+/* Waarom het niet past, of wat je over het hoofd zag. Eén rustige regel. */
+.bestel-uitleg { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); }
+
+.bestel-eters { display: inline-flex; align-items: center; gap: var(--space-1); }
+
+.bestel-gerecht { margin: 0; display: grid; place-items: center; }
+.bestel-gerecht img { width: min(100%, calc(var(--space-12) * 4)); border-radius: var(--radius-card); }
+
+/*
+ * De aflevering ligt over de keuken heen, net als het oude slot: je staat nog
+ * in de keuken, maar nu gaat het om degene die het komt halen.
+ */
+.bestel-aflevering {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-4);
+  isolation: isolate;
+}
+.bestel-aflevering__achtergrond { position: fixed; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.bestel-aflevering::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: #3a24124d;
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+.bestel-kaart--aflevering { justify-items: stretch; text-align: left; }
+.bestel-aflevering__gerecht { position: relative; display: grid; place-items: center; }
+.bestel-aflevering__gerecht img { width: min(100%, calc(var(--space-12) * 4)); border-radius: var(--radius-card); }
+.bestel-aflevering__kop {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* De bon: wat je gemaakt hebt, in drie regels zonder kaders eromheen. */
+.bestel-bon { margin: 0; display: grid; gap: var(--space-2); }
+.bestel-bon > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+.bestel-bon > div:last-child { border-bottom: 0; padding-bottom: 0; }
+.bestel-bon dt { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.bestel-bon dd { margin: 0; font-weight: var(--font-weight-bold); text-align: right; }
+
+.bestel-bonus {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-success-soft);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Het kaartje in het kookboek: er wacht iemand op je. */
+.bestel-uitnodiging {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--motion-fast) var(--ease-storybook);
+}
+.bestel-uitnodiging:hover { transform: translateY(-2px); }
+.bestel-uitnodiging img {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: 50%;
+  background: var(--color-background-soft);
+  object-fit: cover;
+}
+.bestel-uitnodiging span { display: grid; gap: var(--space-1); }
+.bestel-uitnodiging strong { font-size: var(--font-size-md); }
+.bestel-uitnodiging small { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bestel-uitnodiging { transition: none; }
+  .bestel-uitnodiging:hover { transform: none; }
+}
+
+@media (max-width: 600px) {
+  .bestel-kaart { padding: var(--space-5) var(--space-4) var(--space-4); gap: var(--space-4); }
+  .bestel-scherm { padding-right: var(--space-3); padding-left: var(--space-3); }
+  .dream-app .bestel-scherm { padding-top: calc(var(--space-12) + var(--space-8)); }
+}

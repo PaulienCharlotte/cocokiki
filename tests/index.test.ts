@@ -2,6 +2,7 @@ import './learning.test';
 import './designSystem.test';
 import './worldArchitecture.test';
 import './cookingJourney.test';
+import './bakeryOrders.test';
 import './cookingEngine.test';
 import './fruitYogurt.test';
 import './cookingFoundation.test';

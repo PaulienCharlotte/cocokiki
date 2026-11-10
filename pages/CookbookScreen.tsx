@@ -8,12 +8,14 @@ import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFl
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
 import NutrientMemoryFlow from '../components/cooking/NutrientMemoryFlow';
 import JourneyStageProgress from '../components/cooking/JourneyStageProgress';
+import OrderFlow, { OrderInvite } from '../components/cooking/OrderFlow';
 import ShopScreen from './ShopScreen';
 import { RECIPES, RECIPE_CATEGORIES } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeCategory, RecipeConfig } from '../data/cooking/types';
 import { beginDiscoveryStage, createDiscoveryReplay, createMathReplay, createMemoryReplay, loadCookingProgress, restartJourney, saveCookingProgress, startJourney } from '../services/cookingProgress';
 import { getRecipeAccess } from '../data/cooking/availability';
 import { getRecipeIssues } from '../data/cooking/validation';
+import { lopendeBestelling, openBestellingen } from '../services/bakeryOrders';
 
 type ActiveCategory = 'all' | 'completed' | 'preparing' | RecipeCategory;
 type ReplayKind = 'discovery' | 'math' | 'memory';
@@ -34,6 +36,9 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const [replayProgress, setReplayProgress] = useState<CookingProgressState | null>(null);
   const [replayKind, setReplayKind] = useState<ReplayKind | null>(null);
   const [notice, setNotice] = useState('');
+  // De toonbank staat voor het kookboek, maar je kunt er altijd omheen: wie
+  // gewoon iets wil bakken blijft in het kookboek bladeren.
+  const [atToonbank, setAtToonbank] = useState(false);
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   useEffect(() => {
     if (!import.meta.env.DEV) return;
@@ -100,6 +105,12 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     setSelected(null); setReplayProgress(replay); setReplayKind('memory'); setPlayingRecipeId(recipe.id);
   };
 
+  const lopend = playingRecipeId ? null : lopendeBestelling(progress);
+  // Zolang het recept en het aantal nog niet rond zijn hoort het kind aan de
+  // toonbank. Daarna is de bestelling een kaartje waar je op terugkomt, zodat
+  // het kookboek een kookboek blijft.
+  const kiezendeBestelling = lopend && !lopend.voortgang.keerGekozen ? lopend : null;
+  const wachtend = openBestellingen(progress);
   const playingRecipe = playingRecipeId ? RECIPES.find(recipe => recipe.id === playingRecipeId) : undefined;
   const activeProgress = replayProgress ?? progress;
   const playingJourney = playingRecipe ? activeProgress.journeys[playingRecipe.id] : undefined;
@@ -141,10 +152,28 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     </section>
   </main>;
 
+  // De toonbank: hier begint een bestelling, en hier kies je het recept dat
+  // bij de wens past. Daarna loopt het gewone kookavontuur door.
+  if (atToonbank || kiezendeBestelling) return <OrderFlow
+    progress={progress}
+    onSave={next => {
+      if (!saveCookingProgress(next)) return false;
+      setProgress(next);
+      return true;
+    }}
+    onStart={recipe => { setAtToonbank(false); handleStart(recipe); }}
+    onExit={() => setAtToonbank(false)}
+  />;
+
   return <main className="cooking-room cookbook-library-room">
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in jouw eigen boomhut" />
     <section className="recipe-library" aria-labelledby="cooking-title">
       <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>
+      {(lopend?.bestelling ?? wachtend[0]) && <OrderInvite
+        bestelling={lopend?.bestelling ?? wachtend[0]}
+        lopend={Boolean(lopend)}
+        onOpen={() => setAtToonbank(true)}
+      />}
         <nav className="recipe-categories recipe-library__filters" aria-label="Receptcategorieën">
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>

@@ -1,5 +1,51 @@
 # Cooking Engine
 
+## De bestelling aan de toonbank (2026-11-09)
+
+Een kookavontuur begint niet meer bij een recept maar bij iemand met een wens.
+`data/cooking/orders.ts` bevat de bestellingen: wie er langskomt, waarom, voor
+hoeveel mensen, en één eis die het recept moet halen (`zonder` een of meer
+ingrediënten, een `categorie`, of `snel` binnen zoveel minuten). De tekst die
+de klant zegt als een recept niet past hoort bij die eis, niet bij een recept;
+daardoor klopt hij altijd voor elk recept dat zakt.
+
+`services/bakeryOrders.ts` bevat alle regels, zuiver en zonder React:
+`pastBijBestelling`, `keerBakken` (eters gedeeld door porties, naar boven),
+`keerOpties`, `openBestellingen`, en de overgangen `neemBestellingAan`,
+`kiesReceptVoorBestelling`, `kiesAantalVoorBestelling`, `leverBestellingAf` en
+`legBestellingTerug`. Een bestelling verschijnt pas aan de toonbank als er een
+recept bij hoort dat dit kind al mag maken; anders zou de wens onoplosbaar
+zijn. De fruityoghurt gaat open na één afgerond recept, dus Lua's bestelling
+wacht daarop.
+
+Drie schermen (`components/cooking/OrderFlow.tsx`), elk met één vraag: wie help
+je (CardGrid), welk recept past bij de wens (ChoiceList), en hoe vaak moet je
+bakken (ChoiceList). Daarna loopt het bestaande kookavontuur ongewijzigd door.
+Een verkeerde keuze kost niets: de regel kleurt, de klant legt uit waarom het
+niet past, en je kiest opnieuw. Missers worden geteld voor de bonus, niet
+afgestraft.
+
+`components/cooking/OrderDelivery.tsx` vervangt het slot "Klaar, chef!" zolang
+er een bestelling loopt. Het ligt als vast vlak over de keuken, net als het
+oude slot, en toont wat je maakte, hoeveel, en wat de klant ervan vindt.
+
+Opslag: `CookingProgressState` kreeg `activeOrderId` en `orders`, beide
+optioneel. Oude opslag zonder bestellingen migreert naar een leeg overzicht
+zonder voorraad of voortgang te raken; een lopende bestelling naar een
+onbekend spel of een verdwenen recept wordt opgeruimd. De bonus loopt via de
+bestaande grootboekregel `cooking-order:<id>`, dus herladen of twee keer
+opslaan betaalt niet opnieuw uit.
+
+Nog niet gedaan, bewust: de etappes tússen de bestelling en de aflevering
+(ontdekken, memory, rekenen, winkelen) weten nog niets van de klant. De
+rekenopgaven komen uit het recept, niet uit de bestelling. Dat is het volgende
+stuk als de bakkerij verder af moet.
+
+Verificatie: 329 tests, TypeScript en de productiebuild. Zelf gespeeld op
+desktop en 375px: de toonbank, een verkeerd recept, het goede recept, een te
+laag aantal, het goede aantal, en de aflevering met en zonder bonus. De
+uitbetaling is in de balk gecontroleerd (0 naar 5).
+
 ## Shopping Practice and Direct Amount Entry (2026-10-29)
 
 `components/shop/BasketPractice.tsx` replaces the basket item list temporarily,

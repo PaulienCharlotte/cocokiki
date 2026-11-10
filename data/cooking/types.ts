@@ -257,10 +257,31 @@ export interface CookingAssetRegistry {
   equipment: Record<string, string>;
 }
 
+/** Hoe ver je bent met één bestelling aan de toonbank. */
+export interface OrderProgress {
+  bestellingId: string;
+  /** Het gekozen recept; `null` zolang je nog aan het kiezen bent. */
+  recipeId: RecipeId | null;
+  status: 'bezig' | 'geleverd';
+  /** Hoe vaak een recept werd gekozen dat niet bij de wens paste. */
+  misgrepen: number;
+  /** Of het aantal keer bakken meteen goed was. */
+  aantalInEenKeer: boolean;
+  /** Het gekozen aantal keer bakken; `null` zolang dat nog niet klopt. */
+  keerGekozen: number | null;
+  aangenomenOp: string;
+  geleverdOp?: string;
+  bonusGekregen?: number;
+}
+
 export interface CookingProgressState {
   version: 1;
   revision?: number;
   activeRecipeId: RecipeId | null;
+  /** De bestelling waar je nu mee bezig bent. */
+  activeOrderId?: string | null;
+  /** Wat er van elke bestelling bekend is, op bestelling-id. */
+  orders?: Record<string, OrderProgress>;
   journeys: Partial<Record<RecipeId, JourneyProgress>>;
   discoveredIngredientIds: string[];
   inventory: CookingInventory;

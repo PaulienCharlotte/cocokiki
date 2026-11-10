@@ -18,6 +18,8 @@ import CookingInteraction from './CookingInteraction';
 import CookingTipCard from './CookingTipCard';
 import HomeRecipe from './HomeRecipe';
 import { dismissCookingTip, eligibleCookingTip, presentCookingTip, type CookingTip } from '../../data/cooking/tips';
+import { bestellingVoorRecept, leverBestellingAf } from '../../services/bakeryOrders';
+import OrderDelivery from './OrderDelivery';
 
 interface Props {
   recipe: RecipeConfig;
@@ -43,6 +45,7 @@ export default function CookingExperience(props: Props) {
   const [message, setMessage] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
   const [visibleTip, setVisibleTip] = useState<CookingTip | null>(null);
+  const bestelling = bestellingVoorRecept(progress, props.recipe.id);
   const issues = getRecipeIssues(recipe);
   const initial = useRef(recipe.preparation?.steps.length ? createCookingSession(recipe) : null);
   const session = progress.preparationSessions[recipe.id] ?? initial.current;
@@ -152,6 +155,27 @@ export default function CookingExperience(props: Props) {
     if (saved?.attemptId === session.attemptId && persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: dismissCookingTip(saved, visibleTip) } }, true)) setVisibleTip(null);
   };
   const stockMessage = missingIngredientMessage(recipe, progress, progress.journeys[recipe.id]?.consumedIngredientIds);
+
+  // Was er een bestelling, dan eindigt het niet in de keuken maar bij degene
+  // die erop wacht. Afleveren haalt de bestelling van de toonbank en betaalt
+  // de bonus uit; daarna is dit weer een gewoon klaargemaakt recept.
+  if (session.completed && bestelling) return <OrderDelivery
+    bestelling={bestelling.bestelling}
+    recipe={recipe}
+    keer={bestelling.voortgang.keerGekozen ?? 1}
+    bonus={bestelling.voortgang.misgrepen === 0 && bestelling.voortgang.aantalInEenKeer ? bestelling.bestelling.bonus : 0}
+    inEenKeer={bestelling.voortgang.misgrepen === 0 && bestelling.voortgang.aantalInEenKeer}
+    onClose={() => {
+      const current = loadCookingProgress();
+      const uitkomst = leverBestellingAf(current);
+      if (uitkomst.bestelling) {
+        if (!saveCookingProgress(uitkomst.progress)) { setMessage('Afleveren lukt even niet. Probeer het nog eens.'); return; }
+        setProgress(uitkomst.progress);
+        onProgressChange(uitkomst.progress);
+      }
+      onClose();
+    }}
+  />;
 
   if (session.completed) return <section className="cooking-stage cooking-stage--done" aria-live="polite">
     <img className="cooking-stage__background" src={ASSET_LIBRARY.treehouse.stations.worktop} alt="" />

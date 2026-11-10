@@ -7,6 +7,7 @@ import { ingredientRequirements } from './recipeInventory';
 import { createCookingSession, migrateCookingSession, migrateLegacyCookingSession } from '../data/cooking/session';
 import { COOKING_SESSION_KEY } from '../data/cooking/bananaPancakeCooking';
 import { memoryConfigIssues } from '../data/cooking/nutrientMemory';
+import { BESTELLINGEN_BY_ID } from '../data/cooking/orders';
 import type {
   CookingProgressState,
   IngredientDiscoveryState,
@@ -15,6 +16,7 @@ import type {
   JourneyStage,
   MathChallengeConfig,
   MathChallengeState,
+  OrderProgress,
   RecipeConfig,
   RecipeId,
   ShoppingTransaction,
@@ -53,6 +55,8 @@ export function createEmptyCookingProgress(): CookingProgressState {
   return {
     version: COOKING_PROGRESS_VERSION,
     activeRecipeId: null,
+    activeOrderId: null,
+    orders: {},
     journeys: {},
     discoveredIngredientIds: [],
     inventory: { quantitySchemaVersion: 2, consumables: {}, equipmentIds: [], acquisitions: [] },
@@ -220,6 +224,29 @@ export function migrateCookingProgress(value: unknown): CookingProgressState {
       };
     }
   }
+  // Bestellingen zijn later bijgekomen. Een opslag zonder bestellingen is
+  // gewoon een spel waarin nog niemand aan de toonbank heeft gestaan.
+  if (source.orders && typeof source.orders === 'object') {
+    for (const [id, candidate] of Object.entries(source.orders)) {
+      if (!BESTELLINGEN_BY_ID[id] || !candidate || typeof candidate !== 'object') continue;
+      const order = candidate as OrderProgress;
+      if (order.status !== 'bezig' && order.status !== 'geleverd') continue;
+      result.orders![id] = {
+        bestellingId: id,
+        recipeId: isRecipeId(order.recipeId) ? order.recipeId : null,
+        status: order.status,
+        misgrepen: typeof order.misgrepen === 'number' && order.misgrepen >= 0 ? Math.floor(order.misgrepen) : 0,
+        aantalInEenKeer: order.aantalInEenKeer !== false,
+        keerGekozen: typeof order.keerGekozen === 'number' && order.keerGekozen > 0 ? Math.floor(order.keerGekozen) : null,
+        aangenomenOp: typeof order.aangenomenOp === 'string' ? order.aangenomenOp : new Date(0).toISOString(),
+        ...(typeof order.geleverdOp === 'string' ? { geleverdOp: order.geleverdOp } : {}),
+        ...(typeof order.bonusGekregen === 'number' ? { bonusGekregen: order.bonusGekregen } : {}),
+      };
+    }
+  }
+  const lopend = typeof source.activeOrderId === 'string' ? source.activeOrderId : null;
+  result.activeOrderId = lopend && result.orders![lopend]?.status === 'bezig' ? lopend : null;
+
   if (source.preparationSessions && typeof source.preparationSessions === 'object') {
     for (const [id, session] of Object.entries(source.preparationSessions)) {
       const recipe = RECIPES_BY_ID[id];
@@ -272,6 +299,11 @@ export function saveCookingProgress(progress: CookingProgressState, spend?: { id
     const completion = progress.completions[recipeId];
     const reward = RECIPES_BY_ID[recipeId]?.rewardCoins;
     if (completion?.rewardClaimed && reward) operations.push({ id: `cooking-complete:${recipeId}`, amount: reward });
+  }
+  // De bonus voor een bestelling die in één keer goed ging. Eén transactie per
+  // bestelling, dus herladen of twee keer opslaan betaalt niet opnieuw uit.
+  for (const [bestellingId, order] of Object.entries(progress.orders ?? {})) {
+    if (order?.status === 'geleverd' && order.bonusGekregen) operations.push({ id: `cooking-order:${bestellingId}`, amount: order.bonusGekregen });
   }
   for (let index = operations.length - 1; index >= 0; index--) {
     if (options?.rewards === false || ledger[operations[index].id] !== undefined) operations.splice(index, 1);

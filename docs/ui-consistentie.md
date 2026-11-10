@@ -142,8 +142,25 @@ dan het keuzeraster (`CardGrid`) en de schuifbalk die de rekenspellen gebruiken.
 **Doen:** het klokoverzicht naar `CardGrid`, en de niveaurondjes naar dezelfde
 schuifbalk als bij rekenen.
 
+## 11. De etappes weten nog niets van de bestelling
+
+De bakkerij heeft nu een bestelling aan de voorkant en een aflevering aan de
+achterkant, maar daartussen is er niets veranderd. Ontdekken, de memory, het
+rekenen en het winkelen noemen de klant niet en gebruiken zijn getallen niet.
+De rekenopgaven staan vast in het recept (`education.math`), terwijl de
+bestelling er al een echte som in zich heeft: zoveel eters, zoveel porties.
+
+Doen: de bestelling als eerste rekenopgave meegeven aan `MathChallengeFlow`,
+en in de etappebalk (`JourneyStageProgress`) laten zien voor wie je bezig bent.
+Dat laatste is één kaartje in een component die op elk etappescherm al staat.
+
 ## Al opgelost
 
+- **Een kookavontuur was het recept uit het kookboek.** Zeven etappes die voor
+  elk recept hetzelfde waren, zonder reden om te bakken, zonder iemand om het
+  voor te doen, en met "Klaar, chef!" en een aantal porties als slot. Nu begint
+  het bij een bestelling en eindigt het bij degene die erop wacht. De regel
+  staat in sectie 9 van de skill.
 - Een kamer in de boomhut werd alleen op een telefoon op volle breedte getoond
   met schuiven naar links en rechts; op een laptop zag je het midden van de
   tekening en voelde de kamer klein. Die regels staan nu buiten de media query,

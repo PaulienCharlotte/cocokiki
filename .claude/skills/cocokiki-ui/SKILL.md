@@ -251,7 +251,33 @@ klokmemory delen die regels; een nieuw memoryspel zet zijn eigen klassen in
 datzelfde bestand erbij in plaats van een eigen kaart te tekenen. Alleen hoe
 de kaarten op het bord liggen hoort bij het spel.
 
-## 9. Per spel mag de dynamiek verschillen, de vorm niet
+## 9. Een avontuur heeft een reden, iemand en een afloop
+
+Een spel afwerken is geen avontuur. Het kookavontuur was zeven etappes lang
+precies het recept uit het kookboek, en dat voelde ook zo. Wat het verschil
+maakt staat niet in meer knoppen of strengere tolerantie, maar eromheen:
+
+- **Een aanleiding.** Waarom doe je dit nu? Iemand is jarig, iemand heeft
+  haast, iemand heeft de hele ochtend gewerkt.
+- **Iemand voor wie je het doet.** Niet de app die een vinkje zet, maar een
+  personage met een wens die niet precies het recept is.
+- **Iets wat mis kan gaan zonder dat je iets kwijtraakt.** Het verkeerde
+  recept kiezen is een antwoord, geen fout: de klant zegt zelf waarom het niet
+  past, en je kiest opnieuw. Tellen mag, straffen niet.
+- **Een afloop die een afloop is.** "Klaar, chef!" en tien porties is een
+  melding. Afleveren en horen wat die ander ervan vindt, is een einde.
+
+De bestelling in de bakkerij (`data/cooking/orders.ts`,
+`services/bakeryOrders.ts`) is hiervan het voorbeeld. Een nieuwe wereld doet
+het op dezelfde manier: de wens staat in de data, de regels staan in een
+zuivere service, en de schermen stellen één vraag per keer met de spraakwolk
+en de keuzelijst.
+
+**Wie bakt en wie langskomt.** Coco staat achter de toonbank, want koken is
+van hem. De anderen komen langs als klant. Dat is geen uitzondering op
+sectie 7: ze koken niet, ze bestellen. Laat Kiki nooit het recept uitleggen.
+
+## 10. Per spel mag de dynamiek verschillen, de vorm niet
 
 Verschillend mag: hoe je speelt, welke beweging erbij hoort, welke
 achtergrond, hoe je scoort.
@@ -260,13 +286,13 @@ Hetzelfde moet: tokens, de knoppen uit het design system, de opbouw van
 hierboven, het topmenu (`AppShell`), de munten, de taal, en waar overkoepelende
 dingen staan (de encyclopedie zit in het topmenu, niet in een kamer).
 
-## 10. Taal
+## 11. Taal
 
 Nederlands, tegen een kind van negen. Korte zinnen, geen schoolse termen.
 Variabelen en commentaar in de code ook Nederlands, zoals in de rest van de
 repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 
-## 11. Voor je klaar bent
+## 12. Voor je klaar bent
 
 1. `npm test` — alles groen (de tests zijn ook de plek waar botsingen met de
    andere agent opvallen).
@@ -276,7 +302,7 @@ repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 4. Kijk er in de browser naar op 360px en op desktop.
 5. Commit en push alleen als Charlotte erom vraagt.
 
-## 12. Wat nu nog niet klopt
+## 13. Wat nu nog niet klopt
 
 `docs/ui-consistentie.md` houdt bij welke oude stukken nog niet aan dit
 bestand voldoen, en in welke volgorde ze opgeruimd worden. Bouw niets nieuws
