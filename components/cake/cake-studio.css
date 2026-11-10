@@ -1,9 +1,9 @@
 /*
  * Het taartenatelier.
  *
- * Links het gereedschap, in het midden de taart op een rustig werkblad,
- * rechts de versieringen. Op een telefoon staat alles onder elkaar met de
- * versieringen als een strook die je opzij schuift.
+ * De taart staat zo groot mogelijk in beeld. Daaronder staat één paneel met
+ * alle keuzes achter tabbladen: de taartvorm, het tekengereedschap en de
+ * versieringen. Eén lijst, dus geen losse menu's die ruimte opeten.
  */
 
 .taart-atelier {
@@ -27,6 +27,8 @@
 }
 .taart-atelier__taarten { display: flex; flex: 1; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
 .taart-atelier__opslaan { display: flex; align-items: center; gap: var(--space-2); }
+/* "Klaar" brak op een smal scherm in tweeën; het is één woord. */
+.taart-atelier__opslaan .ck-button { white-space: nowrap; }
 
 .taart-keuze {
   width: var(--touch-target);
@@ -42,18 +44,19 @@
 
 .taart-atelier__werk {
   display: grid;
-  grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) minmax(0, 15rem);
-  gap: var(--space-4);
-  align-items: start;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: var(--space-3);
   min-height: 0;
 }
-.taart-atelier__midden { display: grid; gap: var(--space-3); justify-items: center; min-width: 0; }
+.taart-atelier__midden { display: grid; place-items: center; min-height: 0; min-width: 0; }
 
 /* Het werkblad zelf */
 .taart-vlak {
   position: relative;
-  width: min(100%, 34rem);
   aspect-ratio: 1;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
   border-radius: var(--radius-card);
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
@@ -68,27 +71,85 @@
 
 .taart-stuk { position: absolute; cursor: grab; touch-action: none; }
 .taart-stuk img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-.taart-stuk.is-gekozen { outline: 2px dashed var(--color-primary); outline-offset: 3px; border-radius: var(--radius-control-sm); }
+.taart-stuk.is-gekozen {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: var(--radius-control-sm);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--color-surface) 70%, transparent);
+}
 
+/*
+ * Twee kleine grepen op het gekozen stuk: draaien en weghalen. Groter en
+ * kleiner gaat met de knoppen onder het werkblad, net als bij de meubels.
+ * Het bolletje is klein, het aanraakvlak eromheen blijft ruim.
+ */
 .taart-greep {
   position: absolute;
-  width: var(--space-6);
-  height: var(--space-6);
+  width: var(--space-8);
+  height: var(--space-8);
   padding: 0;
+  display: grid;
+  place-items: center;
   border: 2px solid var(--color-surface);
   border-radius: 50%;
   background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-soft);
   cursor: grab;
   touch-action: none;
 }
-.taart-greep--schaal { right: calc(var(--space-4) * -1); bottom: calc(var(--space-4) * -1); }
-.taart-greep--draai { left: 50%; top: calc(var(--space-6) * -1); transform: translateX(-50%); background: var(--color-reward-strong); }
+.taart-greep--weg { right: calc(var(--space-8) / -2); top: calc(var(--space-8) / -2); background: var(--color-danger, #c2583f); cursor: pointer; }
+.taart-greep--draai { left: calc(var(--space-8) / -2); top: calc(var(--space-8) / -2); background: var(--color-reward-strong); }
 
-/* Gereedschap */
-.taart-gereedschap { display: grid; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-soft); }
-.taart-gereedschap__rij { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* Eén paneel met tabbladen onder het werkblad */
+.taart-paneel {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+.taart-paneel__tabs { display: flex; gap: var(--space-1); overflow-x: auto; }
+.taart-paneel__tabs button {
+  flex: 0 0 auto;
+  min-height: var(--space-8);
+  padding: var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-background-soft);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.taart-paneel__tabs button.is-actief { background: var(--color-primary); color: var(--color-on-primary); }
+.taart-paneel__lijst {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+  overflow-x: auto;
+}
+.taart-paneel__lijst li { flex: 0 0 auto; }
+.taart-paneel__lijst button {
+  width: var(--space-16, 4rem);
+  height: var(--space-16, 4rem);
+  padding: var(--space-1);
+  border: 2px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+  cursor: pointer;
+}
+.taart-paneel__lijst button.is-actief { border-color: var(--color-primary); background: var(--color-success-soft); }
+.taart-paneel__lijst img { width: 100%; height: 100%; object-fit: contain; }
+
+.taart-tekenen { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.taart-tekenen__rij { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .taart-knop {
-  flex: 1 1 5rem;
+  min-width: 4rem;
   min-height: var(--touch-target);
   display: grid;
   place-items: center;
@@ -104,7 +165,6 @@
 }
 .taart-knop.is-actief { border-color: var(--color-primary); background: var(--color-success-soft); color: var(--color-primary); }
 
-.taart-kleuren { gap: var(--space-2); }
 .taart-kleur {
   width: var(--touch-target);
   height: var(--touch-target);
@@ -114,75 +174,24 @@
 }
 .taart-kleur.is-actief { border-color: var(--color-text); box-shadow: 0 0 0 3px var(--color-success-soft); }
 
-.taart-dikte { display: grid; gap: var(--space-2); font-size: var(--font-size-sm); }
-.taart-dikte input { width: 100%; }
-.taart-dikte__stappen { display: flex; gap: var(--space-2); }
-.taart-dikte__stappen button {
-  flex: 1;
-  min-height: var(--touch-target);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-}
-.taart-dikte__stappen button.is-actief { border-color: var(--color-primary); background: var(--color-success-soft); color: var(--color-primary); }
-
 /* Instellingen van het gekozen voorwerp */
 .taart-instellingen {
-  width: min(100%, 34rem);
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: var(--space-2);
   padding: var(--space-3);
   border-radius: var(--radius-card);
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
 }
+.taart-instellingen__maat { display: flex; align-items: center; gap: var(--space-2); }
+.taart-instellingen__maat label { flex: 1; }
 .taart-instellingen label { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--space-3); font-size: var(--font-size-sm); }
 .taart-instellingen__knoppen { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .is-omgekeerd { transform: rotate(180deg); }
 
 .taart-melding { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
-
-/* Bibliotheek */
-.taart-bibliotheek { display: grid; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-soft); }
-.taart-bibliotheek__soorten { display: flex; flex-wrap: wrap; gap: var(--space-1); }
-.taart-bibliotheek__soorten button {
-  flex: 1 1 auto;
-  min-height: var(--space-8);
-  padding: var(--space-1) var(--space-2);
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--color-background-soft);
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-}
-.taart-bibliotheek__soorten button.is-actief { background: var(--color-primary); color: var(--color-on-primary); }
-.taart-bibliotheek__lijst {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-.taart-bibliotheek__lijst button {
-  width: 100%;
-  aspect-ratio: 1;
-  padding: var(--space-1);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-background-soft);
-  cursor: pointer;
-}
-.taart-bibliotheek__lijst img { width: 100%; height: 100%; object-fit: contain; }
 
 /* Klaar */
 .taart-klaar { min-height: 100dvh; display: grid; place-items: center; padding: var(--space-6) var(--space-4); background: var(--color-background); }
@@ -200,17 +209,9 @@
 .taart-klaar__kop { display: flex; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-primary); font-weight: var(--font-weight-bold); }
 .taart-klaar__acties { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; }
 
-@media (max-width: 900px) {
-  .taart-atelier__werk { grid-template-columns: minmax(0, 1fr); }
-  /* De taart staat voorop; het gereedschap komt eronder. */
-  .taart-atelier__midden { order: -1; }
-  .taart-bibliotheek__lijst { grid-template-columns: repeat(6, minmax(0, 1fr)); max-height: none; }
-}
-
-@media (max-width: 600px) {
-  .taart-atelier { padding: calc(var(--space-12) + var(--space-8)) var(--space-3) var(--space-4); }
+@media (max-width: 700px) {
+  .taart-atelier { padding: calc(var(--space-12) + var(--space-8)) var(--space-3) var(--space-3); }
   .taart-atelier__balk { gap: var(--space-2); padding: var(--space-2); }
-  .taart-atelier__taarten { order: 3; flex-basis: 100%; }
-  .taart-bibliotheek__lijst { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .taart-knop { flex-basis: 4rem; }
+  .taart-instellingen { grid-template-columns: minmax(0, 1fr); }
+  .taart-paneel__lijst button { width: 3.5rem; height: 3.5rem; }
 }

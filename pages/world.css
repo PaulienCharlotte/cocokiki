@@ -1480,6 +1480,26 @@
 .encyclopedie__tegel.is-slot { min-height: 118px; place-content: center; border: 1px dashed var(--color-border); background: transparent; }
 .encyclopedie__tegel.is-slot span { display: grid; place-items: center; color: var(--color-border-strong); }
 
+/* Bewaarde taarten uit het taartenatelier. */
+.encyclopedie__taart { position: relative; display: grid; gap: var(--space-1); margin: 0; }
+.encyclopedie__taart img { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: var(--radius-control); background: var(--color-background-soft); }
+.encyclopedie__taart figcaption { font-size: var(--font-size-xs); color: var(--color-text-muted); text-align: center; }
+.encyclopedie__taart button {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  display: grid;
+  place-items: center;
+  width: var(--space-8);
+  height: var(--space-8);
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.encyclopedie__taart button:hover { color: var(--color-text); }
+
 .encyclopedie__leeg { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-8) var(--space-4); text-align: center; color: var(--color-text-soft); }
 .encyclopedie__leeg svg { color: var(--color-primary); }
 .encyclopedie__leeg p { margin: 0; max-width: 28em; line-height: var(--line-height-default); }

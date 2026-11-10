@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import { TAART_BODEMS, VERSIERINGEN, VERSIERINGEN_BY_ID } from '../data/cake/catalog';
-import { MAX_SCHAAL, MIN_SCHAAL, heeftOntwerp, leegOntwerp, migreerOntwerp, nieuweVersieringId, verplaatsInStapel } from '../services/cakeStudio';
+import { MAX_GALERIJ, MAX_SCHAAL, MIN_SCHAAL, heeftOntwerp, migreerGalerij, leegOntwerp, migreerOntwerp, nieuweVersieringId, verplaatsInStapel } from '../services/cakeStudio';
 
 test('alle taarten en versieringen bestaan echt als bestand', () => {
-  assert.equal(TAART_BODEMS.length, 6);
-  assert.equal(VERSIERINGEN.length, 54);
+  assert.equal(TAART_BODEMS.length, 24);
+  assert.equal(VERSIERINGEN.length, 57);
   for (const item of [...TAART_BODEMS, ...VERSIERINGEN]) {
     assert.ok(existsSync(`public${item.beeld}`), item.beeld);
   }
@@ -62,4 +62,21 @@ test('een versiering schuift één plek naar voren of naar achteren', () => {
 test('elke geplaatste versiering krijgt een eigen id', () => {
   const ids = new Set(Array.from({ length: 50 }, () => nieuweVersieringId()));
   assert.equal(ids.size, 50);
+});
+
+test('de galerij bewaart taarten, nieuwste eerst, en gooit rommel weg', () => {
+  const nu = new Date().toISOString();
+  const plaatje = 'data:image/webp;base64,AAAA';
+  assert.deepEqual(migreerGalerij(null), []);
+  assert.deepEqual(migreerGalerij([{ id: 'a', beeld: 'https://elders/taart.webp' }]), []);
+  const een = migreerGalerij([{ id: 'a', naam: 'Roze taart', beeld: plaatje, bewaardOp: nu }]);
+  assert.equal(een.length, 1);
+  assert.equal(een[0].naam, 'Roze taart');
+  // Een taart zonder naam krijgt er een, en een dubbele id telt maar één keer.
+  const twee = migreerGalerij([{ id: 'a', beeld: plaatje }, { id: 'a', beeld: plaatje }]);
+  assert.equal(twee.length, 1);
+  assert.equal(twee[0].naam, 'Mijn taart');
+  // Boven het maximum valt de rest eraf.
+  const veel = migreerGalerij(Array.from({ length: MAX_GALERIJ + 5 }, (_item, i) => ({ id: `t${i}`, beeld: plaatje })));
+  assert.equal(veel.length, MAX_GALERIJ);
 });

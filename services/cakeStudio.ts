@@ -93,3 +93,63 @@ export function verplaatsInStapel(lijst: GeplaatsteVersiering[], id: string, ric
   [kopie[plek], kopie[doel]] = [kopie[doel], kopie[plek]];
   return kopie;
 }
+
+/**
+ * De taartengalerij: taarten die een kind bewaard heeft voor in de
+ * encyclopedie. Alleen het plaatje en de datum, niet het hele ontwerp; het
+ * werkblad houdt maar één taart tegelijk vast.
+ */
+export const TAART_GALERIJ_KEY = 'cocokiki:taart-galerij:v1';
+export const MAX_GALERIJ = 12;
+
+export interface BewaardeTaart {
+  id: string;
+  naam: string;
+  beeld: string;
+  bewaardOp: string;
+}
+
+export function migreerGalerij(bron: unknown): BewaardeTaart[] {
+  if (!Array.isArray(bron)) return [];
+  const gezien = new Set<string>();
+  const uit: BewaardeTaart[] = [];
+  for (const item of bron) {
+    if (!item || typeof item !== 'object') continue;
+    const taart = item as Partial<BewaardeTaart>;
+    const beeld = afbeelding(taart.beeld);
+    if (!beeld || typeof taart.id !== 'string' || gezien.has(taart.id)) continue;
+    gezien.add(taart.id);
+    uit.push({
+      id: taart.id,
+      naam: typeof taart.naam === 'string' && taart.naam.trim() ? taart.naam.slice(0, 60) : 'Mijn taart',
+      beeld,
+      bewaardOp: typeof taart.bewaardOp === 'string' ? taart.bewaardOp : new Date(0).toISOString(),
+    });
+  }
+  return uit.slice(0, MAX_GALERIJ);
+}
+
+export function laadGalerij(): BewaardeTaart[] {
+  try {
+    const opgeslagen = readDocument(TAART_GALERIJ_KEY);
+    return migreerGalerij(opgeslagen ? JSON.parse(opgeslagen) : null);
+  } catch {
+    return [];
+  }
+}
+
+function schrijfGalerij(lijst: BewaardeTaart[]): boolean {
+  const uitkomst = commitLocalState({ [TAART_GALERIJ_KEY]: JSON.stringify(lijst.slice(0, MAX_GALERIJ)) });
+  return uitkomst.status === 'applied' || uitkomst.status === 'duplicate';
+}
+
+/** De nieuwste taart staat vooraan; boven MAX_GALERIJ valt de oudste eraf. */
+export function bewaarInGalerij(beeld: string, naam: string, nu = new Date().toISOString()): boolean {
+  if (!beeld.startsWith('data:image/')) return false;
+  const nieuw: BewaardeTaart = { id: `t${Date.now().toString(36)}`, naam: naam.slice(0, 60) || 'Mijn taart', beeld, bewaardOp: nu };
+  return schrijfGalerij([nieuw, ...laadGalerij()]);
+}
+
+export function verwijderUitGalerij(id: string): boolean {
+  return schrijfGalerij(laadGalerij().filter(item => item.id !== id));
+}

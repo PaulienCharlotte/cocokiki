@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Lock, Stamp } from 'lucide-react';
+import { CakeSlice, Leaf, Lock, Stamp, Trash2 } from 'lucide-react';
 import CookingAssetImage from '../components/cooking/CookingAssetImage';
 import VraagVanDeDag from '../components/quiz/VraagVanDeDag';
 import { Button, Dialog } from '../design-system';
@@ -12,12 +12,13 @@ import { plantProduct } from '../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL } from '../data/plants/firstAid';
 import { KNOWLEDGE_HINT, KNOWLEDGE_LABEL, knowledgeProgress, plantKnowledge, type PlantKnowledge } from '../services/plantKnowledge';
 import { STAMPS_NEEDED } from '../services/plantClinic';
+import { laadGalerij, verwijderUitGalerij, type BewaardeTaart } from '../services/cakeStudio';
 
 interface EncyclopediaScreenProps {
   onNavigate: (path: string) => void;
 }
 
-type Afdeling = 'planten' | 'voeding';
+type Afdeling = 'planten' | 'voeding' | 'taarten';
 
 /**
  * De encyclopedie is de plek waar alles samenkomt wat een kind geleerd heeft,
@@ -36,6 +37,7 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
     return gevraagd ? planten.find(item => item.species.id === gevraagd && item.level > 0) ?? null : null;
   });
   const [openEten, setOpenEten] = useState<IngredientEntry | null>(null);
+  const [taarten, setTaarten] = useState<BewaardeTaart[]>(laadGalerij);
 
   const ingredienten = INGREDIENTS.filter(item => progress.discoveredIngredientIds.includes(item.id));
   const stand = knowledgeProgress(planten);
@@ -54,9 +56,26 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
       <div className="encyclopedie__tabs" role="tablist" aria-label="Afdelingen">
         <Tab id="planten" actief={afdeling} op={setAfdeling} label="Planten" teller={`${stand.open}/${stand.totaal}`} />
         <Tab id="voeding" actief={afdeling} op={setAfdeling} label="Voeding" teller={`${ingredienten.length}/${INGREDIENTS.length}`} />
+        <Tab id="taarten" actief={afdeling} op={setAfdeling} label="Mijn taarten" teller={`${taarten.length}`} />
       </div>
 
-      {afdeling === 'planten' ? <div
+      {afdeling === 'taarten' ? (taarten.length ? <div
+        className="encyclopedie__raster"
+        role="tabpanel"
+        id="afdeling-taarten"
+        aria-labelledby="tab-taarten"
+      >
+        {taarten.map(taart => <figure key={taart.id} className="encyclopedie__taart">
+          <img src={taart.beeld} alt={taart.naam} />
+          <figcaption>{taart.naam}</figcaption>
+          <button type="button" aria-label={`${taart.naam} weghalen`} title="Weghalen"
+            onClick={() => { verwijderUitGalerij(taart.id); setTaarten(laadGalerij()); }}><Trash2 size={16} aria-hidden="true" /></button>
+        </figure>)}
+      </div> : <div className="encyclopedie__leeg" role="tabpanel" id="afdeling-taarten" aria-labelledby="tab-taarten">
+        <CakeSlice size={38} aria-hidden="true" />
+        <p>Hier komen de taarten te staan die je bewaart. Versier er een in het taartenatelier en kies daarna Bewaar in de encyclopedie.</p>
+        <Button pill onClick={() => onNavigate('/games/taartenatelier')}>Naar het taartenatelier</Button>
+      </div>) : afdeling === 'planten' ? <div
         className="encyclopedie__raster"
         role="tabpanel"
         id="afdeling-planten"
