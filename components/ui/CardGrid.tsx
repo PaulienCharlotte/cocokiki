@@ -23,6 +23,8 @@ export interface GridCard {
   icoon?: React.ReactNode;
   /** Eén kort ding rechtsonder: een stand, een aantal. */
   meta?: React.ReactNode;
+  /** Deze kaart is nu gekozen; de kaart blijft zichtbaar aangezet. */
+  actief?: boolean;
 }
 
 interface CardGridProps {
@@ -41,7 +43,13 @@ export default function CardGrid({ cards, onChoose, kolommen = 3, label, classNa
   const compact = cards.every(kaart => !kaart.beeld);
   return <ul className={`ck-kaarten is-${kolommen}${compact ? ' is-compact' : ''}${className ? ` ${className}` : ''}`} aria-label={label}>
     {cards.map(kaart => <li key={kaart.id}>
-      <button type="button" className="ck-kaart" onClick={() => onChoose(kaart.id)}>
+      <button
+        type="button"
+        className={`ck-kaart${kaart.actief ? ' is-actief' : ''}`}
+        // Alleen waar een kaart aan of uit kan staan; anders zegt het niets.
+        aria-pressed={kaart.actief === undefined ? undefined : kaart.actief}
+        onClick={() => onChoose(kaart.id)}
+      >
         {/* Een tekening vult het bovenvlak; een icoon krijgt een klein vierkantje. */}
         {(kaart.beeld || kaart.icoon) && <span className={`ck-kaart__beeld${kaart.beeld ? '' : ' is-icoon'}`}>
           {kaart.beeld ? <img src={kaart.beeld} alt="" /> : kaart.icoon}

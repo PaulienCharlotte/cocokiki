@@ -62,11 +62,11 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     backgroundPosition: { desktop: '32% center', mobile: '24% center' },
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
+    // Voedingsstoffen staat al in de encyclopedie in de bovenbalk.
     activities: [
       { id: 'recipes', label: 'Recepten', icon: 'recipes', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', target: { activity: 'recipes' } },
       { id: 'groceries', label: 'Boodschappen', icon: 'orders', image: '/games/shop/products/flour.webp', tone: 'sage', target: { comingSoon: true } },
       { id: 'math', label: 'Bakrekenen', icon: 'math', image: '/assets/library/cooking/baking/measuring-jug.webp', tone: 'sky', target: { comingSoon: true } },
-      { id: 'nutrition', label: 'Voedingsstoffen', icon: 'nutrition', image: '/games/shop/products/strawberry.webp', tone: 'berry', target: { activity: 'nutrient-memory' } },
     ],
     featuredActivities: RECIPES.map(recipe => `recipe:${recipe.id}`),
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],

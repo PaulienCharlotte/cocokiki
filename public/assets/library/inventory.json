@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-29T11:44:42.650Z",
-  "count": 438,
+  "generatedAt": "2026-11-10T06:54:18.908Z",
+  "count": 509,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -11,6 +11,12 @@
     {
       "id": "assets:baby-lua:backgrounds:jungle",
       "path": "/assets/baby-lua/backgrounds/jungle.webp",
+      "category": "assets",
+      "format": "webp"
+    },
+    {
+      "id": "assets:baby-lua:backgrounds:waterfall-cliff",
+      "path": "/assets/baby-lua/backgrounds/waterfall-cliff.webp",
       "category": "assets",
       "format": "webp"
     },
@@ -423,6 +429,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:cooking:klembord",
+      "path": "/assets/library/cooking/klembord.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:plants:gereedschap:bloempot",
       "path": "/assets/library/plants/gereedschap/bloempot.webp",
       "category": "plants",
@@ -713,6 +725,78 @@
     {
       "id": "assets:library:shop:decor:products:arched-floor-lamp",
       "path": "/assets/library/shop/decor/products/arched-floor-lamp.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:bath-sponge",
+      "path": "/assets/library/shop/decor/products/bathroom/bath-sponge.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:bath-tray",
+      "path": "/assets/library/shop/decor/products/bathroom/bath-tray.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:bath-wall-lamp",
+      "path": "/assets/library/shop/decor/products/bathroom/bath-wall-lamp.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:bathroom-vanity",
+      "path": "/assets/library/shop/decor/products/bathroom/bathroom-vanity.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:clawfoot-bathtub",
+      "path": "/assets/library/shop/decor/products/bathroom/clawfoot-bathtub.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:glass-shower",
+      "path": "/assets/library/shop/decor/products/bathroom/glass-shower.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:hanging-towel",
+      "path": "/assets/library/shop/decor/products/bathroom/hanging-towel.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:laundry-basket",
+      "path": "/assets/library/shop/decor/products/bathroom/laundry-basket.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:rinse-cup",
+      "path": "/assets/library/shop/decor/products/bathroom/rinse-cup.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:rolled-towels",
+      "path": "/assets/library/shop/decor/products/bathroom/rolled-towels.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:soap-dispenser",
+      "path": "/assets/library/shop/decor/products/bathroom/soap-dispenser.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:bathroom:toothbrush-cup",
+      "path": "/assets/library/shop/decor/products/bathroom/toothbrush-cup.webp",
       "category": "shop",
       "format": "webp"
     },
@@ -1684,27 +1768,27 @@
     },
     {
       "id": "assets:library:treehouse:expansions:extra-bedroom",
-      "path": "/assets/library/treehouse/expansions/extra-bedroom.png",
+      "path": "/assets/library/treehouse/expansions/extra-bedroom.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:expansions:greenhouse",
-      "path": "/assets/library/treehouse/expansions/greenhouse.png",
+      "path": "/assets/library/treehouse/expansions/greenhouse.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:expansions:growing-deck",
-      "path": "/assets/library/treehouse/expansions/growing-deck.png",
+      "path": "/assets/library/treehouse/expansions/growing-deck.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:expansions:hobby-room",
-      "path": "/assets/library/treehouse/expansions/hobby-room.png",
+      "path": "/assets/library/treehouse/expansions/hobby-room.webp",
       "category": "treehouse",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "assets:library:treehouse:furnishings:cart",
@@ -1803,14 +1887,44 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:overview:treehouse-clearing",
+      "path": "/assets/library/treehouse/overview/treehouse-clearing.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:overview:treehouse-ground",
+      "path": "/assets/library/treehouse/overview/treehouse-ground.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:overview:treehouse-overview",
       "path": "/assets/library/treehouse/overview/treehouse-overview.webp",
       "category": "treehouse",
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:rooms:bathroom-interior",
+      "path": "/assets/library/treehouse/rooms/bathroom-interior.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:rooms:bedroom",
       "path": "/assets/library/treehouse/rooms/bedroom.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:blush-interior",
+      "path": "/assets/library/treehouse/rooms/blush-interior.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:green-bedroom-interior",
+      "path": "/assets/library/treehouse/rooms/green-bedroom-interior.webp",
       "category": "treehouse",
       "format": "webp"
     },
@@ -1851,22 +1965,172 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:units:bathroom-empty",
+      "path": "/assets/library/treehouse/units/bathroom-empty.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:bathroom",
+      "path": "/assets/library/treehouse/units/bathroom.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:bedroom",
+      "path": "/assets/library/treehouse/units/bedroom.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:blush-room",
+      "path": "/assets/library/treehouse/units/blush-room.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:canopy-tall",
+      "path": "/assets/library/treehouse/units/canopy-tall.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:canopy-wide",
+      "path": "/assets/library/treehouse/units/canopy-wide.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:canopy",
+      "path": "/assets/library/treehouse/units/canopy.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:garden-room",
+      "path": "/assets/library/treehouse/units/garden-room.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:kitchen",
+      "path": "/assets/library/treehouse/units/kitchen.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:ladder",
+      "path": "/assets/library/treehouse/units/ladder.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:platform",
+      "path": "/assets/library/treehouse/units/platform.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:roof-blue",
+      "path": "/assets/library/treehouse/units/roof-blue.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:roof-flowers",
+      "path": "/assets/library/treehouse/units/roof-flowers.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:roof",
+      "path": "/assets/library/treehouse/units/roof.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:room-prototype",
+      "path": "/assets/library/treehouse/units/room-prototype.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:terrace",
+      "path": "/assets/library/treehouse/units/terrace.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:trunk-left",
+      "path": "/assets/library/treehouse/units/trunk-left.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:trunk-right",
+      "path": "/assets/library/treehouse/units/trunk-right.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:trunk",
+      "path": "/assets/library/treehouse/units/trunk.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "dreamworld:island-icons",
-      "path": "/dreamworld/island-icons.png",
+      "path": "/dreamworld/island-icons.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:locations:coco-bakery",
+      "path": "/dreamworld/locations/coco-bakery.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:locations:kiki-greenhouse",
+      "path": "/dreamworld/locations/kiki-greenhouse.png",
+      "category": "dreamworld",
+      "format": "png"
+    },
+    {
+      "id": "dreamworld:locations:lua-workshop",
+      "path": "/dreamworld/locations/lua-workshop.png",
       "category": "dreamworld",
       "format": "png"
     },
     {
       "id": "dreamworld:plant-clinic",
-      "path": "/dreamworld/plant-clinic.png",
+      "path": "/dreamworld/plant-clinic.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:topo-interior",
+      "path": "/dreamworld/topo-interior.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:world-map-modern",
+      "path": "/dreamworld/world-map-modern.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:world-map-v2",
+      "path": "/dreamworld/world-map-v2.png",
       "category": "dreamworld",
       "format": "png"
     },
     {
       "id": "dreamworld:world-map",
-      "path": "/dreamworld/world-map.png",
+      "path": "/dreamworld/world-map.webp",
       "category": "dreamworld",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "games:cooking:banana-pancakes",
@@ -1931,6 +2195,18 @@
     {
       "id": "games:destinations:travel-room",
       "path": "/games/destinations/travel-room.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:flags-memory:navigation-alternative",
+      "path": "/games/flags-memory/navigation-alternative.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:flags-memory:navigation",
+      "path": "/games/flags-memory/navigation.webp",
       "category": "games",
       "format": "webp"
     },
@@ -2031,6 +2307,18 @@
       "format": "webp"
     },
     {
+      "id": "games:school:math:adventures:checkout-belt",
+      "path": "/games/school/math/adventures/checkout-belt.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:checkout-room",
+      "path": "/games/school/math/adventures/checkout-room.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
       "id": "games:school:math:adventures:cookie",
       "path": "/games/school/math/adventures/cookie.webp",
       "category": "games",
@@ -2051,6 +2339,12 @@
     {
       "id": "games:school:math:adventures:honey-jar",
       "path": "/games/school/math/adventures/honey-jar.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:honey-room",
+      "path": "/games/school/math/adventures/honey-room.webp",
       "category": "games",
       "format": "webp"
     },
@@ -2105,6 +2399,42 @@
     {
       "id": "games:school:math:divide",
       "path": "/games/school/math/divide.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:add-subtract",
+      "path": "/games/school/math/icons/add-subtract.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:balance",
+      "path": "/games/school/math/icons/balance.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:divide",
+      "path": "/games/school/math/icons/divide.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:missing",
+      "path": "/games/school/math/icons/missing.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:multiply",
+      "path": "/games/school/math/icons/multiply.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:race",
+      "path": "/games/school/math/icons/race.webp",
       "category": "games",
       "format": "webp"
     },
@@ -2692,9 +3022,9 @@
     },
     {
       "id": "images:cocokiki-logo",
-      "path": "/images/cocokiki-logo.png",
+      "path": "/images/cocokiki-logo.webp",
       "category": "images",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "images:headertopo",
