@@ -58,7 +58,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   },
   {
     id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
-    background: '/dreamworld/locations/coco-bakery.png',
+    background: '/dreamworld/locations/coco-bakery.webp',
     backgroundPosition: { desktop: '32% center', mobile: '24% center' },
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
