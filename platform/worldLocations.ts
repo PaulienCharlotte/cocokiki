@@ -90,15 +90,12 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   },
   {
     id: 'kiki', islandId: 'plants', path: '/islands/plants', name: 'Kiki’s Plantenkas',
-    background: '/dreamworld/locations/kiki-greenhouse.png',
+    background: '/dreamworld/locations/kiki-greenhouse.webp',
     backgroundPosition: { desktop: '32% center', mobile: '25% center' },
     accentColor: 'var(--color-primary)', character: { id: 'kiki', name: CHARACTERS.kiki.naam },
-    activities: [
-      { id: 'clinic', label: 'Plantendokter', icon: 'clinic', target: { activity: 'plant-clinic' } },
-      { id: 'plants', label: 'Mijn planten', icon: 'plants', target: { activity: 'plant-family' } },
-      { id: 'book', label: 'Plantenboek', icon: 'book', target: { activity: 'plant-book' } },
-      { id: 'grow', label: 'Kweken', icon: 'grow', target: { comingSoon: true } },
-    ],
-    featuredActivities: PLANT_SPECIES.map(plant => `plant:${plant.id}`), practiceActivities: [], adventures: [],
+    // Eén raster, net als school en de bakkerij. De plantensoorten zelf
+    // staan in het plantenboek; op het eiland kies je wat je gaat doen.
+    activities: [],
+    featuredActivities: ['plant-clinic', 'plant-family', 'plant-book'], practiceActivities: [], adventures: [],
   },
 ];

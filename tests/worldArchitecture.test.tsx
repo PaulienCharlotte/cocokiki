@@ -71,10 +71,10 @@ test('game header reuses the homepage menu with coins and profile controls', () 
   assert.doesNotMatch(html, /app-header platform-header/);
 });
 
-test('Dreamworld renders one intact world image, six hotspots and compact tools', () => {
+test('Dreamworld renders one intact world image, five hotspots and compact tools', () => {
   assert.deepEqual(WORLD_ISLANDS.map(island => island.path), ['/treehouse', '/challenges', '/shop']);
   const html = renderToStaticMarkup(<WorldHub coins={69} onNavigate={() => undefined} />);
-  assert.equal((html.match(/class="dream-hotspot"/g) ?? []).length, 6);
+  assert.equal((html.match(/class="dream-hotspot"/g) ?? []).length, 5);
   assert.doesNotMatch(html, /world-bridge/);
   assert.match(html, /aria-label="Mijn boomhut openen"/);
   assert.match(html, /aria-label="Rekenwerkplaats openen"/);
@@ -82,7 +82,8 @@ test('Dreamworld renders one intact world image, six hotspots and compact tools'
   assert.match(html, /aria-label="Kiki’s Plantenkas openen"/);
   assert.match(html, /aria-label="Coco’s Bakkerij openen"/);
   assert.match(html, /aria-label="Reizen en topografie openen"/);
-  assert.match(html, /aria-label="Taal · Binnenkort openen"/);
+  // Het taaleiland staat niet op de kaart zolang er niets te doen is.
+  assert.doesNotMatch(html, /aria-label="Taal/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);

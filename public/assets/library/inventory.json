@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T07:32:29.964Z",
-  "count": 509,
+  "generatedAt": "2026-11-10T08:17:52.763Z",
+  "count": 510,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -563,6 +563,12 @@
     {
       "id": "assets:library:plants:icons:zon",
       "path": "/assets/library/plants/icons/zon.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:klembord",
+      "path": "/assets/library/plants/klembord.webp",
       "category": "plants",
       "format": "webp"
     },
@@ -2092,9 +2098,9 @@
     },
     {
       "id": "dreamworld:locations:kiki-greenhouse",
-      "path": "/dreamworld/locations/kiki-greenhouse.png",
+      "path": "/dreamworld/locations/kiki-greenhouse.webp",
       "category": "dreamworld",
-      "format": "png"
+      "format": "webp"
     },
     {
       "id": "dreamworld:locations:lua-workshop",

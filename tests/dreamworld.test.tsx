@@ -147,8 +147,8 @@ test('three global shops are addressable without cluttering island activities', 
 test('world map has no visible name pills and shops stay available in the shared menu', () => {
   const world = renderToStaticMarkup(<WorldHub coins={20} onNavigate={() => undefined} />);
   assert.doesNotMatch(world, /dream-map__index/);
-  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 6);
-  assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 6);
+  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 5);
+  assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 5);
   assert.doesNotMatch(world, /dream-hotspot__label/);
   assert.ok(existsSync(`public${ISLAND_ICONS_IMAGE}`));
   assert.deepEqual(Object.keys(ISLAND_ICON_POSITIONS).sort(), DREAM_ISLANDS.map(island => island.id).sort());
@@ -183,8 +183,8 @@ test('map panning and zoom stay bounded at desktop and mobile dimensions', () =>
 });
 
 test('painted island buttons use normalized positions and existing canonical routes', () => {
-  assert.equal(WORLD_DESTINATIONS.length, 6);
-  assert.equal(new Set(WORLD_DESTINATIONS.map(destination => destination.id)).size, 6);
+  assert.equal(WORLD_DESTINATIONS.length, 5);
+  assert.equal(new Set(WORLD_DESTINATIONS.map(destination => destination.id)).size, 5);
   for (const destination of WORLD_DESTINATIONS) {
     assert.equal(destination.enabled, true);
     assert.equal(resolveRoute(destination.route).redirect, false);
@@ -197,7 +197,8 @@ test('painted island buttons use normalized positions and existing canonical rou
   assert.ok(byId.math.position.x > byId.home.position.x);
   assert.ok(byId.plants.position.y > byId.cooking.position.y);
   assert.ok(byId.discovery.position.y > byId.math.position.y);
-  assert.equal(byId.language.route, '/islands/language');
+  // Het taaleiland staat niet op de kaart zolang er niets te doen is.
+  assert.equal(byId.language, undefined);
 });
 test('direct supermarket links retain recipe requirements and reject unknown recipe IDs', () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'window');
