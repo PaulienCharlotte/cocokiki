@@ -132,15 +132,16 @@ Die zijn omgezet naar WebP: 11,7 MB, dezelfde tekeningen. De map is nu 62 MB.
 **Doen:** nieuwe tekeningen altijd als WebP aanleveren. Een PNG van twee
 megabyte laat een kind seconden naar een leeg scherm kijken.
 
-## 10. De klokspellen hebben nog hun eigen vorm
+## 10. De klokspellen kiezen hun niveau nog met rondjes
 
-De memorykaarten zijn gelijkgetrokken, maar de rest van de klokspellen heeft
-nog een eigen schil: het overzicht met gekleurde vlakken links en een plaatje,
-de niveaukiezer met rondjes 1 tot 5, en een eigen kopbalk. Dat is iets anders
-dan het keuzeraster (`CardGrid`) en de schuifbalk die de rekenspellen gebruiken.
+Het klokoverzicht gebruikt nu `CardGrid`, net als rekenen. Wat er nog staat is
+de niveaukiezer met rondjes 1 tot 5 en de eigen kopbalk boven een klokspel.
+Dat is iets anders dan de schuifbalk van de rekenspellen
+(`games/math/MathControls.tsx`), en een kind dat al verder is moet zich er
+nog doorheen werken.
 
-**Doen:** het klokoverzicht naar `CardGrid`, en de niveaurondjes naar dezelfde
-schuifbalk als bij rekenen.
+**Doen:** de niveaurondjes vervangen door diezelfde schuifbalk, en de kopbalk
+van een klokspel gelijktrekken met die van een rekenspel.
 
 ## 11. De etappes weten nog niets van de bestelling
 
@@ -169,6 +170,11 @@ volgend avontuur. Niet zelf weggooien: het is het werk van een andere agent.
 
 ## Al opgelost
 
+- **Elk eiland had zijn eigen vorm.** Het ontdekkingseiland en het
+  planteneiland hadden losse iconen op de tekening of een knoppenrij met een
+  tweede raster eronder. Alle vier de eilanden gebruiken nu hetzelfde
+  kaartraster. Het taaleiland staat niet meer op de wereldkaart zolang er
+  niets te doen is.
 - **Een kookavontuur was het recept uit het kookboek.** Zeven etappes die voor
   elk recept hetzelfde waren, zonder reden om te bakken, zonder iemand om het
   voor te doen, en met "Klaar, chef!" en een aantal porties als slot. Nu begint
