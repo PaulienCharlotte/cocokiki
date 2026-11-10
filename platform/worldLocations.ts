@@ -59,15 +59,13 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   {
     id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
     background: '/dreamworld/locations/coco-bakery.webp',
-    backgroundPosition: { desktop: '32% center', mobile: '24% center' },
+    backgroundPosition: { desktop: 'center', mobile: '28% center' },
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
-    // Voedingsstoffen staat al in de encyclopedie in de bovenbalk.
-    activities: [
-      { id: 'recipes', label: 'Recepten', icon: 'recipes', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', target: { activity: 'recipes' } },
-      { id: 'groceries', label: 'Boodschappen', icon: 'orders', image: '/games/shop/products/flour.webp', tone: 'sage', target: { comingSoon: true } },
-      { id: 'math', label: 'Bakrekenen', icon: 'math', image: '/assets/library/cooking/baking/measuring-jug.webp', tone: 'sky', target: { comingSoon: true } },
-    ],
+    // Geen losse activiteitenkaarten: twee van de drie beloofden alleen
+    // "binnenkort", en voedingsstoffen staat al in de encyclopedie in de
+    // bovenbalk. Wat je hier doet begint bij een bestelling.
+    activities: [],
     featuredActivities: RECIPES.map(recipe => `recipe:${recipe.id}`),
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],

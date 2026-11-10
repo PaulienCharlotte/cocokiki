@@ -15,7 +15,6 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
   const validProgress = progress && Number.isSafeInteger(progress.completed) && Number.isSafeInteger(progress.total) && progress.total > 0 && progress.completed >= 0 && progress.completed <= progress.total;
   return <section className="adventure-clipboard" aria-labelledby={id}>
     <div className="adventure-clipboard__paper">
-      <span className="adventure-clipboard__eyebrow">Op het klembord</span>
       <div aria-live="polite" aria-atomic="true"><h2 id={id}>{adventure.title}</h2><p>{adventure.description}</p></div>
       {validProgress && <ProgressIndicator value={progress.completed} max={progress.total} label="Voortgang" compact />}
       {children}
@@ -34,19 +33,21 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
 export default function LocationGameView({ location, onOpen, renderClipboard, initialTab = 'activities' }: { location: WorldLocation; onOpen: (activity: LocationActivity) => void; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
   const previews = location.adventurePreviews ?? [];
   const [selectedId, setSelectedId] = useState(previews[0]?.id);
-  const [tab, setTab] = useState<'activities' | 'adventures'>(initialTab);
+  // Zonder activiteiten valt er niets te kiezen; dan is er ook geen tabblad.
+  const heeftActiviteiten = location.activities.length > 0;
+  const [tab, setTab] = useState<'activities' | 'adventures'>(heeftActiviteiten ? initialTab : 'adventures');
   const selected = previews.find(item => item.id === selectedId) ?? previews[0];
   const id = useId();
-  return <div className={`location-game location-game--${tab}`}>
-    <header className="location-game__heading"><h1 id={`${id}-title`}>{location.name}</h1><span>Bij {location.character.name}</span></header>
-    <div className="location-tabs location-game__tabs" role="tablist" aria-label="Kies activiteiten of avonturen">
+  return <div className={`location-game location-game--${heeftActiviteiten ? tab : 'adventures'}`}>
+    <header className="location-game__heading"><h1 id={`${id}-title`} className="sr-only">{location.name}</h1></header>
+    {heeftActiviteiten && <div className="location-tabs location-game__tabs" role="tablist" aria-label="Kies activiteiten of avonturen">
       {(['activities', 'adventures'] as const).map((value, index) => <button type="button" key={value} role="tab" aria-selected={tab === value} tabIndex={tab === value ? 0 : -1} id={`${id}-${value}-tab`} aria-controls={`${id}-${value}`} onClick={() => setTab(value)} onKeyDown={event => {
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
         event.preventDefault(); const next = event.key === 'Home' ? 'activities' : event.key === 'End' ? 'adventures' : index === 0 ? 'adventures' : 'activities';
         setTab(next); document.getElementById(`${id}-${next}-tab`)?.focus();
       }}>{value === 'activities' ? 'Activiteiten' : 'Avonturen'}</button>)}
-    </div>
-    <div id={`${id}-activities`} className="location-game__activities">
+    </div>}
+    {location.activities.length > 0 && <div id={`${id}-activities`} className="location-game__activities">
       <CardGrid
         // De activiteiten staan in de smalle kolom naast de tekening; drie
         // naast elkaar breekt een woord als "Boodschappen" doormidden.
@@ -63,7 +64,7 @@ export default function LocationGameView({ location, onOpen, renderClipboard, in
           if (activity && !('comingSoon' in activity.target)) onOpen(activity);
         }}
       />
-    </div>
+    </div>}
     <div id={`${id}-adventures`} className="location-game__stories">
       {selected && (renderClipboard ? renderClipboard(selected) : <AdventureClipboard adventure={selected} />)}
       <section className="adventure-shelf" aria-labelledby={`${id}-shelf-title`}>

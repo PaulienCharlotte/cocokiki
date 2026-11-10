@@ -93,11 +93,11 @@ test('recipe deep links open the existing overview without starting a journey', 
   }
 });
 
-test('de bakkerij heeft drie activiteiten, een speelbare toonbank en vijf avonturen die nog komen', () => {
+test('de bakkerij begint bij de toonbank, met vijf avonturen die nog komen', () => {
   const location = WORLD_LOCATIONS.find(item => item.id === 'coco')!;
-  // Voedingsstoffen hoort bij de encyclopedie in de bovenbalk, niet hier.
-  assert.deepEqual(location.activities.map(item => item.label), ['Recepten', 'Boodschappen', 'Bakrekenen']);
-  assert.deepEqual(location.activities.filter(item => 'comingSoon' in item.target).map(item => item.id), ['groceries', 'math']);
+  // Geen losse activiteitenkaarten meer: wat je hier doet begint bij een
+  // bestelling, en voedingsstoffen staat in de encyclopedie in de bovenbalk.
+  assert.deepEqual(location.activities, []);
   const previews = location.adventurePreviews!;
   assert.equal(previews.length, 6);
   assert.equal(new Set(previews.map(item => item.id)).size, 6);

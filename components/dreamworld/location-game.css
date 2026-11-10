@@ -5,9 +5,7 @@
   min-height: 100svh; box-sizing: border-box; min-width: 0;
   padding: calc(var(--space-12) * 2 + var(--space-5)) var(--space-8) var(--space-4);
 }
-.location-game__heading { grid-column: 2; text-align: center; color: var(--color-text); }
-.location-game__heading h1 { margin: 0; font-size: var(--font-size-xl); text-shadow: 0 1px var(--color-cream), 0 0 12px var(--color-cream); }
-.location-game__heading > span { display: none; }
+.location-game__heading { grid-column: 2; }
 .location-game__activities { grid-column: 2; min-width: 0; }
 .location-game__stories { display: contents; }
 /*
@@ -24,7 +22,6 @@
   display: grid; align-content: start; gap: var(--space-2);
   min-height: 0; overflow: auto;
 }
-.adventure-clipboard__eyebrow { color: var(--color-reward-strong); font-size: var(--font-size-xs); font-weight: var(--font-weight-heavy); text-transform: uppercase; }
 .adventure-clipboard h2 { margin: var(--space-2) 0; font-size: var(--font-size-lg); line-height: var(--line-height-tight); }
 .adventure-clipboard p { margin: 0 0 var(--space-3); font-size: var(--font-size-sm); line-height: var(--line-height-default); }
 .adventure-clipboard .ck-button { width: 100%; background: var(--color-success-soft); color: var(--color-primary); opacity: 1; font-size: var(--font-size-sm); }
@@ -38,8 +35,7 @@
 }
 @media (max-width: 700px) {
   .location-game { display: flex; flex-direction: column; gap: 0; padding: 0; }
-  .location-game__heading { min-height: 44svh; box-sizing: border-box; text-align: right; padding: calc(var(--space-12) * 2 + var(--space-3)) var(--space-4) var(--space-4); }
-  .location-game__heading h1 { max-width: 46%; margin-left: auto; font-size: var(--font-size-lg); }
+  .location-game__heading { min-height: 40svh; }
   .location-game__activities { padding: var(--space-4) var(--space-3) var(--space-6); }
   .location-game__stories { display: flex; flex-direction: column; min-width: 0; padding-bottom: var(--space-6); background: var(--color-background-calm); }
   .location-game--activities .location-game__stories, .location-game--adventures .location-game__activities { display: none; }
