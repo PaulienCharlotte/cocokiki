@@ -302,3 +302,26 @@ test('progress separates wrong answers, counts practice and reuses country IDs a
   assert.equal(corrected['flag:Rusland'].correct, 1);
   assert.equal(failed['flag:Rusland'].seen, 1);
 });
+
+test('Nederland kent alle onderwerpen, inclusief provincies met hun hoofdsteden', () => {
+  // De onderwerpkiezer is ooit uit het scherm verdwenen, waardoor alleen het
+  // eerste onderwerp nog te oefenen was. Deze test houdt de lijst compleet.
+  const onderwerpen = availableTopics('all');
+  for (const id of ['provinces', 'capitals', 'provinces-capitals', 'cities', 'waters', 'facts'] as const) {
+    assert.ok(onderwerpen.includes(id), id);
+  }
+  const provincies = studyLocations({ areaId: 'all', topicId: 'provinces', clusterId: 'all' });
+  const hoofdsteden = studyLocations({ areaId: 'all', topicId: 'capitals', clusterId: 'all' });
+  const samen = studyLocations({ areaId: 'all', topicId: 'provinces-capitals', clusterId: 'all' });
+  assert.equal(provincies.length, 12);
+  assert.equal(hoofdsteden.length, 12);
+  assert.equal(samen.length, provincies.length + hoofdsteden.length);
+  // Elke provincie heeft een hoofdstad, en die staat er ook echt bij.
+  for (const provincie of PROVINCES.filter(p => !p.isStudyArea)) {
+    assert.ok(provincie.capital, provincie.name);
+    assert.ok(samen.some(item => item.name.replace('’', "'") === provincie.capital.replace('’', "'")), provincie.capital);
+  }
+  // Binnen één provincie valt er aan provincies niets te kiezen.
+  assert.ok(!availableTopics('ut').includes('provinces'));
+  assert.ok(!availableTopics('ut').includes('provinces-capitals'));
+});

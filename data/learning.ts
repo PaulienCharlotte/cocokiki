@@ -4,7 +4,7 @@ import { COUNTRY_FLAGS } from './flags';
 import { LOCATION_FACTS } from './locationFacts';
 import { topographyDataset } from './topography/datasets';
 
-export type TopicId = 'provinces' | 'capitals' | 'cities' | 'waters' | 'regions' | 'countries' | 'flags' | 'facts' | 'all';
+export type TopicId = 'provinces' | 'capitals' | 'provinces-capitals' | 'cities' | 'waters' | 'regions' | 'countries' | 'flags' | 'facts' | 'all';
 export type PlayMode = 'find' | 'spell' | 'memory' | 'quiz' | 'master' | 'test';
 export interface Selection { areaId: string; topicId: TopicId; clusterId: string }
 export interface MemoryPair { id: string; left: string; right: string; kind: 'flag' | 'capital' | 'fact' }
@@ -12,7 +12,8 @@ export interface LearningGroup { id: string; name: string; icon: string; count: 
 export const DUTCH_PROVINCES = PROVINCES.filter(p => !p.isStudyArea);
 export const CONTINENT_IDS = ['europe', 'africa', 'asia', 'north-america', 'south-america', 'oceania', 'antarctica'];
 export const TOPIC_LABELS: Record<TopicId, string> = {
-  provinces: 'Provincies', capitals: 'Hoofdsteden', cities: 'Steden', waters: 'Wateren',
+  provinces: 'Provincies', capitals: 'Hoofdsteden', 'provinces-capitals': 'Provincies en hoofdsteden',
+  cities: 'Steden', waters: 'Wateren',
   regions: 'Gebieden en eilanden', countries: 'Landen', flags: 'Vlaggen', facts: 'Weetjes', all: 'Alles op de kaart',
 };
 export const MODE_LABELS: Record<PlayMode, string> = {
@@ -32,10 +33,17 @@ export function areaLocations(areaId: string): Location[] {
   return LOCATIONS.filter(l => l.provinceId === areaId);
 }
 
-function topicLocations(areaId: string, topicId: TopicId): Location[] {
-  if (topicId === 'provinces') return DUTCH_PROVINCES.filter(p => areaId === 'all' || p.id === areaId).map(p => ({
+const provinceLocations = (areaId: string): Location[] =>
+  DUTCH_PROVINCES.filter(p => areaId === 'all' || p.id === areaId).map(p => ({
     id: p.id, name: p.name, provinceId: p.id, type: 'province', lat: p.center[0], lng: p.center[1],
   }));
+
+function topicLocations(areaId: string, topicId: TopicId): Location[] {
+  if (topicId === 'provinces') return provinceLocations(areaId);
+  // De provincie en haar hoofdstad horen bij elkaar; dat leer je in één keer.
+  if (topicId === 'provinces-capitals') {
+    return [...provinceLocations(areaId), ...areaLocations(areaId).filter(l => !!l.isCapital)];
+  }
   return areaLocations(areaId).filter(l => {
     switch (topicId) {
       case 'capitals': return !!l.isCapital;
@@ -218,9 +226,11 @@ export function availableTopics(areaId: string): TopicId[] {
   const choices: TopicId[] = isMixedWorksheetArea(areaId)
     ? ['cities', 'waters', 'regions', ...(topographyDataset(areaId) ? ['countries' as const] : []), ...(isBeneluxArea(areaId) ? ['countries' as const, 'facts' as const] : []), 'all']
     : isDutchArea(areaId)
-    ? ['provinces', 'capitals', 'cities', 'waters', 'regions', 'facts', 'all']
+    ? ['provinces', 'capitals', 'provinces-capitals', 'cities', 'waters', 'regions', 'facts', 'all']
     : ['countries', 'capitals', 'flags', 'regions', 'all'];
-  return choices.filter(id => (id !== 'provinces' || areaId === 'all') && studyLocations({ areaId, topicId: id, clusterId: 'all' }).length > 0);
+  // Provincies kun je alleen oefenen als je heel Nederland voor je hebt:
+  // binnen één provincie valt er niets te kiezen.
+  return choices.filter(id => (!id.startsWith('provinces') || areaId === 'all') && studyLocations({ areaId, topicId: id, clusterId: 'all' }).length > 0);
 }
 
 export function validateSelection(value?: Partial<Selection> | null): Selection {
