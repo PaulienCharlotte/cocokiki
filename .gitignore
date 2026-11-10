@@ -27,3 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# De contactvellen voor het taartenatelier zijn bronmateriaal, geen app-bestanden.
+_inbox-taartenatelier/
