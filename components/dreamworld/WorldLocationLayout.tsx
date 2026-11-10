@@ -18,6 +18,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
   const [tab, setTab] = useState<'activities' | 'adventures'>('activities');
   const [section, setSection] = useState<'main' | 'math'>('main');
   const [plant, setPlant] = useState<string | null>(null);
+  const heeftAvonturen = location.adventures.length > 0;
   const id = useId();
   const open = (activity: ActivityDefinition) => {
     if (!activity || activity.status !== 'available') return;
@@ -58,15 +59,17 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
     <div className="world-location__scene"><h1 id={`${id}-title`}>{location.name}</h1></div>
     <div className="world-location__dock">
-      <div className="location-tabs" role="tablist" aria-label="Kies activiteiten of avonturen">
+      {/* Een tabblad dat alleen "binnenkort" zegt, is een belofte en geen keuze.
+          Zonder avonturen staan hier gewoon de activiteiten. */}
+      {heeftAvonturen && <div className="location-tabs" role="tablist" aria-label="Kies activiteiten of avonturen">
         {(['activities', 'adventures'] as const).map((value, index) => <button key={value} type="button" role="tab" id={`${id}-${value}-tab`} aria-controls={`${id}-${value}`} aria-selected={tab === value} tabIndex={tab === value ? 0 : -1}
           onClick={() => setTab(value)} onKeyDown={event => {
             if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
             event.preventDefault(); const next = event.key === 'Home' ? 'activities' : event.key === 'End' ? 'adventures' : index === 0 ? 'adventures' : 'activities';
             setTab(next); document.getElementById(`${id}-${next}-tab`)?.focus();
           }}>{value === 'activities' ? 'Activiteiten' : 'Avonturen'}</button>)}
-      </div>
-      <section id={`${id}-activities`} className={`location-panel location-panel--activities${tab === 'activities' ? ' is-selected' : ''}`} aria-labelledby={`${id}-activities-title`}>
+      </div>}
+      <section id={`${id}-activities`} className={`location-panel location-panel--activities${!heeftAvonturen || tab === 'activities' ? ' is-selected' : ''}`} aria-labelledby={`${id}-activities-title`}>
         <div className="location-panel__heading"><h2 id={`${id}-activities-title`}>{section === 'math' ? 'Bakrekenen' : 'Activiteiten'}</h2>
           {section === 'math' && <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={() => setSection('main')}>Alles</Button>}
         </div>
@@ -83,11 +86,11 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
           <ul className="location-carousel" aria-label={location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : 'Rekenspellen'}>{cards(location.featuredActivities)}</ul>
         </> : <ul className="location-carousel location-carousel--practice" aria-label="Rekenspellen">{cards(location.practiceActivities)}</ul>}
       </section>
-      <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>
+      {heeftAvonturen && <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>
         <h2 id={`${id}-adventures-title`}>Avonturen</h2>
         <Compass size={32} aria-hidden="true" /><p>Binnenkort beschikbaar</p>
-        {location.adventures.length > 0 && <ul>{location.adventures.map(adventure => <li key={adventure.id}>{adventure.name} · Binnenkort</li>)}</ul>}
-      </section>
+        <ul>{location.adventures.map(adventure => <li key={adventure.id}>{adventure.name} · Binnenkort</li>)}</ul>
+      </section>}
     </div>
     {plant && <PlantFlashcard speciesId={plant} onClose={() => setPlant(null)} onNavigate={path => onNavigate(withLocationOrigin(path, location.id))} />}
   </main>;

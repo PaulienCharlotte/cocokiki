@@ -33,8 +33,13 @@ test('resident locations use existing activities, not invented adventures or pro
     for (const id of [...location.featuredActivities, ...location.practiceActivities]) assert.ok(ACTIVITIES_BY_ID[id], id);
     const html = renderToStaticMarkup(<WorldLocationLayout location={location} onNavigate={() => undefined} />);
     assert.ok(html.includes(location.name));
-    assert.match(html, /role="tablist"/);
-    assert.match(html, /Binnenkort/);
+    // Tabbladen horen bij een locatie die ook echt avonturen heeft. Een
+    // tabblad dat alleen "binnenkort" zegt, hoort er niet te staan.
+    if (location.adventurePreviews?.length) assert.match(html, /Avonturen/, `${location.id} heeft avonturen om te tonen`);
+    else {
+      assert.doesNotMatch(html, /role="tablist"/, `${location.id} heeft geen avonturen, dus ook geen tabbladen`);
+      assert.doesNotMatch(html, /Avonturen/, `${location.id} belooft geen avonturen die er niet zijn`);
+    }
     assert.equal((html.match(/class="world-location__background"/g) ?? []).length, 1);
     assert.doesNotMatch(html, /avatars\/(?:coco|kiki)|avontuur voltooid/i);
   }

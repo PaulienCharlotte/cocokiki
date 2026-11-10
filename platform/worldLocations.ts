@@ -46,13 +46,14 @@ export interface WorldLocation {
 export const WORLD_LOCATIONS: WorldLocation[] = [
   {
     id: 'lua', islandId: 'math', path: '/islands/math', name: 'Baby Lua’s Rekenwerkplaats',
-    background: '/dreamworld/locations/lua-workshop.png',
-    backgroundPosition: { desktop: '32% center', mobile: '25% center' },
+    // Rekenen hoort op school; de rekenspellen staan er al jaren in.
+    background: '/games/school/school-interior.webp',
+    backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
     activities: [
       { id: 'multiply', label: 'Tafels oefenen', icon: 'math', target: { activity: 'math:multiply' } },
-      { id: 'divide', label: 'Eerlijk delen', icon: 'math', target: { activity: 'math:divide' } },
-      { id: 'balance', label: 'Rekenpuzzels', icon: 'math', target: { activity: 'math:balance' } },
+      { id: 'divide', label: 'Delen', icon: 'math', target: { activity: 'math:divide' } },
+      { id: 'balance', label: 'Vergelijken', icon: 'math', target: { activity: 'math:balance' } },
       { id: 'clock', label: 'Kloklezen', icon: 'clock', target: { activity: 'clock' } },
     ],
     featuredActivities: MATH_GAMES.map(game => `math:${game.id}`),

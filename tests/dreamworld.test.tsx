@@ -131,7 +131,7 @@ test('plant location is addressable and discovery offers real flag memory', () =
   assert.ok(FLAG_MEMORY_PAIRS.every(pair => pair.kind === 'flag' && pair.left && pair.right));
   const island = renderToStaticMarkup(<IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={() => undefined} />);
   assert.doesNotMatch(island, /dream-island__title|<span>/);
-  assert.match(island, /aria-label="Red Baby Lua! openen"/);
+  assert.match(island, /aria-label="Keersommen openen"/);
 });
 test('three global shops are addressable without cluttering island activities', () => {
   assert.deepEqual(WORLD_SHOPS.map(shop => shop.id), ['groceries', 'furniture', 'plants']);
