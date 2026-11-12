@@ -70,13 +70,11 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   {
     id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
     background: '/dreamworld/locations/coco-bakery.webp',
-    backgroundPosition: { desktop: 'center', mobile: '28% center' },
+    backgroundPosition: { desktop: '28% center', mobile: '18% center' },
     clipboard: '/assets/library/cooking/klembord.webp',
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
-    // Geen losse activiteitenkaarten: twee van de drie beloofden alleen
-    // "binnenkort", en voedingsstoffen staat al in de encyclopedie in de
-    // bovenbalk. Wat je hier doet begint bij een bestelling.
+    // Vaste bestemmingen openen rechtstreeks; de toonbank bevat de opdrachten.
     activities: [],
     featuredActivities: RECIPES.map(recipe => `recipe:${recipe.id}`),
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
@@ -84,6 +82,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     adventurePreviews: [
       { id: 'bestellingen', title: 'De toonbank', description: 'Help een klant met een kookopdracht of een verjaardagstaart.', image: '/assets/library/cooking/klembord.webp', tone: 'honey', status: 'available' },
       { id: 'kookboek', title: 'Het kookboek', description: 'Kies een recept of versier vrij een taart.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'sage', status: 'available' },
+      { id: 'taartenatelier', title: 'Taart versieren', description: 'Maak en versier je eigen feestelijke taart.', image: '/assets/library/cooking/taarten/roze-rand.webp', tone: 'berry', status: 'available' },
       { id: 'voeding', title: 'Ontdek je eten', description: 'Ontdek samen met Coco wat je lichaam met eten doet.', image: '/assets/library/cooking/healthy/wholewheat-pasta.webp', tone: 'sage', status: 'available' },
     ],
   },

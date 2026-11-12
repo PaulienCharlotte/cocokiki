@@ -66,7 +66,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
       onChoose={id => open(ACTIVITIES_BY_ID[id])}
     />;
   };
-  if (location.presentation === 'game') return <main className="world-location world-location--game" aria-label={location.name} style={{
+  if (location.presentation === 'game') return <main className={`world-location world-location--game world-location--${location.id}`} aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
     ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),

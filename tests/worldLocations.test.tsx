@@ -94,15 +94,15 @@ test('recipe deep links open the existing overview without starting a journey', 
   }
 });
 
-test('de bakkerij heeft drie werkende bestemmingen zonder vergrendelde voorstellen', () => {
+test('de bakkerij heeft vier werkende bestemmingen zonder vergrendelde voorstellen', () => {
   const location = WORLD_LOCATIONS.find(item => item.id === 'coco')!;
-  // Drie bestemmingen, elk met een directe werkende ingang.
+  // Vier bestemmingen, elk met een directe werkende ingang.
   assert.deepEqual(location.activities, []);
   const previews = location.adventurePreviews!;
-  assert.equal(previews.length, 3);
-  assert.equal(new Set(previews.map(item => item.id)).size, 3);
+  assert.equal(previews.length, 4);
+  assert.equal(new Set(previews.map(item => item.id)).size, 4);
   // Geen kaartjes voor nog ongebouwde spellen.
-  const speelbaar = ['bestellingen', 'kookboek', 'voeding'];
+  const speelbaar = ['bestellingen', 'kookboek', 'taartenatelier', 'voeding'];
   assert.deepEqual(previews.filter(item => item.status !== 'locked').map(item => item.id), speelbaar);
   for (const preview of previews) {
     assert.equal(preview.status, speelbaar.includes(preview.id) ? 'available' : 'locked');

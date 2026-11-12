@@ -39,3 +39,5 @@ import "./foodEducation.test";
 import "./foodGlossary.test";
 
 import "./networkOptimizations.test";
+
+import "./redactieNavigation.test";

@@ -134,7 +134,7 @@ const App: React.FC = () => {
       : current.route.page === 'nutrient-memory'
       ? <NutrientMemoryScreen onBack={back} />
       : current.route.page === 'taartenatelier'
-      ? <CakeStudio key={current.route.path + window.location.search} onClose={() => navigate(new URLSearchParams(window.location.search).has('order') ? '/treehouse/cookbook?toonbank=1' : '/treehouse/cookbook')} />
+      ? <CakeStudio key={current.route.path + window.location.search} onClose={() => navigate(new URLSearchParams(window.location.search).has('order') ? '/treehouse/cookbook?toonbank=1' : '/islands/cooking')} />
       : current.route.page === 'cooking-kitchen'
       ? <CookingKitchen onNavigate={navigate} />
       : current.route.page === 'math'
