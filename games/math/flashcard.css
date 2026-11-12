@@ -229,3 +229,391 @@
 .cookie-order__batch img { width: 48px; height: 48px; object-fit: contain; }
 .cookie-order.is-complete { color: #465e43; }
 @media (max-width: 600px) { .math-workbench__equation { font-size: var(--font-size-xl); } .math-workbench input { width: calc(var(--space-12) + var(--space-8)); } }
+
+/*
+ * De redactiesom: eerst aanstrepen, dan rekenen, dan de naam van de techniek.
+ * De stappen zelf lenen de opmaak van `.story-stappen` hierboven, zodat een
+ * redactiesom er hetzelfde uitziet als de andere werkbladen.
+ */
+.redactie { display: grid; gap: var(--space-4); width: 100%; }
+/*
+ * Een redactiesom heeft langere stappen dan een bessensom: 'Hoeveel volle
+ * keren van 6 gaan eruit?' past niet in een smalle kolom. Daarom staan deze
+ * stappen altijd onder elkaar, ook op een breed scherm.
+ */
+.redactie .story-stappen { grid-auto-flow: row; gap: var(--space-4); }
+/* Dezelfde schone witte blokken als het kaartraster: één haarlijn, geen
+   eigen achtergrondkleur. De stap waar je mee bezig bent is de enige die
+   kleurt. */
+.redactie .story-stappen li {
+  justify-items: start;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+.redactie .story-stappen li.is-nu {
+  border-color: var(--color-primary);
+  background: var(--color-success-soft);
+  box-shadow: none;
+}
+.redactie .story-stappen li.is-later { border-style: dashed; opacity: 1; color: var(--color-text-soft); }
+.redactie .story-stappen li.is-later .story-stappen__kop { color: var(--color-text-soft); }
+.redactie .math-workbench__equation { justify-content: flex-start; }
+.redactie .story-stappen output { background: var(--color-background-soft); }
+.redactie .story-stappen li.is-nu output { background: var(--color-surface); }
+.redactie-verhaal { margin: 0; font-size: var(--font-size-lg); line-height: 1.55; }
+.redactie-getal {
+  padding: 0 var(--space-1);
+  border: 0;
+  border-radius: var(--radius-control-sm);
+  background: var(--color-background-soft);
+  color: inherit;
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.redactie-getal:disabled { cursor: default; }
+.redactie-getal.is-nodig { background: var(--color-reward); color: var(--color-text); }
+.redactie-getal.is-mis { background: var(--color-background-soft); color: var(--color-text-soft); text-decoration: line-through; }
+.redactie-opdracht {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+.redactie-tip { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); text-align: center; }
+.redactie-eenheid { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.redactie-aanpak {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-success-soft);
+  font-size: var(--font-size-sm);
+}
+.redactie-aanpak p { margin: 0; }
+.redactie-aanpak__naam { color: var(--color-primary); font-weight: var(--font-weight-bold); }
+.redactie-aanpak__controle { color: var(--color-text-muted); }
+
+/*
+ * De rekenmachine: de tekening is het apparaat. De toetsen zijn doorzichtige
+ * vlakken die er precies overheen liggen, in procenten opgemeten op de
+ * tekening, zodat ze meeschalen op elk scherm.
+ */
+/* De tekening zegt zelf al dat het een rekenmachine is; de kop blijft er
+   alleen voor een voorleesprogramma. */
+.rekenmachine-dialoog .ck-dialog__copy > h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+/* Zo groot als past: bij 26rem is een toets ongeveer een vingertop. */
+.rekenmachine { position: relative; width: min(100%, 26rem); margin: 0 auto; }
+.rekenmachine img { display: block; width: 100%; height: auto; }
+.rekenmachine__venster {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4%;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.rekenmachine__toets {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  cursor: pointer;
+}
+.rekenmachine__toets:active { transform: translateY(2%) scale(.97); background: #3b241a1f; }
+.rekenmachine__toets.is-actief { background: #3b241a1f; }
+.rekenmachine__toets:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .rekenmachine__toets:active { transform: none; }
+}
+
+/* Het plan: vier aanpakken met dezelfde twee getallen. Eén keuze, dus geen
+   knoppen naast elkaar maar één blok, zoals elke andere keuze in de app. */
+.redactie-plan { display: grid; gap: var(--space-3); }
+.redactie-plan__keuzes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.redactie-plan__keuzes button {
+  min-height: var(--touch-target);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.redactie-plan__keuzes button:hover { border-color: var(--color-border-strong); }
+.redactie-plan__keuzes button.is-mis { border-color: var(--color-error); background: var(--color-error-soft); }
+
+/* De volgende trede van de tip, in Lua's eigen wolk. */
+.redactie-meer {
+  display: block;
+  margin-top: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.redactie-meer:disabled { color: var(--color-text-soft); text-decoration: none; cursor: default; }
+
+/*
+ * Nakijken: één kaart, geen stapeltje blokjes. De regels worden gescheiden
+ * door een haarlijn, zoals de keuzelijst elders in de app — dat leest als
+ * één uitslag in plaats van als losse vakjes.
+ */
+.redactie-uitslag {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.redactie-nakijk { display: grid; margin: 0; padding: 0; list-style: none; }
+.redactie-nakijk li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+.redactie-nakijk li + li { border-top: 1px solid var(--color-border); }
+.redactie-nakijk svg { align-self: center; color: var(--color-primary); }
+.redactie-nakijk li.is-mis { background: var(--color-error-soft); }
+.redactie-nakijk li.is-mis svg { color: var(--color-error); }
+.redactie-nakijk span { color: var(--color-text); font-size: var(--font-size-lg); }
+.redactie-nakijk small { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.redactie-nakijk em { grid-column: 2 / -1; color: var(--color-error); font-size: var(--font-size-sm); font-style: normal; }
+.redactie-oordeel {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+/* De terugblik hoort bij dezelfde kaart: geen eigen kleurvlak, alleen een
+   haarlijn. Anders valt de kaart weer uiteen in blokjes. */
+.redactie-uitslag .redactie-aanpak {
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  background: none;
+}
+.redactie-soorten { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.redactie-soort {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+}
+.redactie-soort > button {
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+.redactie-soort > button:hover { background: var(--color-background-soft); }
+.redactie-soort__info {
+  display: grid;
+  place-items: center;
+  width: var(--touch-target);
+  padding: 0 !important;
+  border-left: 1px solid var(--color-border) !important;
+  color: var(--color-text-muted) !important;
+}
+.redactie-soort__info[aria-expanded='true'] { background: var(--color-success-soft); color: var(--color-primary) !important; }
+.redactie-soort__uitleg { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.redactie-soort__uitleg strong { color: var(--color-text); }
+
+.redactie-verder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  padding: var(--space-3);
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+@media (max-width: 420px) {
+  .redactie-plan__keuzes { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* De som blijft boven de rekenmachine staan, anders ben je hem kwijt. */
+.rekenmachine__som {
+  width: min(100%, 26rem);
+  margin: 0 auto var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+/*
+ * Maten omrekenen: één kaart met haarlijnen, net als het nakijkscherm.
+ * Bovenin kies je wat je omrekent, daaronder de trap, dan de uitkomst en
+ * onderaan de weetjes. Losse blokjes onder elkaar lezen als rommel.
+ */
+.maten {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.maten > * + * { border-top: 1px solid var(--color-border); }
+.maten-vak { margin: 0; padding: var(--space-4); }
+
+/* De soortenkiezer is één schuifje, geen rij losse pillen. */
+.maten-soorten {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--color-background-soft);
+}
+.maten-soorten button {
+  flex: 1 1 auto;
+  min-height: var(--space-8);
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.maten-soorten button.is-actief { background: var(--color-surface); color: var(--color-primary); box-shadow: var(--shadow-soft); }
+
+.maten-trap-schuif { overflow-x: auto; }
+.maten-trap {
+  display: grid;
+  grid-template-columns: repeat(var(--maten), minmax(3rem, 1fr));
+  /* De rij voor de brug blijft leeg gereserveerd, anders springt de trap
+     omhoog zodra je twee maten kiest. */
+  grid-template-rows: auto var(--space-7);
+  gap: var(--space-1);
+}
+.maten-trap button {
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+.maten-trap button.is-basis { font-weight: var(--font-weight-bold); }
+.maten-trap button:hover { background: var(--color-border); }
+.maten-trap button.is-gekozen { border-color: var(--color-primary); background: var(--color-success-soft); color: var(--color-primary); font-weight: var(--font-weight-bold); }
+
+/* De brug: één balkje van de ene gekozen maat tot de andere. */
+.maten-brug {
+  grid-row: 2;
+  align-self: center;
+  margin: 0;
+  padding: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+.maten-uitkomst { display: grid; gap: var(--space-1); }
+.maten-uitkomst p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--font-size-xl);
+}
+.maten-uitkomst input {
+  width: calc(var(--space-12) + var(--space-6));
+  min-height: var(--touch-target);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-xl);
+  text-align: center;
+}
+.maten-uitkomst input:focus-visible { background: var(--color-surface); }
+.maten-uitkomst i { color: var(--color-text-muted); font-style: normal; }
+.maten-uitkomst output { color: var(--color-primary); font-weight: var(--font-weight-bold); }
+.maten-uitkomst small,
+.maten-hint { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+
+.maten-weetjes {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-background-soft);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Het matenspel: één som of één keuze op het scherm, verder niets. */
+.maatvraag { display: grid; gap: var(--space-4); justify-items: center; width: 100%; }
+.maatvraag__som {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--font-size-2xl);
+}
+.maatvraag__som i { color: var(--color-text-muted); font-style: normal; }
+.maatvraag__som input {
+  width: calc(var(--space-12) * 2);
+  min-height: var(--touch-target);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--font-size-2xl);
+  text-align: center;
+}
+.maatvraag__som input:focus-visible { background: var(--color-surface); }
+.maatvraag__uitleg { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); text-align: center; }

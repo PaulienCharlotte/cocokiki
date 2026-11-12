@@ -203,3 +203,44 @@ beantwoordt de vraag en behoudt toetsenbordfocus na de automatische overgang.
 Terugnavigatie naar rekenen en School is getest; de browserconsole bleef zonder
 waarschuwingen/fouten. Aanraakbediening is via Pointer Events gebouwd en op
 mobiel formaat getest; fysieke touchscreenhardware is niet getest.
+
+- Redactiesommen werken anders dan de andere rekenspellen: zie [redactiesommen.md](redactiesommen.md).
+
+## Gereedschap in de balk
+
+Boven elk rekenspel staan twee naslagknoppen, rechts van de niveauschuif:
+
+- **Maten** (liniaal) — de trapjes voor lengte, inhoud, gewicht, oppervlakte
+  en volume. Tik twee maten in dezelfde rij aan en je rekent om: je typt een
+  getal en ziet de uitkomst, met hoeveel stappen het zijn en of je keer of
+  gedeeld door moet. Groen betekent 'door jou gekozen'; de basismaat is
+  alleen vet. Staat bij elk rekenspel: het is naslag, geen hulp bij het
+  antwoord. Zie `games/math/Maten.tsx`.
+- **Rekenmachine** — alleen bij de redactiesommen, waar de aanpak de oefening
+  is en niet het hoofdrekenen. De som staat erboven, want anders is een kind
+  hem kwijt zodra het rekent. De vraag komt via `MathModule` uit
+  `MathSession` in de balk terecht.
+
+## Het matenspel
+
+Een eigen rekenspel om maten te oefenen (`games/math/maten/vragen.ts`), met
+drie soorten vragen:
+
+- **Omrekenen** — "Hoeveel ml is 15 cl?" Je typt het getal; kiezen uit vier
+  getallen zou er een gokspel van maken. De getallen zijn zo gekozen dat er
+  nooit een eindeloos kommagetal uitrolt, ook niet als je deelt.
+- **Vergelijken** — "Welke is het zwaarst?" Vier maten door elkaar, zoals op
+  een werkblad. Alleen als er één duidelijke winnaar is.
+- **Schatten** — "Een appel weegt ongeveer 150 …" Zonder maatgevoel merk je
+  niet dat een antwoord niet kan kloppen.
+
+Per niveau doen meer trappen mee: lengte en inhoud, dan gewicht, dan
+vergelijken, dan oppervlakte, en op niveau 5 ook volume en kommagetallen.
+De trappen zelf komen uit `games/math/Maten.tsx`, dezelfde als in het
+naslagvenster.
+
+**Het spel heeft nog geen eigen tekening.** Daarom staat `tekening: false`
+bij dit spel in de config: het krijgt een liniaal-icoon in het rekenmenu en
+op het rekeneiland, en het staat nog niet als speld op de wereldkaart. Zodra
+er een tekening is op `public/games/school/math/icons/maten.webp`, haal je
+die regel weg en doet het overal mee.

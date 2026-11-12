@@ -5,7 +5,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { DREAM_ISLANDS, DREAMWORLD_IMAGE, ISLANDS_BY_ID, WORLD_SHOPS, WORLD_DESTINATIONS, islandForActivity } from '../platform/dreamworld';
 import { resolveRoute } from '../platform/routes';
-import { MATH_GAMES } from '../games/math/config';
+import { GETEKENDE_MATH_GAMES, MATH_GAMES } from '../games/math/config';
 import { clampWorldView, worldImageSize, worldMinimumScale } from '../services/worldViewport';
 import IslandEnvironment from '../pages/IslandEnvironment';
 import ShopScreen from '../pages/ShopScreen';
@@ -70,7 +70,9 @@ test('island icon positions persist separately and reject corrupt or invalid coo
   }
 });
 test('every actual math module has one island entry and preserves its identity', () => {
-  assert.deepEqual(ISLANDS_BY_ID.math.activities.map(item => item.id), MATH_GAMES.map(game => game.id));
+  // Alleen spellen met een eigen tekening staan op het eiland; de route
+  // bestaat wel voor allemaal.
+  assert.deepEqual(ISLANDS_BY_ID.math.activities.map(item => item.id), GETEKENDE_MATH_GAMES.map(game => game.id));
   for (const game of MATH_GAMES) assert.deepEqual(resolveRoute(`/school/math/${game.id}`).route, { page: 'math', path: `/school/math/${game.id}`, mathGame: game.id });
   assert.equal(islandForActivity('/games/red-baby-lua')?.id, 'math');
 });

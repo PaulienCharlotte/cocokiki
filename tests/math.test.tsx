@@ -11,7 +11,7 @@ import { MATH_GAME_IDS, MATH_LEVELS, type Expression, type MathResult } from '..
 import { DROP_MARGE, dropDoel } from '../games/math/dropTarget';
 import { DISTRIBUTION_MAX, answerChoices, balanceAngle, createQuestionDeck, distributionCorrect, evaluate, expressionText, generateQuestion, resultStatus, validAnswer } from '../games/math/engine';
 import { emptyMathProgress, finishMathLevel, levelUnlocked, loadMathProgress, migrateMathProgress, MATH_PROGRESS_KEY, nextMathLevel } from '../games/math/progress';
-import { MATH_GAMES, mathIcon, RACE_TARGETS } from '../games/math/config';
+import { GETEKENDE_MATH_GAMES, MATH_GAMES, mathIcon, RACE_TARGETS } from '../games/math/config';
 import { loadCurrency } from '../services/currency';
 import { commitLocalState, readDocument } from '../services/localState';
 import { resolveRoute } from '../platform/routes';
@@ -107,16 +107,19 @@ test('winter and cookie art uses small rewards instead of weighted count badges'
   }
 });
 
-test('math routes and six supplied icons are integrated without replacing clock or Lua', () => {
+test('math routes and the supplied icons are integrated without replacing clock or Lua', () => {
   assert.equal(resolveRoute('/school/math').route.page, 'math');
   assert.equal(resolveRoute('/school/clock').route.page, 'clock');
   assert.equal(resolveRoute('/games/red-baby-lua').route.page, 'game');
-  assert.equal(MATH_GAMES.length, 6);
-  for (const game of MATH_GAMES) assert.ok(existsSync(`public${mathIcon(game.id)}`));
+  assert.equal(MATH_GAMES.length, 7);
+  for (const game of GETEKENDE_MATH_GAMES) assert.ok(existsSync(`public${mathIcon(game.id)}`), `${game.id} mist zijn tekening`);
   const hub = renderToStaticMarkup(<MathHub progress={emptyMathProgress()} onPlay={() => undefined} />);
-  for (const game of MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide')) { assert.ok(hub.includes(game.title.replace('&', '&amp;'))); assert.ok(hub.includes(mathIcon(game.id))); }
+  for (const game of MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide')) {
+    assert.ok(hub.includes(game.title.replace('&', '&amp;')));
+    if (game.tekening !== false) assert.ok(hub.includes(mathIcon(game.id)));
+  }
   assert.ok(!hub.includes('Red Baby Lua'));
-  assert.equal((hub.match(/0\/5 niveaus/g) ?? []).length, 4);
+  assert.equal((hub.match(/0\/5 niveaus/g) ?? []).length, 5);
   assert.match(renderToStaticMarkup(<ChallengesScreen onNavigate={() => undefined} />), /Rekenen openen/);
 });
 

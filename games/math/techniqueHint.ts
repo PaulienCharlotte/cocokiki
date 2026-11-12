@@ -1,14 +1,11 @@
 import { evaluate } from './engine';
 import type { MathQuestion } from './types';
-import { storySteps } from './storySteps';
 
 export function techniqueHint(question: MathQuestion): string {
   const left = question.left;
-  if (question.id.startsWith('story:')) {
-    const first = storySteps(left)[0];
-    const symbol = { '+': '+', '-': '−', '*': '×', '/': '÷' }[first.operation];
-    return `Begin met ${first.left} ${symbol} ${first.right}. ${question.hint}`;
-  }
+  // Bij een redactiesom is de tip de aanpak van het type, niet een losse som:
+  // de stap waar je op vastloopt wijst zichzelf aan in het werkblad.
+  if ('typeId' in question) return question.hint;
   if (question.kind !== 'puzzle' || !('op' in left)) return question.hint;
   const blankFirst = 'blank' in left.left;
   const known = evaluate(blankFirst ? left.right : left.left);

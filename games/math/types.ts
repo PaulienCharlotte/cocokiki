@@ -1,4 +1,4 @@
-export const MATH_GAME_IDS = ['multiply', 'divide', 'add-subtract', 'missing', 'balance', 'race'] as const;
+export const MATH_GAME_IDS = ['multiply', 'divide', 'add-subtract', 'missing', 'balance', 'maten', 'race'] as const;
 export type MathGameId = typeof MATH_GAME_IDS[number];
 export type MathLevel = 1 | 2 | 3 | 4 | 5;
 export const MATH_LEVELS: MathLevel[] = [1, 2, 3, 4, 5];

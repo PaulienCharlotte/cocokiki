@@ -16,7 +16,7 @@ export interface ActivityDefinition {
 
 // Shared content index, not a new game engine or a second progress store.
 export const SCHOOL_ACTIVITIES: ActivityDefinition[] = [
-  ...MATH_GAMES.map(game => ({ id: `math:${game.id}`, title: game.title, subtitle: game.subtitle, kind: 'game' as const, path: `/school/math/${game.id}`, image: mathIcon(game.id), status: 'available' as const })),
+  ...MATH_GAMES.map(game => ({ id: `math:${game.id}`, title: game.title, subtitle: game.subtitle, kind: 'game' as const, path: `/school/math/${game.id}`, image: game.tekening === false ? undefined : mathIcon(game.id), status: 'available' as const })),
   { id: 'topo', title: 'Topografie', subtitle: 'Plekken zoeken op de kaart', kind: 'game', path: '/games/topo', image: '/games/school/topo-cta.webp', status: 'available' },
   { id: 'clock', title: 'Kloklezen', subtitle: 'Klokkijken en wereldtijden', kind: 'game', path: '/school/clock', image: '/games/school/clock/clock-school-navigation-v2.webp', status: 'available' },
   { id: 'flags-memory', title: 'Vlaggenmemory', subtitle: 'Zoek de vlag bij het land', kind: 'game', path: '/games/flags-memory', image: '/games/flags-memory/navigation.webp', status: 'available' },

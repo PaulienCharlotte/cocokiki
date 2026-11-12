@@ -1,5 +1,5 @@
 import { ASSET_LIBRARY as A } from '../data/assetLibrary';
-import { mathIcon, MATH_GAMES } from '../games/math/config';
+import { mathIcon, MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
 
 export type IslandId = 'home' | 'math' | 'cooking' | 'plants' | 'discovery' | 'language';
 export interface MapSpot { x: number; y: number; width: number; height: number }
@@ -49,13 +49,13 @@ export const WORLD_SHOPS = [
 ] as const;
 
 const activity = (id: string, label: string, path: string, image: string, x: number, y: number): IslandActivity => ({ id, label, path, image, x, y });
-const mathPositions = [[19, 38], [48, 34], [77, 38], [19, 72], [48, 70], [77, 72]];
+const mathPositions = [[19, 34], [48, 31], [77, 34], [19, 60], [48, 58], [77, 60], [48, 82]];
 
 export const DREAM_ISLANDS: DreamIsland[] = [
   { id: 'home', label: 'Mijn boomhut', path: '/islands/home', spot: { x: .49, y: .49, width: .19, height: .27 }, background: A.treehouse.rooms.livingRoom, backgroundAlt: 'Een open houten boomhut met uitzicht op het bos', modules: ['treehouse', 'room-inventory', 'furniture'], status: 'available', future: ['design-island'], activities: [
     activity('treehouse', 'Mijn kamers', '/treehouse', A.treehouse.overview, 50, 55),
   ] },
-  { id: 'math', label: 'Rekeneiland', path: '/islands/math', spot: { x: .255, y: .21, width: .25, height: .30 }, background: A.destinations.school, backgroundAlt: 'Het schooltje met houten trappen, boeken, planten en zonnige klaslokalen', modules: ['math', 'red-baby-lua'], status: 'available', future: [], activities: MATH_GAMES.map((game, i) => activity(game.id, game.title, `/school/math/${game.id}`, mathIcon(game.id), mathPositions[i][0], mathPositions[i][1])) },
+  { id: 'math', label: 'Rekeneiland', path: '/islands/math', spot: { x: .255, y: .21, width: .25, height: .30 }, background: A.destinations.school, backgroundAlt: 'Het schooltje met houten trappen, boeken, planten en zonnige klaslokalen', modules: ['math', 'red-baby-lua'], status: 'available', future: [], activities: GETEKENDE_MATH_GAMES.map((game, i) => activity(game.id, game.title, `/school/math/${game.id}`, mathIcon(game.id), mathPositions[i % mathPositions.length][0], mathPositions[i % mathPositions.length][1])) },
   { id: 'cooking', label: 'Kookeiland', path: '/islands/cooking', spot: { x: .805, y: .31, width: .25, height: .30 }, background: A.destinations.cookingStudio, backgroundAlt: 'Een gezellige kookstudio met houten werkbladen', modules: ['cooking', 'groceries', 'recipes', 'nutrition'], status: 'available', future: [], activities: [
     activity('recipes', 'Mijn kookboek', '/treehouse/cookbook', A.treehouse.collections.cookbook, 50, 50),
   ] },

@@ -36,12 +36,13 @@ export default function MathModule({ onBack = () => undefined, onHome = onBack, 
     if (!levelUnlocked(loadMathProgress(), id, nextLevel)) return;
     setGame(id); setLevel(nextLevel); setAttempt(value => value + 1); setOutcome(null);
   };
+  const [vraag, setVraag] = useState('');
   const hub = () => { if (initialGame) { onBack(); return; } setGame(null); setOutcome(null); };
-  const controls = <MathHeader game={game} level={level} progress={progress} coins={coins} sound={sound} onSound={toggleSound} onHome={onHome} onBack={game ? hub : onBack} onLevel={nextLevel => { if (game) start(game, nextLevel); }} />;
+  const controls = <MathHeader game={game} level={level} vraag={vraag} progress={progress} coins={coins} sound={sound} onSound={toggleSound} onHome={onHome} onBack={game ? hub : onBack} onLevel={nextLevel => { if (game) start(game, nextLevel); }} />;
   return <div className={`math-module${game ? ` math-adventure math-adventure--${game}` : ''}`} style={game ? { backgroundImage: `linear-gradient(#26382a18, #26382a24), url('${mathEnvironments[game]}')` } : undefined}>
     {game !== 'multiply' && controls}
     {!game ? <MathHub progress={progress} onPlay={id => start(id, nextMathLevel(progress, id))} /> : <main className="math-game">
-    <React.Fragment key={`${game}:${level}:${attempt}`}>{game === 'race' ? <RaceGame level={level} onFinish={finish} onSound={play} /> : game === 'multiply' ? <div className="math-lua"><Suspense fallback={<p role="status">Lua komt eraan…</p>}><BabyLua onHome={hub} setupControls={controls} mathAdventure={{ level, onComplete: finish, sound }} /></Suspense></div> : <MathSession game={game} level={level} onFinish={finish} onSound={play} />}</React.Fragment>
+    <React.Fragment key={`${game}:${level}:${attempt}`}>{game === 'race' ? <RaceGame level={level} onFinish={finish} onSound={play} /> : game === 'multiply' ? <div className="math-lua"><Suspense fallback={<p role="status">Lua komt eraan…</p>}><BabyLua onHome={hub} setupControls={controls} mathAdventure={{ level, onComplete: finish, sound }} /></Suspense></div> : <MathSession game={game} level={level} onFinish={finish} onSound={play} onVraag={setVraag} />}</React.Fragment>
     {outcome && <MathCompletion game={game} level={level} result={outcome.result} reward={outcome.reward} saved={outcome.saved} onRetrySave={() => finish(outcome.result)} onReplay={() => start(game, level)} onNext={() => start(game, (level + 1) as MathLevel)} onBack={hub} />}
   </main>}</div>;
 }

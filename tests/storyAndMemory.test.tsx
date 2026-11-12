@@ -2,9 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { createStoryDeck } from '../games/math/storyProblems';
-import StoryChallenge from '../games/math/StoryChallenge';
-import { storySteps } from '../games/math/storySteps';
+import { REDACTIE_TYPEN_BY_ID, maakRedactiedeck, steunVoorNiveau } from '../games/math/redactie/catalogus';
+import { evalueerSom, planOpties, somTekst } from '../games/math/redactie/types';
+import { paaltjes } from '../games/math/redactie/typen/paaltjes';
+import { ritten } from '../games/math/redactie/typen/ritten';
+import RedactieChallenge from '../games/math/RedactieChallenge';
+import { rekenUit, toonGetal } from '../games/math/Rekenmachine';
+import { TRAPPEN, reken } from '../games/math/Maten';
+import { maakMatendeck } from '../games/math/maten/vragen';
 import { mathAssets } from '../games/math/assets';
 import { techniqueHint } from '../games/math/techniqueHint';
 import { generateQuestion } from '../games/math/engine';
@@ -20,37 +25,160 @@ import { memoryBoardIds } from '../services/memoryBoards';
 import { loadProfileAvatar, PROFILE_AVATAR_KEY } from '../services/profile';
 import type { Expression } from '../games/math/types';
 
-test('story problems require several steps, whole answers and a matching narrative', () => {
-  const steps = (value: Expression): number => 'op' in value ? 1 + steps(value.left) + steps(value.right) : 0;
+test('elke redactiesom draagt zijn eigen aanpak, stappen en getallen', () => {
   for (const level of MATH_LEVELS) for (const random of [() => 0, () => .999, Math.random]) {
-    const deck = createStoryDeck(level, random);
+    const deck = maakRedactiedeck(level, random);
     assert.equal(deck.length, 10);
-    assert.equal(new Set(deck.map(question => question.id)).size, 10);
     assert.equal(new Set(deck.map(question => question.prompt)).size, 10);
+    const steun = steunVoorNiveau(level);
     for (const question of deck) {
-      assert.ok(steps(question.left) >= 2);
-      assert.ok(Number.isSafeInteger(question.answer) && question.answer > 0);
-      assert.equal(evaluate(question.left), question.answer);
-      assert.equal(question.options.filter(value => validAnswer(question, value)).length, 1);
-      assert.equal(question.options.length, 4);
-      assert.ok(question.prompt.includes('Hoeveel'));
-      const hidden = renderToStaticMarkup(<StoryChallenge question={question} locked={false} onAnswer={() => undefined} />);
-      assert.ok(!hidden.includes('story-explanation'));
-      assert.ok(hidden.includes('type="number"'));
-      assert.ok(!hidden.includes('answer-choices'));
-      assert.ok(!hidden.includes(mathAssets.strawberry));
-      assert.ok(!hidden.includes(mathAssets.squirrel));
-      const plan = storySteps(question.left);
-      assert.ok(plan.length >= 2 && plan.length <= steps(question.left));
-      assert.equal(plan.at(-1)?.answer, question.answer);
-      assert.ok(plan.every(step => Number.isSafeInteger(step.answer)));
-      const solved = renderToStaticMarkup(<StoryChallenge question={question} locked onAnswer={() => undefined} />);
-      assert.ok(solved.includes('story-explanation'));
-      assert.ok(solved.includes(`${question.answer} ${question.unit}.`));
+      const type = REDACTIE_TYPEN_BY_ID[question.typeId];
+      assert.ok(type, `onbekend type ${question.typeId}`);
+      assert.ok(type.niveaus.includes(level));
+      assert.ok(question.stappen.length >= 2);
+      assert.equal(question.answer, question.stappen.at(-1)?.antwoord);
+      assert.ok(question.stappen.every(stap => Number.isFinite(stap.antwoord) && stap.antwoord >= 0));
+      assert.ok(question.stappen.every(stap => stap.tip && stap.vraag && stap.eenheid));
+      assert.ok(question.zoek && question.controle);
+      // Elk getal dat je moet aanstrepen staat ook echt in het verhaal.
+      assert.ok(question.nodig.length >= 2);
+      for (const getal of question.nodig) assert.ok(question.prompt.includes(getal), `${getal} ontbreekt in: ${question.prompt}`);
+      const open = renderToStaticMarkup(<RedactieChallenge question={question} steun={steun} locked={false} onAnswer={() => undefined} onVerder={() => undefined} />);
+      // Eerst aanstrepen: het werkblad komt pas daarna in beeld.
+      assert.ok(open.includes('redactie-getal'));
+      assert.ok(!open.includes('math-workbench'));
+      // Elke stap is na te rekenen met de getallen die eraan voorafgaan.
+      const tot: number[] = [];
+      for (const stap of question.stappen) {
+        assert.equal(evalueerSom(stap.som, tot, stap.afronden), stap.antwoord,
+          `'${stap.som}' levert niet ${stap.antwoord} op`);
+        tot.push(stap.antwoord);
+      }
     }
-    if (level === 3) assert.ok(deck.some(question => question.prompt.includes('kwart')));
-    if (level === 4) assert.ok(deck.every(question => question.prompt.includes('%')));
   }
+});
+
+test('een latere stap verklapt nooit de uitkomst van een eerdere', () => {
+  for (const level of MATH_LEVELS) {
+    for (const question of maakRedactiedeck(level, Math.random)) {
+      for (const [i, stap] of question.stappen.entries()) {
+        const verwijzingen = [...stap.som.matchAll(/\{(\d+)\}/g)].map(treffer => Number(treffer[1]));
+        // Een verwijzing wijst altijd naar een eerdere stap, nooit vooruit.
+        assert.ok(verwijzingen.every(nummer => nummer >= 1 && nummer <= i), `stap ${i + 1} verwijst vooruit: ${stap.som}`);
+        // Zolang je er nog niet bent staat er een vraagteken.
+        if (verwijzingen.length && !stap.verborgen) {
+          assert.ok(somTekst(question.stappen, i, 0, false).includes('?'));
+          assert.ok(!somTekst(question.stappen, i, i, false).includes('?'));
+        }
+      }
+      // Wie alleen stap 1 ziet, kan het eindantwoord nergens aflezen.
+      const laatste = somTekst(question.stappen, question.stappen.length - 1, 0, false);
+      assert.ok(!laatste.includes(String(question.answer)) || question.prompt.includes(String(question.answer)));
+    }
+  }
+});
+
+test('de vier aanpakken bevatten de juiste, en narekenen met eigen getallen werkt', () => {
+  for (const level of MATH_LEVELS) {
+    for (const question of maakRedactiedeck(level, Math.random)) {
+      const opties = planOpties(question.stappen[0].som, question.id);
+      assert.equal(opties.length, 4);
+      assert.equal(new Set(opties).size, 4);
+      assert.ok(opties.includes(question.stappen[0].som), `de juiste aanpak ontbreekt: ${question.stappen[0].som}`);
+    }
+  }
+  // Rekent een kind door met een fout getal, dan telt de volgende stap als
+  // goed zolang die bij zijn eigen som klopt.
+  assert.equal(evalueerSom('{1} × 24', [12]), 288);
+  assert.equal(evalueerSom('319 ÷ 24', [], 'beneden'), 13);
+  assert.equal(evalueerSom('14 + 60 + 28', []), 102);
+  assert.equal(evalueerSom('5 ÷ 0', []), null);
+});
+
+test('geen enkele stap vraagt om rekenregels', () => {
+  for (const level of MATH_LEVELS) for (const random of [() => 0, () => .999, Math.random]) {
+    for (const question of maakRedactiedeck(level, random)) {
+      for (const stap of question.stappen) {
+        const punt = /[×÷]/.test(stap.som), streep = /[+−]/.test(stap.som);
+        assert.ok(!(punt && streep),
+          `'${stap.som}' mengt keer of delen met plus of min; splits dat in twee stappen`);
+      }
+    }
+  }
+});
+
+test('het matenspel stelt alleen vragen die bij het niveau passen', () => {
+  for (const level of MATH_LEVELS) for (const random of [() => 0, () => .999, Math.random]) {
+    const deck = maakMatendeck(level, random);
+    assert.equal(deck.length, 10);
+    const bekend = new Set((level <= 1 ? TRAPPEN.slice(0, 2) : level <= 3 ? TRAPPEN.slice(0, 3) : level === 4 ? TRAPPEN.slice(0, 4) : TRAPPEN).flatMap(t => t.maten));
+    for (const vraag of deck) {
+      if (vraag.soort === 'omrekenen') {
+        assert.ok(bekend.has(vraag.van) && bekend.has(vraag.naar), `${vraag.van}→${vraag.naar} hoort niet bij niveau ${level}`);
+        // Het antwoord mag geen eindeloos kommagetal zijn.
+        assert.ok(String(vraag.answer).replace('-', '').replace('.', '').length <= 8, `${vraag.answer} is te lang`);
+      } else {
+        assert.ok(vraag.keuzes.length >= 3);
+        assert.ok(vraag.keuzes[vraag.answer], 'het juiste antwoord ontbreekt in de keuzes');
+        for (const keuze of vraag.keuzes) {
+          const maat = keuze.split(' ').at(-1)!;
+          assert.ok(bekend.has(maat), `${maat} hoort niet bij niveau ${level}`);
+        }
+      }
+    }
+  }
+});
+
+test('de matentrapjes rekenen beide kanten op, met de juiste stapgrootte', () => {
+  assert.equal(reken(1, 3, 10), 1000);          // hm → dm
+  assert.equal(reken(250, -2, 10), 2.5);        // cm → dm → m
+  assert.equal(reken(1, 1, 100), 100);          // ha → dam²
+  assert.equal(reken(2, 2, 1000), 2000000);     // m³ → cm³
+  assert.equal(reken(5, 0, 10), 5);
+  // Elke trap heeft een basismaat die ook echt in de rij staat.
+  for (const trap of TRAPPEN) {
+    assert.ok(trap.maten.includes(trap.basis), `${trap.naam} mist ${trap.basis}`);
+    assert.equal(new Set(trap.maten).size, trap.maten.length);
+    assert.ok([10, 100, 1000].includes(trap.factor));
+  }
+});
+
+test('de rekenmachine rekent, en deelt niet door nul', () => {
+  assert.equal(rekenUit(5, '×', 6), 30);
+  assert.equal(rekenUit(120, '÷', 4), 30);
+  assert.equal(rekenUit(7, '−', 9), -2);
+  assert.equal(toonGetal(rekenUit(5, '÷', 0)), 'oeps');
+  // Een derde wordt geen eindeloze sliert, en de komma is Nederlands.
+  assert.equal(toonGetal(rekenUit(10, '÷', 3)), '3,3333');
+  assert.equal(toonGetal(rekenUit(1, '+', 2)), '3');
+});
+
+test('de paaltjessom telt er één bij, maar rondom niet', () => {
+  const recht = paaltjes.maak(3, 0, () => 0);
+  const laatste = recht.stappen.at(-1)!, eerste = recht.stappen[0];
+  assert.equal(laatste.antwoord, eerste.antwoord + 1);
+  const rond = paaltjes.maak(5, 2, () => 0);
+  assert.equal(rond.stappen.at(-1)!.antwoord, rond.stappen.at(-2)!.antwoord);
+});
+
+test('de ritjessom rondt alleen naar boven als er iets overblijft', () => {
+  let metRest = 0, zonderRest = 0;
+  for (let index = 0; index < 12; index++) {
+    const kort = ritten.maak(4, index, Math.random);
+    assert.equal(kort.stappen.length, 2, 'vanaf niveau 3 hoort de rest niet meer uitgeschreven te worden');
+    const [vol, beslissing] = kort.stappen;
+    assert.ok(beslissing.verborgen, 'de beslissing mag niet voorgezegd worden');
+    const totaal = Number(kort.nodig[0]), perKeer = Number(kort.nodig[1]);
+    const rest = totaal - vol.antwoord * perKeer;
+    assert.ok(rest >= 0 && rest < perKeer);
+    assert.equal(beslissing.antwoord, vol.antwoord + (rest > 0 ? 1 : 0));
+    if (rest > 0) metRest++; else zonderRest++;
+
+    const lang = ritten.maak(2, index, Math.random);
+    assert.equal(lang.stappen.length, 4, 'op niveau 1 en 2 blijft de rest zichtbaar');
+  }
+  // Allebei de gevallen moeten voorkomen, anders leert een kind 'altijd +1'.
+  assert.ok(metRest > 0 && zonderRest > 0, `${metRest} met rest, ${zonderRest} zonder`);
 });
 
 test('topo answers, submitted results and retry sets survive reload independently per test', () => {

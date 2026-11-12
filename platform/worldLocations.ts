@@ -1,6 +1,6 @@
 import { RECIPES } from '../data/cooking/catalog';
 import { PLANT_SPECIES } from '../data/plants/species';
-import { MATH_GAMES } from '../games/math/config';
+import { MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
 import { CHARACTERS, type CharacterId } from '../data/characters';
 
 /** De bewoners zijn de personages uit `data/characters.ts`, geen eigen lijst. */

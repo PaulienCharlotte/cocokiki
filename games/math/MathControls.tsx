@@ -1,13 +1,20 @@
-import React from 'react';
-import { ArrowLeft, Star, Volume2, VolumeX } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Calculator, Ruler, Star, Volume2, VolumeX } from 'lucide-react';
 import { Button, Dialog } from '../../design-system';
 import CocoCoin from '../../components/platform/CocoCoin';
 import { MATH_GAMES_BY_ID } from './config';
+import Rekenmachine from './Rekenmachine';
+import Maten from './Maten';
 import { resultStatus } from './engine';
 import { MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
 
-export function MathHeader({ game, level, progress, onBack, onHome = onBack, onLevel, coins = 0, sound = false, onSound }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onHome?: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void }) {
+export function MathHeader({ game, level, progress, onBack, onHome = onBack, onLevel, coins = 0, sound = false, onSound, vraag = '' }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onHome?: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void; vraag?: string }) {
   const config = game ? MATH_GAMES_BY_ID[game] : null;
+  // Alleen bij de redactiesommen: daar oefen je de aanpak, niet het
+  // hoofdrekenen. Bij de tafels en de race zou een rekenmachine het spel
+  // wegnemen.
+  const [rekenmachine, setRekenmachine] = useState(false);
+  const [maten, setMaten] = useState(false);
   return <header className="math-game-header">
     {/* De uitgang staat in elk spel als eerste in de rij, als rond icoon. */}
     <button className="math-icon-tool math-terug" type="button" aria-label={game ? 'Terug naar het rekeneiland' : 'Terug naar School'} title={game ? 'Rekeneiland' : 'School'} onClick={onBack}><ArrowLeft size={20} aria-hidden="true" /></button>
@@ -15,6 +22,12 @@ export function MathHeader({ game, level, progress, onBack, onHome = onBack, onL
     <h1>{config?.title ?? 'Rekenavonturen'}</h1>
     {game && config && <MathLevelSlider game={game} level={level} progress={progress} onLevel={onLevel} />}
     <span className="math-wallet" aria-label={`${coins} CocoCoins`}><CocoCoin size={24} />{coins}</span>
+    {game === 'add-subtract' && <button type="button" className="math-icon-tool" aria-label="Rekenmachine openen" title="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={20} aria-hidden="true" /></button>}
+    {/* Maten zijn naslag, geen hulp bij het antwoord: die staan bij elk
+        rekenspel klaar. */}
+    {game && <button type="button" className="math-icon-tool" aria-label="Maten omrekenen" title="Maten" aria-haspopup="dialog" onClick={() => setMaten(true)}><Ruler size={20} aria-hidden="true" /></button>}
+    {rekenmachine && <Rekenmachine som={vraag} onClose={() => setRekenmachine(false)} />}
+    {maten && <Maten onClose={() => setMaten(false)} />}
     {onSound && <button type="button" className="math-icon-tool" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} title={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={onSound}>{sound ? <Volume2 size={20} /> : <VolumeX size={20} />}</button>}
   </header>;
 }

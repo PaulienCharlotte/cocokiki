@@ -18,6 +18,7 @@ export const mathAssets = {
 export const mathEnvironments: Record<MathGameId, string> = {
   multiply: ASSET_LIBRARY.games.babyLua.background, divide: mathAssets.garden, 'add-subtract': mathAssets.forest,
   missing: mathAssets.kitchen, balance: `${supplied}/honey-room.webp`, race: `${supplied}/checkout-room.webp`,
+  maten: '/games/school/school-interior.webp',
 };
 export { checkoutProducts } from './checkoutCatalog';
 export const missingMathAssets: readonly string[] = [];
