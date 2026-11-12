@@ -57,18 +57,18 @@ export function migreerOntwerp(bron: unknown): TaartOntwerp {
   };
 }
 
-export function laadOntwerp(): TaartOntwerp {
+export function laadOntwerp(key = TAART_ONTWERP_KEY): TaartOntwerp {
   try {
-    const opgeslagen = readDocument(TAART_ONTWERP_KEY);
+    const opgeslagen = readDocument(key);
     return migreerOntwerp(opgeslagen ? JSON.parse(opgeslagen) : null);
   } catch {
     return leegOntwerp();
   }
 }
 
-export function bewaarOntwerp(ontwerp: TaartOntwerp, nu = new Date().toISOString()): boolean {
+export function bewaarOntwerp(ontwerp: TaartOntwerp, nu = new Date().toISOString(), key = TAART_ONTWERP_KEY): boolean {
   const schoon: TaartOntwerp = { ...migreerOntwerp(ontwerp), bewerktOp: nu };
-  const uitkomst = commitLocalState({ [TAART_ONTWERP_KEY]: JSON.stringify(schoon) });
+  const uitkomst = commitLocalState({ [key]: JSON.stringify(schoon) });
   return uitkomst.status === 'applied' || uitkomst.status === 'duplicate';
 }
 

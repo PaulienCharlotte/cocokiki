@@ -1,3 +1,6 @@
+import FoodKnowledgeDialog from '../components/food/FoodKnowledge';
+import { FOOD_LESSONS } from '../data/cooking/foodLessons';
+import { loadFoodKnowledge } from '../services/foodKnowledge';
 import React, { useState } from 'react';
 import { CakeSlice, Leaf, Lock, Stamp, Trash2 } from 'lucide-react';
 import CookingAssetImage from '../components/cooking/CookingAssetImage';
@@ -6,8 +9,6 @@ import { Button, Dialog } from '../design-system';
 import { INGREDIENTS } from '../data/cooking/catalog';
 import type { IngredientEntry } from '../data/cooking/types';
 import { loadCookingProgress } from '../services/cookingProgress';
-import { INGREDIENT_DISCOVERIES_BY_ID } from '../data/cooking/discovery';
-import { NUTRIENTS, NUTRIENTS_BY_ID } from '../data/cooking/nutrients';
 import { plantProduct } from '../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL } from '../data/plants/firstAid';
 import { KNOWLEDGE_HINT, KNOWLEDGE_LABEL, knowledgeProgress, plantKnowledge, type PlantKnowledge } from '../services/plantKnowledge';
@@ -28,6 +29,7 @@ type Afdeling = 'planten' | 'voeding' | 'taarten';
  * het overzicht blijft een overzicht.
  */
 export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenProps) {
+  const [foodKnowledge] = useState(loadFoodKnowledge);
   const [progress] = useState(loadCookingProgress);
   const [planten] = useState(() => plantKnowledge());
   const [afdeling, setAfdeling] = useState<Afdeling>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'voeding' ? 'voeding' : 'planten');
@@ -58,6 +60,8 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
         <Tab id="voeding" actief={afdeling} op={setAfdeling} label="Voeding" teller={`${ingredienten.length}/${INGREDIENTS.length}`} />
         <Tab id="taarten" actief={afdeling} op={setAfdeling} label="Mijn taarten" teller={`${taarten.length}`} />
       </div>
+
+      {afdeling === 'voeding' && <Button variant="secondary" onClick={() => onNavigate('/cooking/discover')}>Ontdek je eten · {foodKnowledge.length}/{FOOD_LESSONS.length} ontdekt</Button>}
 
       {afdeling === 'taarten' ? (taarten.length ? <div
         className="encyclopedie__raster"
@@ -114,14 +118,7 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
       {openPlant && <PlantVenster item={openPlant} onNavigate={onNavigate} />}
     </Dialog>
 
-    <Dialog
-      open={openEten !== null}
-      title={openEten ? openEten.name : ''}
-      onClose={() => setOpenEten(null)}
-      primaryAction={<Button pill onClick={() => setOpenEten(null)}>Klaar</Button>}
-    >
-      {openEten && <EtenVenster item={openEten} />}
-    </Dialog>
+    {openEten && <FoodKnowledgeDialog ingredient={openEten} onClose={() => setOpenEten(null)} />}
   </main>;
 }
 
@@ -188,25 +185,5 @@ function PlantVenster({ item, onNavigate }: { item: PlantKnowledge; onNavigate: 
       {KNOWLEDGE_HINT[2]}
       <Button variant="quiet" size="small" pill onClick={() => onNavigate('/plantendokter')}>Naar het spreekuur</Button>
     </p>}
-  </div>;
-}
-
-/** Hetzelfde venster voor een ingrediënt, zodat beide afdelingen gelijk aanvoelen. */
-function EtenVenster({ item }: { item: IngredientEntry }) {
-  const ontdekking = INGREDIENT_DISCOVERIES_BY_ID[item.id];
-  const stoffen = ontdekking?.nutrition.map(fact => NUTRIENTS.find(nutrient => nutrient.name === fact.nutrient)?.bodyFunction ?? `${fact.nutrient}: ${fact.role}`) ?? [];
-  const extra = item.nutrientIds?.filter(id => !ontdekking?.nutrition.some(fact => fact.nutrient === NUTRIENTS_BY_ID[id]?.name)).map(id => NUTRIENTS_BY_ID[id]?.bodyFunction).filter(Boolean) ?? [];
-  return <div className="plantpagina">
-    <CookingAssetImage className="plantpagina__plant" src={item.image} alt="" />
-    <p>{ontdekking?.heroFact ?? item.origin ?? 'Meer informatie volgt later.'}</p>
-    <p>{ontdekking?.origin.text}</p>
-    <dl className="plantpagina__feiten">
-      {item.season && <div><dt>Seizoen</dt><dd>{item.season}</dd></div>}
-      {item.productionRegions.length > 0 && <div><dt>Groeit in</dt><dd>{item.productionRegions.join(', ')}</dd></div>}
-    </dl>
-    {[...stoffen, ...extra].length > 0 && <ul className="plantpagina__ehbo">
-      {[...stoffen, ...extra].map(regel => <li key={String(regel)}><span>{regel}</span></li>)}
-    </ul>}
-    {ontdekking?.foodKnowledge.text && <p>{ontdekking.foodKnowledge.text}</p>}
   </div>;
 }

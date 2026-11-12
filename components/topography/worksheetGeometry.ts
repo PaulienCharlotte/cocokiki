@@ -1,3 +1,4 @@
+import { loadStaticJson } from '../../services/staticJson';
 import { useEffect, useState } from 'react';
 import L from 'leaflet';
 import { Location } from '../../types';
@@ -13,10 +14,7 @@ export function useWorksheetGeometry(areaId: string) {
     let cancelled = false;
     let request = requests.get(dataset.id);
     if (!request) {
-      request = fetch(dataset.geometryUrl).then(response => {
-        if (!response.ok) throw new Error('Kaartdata niet bereikbaar');
-        return response.json();
-      }).then(data => validateWorksheetGeometry(data, dataset));
+      request = loadStaticJson<WorksheetGeometry>(dataset.geometryUrl).then(data => validateWorksheetGeometry(data, dataset));
       requests.set(dataset.id, request);
     }
     request.then(data => { if (!cancelled) setState({ id: dataset.id, data }); })

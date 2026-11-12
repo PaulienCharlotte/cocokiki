@@ -43,6 +43,8 @@ function WorldClock() {
   </section>;
 }
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+
 export default function WorldTimes({ initialLevel, completedLevels, onBack, onComplete }: Props) {
   const [mode, setMode] = useState<'clock' | 'practice'>('clock');
   const [level, setLevel] = useState(initialLevel);
@@ -54,6 +56,7 @@ export default function WorldTimes({ initialLevel, completedLevels, onBack, onCo
   const [hint, setHint] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
   const roundId = useRef(crypto.randomUUID()), answered = useRef(false), advancing = useRef(false);
+  useActivityAnalytics(mode === 'practice' ? 'clock:world-times' : null, roundId.current, reward !== null);
   const questionHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { if (mode === 'practice') questionHeading.current?.focus(); }, [question, mode]);
   const reset = (nextLevel = level) => {

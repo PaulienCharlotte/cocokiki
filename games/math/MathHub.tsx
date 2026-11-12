@@ -1,5 +1,4 @@
 import React from 'react';
-import { Ruler } from 'lucide-react';
 import CardGrid from '../../components/ui/CardGrid';
 import { mathIcon, MATH_GAMES } from './config';
 import type { MathGameId, MathProgress } from './types';
@@ -10,8 +9,6 @@ import type { MathGameId, MathProgress } from './types';
  * De kaarten komen uit `components/ui/CardGrid`, zodat dit menu er hetzelfde
  * uitziet als dat van het vlaggenmemory. Zie `.claude/skills/cocokiki-ui`.
  */
-/** Spellen zonder eigen tekening krijgen een icoon in een klein vierkantje. */
-const ICONEN: Partial<Record<MathGameId, React.ReactNode>> = { maten: <Ruler size={26} aria-hidden="true" /> };
 
 export default function MathHub({ progress, onPlay }: { progress: MathProgress; onPlay: (game: MathGameId) => void }) {
   const spellen = MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide');
@@ -23,8 +20,7 @@ export default function MathHub({ progress, onPlay }: { progress: MathProgress; 
         id: game.id,
         titel: game.title,
         onder: game.subtitle,
-        beeld: ICONEN[game.id] ? undefined : mathIcon(game.id),
-        icoon: ICONEN[game.id],
+        beeld: mathIcon(game.id),
         meta: `${progress.games[game.id].completed.length}/5 niveaus`,
       }))}
       onChoose={id => onPlay(id as MathGameId)}

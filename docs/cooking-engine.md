@@ -346,3 +346,75 @@ Browser checks used `localhost:3002`, separate from the user's `127.0.0.1:3002` 
 Physical touchscreen input and truly simultaneous multi-tab writes were not tested. Browser discovery replay used the existing-known-ingredient skip path; first-time discovery answer/reward paths are covered by automated tests rather than a fresh browser profile run.
 
 TypeScript and production build pass. Vite retains the existing large Phaser/game bundle warning; no dependency was added to address unrelated bundling.
+# Vaste keuken in de kookstudio
+
+De bereidingsplek staat op `/cooking/kitchen`, bereikbaar via **De keuken**
+bij Coco. Deze plek gebruikt de bestaande ingerichte keuken met het
+interactieve werkblad, de kookplaat, boodschappen en `CookingExperience`.
+Het kookboek en het afronden van receptboodschappen verwijzen hierheen;
+`?recipe=…` opent de bestaande bereiding en hervat de opgeslagen kookpoging.
+Voortgang, bestellingen en voorraad blijven dezelfde documenten gebruiken.
+De kamer op `/treehouse/kitchen` is uitsluitend voor vrij inrichten en heeft
+geen onzichtbare bereidingsstations meer.
+
+## Gezonde kookavonturen
+
+Volkoren pasta, zilvervliesrijst met kikkererwten, groenteomelet en
+appel-havermout doorlopen dezelfde reis als de muffins en pannenkoekjes:
+ontdekken, voedingsstoffenmemory, rekenen, boodschappen, bereiden en afronden.
+`data/cooking/healthyRecipes.ts` bevat de recepten en thuisinstructies;
+`healthyPreparations.ts` bevat per gerecht de 15–18 interactieve kookstappen.
+`healthyDiscoveries.ts` koppelt de acht nieuwe voedingsmiddelen aan hun
+kennisvragen, voedingsstoffen en encyclopedie. Coco geeft de voedingsweetjes
+bij het afwegen en mengen. De drie nieuwe voorraadproducten zijn apart koopbaar:
+volkoren pasta, zilvervliesrijst en gare kikkererwten met uitlekgewicht.
+
+De bestaande timer kan voor deze recepten een hele pan tonen, zonder de
+pannenkoeklaag. De oven ondersteunt één ovenschaal met een rauwe en gare
+inhoud; de muffinbakvorm blijft zijn bestaande losse vormpjes gebruiken.
+Aan de toonbank worden maximaal vier beschikbare recepten getoond, met altijd
+een passend recept voor een haalbare bestelling. Meerdere recepten mogen nu
+bij dezelfde wens passen.
+
+Zestien nieuwe illustraties staan als WebP met behouden transparantie onder
+`public/assets/library/cooking/healthy/`. De ingebouwde image_gen-tool maakte
+de originelen; onderwerpen, bronbestanden en exacte prompts staan in
+`docs/healthy-cooking-assets.json` en `docs/healthy-cooking-prompts.json`.
+De automatische routecontroles doorlopen voor elk nieuw recept de hele reis,
+met echt afrekenen, koken, ovenopwarming waar nodig, hervatten en eenmalig
+voorraadverbruik. Browsercontroles gebruiken een tijdelijke weergave met
+opslag in het geheugen, zodat bestaande speelvoortgang intact blijft.
+
+## Verwarmen op de kookplaat
+
+`HeatInteraction` toont de kookplaat als één schaalbare SVG-scène met
+`CooktopCanvas`. De panbodem en de drie kookzones gebruiken hetzelfde
+coördinatenstelsel. Eerst kan de pan worden versleept of op een zone worden
+gezet met aantikken of het toetsenbord. Daarna volgen de toevoeging en de
+warmteknop. Op smalle schermen wordt de plaat compacter ingedeeld; de gekozen
+zone blijft dezelfde. De bediening en de bovenbalk zijn ondoorzichtig en vlak.
+De warmteknop ondersteunt slepen, aantikken en de pijltoetsen, Home en End.
+Alleen de receptstand schakelt het verwarmen in. Coco’s hulp en het thuisrecept
+openen via het bestaande Dialog-patroon.
+
+De opgeslagen `count` en `heat` blijven hetzelfde: hervatten vraagt niet opnieuw
+om een al toegevoegde olie of een gekozen stand. De optionele `cooktopZone`
+bewaart de panplaatsing. Oudere verwarmstappen met toegevoegde ingrediënten
+beginnen op de grote kookzone; onbekende zonewaarden worden bij laden verwijderd. `addition.kind` is optionele
+presentatie-informatie voor olie, water of een al gevulde pan, zonder nieuw
+opslagformaat. Bij een sleepgebaar onderdrukt `DragToTarget` de bijkomende klik;
+naast het doel loslaten voegt daardoor niet alsnog het ingrediënt toe.
+
+## Stukjes toevoegen, roeren en wachten
+
+`CooktopStepInteraction` deelt de rustige kookplaat-layout met de verwarmstap.
+Alle `timed`-stappen gebruiken deze interface, inclusief de pannenkoekjes.
+Hun bestaande `phase` en `readyAt` blijven de timer en de hervatstatus bepalen.
+De gekozen kookzone wordt meegenomen vanuit de voorgaande bereidingsstappen.
+
+De optionele `cooktop`-configuratie tekent gesneden paprika en tomaat als
+kleine SVG-stukjes; bij toevoegen vallen dezelfde stukjes in de pan. Het
+paprikaroeren toont een gevulde pan en ondersteunt rondjes maken, aantikken
+en de knop Roer om. Het bestaande herhalingsaantal blijft gelden. De groentesaus
+behoudt bij het pruttelen dezelfde pan en stukjes. Er zijn geen nieuwe bitmap-
+assets of gewijzigde ingrediënthoeveelheden nodig.

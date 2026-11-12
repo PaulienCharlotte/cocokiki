@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
 import Phaser from 'phaser';
+import { analytics } from '../../services/analytics';
 import CocoCoin from '../../components/platform/CocoCoin';
 import { awardCurrencyOnce, CURRENCY_CHANGE_EVENT, loadCurrency } from '../../services/currency';
 import { createLuaGame } from './game/config';
@@ -68,6 +69,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
   };
 
   const finish = useCallback((finalStats: SessionStats, playedRounds: number) => {
+    analytics().complete(mathAdventure ? 'math:multiply' : 'red-baby-lua');
     clearTransition();
     const stars = starsFor(finalStats, playedRounds);
     const nextBest = { score: Math.max(best.score, finalStats.score), stars: Math.max(best.stars, stars) };
@@ -121,6 +123,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
 
   const startSession = () => {
     if (!sceneReady) return;
+    analytics().start(mathAdventure ? 'math:multiply' : 'red-baby-lua', true);
     coinSessionId.current = crypto.randomUUID();
     audioRef.current.unlock(); missedRef.current = []; difficultyRef.current = preferences.mode === 'challenge' ? 3 : 1;
     setStats(EMPTY_STATS); setHearts(3); setRound(0); setSessionCoins(0);

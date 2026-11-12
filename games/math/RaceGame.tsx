@@ -29,12 +29,16 @@ export function CheckoutOrder({ question }: { question: MathQuestion }) {
   </>;
 }
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+import { analytics } from '../../services/analytics';
+
 export default function RaceGame({ level, onFinish, onSound = () => undefined }: { level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void }) {
   const [question, setQuestion] = useState(() => createCheckoutQuestion(level));
   const questionRef = useRef(question);
   // De klok telt af voor de klant die nu op de band staat, niet voor de ronde:
   // de ronde duurt tot er iemand van de band valt.
   const [seconds, setSeconds] = useState(() => checkoutOrderSeconds(level)), [started, setStarted] = useState(false);
+  useActivityAnalytics(started ? 'math:race' : null);
   const [score, setScore] = useState(0), [wrong, setWrong] = useState(false);
   const [hint, setHint] = useState(false);
   const [travel, setTravel] = useState(0), [falling, setFalling] = useState(false);
@@ -54,6 +58,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
   const finish = () => {
     if (finished.current) return;
     finished.current = true; setSeconds(0);
+    analytics().complete('math:race');
     if (fallTimer.current) clearTimeout(fallTimer.current);
     finishRef.current({ ...statistics.current, raceId });
   };
@@ -110,7 +115,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined }:
       <div className="checkout-hud"><span><Clock3 size={20} />{seconds} s</span><strong>{score} klanten</strong>{started && seconden === CHECKOUT_MIN_SECONDS && <span className="checkout-tempo-nu">volle snelheid</span>}</div>
       {!started ? <div className="checkout-start"><ShoppingBasket size={48} /><h2>De winkel gaat open!</h2>
         <p className="checkout-uitleg">De band gaat bij elke klant een beetje sneller. Valt er een klant van de band, dan sluit de winkel.</p>
-        <button className="adventure-start" type="button" onClick={() => { orderDeadline.current = Date.now() + duur.current; setStarted(true); }}><Play size={20} />Open de winkel</button></div> : <>
+        <button className="adventure-start" type="button" onClick={() => { analytics().start('math:race', true); orderDeadline.current = Date.now() + duur.current; setStarted(true); }}><Play size={20} />Open de winkel</button></div> : <>
         <div className="checkout-order-time" role="progressbar" aria-label="Tijd voor deze klant" aria-valuemin={0} aria-valuemax={seconden} aria-valuenow={Math.max(0, Math.ceil((1 - travel) * seconden))}><span style={{ width: `${(1 - travel) * 100}%` }} /></div>
       </>}
     </div>

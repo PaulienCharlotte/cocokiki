@@ -1,0 +1,9 @@
+Use case: stylized-concept
+Asset type: CocoKiki empty modular room master reference, landscape image.
+Generate ONE empty room shell for a cozy children's decorating game. This establishes the geometry for all future room and furniture assets.
+Camera: exact orthographic parallel projection, looking diagonally into an open dollhouse room, azimuth 45 degrees, elevation 25 degrees. Vertical edges vertical, parallel world edges remain parallel, no vanishing point, no wide-angle perspective. Show a rear wall and left wall meeting at a back corner, an unobstructed full rectangular floor; front and right walls removed for visibility. Roof and ceiling removed for decorating access. Whole room comfortably within frame.
+Architecture: warm pale timber floor, warm off-white plaster walls, restrained rounded honey-oak posts and trim. One simple arched timber-framed window on each visible wall, soft muted foliage and sky outside. Empty uninterrupted floor and generous plain wall areas. No built-in furniture.
+Style: polished soft 3D illustration, natural materials, softly rounded shapes, cozy CocoKiki treehouse aesthetic, muted moss/eucalyptus, cream and warm wood; gentle textures, no oversaturated orange, no outlines.
+Lighting: soft diffuse daylight from upper left, restrained ambient contact shading, matte floor, no hard sun patches or mirror reflections.
+Absolutely no lamps of any kind, no pendant lights, no wall lights, no ceiling fixtures, no furniture, no bathroom fittings, no kitchen units, no plants inside, no rugs, no curtains, no ornaments, no characters, no text, no UI.
+Opaque warm neutral background surrounding the room. This is a room background/reference, not a transparent furniture asset. Geometrically coherent clean reusable room shell.

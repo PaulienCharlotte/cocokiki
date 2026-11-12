@@ -1,0 +1,86 @@
+.cooking-stage--heat { background: var(--color-background-soft); }
+.cooking-stage--heat .cooking-stage__background { display: none; }
+/* De verwarmstap is een toneel: twee rustige bedieningsvlakken, de pan ertussen. */
+.cooking-stage.cooking-stage--heat::after { background: transparent; backdrop-filter: none; }
+.cooking-stage--heat .cooking-stage__shell { max-width: 64rem; margin: auto; padding: var(--space-4); gap: 0; }
+.cooking-stage--heat .cooking-stage__bar { width: min(100%, 52rem); flex: none; padding: var(--space-2); border-radius: var(--radius-control-sm) var(--radius-control-sm) 0 0; background: var(--color-surface); border-bottom: 1px solid var(--color-border); gap: var(--space-2); }
+.cooking-stage--heat .cooking-stage__icon { background: transparent; box-shadow: none; }
+.cooking-stage--heat .heat-previous { min-height: var(--touch-target); padding-inline: var(--space-2); white-space: nowrap; font-size: var(--font-size-xs); border: 0; box-shadow: none; background: transparent; }
+.cooking-stage--heat .cooking-stage__progress { background: transparent; padding: var(--space-1); gap: var(--space-1); }
+.cooking-stage--heat .cooking-stage__progress i { height: var(--space-1); background: var(--color-border); }
+.cooking-stage--heat .cooking-card--heat { width: 100%; padding: 0; gap: var(--space-2); overflow: visible; background: transparent; box-shadow: none; border-radius: 0; }
+.cooking-stage--heat .cooking-card .cooking-card__scene--cooktop, .cooking-stage--heat .cooking-card .cooking-card__scene--heat { display: block; flex: 1; min-height: 0; padding: 0; background: transparent; box-shadow: none; }
+.cooking-stage--heat .cooking-card__scene--heat::before { display: none; }
+.heat-scene { width: 100%; height: 100%; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: var(--space-3); }
+.heat-scene > * { min-width: 0; }
+.heat-scene__caption { padding: var(--space-3) var(--space-5); width: min(100%, 52rem); border-radius: 0 0 var(--radius-control-sm) var(--radius-control-sm); background: var(--color-surface); text-align: left; }
+.heat-scene__caption h1 { margin: 0; font-size: var(--font-size-xl); line-height: var(--line-height-tight); }
+.heat-scene__caption p { margin: var(--space-1) 0 0; font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.heat-scene__stage { width: min(100%, 52rem); height: 100%; min-height: 0; position: relative; display: grid; place-items: center; }
+.heat-scene__controls { width: min(100%, 52rem); display: flex; align-items: center; justify-content: center; gap: var(--space-6); padding: var(--space-2) var(--space-5); border-radius: var(--radius-control-sm); background: var(--color-surface); }
+.heat-dial { width: 11rem; flex: none; border-radius: var(--radius-control-sm); cursor: grab; touch-action: none; user-select: none; }
+.heat-dial:active { cursor: grabbing; }
+.heat-dial[aria-disabled='true'] { pointer-events: none; }
+.heat-dial svg { display: block; width: 100%; overflow: visible; }
+.heat-dial text { fill: var(--color-text-muted); font-family: inherit; font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); }
+.heat-dial g line { stroke: var(--color-border-strong); stroke-width: 2; }
+.heat-dial .is-selected text { fill: var(--color-primary); font-weight: var(--font-weight-heavy); }
+.heat-dial .is-selected line { stroke: var(--color-primary); stroke-width: 3; }
+.heat-dial__knob { fill: var(--color-surface); stroke: var(--color-border-strong); stroke-width: 2; filter: none; }
+.heat-dial__needle { stroke: var(--color-primary); stroke-width: 5; stroke-linecap: round; transition: transform var(--motion-fast) var(--ease-storybook); }
+.heat-scene__action { display: grid; gap: var(--space-2); justify-items: center; }
+.heat-scene__action p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+@media (max-width: 600px) {
+  .cooking-stage--heat .cooking-stage__shell { padding: var(--space-3); gap: 0; }
+  .cooking-stage--heat .cooking-stage__bar { padding: var(--space-1); gap: var(--space-1); }
+  .heat-scene { gap: var(--space-2); }
+  .heat-scene__caption { padding: var(--space-3); }
+  .heat-scene__caption h1 { font-size: var(--font-size-lg); }
+  .heat-scene__controls { padding: var(--space-2); gap: var(--space-2); }
+  .heat-dial { width: 9rem; }
+  .heat-scene__action { flex: 1; min-width: 0; }
+  .heat-scene__action .ck-button { padding-inline: var(--space-3); font-size: var(--font-size-sm); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .heat-dial__needle { transition: none; }
+}
+
+
+.heat-dial:focus-visible { outline: var(--space-1) solid var(--color-focus); outline-offset: var(--space-1); }
+.heat-scene__action .ck-button { border-radius: var(--radius-control-sm); box-shadow: none; }
+.cooktop-canvas { position: relative; width: 100%; height: 100%; min-width: 0; min-height: 0; display: grid; place-items: center; }
+.cooktop-canvas__drawing { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cooktop-canvas__board { fill: var(--color-text); stroke: var(--color-border-strong); stroke-width: 2; }
+.cooktop-zone { cursor: pointer; outline: none; }
+.cooktop-zone circle { fill: none; stroke: var(--color-border-strong); stroke-width: 2; }
+.cooktop-zone path { stroke: var(--color-border-strong); stroke-width: 2; }
+.cooktop-zone circle:nth-child(2) { opacity: .35; }
+.cooktop-zone.is-selected circle { stroke: var(--color-sage); stroke-width: 4; }
+.cooktop-zone.is-warming circle { stroke: var(--color-reward); stroke-width: 8; }
+.cooktop-zone:focus-visible circle:first-child { stroke: var(--color-focus); stroke-width: 8; }
+.cooktop-canvas__pan, .cooktop-canvas__addition { cursor: grab; touch-action: none; outline: none; }
+.cooktop-canvas__pan:active, .cooktop-canvas__addition:active { cursor: grabbing; }
+.cooktop-canvas__pan:focus-visible { filter: drop-shadow(0 0 6px var(--color-focus)); }
+.cooktop-canvas__pan image, .cooktop-canvas__addition image { pointer-events: none; }
+.cooktop-canvas__oil { fill: var(--color-reward); opacity: .25; pointer-events: none; }
+.cooktop-canvas__addition rect { fill: var(--color-surface); stroke: var(--color-border); stroke-width: 2; }
+.cooktop-canvas__addition:focus-visible rect { stroke: var(--color-focus); stroke-width: 6; }
+.cooktop-canvas__addition text { fill: var(--color-text); font-size: var(--font-size-xl); font-family: inherit; font-weight: var(--font-weight-bold); pointer-events: none; }
+body:has(.cooking-stage--heat) .world-hud { background: var(--color-surface); backdrop-filter: none; -webkit-backdrop-filter: none; border-color: var(--color-border); box-shadow: none; border-radius: var(--radius-control-sm); }
+@media (max-width: 600px) {
+  .heat-scene__caption { padding: var(--space-3); }
+}
+.cooktop-canvas__pan-hit { fill: transparent; pointer-events: all; }
+.cooktop-zone circle:first-child { fill: transparent; pointer-events: all; }
+.vegetable-pieces { pointer-events: none; }
+.vegetable-piece__pepper, .vegetable-piece__tomato { fill: var(--color-error); stroke: var(--color-peach); stroke-width: 1.5; }
+.vegetable-piece__flesh { fill: var(--color-peach); }
+.vegetable-piece__seed { fill: var(--color-reward); }
+.vegetable-piece__shine { fill: none; stroke: var(--color-peach); stroke-width: 2; }
+.cooktop-step__controls { min-height: calc(var(--touch-target) + var(--space-6)); flex-wrap: wrap; gap: var(--space-3); }
+.cooktop-step__controls p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.cooktop-step__controls small { color: var(--color-text-muted); font-size: var(--font-size-xs); }
+.cooktop-step__controls progress { width: min(14rem, 55%); height: var(--space-2); accent-color: var(--color-primary); }
+.cooktop-canvas__pour { animation: cooktop-pour var(--motion-gentle) var(--ease-storybook); }
+@keyframes cooktop-pour { from { transform: translateY(-70px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .cooktop-canvas__pour { animation: none; } }

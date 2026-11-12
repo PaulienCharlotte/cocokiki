@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { subscribeLocalState } from '../services/localState';
 import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 import { ChefHat } from 'lucide-react';
+import { Button } from '../design-system';
 import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
 import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFlow';
@@ -50,7 +51,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       if (issues.length) console.warn(`Receptconfiguratie ${recipe.id}:`, issues);
     }
   }, []);
-  const recipes = useMemo(() => category === 'all' ? RECIPES : RECIPES.filter(recipe => category === 'completed' ? Boolean(progress.completions[recipe.id]) : category === 'preparing' ? progress.journeys[recipe.id]?.stage === 'cooking' : recipe.category === category), [category, progress]);
+  const recipes = useMemo(() => RECIPES.filter(recipe => recipe.contentStatus === 'ready').filter(recipe => category === 'all' || (category === 'completed' ? Boolean(progress.completions[recipe.id]) : category === 'preparing' ? progress.journeys[recipe.id]?.stage === 'cooking' : recipe.category === category)), [category, progress]);
 
   const handleStart = (recipe: RecipeConfig) => {
     if (!getRecipeAccess(recipe, progress).playable) return;
@@ -65,7 +66,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     setReplayProgress(null);
     setReplayKind(null);
     setPlayingRecipeId(recipe.id);
-    if (next.journeys[recipe.id]?.stage === 'cooking') onNavigate?.(`/treehouse/kitchen?recipe=${encodeURIComponent(recipe.id)}`);
+    if (next.journeys[recipe.id]?.stage === 'cooking') onNavigate?.(`/cooking/kitchen?recipe=${encodeURIComponent(recipe.id)}`);
   };
 
   const handleDiscoveryReplay = (recipe: RecipeConfig) => {
@@ -145,13 +146,13 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   />;
 
   if (playingRecipe && playingJourney?.stage === 'cooking') return <main className="cooking-room cooking-coming-soon cooking-go-home">
-    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in jouw eigen boomhut" />
+    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in Coco’s kookstudio" />
     <section>
       <JourneyStageProgress journey={playingJourney} />
       <span aria-hidden="true"><ChefHat /></span>
-      <h1>Naar jouw keuken</h1>
-      <p>Alles staat klaar in je eigen boomhut.</p>
-      <button type="button" onClick={() => onNavigate?.('/treehouse/kitchen')}>Ga naar de keuken</button>
+      <h1>Naar de keuken</h1>
+      <p>Alles staat klaar in de kookstudio.</p>
+      <Button onClick={() => onNavigate?.(`/cooking/kitchen?recipe=${encodeURIComponent(playingRecipe.id)}`)}>Ga naar de keuken</Button>
     </section>
   </main>;
 
@@ -165,11 +166,12 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       return true;
     }}
     onStart={recipe => { setAtToonbank(false); handleStart(recipe); }}
-    onExit={() => setAtToonbank(false)}
+    onCakeOrder={() => onNavigate?.('/games/taartenatelier?order=seb-birthday')}
+    onExit={() => { setAtToonbank(false); onNavigate?.('/islands/cooking'); }}
   />;
 
   return <main className="cooking-room cookbook-library-room">
-    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in jouw eigen boomhut" />
+    <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in Coco’s kookstudio" />
     <section className="recipe-library" aria-labelledby="cooking-title">
       <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>
       {(lopend?.bestelling ?? wachtend[0]) && <OrderInvite
@@ -182,6 +184,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>
           <button type="button" aria-pressed={category === 'preparing'} onClick={() => setCategory('preparing')}>Bereiden</button>
         </nav>
+      <Button variant="secondary" onClick={() => onNavigate?.('/games/taartenatelier')}>Vrij een taart versieren</Button>
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
         {notice && <p role="alert">{notice}</p>}
         {recipes.map(recipe => <div role="listitem" key={recipe.id}><RecipeCard recipe={recipe} progress={progress} journey={progress.journeys[recipe.id]} onOpen={setSelected} /></div>)}

@@ -1,3 +1,4 @@
+import { loadStaticJson } from '../services/staticJson';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import L from 'leaflet';
@@ -108,8 +109,7 @@ const ProvincesMapQuiz: React.FC<{ onScoreChange: (pts: number) => void; onBack:
   const [total, setTotal]         = useState(0);
 
   useEffect(() => {
-    fetch('/data/geojson/nl-all.geo.json')
-      .then(r => r.json()).then(setGeoData);
+    loadStaticJson('/data/geojson/nl-all.geo.json').then(setGeoData).catch(() => {});
   }, []);
 
   const pickNext = useCallback(() => {

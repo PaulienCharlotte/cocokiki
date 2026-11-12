@@ -1,0 +1,137 @@
+{
+  "date": "2026-11-12",
+  "method": "Lokale production builds op aparte origins; desktop 1280x720; gzip voor tekst; response-body bytes, exclusief HTTP-headers en externe kaarttiles/CDN. Geen Netlify-factuurmeting.",
+  "before": {
+    "publishedBytes": 82413876,
+    "jsBytes": 3097831,
+    "jsGzipBytes": 823403,
+    "cssBytes": 367697,
+    "cssGzipBytes": 73344
+  },
+  "after": {
+    "publishedBytes": 81734332,
+    "jsBytes": 3099459,
+    "jsGzipBytes": 824729,
+    "cssBytes": 383303,
+    "cssGzipBytes": 79896
+  },
+  "scenarios": {
+    "before": {
+      "coldHome": {
+        "requests": 14,
+        "responseBodyBytes": 3391637,
+        "errors": []
+      },
+      "homeBakeryFoodCumulative": {
+        "requests": 76,
+        "responseBodyBytes": 5202524,
+        "errors": []
+      },
+      "topographyIncrement": {
+        "requests": 31,
+        "responseBodyBytes": 1428001,
+        "errors": []
+      },
+      "topographyJsonRequests": [
+        {
+          "path": "/data/geojson/nl-all.geo.json",
+          "status": 200,
+          "bytes": 7638,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/europe-countries.geo.json",
+          "status": 200,
+          "bytes": 967020,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/france-spain-portugal.geo.json",
+          "status": 200,
+          "bytes": 360239,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/europe-countries.geo.json",
+          "status": 304,
+          "bytes": 0,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/nl-all.geo.json",
+          "status": 304,
+          "bytes": 0,
+          "type": "application/json"
+        }
+      ]
+    },
+    "after": {
+      "coldHome": {
+        "requests": 15,
+        "responseBodyBytes": 2631336,
+        "errors": []
+      },
+      "homeBakeryFoodCumulative": {
+        "requests": 76,
+        "responseBodyBytes": 4442420,
+        "errors": []
+      },
+      "topographyIncrement": {
+        "requests": 28,
+        "responseBodyBytes": 1428173,
+        "errors": []
+      },
+      "topographyJsonRequests": [
+        {
+          "path": "/data/geojson/nl-all.geo.json",
+          "status": 200,
+          "bytes": 7638,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/europe-countries.geo.json",
+          "status": 200,
+          "bytes": 967020,
+          "type": "application/json"
+        },
+        {
+          "path": "/data/geojson/france-spain-portugal.geo.json",
+          "status": 200,
+          "bytes": 360239,
+          "type": "application/json"
+        }
+      ]
+    }
+  },
+  "worldMap": {
+    "beforeBytes": 2977727,
+    "afterBytes": 2210962,
+    "identicalRgbaPixels": true
+  },
+  "provinceGeometry": {
+    "beforeBytes": 25993,
+    "afterBytes": 9350
+  },
+  "assetValidation": {
+    "rasterFiles": 630,
+    "failed": [],
+    "identicalMapPixels": true
+  },
+  "verification": {
+    "tests": 407,
+    "failures": 0,
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "mobileBrowserMeasurement": "blocked by automatic approval review usage limit",
+    "warmVisitBrowserMeasurement": "not performed",
+    "netlifyDashboard": "not verified; browser access timed out",
+    "deploy": "not performed",
+    "push": "not performed",
+    "allManifestFilesPresent": true
+  },
+  "generatedDuplicateCleanup": {
+    "count": 34,
+    "bytes": 4614223,
+    "criterion": "Alleen identieke bestanden met suffix 2 in de gegenereerde dist; originele bestanden en bronbestanden behouden."
+  }
+}

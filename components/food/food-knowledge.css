@@ -1,0 +1,7 @@
+.food-word { display: inline; border: 0; border-radius: 0; margin: 0; padding: 0; color: var(--color-primary); background: transparent; font: inherit; text-align: inherit; text-decoration: underline dotted; text-underline-offset: .2em; cursor: pointer; }
+.food-word:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.food-article { display: flex; flex-direction: column; gap: var(--space-4); }
+.food-article p { margin: 0; line-height: var(--line-height-default); }
+.food-article__image { width: 100%; height: 160px; object-fit: contain; }
+.food-sections, .food-related { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.food-hint, .food-source { font-size: var(--font-size-sm); color: var(--color-text-muted); }

@@ -1,3 +1,4 @@
+import { isCooktopZone } from './cooktopScene';
 import type { RecipeConfig } from './types';
 import { emptyStepState, type CookingSession, type CookingStepConfig, type CookingStepState } from './preparation';
 import { emptyOven, restoreOven } from './oven';
@@ -19,7 +20,7 @@ export function migrateCookingSession(value: unknown, recipe: RecipeConfig): Coo
   for (const step of steps) {
     const state = source.steps?.[step.id];
     if (!state || typeof state !== 'object') continue;
-    states[step.id] = { ...emptyStepState(), count: integer(state.count, step.target), quantity: integer(state.quantity), heat: integer(state.heat, 10),
+    states[step.id] = { ...emptyStepState(), ...((step.mechanic === 'heat' || step.mechanic === 'timed' || step.cooktop) && isCooktopZone(state.cooktopZone) ? { cooktopZone: state.cooktopZone } : {}), count: integer(state.count, step.target), quantity: integer(state.quantity), heat: integer(state.heat, 10),
       selectedTools: step.mechanic === 'collect' && Array.isArray(state.selectedTools) ? [...new Set(state.selectedTools.filter(id => step.tools.some(tool => tool.id === id)))] : [],
       phase: state.phase === 'wait' || state.phase === 'flip' ? state.phase : 'pour',
       readyAt: typeof state.readyAt === 'number' && Number.isFinite(state.readyAt) ? state.readyAt : null,

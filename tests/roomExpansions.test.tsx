@@ -307,9 +307,9 @@ test('een tandenborstelbeker kun je voor het plankje zetten, en weer erachter', 
 
   // De knoppen zeggen met zoveel woorden wat ze doen; de iconen alleen niet.
   const bron = readFileSync('components/treehouse/RoomInventoryDrawer.tsx', 'utf8');
-  assert.match(bron, /room-placement-toolbar__laag/);
-  assert.match(bron, /<span>Voor<\/span>/);
-  assert.match(bron, /<span>Achter<\/span>/);
+  assert.match(bron, /room-placement-options__laag/);
+  assert.match(bron, />Voor<\/Button>/);
+  assert.match(bron, />Achter<\/Button>/);
 });
 
 test('een kamer is op elk scherm even breed als de tekening, en meubels mogen flink groter', () => {

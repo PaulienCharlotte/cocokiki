@@ -8,6 +8,7 @@ import TipCoach from './TipCoach';
 import MapFactCard from './MapFactCard';
 import RoundResult from './RoundResult';
 import { learningReward } from '../services/learningReward';
+import { useActivityAnalytics } from '../services/useActivityAnalytics';
 
 interface Props {
   mode: 'find' | 'spell' | 'master';
@@ -41,6 +42,7 @@ export default function GameEngine({ mode, areaId, locations, mapLocations, time
   const answerRevealed = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const target = locations[index];
+  useActivityAnalytics(`topo:${mode}`, 0, !target);
 
   useEffect(() => { heading.current?.focus(); }, [index, step]);
   const finish = (success: boolean, message: string) => {

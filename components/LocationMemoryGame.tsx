@@ -6,8 +6,11 @@ import RoundResult from './RoundResult';
 import './memory-mobile.css';
 import { memoryBoardIds } from '../services/memoryBoards';
 import { learningReward } from '../services/learningReward';
+import { useActivityAnalytics } from '../services/useActivityAnalytics';
+import type { ActivityId } from '../shared/analyticsEvents';
 
 interface Props {
+  analyticsId?: ActivityId;
   mode: 'memory' | 'quiz';
   pairs: MemoryPair[];
   choicePool: MemoryPair[];
@@ -19,7 +22,7 @@ interface Props {
 }
 interface Card { id: string; pair: MemoryPair; side: 'left' | 'right' }
 
-function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, onExit }: Props) {
+function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, onExit, analyticsId }: Props) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [wrong, setWrong] = useState<string[]>([]);
@@ -27,6 +30,7 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, 
   const locked = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const target = pairs[index];
+  useActivityAnalytics(analyticsId ?? 'topo:quiz', 0, !target);
   const choices = useMemo(() => target ? shuffle([target, ...shuffle(choicePool.filter(p => p.id !== target.id)).slice(0, 3)]) : [], [target, choicePool]);
   useEffect(() => { heading.current?.focus(); }, [index]);
   if (!target) return <RoundResult total={pairs.length} correct={correct} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={wrong.length ? () => onRetry(wrong) : undefined} />;
@@ -49,12 +53,13 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, 
   </section>;
 }
 
-function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit }: Props) {
+function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, analyticsId }: Props) {
   const [cards] = useState<Card[]>(() => shuffle(pairs.flatMap(pair => [
     { id: pair.id + ':left', pair, side: 'left' as const }, { id: pair.id + ':right', pair, side: 'right' as const },
   ])));
   const [flipped, setFlipped] = useState<string[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
+  useActivityAnalytics(analyticsId ?? 'topo:memory', 0, matched.length === pairs.length);
   const [missed, setMissed] = useState<string[]>([]);
   const [moves, setMoves] = useState(0);
   const [feedback, setFeedback] = useState('');

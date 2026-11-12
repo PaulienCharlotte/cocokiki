@@ -194,9 +194,11 @@
 .taart-melding { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
 /* Klaar */
-.taart-klaar { min-height: 100dvh; display: grid; place-items: center; padding: var(--space-6) var(--space-4); background: var(--color-background); }
+.taart-klaar { min-height: 100dvh; display: grid; place-items: center; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-6); background: var(--color-background); }
 .taart-klaar__kaart {
   width: min(100%, 32rem);
+  min-width: 0;
+  box-sizing: border-box;
   display: grid;
   gap: var(--space-4);
   justify-items: center;
@@ -205,7 +207,7 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
 }
-.taart-klaar__kaart img { width: min(100%, 22rem); border-radius: var(--radius-card); background: var(--color-background-soft); }
+.taart-klaar__kaart > img { width: min(100%, 22rem); border-radius: var(--radius-card); background: var(--color-background-soft); }
 .taart-klaar__kop { display: flex; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-primary); font-weight: var(--font-weight-bold); }
 .taart-klaar__acties { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; }
 
@@ -215,3 +217,11 @@
   .taart-instellingen { grid-template-columns: minmax(0, 1fr); }
   .taart-paneel__lijst button { width: 3.5rem; height: 3.5rem; }
 }
+
+.taart-opdracht { padding: var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-3); background: var(--color-surface); border-radius: var(--radius-card); color: var(--color-text); }
+.taart-opdracht span { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.taart-stuk img { filter: drop-shadow(0 3px 3px #3b241a1f); }
+@media(max-width: 480px) { .taart-atelier__opslaan { flex-wrap: wrap; } }
+
+.taart-klaar__kaart .ck-zegt { width: 100%; min-width: 0; }
+.taart-klaar__acties .ck-zegt { flex-basis: 100%; }

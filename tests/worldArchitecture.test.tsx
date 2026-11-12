@@ -87,7 +87,7 @@ test('Dreamworld renders one intact world image, five hotspots and compact tools
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
-  assert.match(html, /dreamworld\/world-map-v2\.png/);
+  assert.match(html, /world-map-v2[^" ]*\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.webp/);
   assert.match(html, /images\/avatars\/coco\.webp/);
@@ -248,7 +248,7 @@ test('room inventory migrates existing purchases and rejects invalid or excess p
 
 test('shop catalog has configurable package prices and enables purchases', () => {
   assert.equal(SHOP_CATEGORIES[0].id, 'all');
-  assert.equal(SHOP_PRODUCTS.length, 44);
+  assert.equal(SHOP_PRODUCTS.length, 47);
   assert.ok(SHOP_PRODUCTS.every(product => Number.isInteger(product.price) && product.price > 0 && product.purchasable));
   assert.ok(SHOP_PRODUCTS.every(product => product.image.startsWith('/games/shop/products/') || product.image.startsWith('/assets/library/cooking/')));
   assert.ok(new Set(SHOP_PRODUCTS.map(product => product.id)).size === SHOP_PRODUCTS.length);
@@ -277,16 +277,16 @@ test('treehouse routes expose separate encyclopedia and cookbook spaces', () => 
   assert.doesNotMatch(livingRoom, /aria-label="Kamer aanpassen"/);
   assert.match(livingRoom, /aria-label="Mijn boomhut"/);
   const kitchen = renderToStaticMarkup(<TreehouseInterior room="kitchen" onNavigate={() => undefined} />);
-  assert.match(kitchen, /aria-label="Mijn Kookboek openen"/);
+  assert.match(kitchen, /aria-label="De keuken in de kookstudio openen"/);
   assert.doesNotMatch(kitchen, /aria-label="Mijn Encyclopedie openen"/);
   assert.doesNotMatch(kitchen, /Mijn keuken/);
   assert.doesNotMatch(kitchen, /Naar Kookstudio/);
   assert.doesNotMatch(kitchen, /treehouse-kitchen-furnishing treehouse-kitchen-furnishing--/);
-  assert.match(kitchen, /aria-label="Kookeiland openen"/);
-  assert.match(kitchen, /aria-label="Kookplaat openen"/);
-  assert.match(kitchen, /aria-label="Mijn boodschappen openen"/);
-  assert.match(kitchen, /data-kitchen-station="worktop"/);
-  assert.match(kitchen, /data-kitchen-station="cooktop"/);
+  assert.doesNotMatch(kitchen, /aria-label="Kookeiland openen"/);
+  assert.doesNotMatch(kitchen, /aria-label="Kookplaat openen"/);
+  assert.doesNotMatch(kitchen, /aria-label="Mijn boodschappen openen"/);
+  assert.doesNotMatch(kitchen, /data-kitchen-station="worktop"/);
+  assert.doesNotMatch(kitchen, /data-kitchen-station="cooktop"/);
   assert.match(kitchen, /aria-label="Naar Woonkamer"/);
   assert.match(kitchen, /aria-label="Naar Badkamer"/);
   assert.match(kitchen, /aria-label="Mijn rugzak openen"/);
@@ -323,7 +323,7 @@ test('interactive kitchen separates groceries and keeps standard equipment avail
   const progress = createEmptyCookingProgress();
   progress.inventory.consumables = { banana: 2, eggs: 3, oats: 40 };
   assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.id), ['banana', 'eggs', 'oats']);
-  assert.deepEqual(new Set(buildKitchenInventory(progress, 'equipment').map(item => item.id)), new Set(['bowl', 'fork', 'pan', 'spatula', 'spoon', 'whisk', 'scale', 'measuring-jug', 'muffin-pan']));
+  assert.deepEqual(new Set(buildKitchenInventory(progress, 'equipment').map(item => item.id)), new Set(['bowl', 'fork', 'pan', 'spatula', 'spoon', 'whisk', 'scale', 'measuring-jug', 'muffin-pan', 'stockpot', 'prep-board', 'baking-dish']));
   assert.deepEqual(buildKitchenInventory(createEmptyCookingProgress(), 'groceries'), []);
   progress.inventory.consumables = { yogurt: 350, strawberry: 175 };
   assert.deepEqual(buildKitchenInventory(progress, 'groceries').map(item => item.quantityLabel), ['350 ml in voorraad', '175 g in voorraad']);

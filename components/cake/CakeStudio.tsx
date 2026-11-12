@@ -12,6 +12,8 @@ import {
 } from '../../services/cakeStudio';
 import type { GeplaatsteVersiering, Penseel, VersieringSoort } from '../../data/cake/types';
 import './cake-studio.css';
+import SpeechBubble from '../ui/SpeechBubble';
+import { cakeMeetsOrder, deliverCakeOrder, loadCakeOrder, saveCakeOrder } from '../../services/cakeOrder';
 
 /**
  * Het taartenatelier: kies een taart, teken erop en leg er versieringen op.
@@ -49,7 +51,14 @@ const MAX_TERUG = 12;
 const GALERIJ_MAAT = 420;
 
 export default function CakeStudio({ onClose }: { onClose: () => void }) {
-  const [ontwerp, setOntwerp] = useState(laadOntwerp);
+  const isOrder = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('order') === 'seb-birthday';
+  const [order, setOrder] = useState(loadCakeOrder);
+  const [busy, setBusy] = useState(false);
+  const [timed, setTimed] = useState(false);
+  const orderRef = useRef(order);
+  orderRef.current = order;
+  const designKey = isOrder ? 'cocokiki:taart:seb-birthday:v1' : undefined;
+  const [ontwerp, setOntwerp] = useState(() => laadOntwerp(designKey));
   const [versieringen, setVersieringen] = useState<GeplaatsteVersiering[]>(() => ontwerp.versieringen);
   const [bodemId, setBodemId] = useState(ontwerp.bodemId);
   const [gekozen, setGekozen] = useState<string | null>(null);
@@ -64,6 +73,38 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
   const terug = useRef<Array<string | null>>([]);
   const vooruit = useRef<Array<string | null>>([]);
   const [standen, setStanden] = useState({ terug: 0, vooruit: 0 });
+  const designRef = useRef({ ontwerp, bodemId, versieringen });
+  designRef.current = { ontwerp, bodemId, versieringen };
+  useEffect(() => {
+    if (!isOrder || !order.started || order.delivered || klaar) return;
+    const timer = window.setInterval(() => {
+      if (!doek.current || document.visibilityState !== 'visible') return;
+      const current = designRef.current;
+      if (!bewaarOntwerp({ ...current.ontwerp, bodemId: current.bodemId, versieringen: current.versieringen, tekening: doek.current.tekening() }, undefined, designKey)) {
+        setMelding('Automatisch bewaren lukt even niet. Houd dit scherm open en probeer Bewaren.');
+      }
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [isOrder, order.started, order.delivered, klaar, designKey]);
+
+
+  useEffect(() => {
+    if (!isOrder || !order.started || order.delivered || klaar || busy) return;
+    // Alleen zichtbare speeltijd telt. Kleine stukjes blijven bij verversen bewaard.
+    let previous = performance.now();
+    const tick = () => {
+      const now = performance.now();
+      const elapsed = document.visibilityState === 'visible' ? Math.min(2, (now - previous) / 1000) : 0;
+      previous = now;
+      if (!elapsed) return;
+      const next = { ...orderRef.current, elapsed: orderRef.current.elapsed + elapsed };
+      if (saveCakeOrder(next)) { orderRef.current = next; setOrder(next); }
+    };
+    const timer = window.setInterval(tick, 1000);
+    const visibility = () => { previous = performance.now(); };
+    document.addEventListener('visibilitychange', visibility);
+    return () => { window.clearInterval(timer); document.removeEventListener('visibilitychange', visibility); };
+  }, [isOrder, order.started, order.delivered, klaar, busy]);
 
   useEffect(() => { doek.current?.herstelTekening(ontwerp.tekening); }, [ontwerp.tekening]);
 
@@ -155,7 +196,7 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
   const bewaar = async (afsluiten: boolean) => {
     const voorbeeld = await maakAfbeelding();
     const volgende = { ...ontwerp, bodemId, versieringen, tekening: doek.current?.tekening() ?? null, voorbeeld };
-    if (!bewaarOntwerp(volgende)) { setMelding('Opslaan lukt even niet. Je taart staat nog op het werkblad.'); return; }
+    if (!bewaarOntwerp(volgende, undefined, designKey)) { setMelding('Opslaan lukt even niet. Je taart staat nog op het werkblad.'); return; }
     setOntwerp(volgende);
     setMelding('Je taart is bewaard.');
     if (afsluiten) { setInEncyclopedie(false); setKlaar(true); }
@@ -163,7 +204,7 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
 
   /** Een kopie van de taart die in de encyclopedie blijft staan. */
   const naarEncyclopedie = async () => {
-    const plaatje = await maakAfbeelding(GALERIJ_MAAT);
+    const plaatje = klaar ? ontwerp.voorbeeld : await maakAfbeelding(GALERIJ_MAAT);
     if (!plaatje || !bewaarInGalerij(plaatje, bodem.naam)) { setMelding('Bewaren in de encyclopedie lukt even niet.'); return; }
     setInEncyclopedie(true);
   };
@@ -185,12 +226,47 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
     setMelding('');
   };
 
+  const finish = async () => {
+    if (isOrder && !cakeMeetsOrder(bodemId, versieringen)) {
+      setMelding('Seb vroeg om een roze taart met aardbeien. Kies een roze taart en leg er een aardbei op.');
+      return;
+    }
+    setBusy(true);
+    try { await bewaar(true); } finally { setBusy(false); }
+  };
+
+  if (isOrder && order.delivered) return <section className="taart-klaar"><article className="taart-klaar__kaart">
+    {ontwerp.voorbeeld && <img src={ontwerp.voorbeeld} alt="Jouw verjaardagstaart" />}
+    <SpeechBubble character="seb" label="afgeleverd">Dank je! Een roze taart met aardbeien, precies wat mijn zusje leuk vindt. Dit wordt een feest!</SpeechBubble>
+    <p>{order.reward} muntjes verdiend. Deze bestelling is afgeleverd.</p>
+    <Button onClick={onClose}>Naar de toonbank</Button>
+  </article></section>;
+
+  if (isOrder && !order.started) return <section className="taart-klaar"><article className="taart-klaar__kaart">
+    <IconButton label="Terug naar de toonbank" icon={<ArrowLeft size={19} />} onClick={onClose} />
+    <SpeechBubble character="seb" label="een verjaardagstaart">Mijn zusje is jarig! Ze houdt van roze en aardbeien. Versier jij een roze taart met minstens één aardbei?</SpeechBubble>
+    <p>Verdien 5 muntjes bij het afleveren.</p>
+    <Button variant="secondary" aria-pressed={timed} onClick={() => setTimed(value => !value)}>{timed ? 'Met tijdsbonus: aan' : 'Met tijdsbonus: uit'}</Button>
+    <p>Met tijdsbonus: 2 extra muntjes binnen 5 minuten. Daarna mag je rustig verder.</p>
+    <Button onClick={() => {
+      const next = { started: true, timed, elapsed: 0, delivered: false, reward: 0 };
+      if (saveCakeOrder(next)) setOrder(next);
+      else setMelding('Bewaren lukt even niet. Probeer opnieuw.');
+    }}>Begin de taart</Button>
+    {melding && <p role="alert">{melding}</p>}
+  </article></section>;
+
   if (klaar) return <section className="taart-klaar" aria-live="polite">
     <article className="taart-klaar__kaart">
       {ontwerp.voorbeeld && <img src={ontwerp.voorbeeld} alt="Jouw taart" />}
       <p className="taart-klaar__kop"><Sparkles size={19} aria-hidden="true" />Je taart staat klaar</p>
       <div className="taart-klaar__acties">
-        <Button size="large" startIcon={<BookHeart size={18} />} disabled={inEncyclopedie} onClick={() => void naarEncyclopedie()}>
+        {isOrder && <>
+          <SpeechBubble character="coco" label="naar de toonbank">De roze taart met aardbeien staat klaar voor Seb.</SpeechBubble>
+          <Button onClick={() => { const result = deliverCakeOrder(bodemId, versieringen); if (result) setOrder(result); else setMelding('Afleveren lukt even niet. Je taart blijft bewaard. Probeer opnieuw.'); }}>Lever af aan Seb</Button>
+        </>}
+
+        <Button variant={isOrder ? 'secondary' : 'primary'} size="large" startIcon={<BookHeart size={18} />} disabled={inEncyclopedie} onClick={() => void naarEncyclopedie()}>
           {inEncyclopedie ? 'Staat in de encyclopedie' : 'Bewaar in de encyclopedie'}
         </Button>
         <Button variant="quiet" onClick={onClose}>Terug naar de bakkerij</Button>
@@ -209,10 +285,15 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
         <IconButton label="Opnieuw beginnen" icon={<RotateCcw size={19} />} onClick={opnieuw} />
         <IconButton label="Taart als plaatje opslaan" icon={<Download size={19} />} onClick={() => void exporteer()} />
         <IconButton label="Bewaren" icon={<Save size={19} />} onClick={() => void bewaar(false)} />
-        <Button onClick={() => void bewaar(true)}>Klaar</Button>
+        <Button disabled={busy} onClick={() => void finish()}>{isOrder ? 'Naar de toonbank' : 'Klaar'}</Button>
       </div>
     </header>
 
+    {isOrder && <div className="taart-opdracht" role="status">
+      <strong>Voor Seb: een roze taart met aardbeien</strong>
+      <span>{cakeMeetsOrder(bodemId, versieringen) ? 'Alles voor de bestelling staat erop' : 'Kies een roze taart en voeg een aardbei toe'}</span>
+      {order.timed && <span>{order.elapsed < 300 ? `Tijdsbonus: ${Math.floor((300 - order.elapsed) / 60)}:${String(Math.floor((300 - order.elapsed) % 60)).padStart(2, '0')}` : 'De bonustijd is voorbij. Maak je taart rustig af.'}</span>}
+    </div>}
     <div className="taart-atelier__werk">
       <div className="taart-atelier__midden">
         <CakeCanvas

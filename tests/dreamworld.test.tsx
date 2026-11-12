@@ -24,7 +24,8 @@ import { ISLAND_ICONS_IMAGE, ISLAND_ICON_POSITIONS } from '../components/dreamwo
 test('Dreamworld has six unique islands, real assets and addressable activities', () => {
   assert.equal(DREAM_ISLANDS.length, 6);
   assert.equal(new Set(DREAM_ISLANDS.map(island => island.id)).size, 6);
-  assert.ok(existsSync(`public${DREAMWORLD_IMAGE}`));
+  assert.match(DREAMWORLD_IMAGE, /world-map-v2.*\.webp/);
+  assert.ok(existsSync('assets/world-map-v2.webp'));
   for (let i = 0; i < DREAM_ISLANDS.length; i++) for (let j = i + 1; j < DREAM_ISLANDS.length; j++) {
     const a = DREAM_ISLANDS[i].spot, b = DREAM_ISLANDS[j].spot;
     const overlapX = Math.abs(a.x - b.x) < (a.width + b.width) / 2 - 1e-8;

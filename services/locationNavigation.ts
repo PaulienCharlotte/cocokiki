@@ -11,7 +11,7 @@ export function locationOrigin(search: string, path?: string): LocationOrigin | 
   return value === 'coco' || value === 'kiki' || value === 'lua' || value === 'seb' ? value : null;
 }
 function acceptsOrigin(path: string) {
-  return ['/treehouse/cookbook', '/treehouse/kitchen', '/plantendokter', '/plants/collection', '/encyclopedie', '/school/clock', '/shop/groceries', '/games/nutrient-memory', '/games/topo', '/games/flags-memory', '/games/red-baby-lua'].includes(path) || path.startsWith('/school/math/');
+  return ['/cooking/kitchen', '/treehouse/cookbook', '/treehouse/kitchen', '/plantendokter', '/plants/collection', '/encyclopedie', '/school/clock', '/shop/groceries', '/games/nutrient-memory', '/games/topo', '/games/flags-memory', '/games/red-baby-lua'].includes(path) || path.startsWith('/school/math/');
 }
 export function withLocationOrigin(path: string, origin: LocationOrigin | null): string {
   const url = new URL(path, 'https://cocokiki.invalid');

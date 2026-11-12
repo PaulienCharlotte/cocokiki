@@ -10,10 +10,12 @@ import { guardedNavigation, hasNavigationGuard } from './services/navigationGuar
 import { ISLANDS_BY_ID, islandForActivity } from './platform/dreamworld';
 import './components/dreamworld/dreamworld.css';
 import './components/memory-compact.css';
+import { analytics } from './services/analytics';
 import { WORLD_LOCATIONS } from './platform/worldLocations';
 import { LOCATION_ORIGINS, locationOrigin, withLocationOrigin } from './services/locationNavigation';
 
 const WorldHub = lazy(() => import('./pages/WorldHub'));
+const PrivacyScreen = lazy(() => import('./pages/PrivacyScreen'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
 const TreehouseUnitTest = lazy(() => import('./pages/TreehouseUnitTest'));
 const CookbookScreen = lazy(() => import('./pages/CookbookScreen'));
@@ -29,17 +31,21 @@ const DecorShop = lazy(() => import('./components/shop/DecorShop'));
 const PlantFamilyPanel = lazy(() => import('./components/plants/PlantFamilyPanel'));
 const FlagsMemory = lazy(() => import('./pages/FlagsMemory'));
 const WorldLocationLayout = lazy(() => import('./components/dreamworld/WorldLocationLayout'));
+const FoodDiscoveryScreen = lazy(() => import('./pages/FoodDiscoveryScreen'));
 const CakeStudio = lazy(() => import('./components/cake/CakeStudio'));
+const CookingKitchen = lazy(() => import('./pages/CookingKitchen'));
 const NutrientMemoryScreen = lazy(() => import('./pages/NutrientMemoryScreen'));
 
 /** Waar de terugknop je brengt, per pagina. */
 const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: string }>> = {
   store: { path: '/shop', label: 'Terug naar winkels' },
-  'treehouse-section': { path: '/treehouse/kitchen', label: 'Terug naar de keuken' },
+  'treehouse-section': { path: '/islands/cooking', label: 'Terug naar Coco' },
+  'cooking-kitchen': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'treehouse-room': { path: '/treehouse', label: 'Terug naar de boomhut' },
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
   clock: { path: '/challenges', label: 'Terug naar School' },
+  'food-discovery': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Coco' },
   taartenatelier: { path: '/islands/cooking', label: 'Terug naar Coco' },
 };
@@ -65,6 +71,7 @@ function pasTestmuntenToe(): boolean {
 
 const App: React.FC = () => {
   const [current, setCurrent] = useState(() => resolveRoute(window.location.pathname));
+  useEffect(() => { if (current.route.page !== 'privacy') analytics().session(); }, [current.route.page]);
   const [coins, setCoins] = useState(() => { pasTestmuntenToe(); return loadCurrency(); });
 
   useEffect(() => {
@@ -120,10 +127,16 @@ const App: React.FC = () => {
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      : current.route.page === 'privacy'
+      ? <PrivacyScreen />
+      : current.route.page === 'food-discovery'
+      ? <FoodDiscoveryScreen onNavigate={navigate} />
       : current.route.page === 'nutrient-memory'
       ? <NutrientMemoryScreen onBack={back} />
       : current.route.page === 'taartenatelier'
-      ? <CakeStudio onClose={sourceLocation ? back : () => navigate('/islands/cooking')} />
+      ? <CakeStudio key={current.route.path + window.location.search} onClose={() => navigate(new URLSearchParams(window.location.search).has('order') ? '/treehouse/cookbook?toonbank=1' : '/treehouse/cookbook')} />
+      : current.route.page === 'cooking-kitchen'
+      ? <CookingKitchen onNavigate={navigate} />
       : current.route.page === 'math'
       ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={sourceLocation ? back : () => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'

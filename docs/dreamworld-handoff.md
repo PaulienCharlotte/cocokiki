@@ -11,7 +11,7 @@ De lokale werkbestanden met die voorbereidingen blijven behouden.
 
 ## Wat deze implementatie bevat
 
-- Nieuwe wereldkaart: `public/dreamworld/world-map-v2.png`, gekoppeld via
+- Nieuwe wereldkaart: `assets/world-map-v2.webp` (verliesvrij; Vite voegt een inhoudshash toe), gekoppeld via
   `platform/dreamworld.ts` en `components/dreamworld/DreamworldMap.tsx`.
 - Locaties Milo, Novi en Felix: `platform/worldLocations.ts`,
   `components/dreamworld/WorldLocationLayout.tsx` en de drie achtergronden in

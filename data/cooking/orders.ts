@@ -88,4 +88,4 @@ export function eisInWoorden(bestelling: Bestelling): string {
   return `Binnen ${eis.minuten} minuten klaar`;
 }
 
-const CATEGORIE_IN_WOORDEN: Record<RecipeCategory, string> = { breakfast: 'Iets voor bij het ontbijt', snack: 'Iets voor tussendoor', baking: 'Iets uit de oven' };
+const CATEGORIE_IN_WOORDEN: Record<RecipeCategory, string> = { breakfast: 'Iets voor bij het ontbijt', snack: 'Iets voor tussendoor', baking: 'Iets uit de oven', cooking: 'Een warme maaltijd' };

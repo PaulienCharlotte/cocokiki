@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import FoodKnowledgeDialog, { FoodText } from '../food/FoodKnowledge';
 import { Globe2, Leaf, Sparkles } from 'lucide-react';
 import type { IngredientDiscoveryConfig, IngredientEntry } from '../../data/cooking/types';
 import CookingAssetImage from './CookingAssetImage';
@@ -9,7 +10,8 @@ interface IngredientDiscoveryCardProps {
 }
 
 export function NutritionFact({ nutrient, role }: { nutrient: string; role: string }) {
-  return <li><span aria-hidden="true"><Sparkles /></span><p><strong>{nutrient}</strong><small>{role}</small></p></li>;
+  const [term, setTerm] = useState<string | null>(null);
+  return <li><span aria-hidden="true"><Sparkles /></span><p><strong><FoodText text={nutrient} onTerm={setTerm} /></strong><small><FoodText text={role} onTerm={setTerm} /></small></p>{term && <FoodKnowledgeDialog termId={term} onClose={() => setTerm(null)} />}</li>;
 }
 
 export default function IngredientDiscoveryCard({ config, ingredient }: IngredientDiscoveryCardProps) {

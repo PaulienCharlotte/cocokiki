@@ -11,6 +11,8 @@ interface MemoryGameProps {
   onComplete: (level: ClockLevel, roundId: string) => number;
 }
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+
 export default function MemoryGame({ initialLevel, completedLevels, onBack, onComplete }: MemoryGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [deck, setDeck] = useState<MemoryCardData[]>(() => createMemoryDeck(initialLevel));
@@ -20,6 +22,7 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
   const [reward, setReward] = useState<number | null>(null);
   const completionClaimed = useRef(false);
   const roundId = useRef(crypto.randomUUID());
+  useActivityAnalytics('clock:memory', roundId.current, reward !== null);
 
   const reset = (nextLevel = level) => {
     roundId.current = crypto.randomUUID();

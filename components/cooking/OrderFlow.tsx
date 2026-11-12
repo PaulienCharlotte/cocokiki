@@ -14,6 +14,7 @@ import {
 } from '../../services/bakeryOrders';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
 import './orders.css';
+import { loadCakeOrder } from '../../services/cakeOrder';
 
 /**
  * De toonbank: iemand komt langs met een wens.
@@ -31,10 +32,11 @@ interface OrderFlowProps {
   onSave: (next: CookingProgressState) => boolean;
   /** Het recept is gekozen en het aantal klopt: begin het kookavontuur. */
   onStart: (recipe: RecipeConfig, bestelling: Bestelling) => void;
+  onCakeOrder?: () => void;
   onExit: () => void;
 }
 
-export default function OrderFlow({ progress, onSave, onStart, onExit }: OrderFlowProps) {
+export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrder }: OrderFlowProps) {
   const [melding, setMelding] = useState('');
   // Welke aantallen al geprobeerd zijn. Net als bij het recept blijft een
   // misser zichtbaar, zodat je niet nog eens hetzelfde aantikt.
@@ -49,29 +51,31 @@ export default function OrderFlow({ progress, onSave, onStart, onExit }: OrderFl
   // Scherm 1: wie staat er aan de toonbank?
   if (!lopend) {
     const wachtend = openBestellingen(progress);
-    if (!wachtend.length) return <main className="bestel-scherm">
+    const cakeDelivered = loadCakeOrder().delivered;
+    const opdrachtAantal = wachtend.length + (onCakeOrder && !cakeDelivered ? 1 : 0);
+    if (!wachtend.length && !onCakeOrder) return <main className="bestel-scherm">
       <section className="bestel-kaart">
-        <IconButton className="bestel-kaart__terug" label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} />
+        <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
         <SpeechBubble character="coco" label="de toonbank">Er wacht nu niemand. Blader gerust in het kookboek en bak iets voor jezelf.</SpeechBubble>
-        <Button size="large" onClick={onExit}>Naar het kookboek</Button>
+        <Button size="large" onClick={onExit}>Naar het overzicht</Button>
       </section>
     </main>;
     return <main className="bestel-scherm">
       <section className="bestel-kaart">
-        <IconButton className="bestel-kaart__terug" label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} />
-        <SpeechBubble character="coco" label="de toonbank">{wachtend.length === 1 ? 'Er staat iemand te wachten. Help je even?' : `Er staan ${wachtend.length} mensen te wachten. Wie help je het eerst?`}</SpeechBubble>
+        <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
+        <SpeechBubble character="coco" label="de toonbank">{opdrachtAantal ? 'Er liggen opdrachten klaar. Wie help je het eerst?' : 'Alle opdrachten zijn afgeleverd. Bekijk je taart of kies zelf een recept.'}</SpeechBubble>
         {melding && <p className="bestel-melding" role="alert">{melding}</p>}
         <CardGrid
           label="Kies wie je helpt"
           kolommen={3}
-          cards={wachtend.map(bestelling => ({
+          cards={[...(onCakeOrder ? [{ id: 'cake-order', titel: 'Seb', onder: cakeDelivered ? 'Verjaardagstaart afgeleverd' : 'Een verjaardagstaart voor mijn zusje', beeld: CHARACTERS.seb.beeld }] : []), ...wachtend.map(bestelling => ({
             id: bestelling.id,
             titel: CHARACTERS[bestelling.klant].naam,
             onder: bestelling.aanleiding,
             beeld: CHARACTERS[bestelling.klant].beeld,
             meta: <span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>,
-          }))}
-          onChoose={id => bewaar(neemBestellingAan(progress, id))}
+          }))]}
+          onChoose={id => id === 'cake-order' ? onCakeOrder?.() : bewaar(neemBestellingAan(progress, id))}
         />
       </section>
     </main>;

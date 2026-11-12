@@ -79,7 +79,7 @@ export default function LocationGameView({ location, onOpen, onDirect, renderCli
             id: adventure.id,
             titel: adventure.title,
             beeld: adventure.image,
-            actief: selected?.id === adventure.id,
+            actief: onDirect?.(adventure.id, true) ? undefined : selected?.id === adventure.id,
             meta: adventure.status === 'locked'
               ? <span className="adventure-slot"><LockKeyhole size={14} aria-hidden="true" />{STATUS.locked}</span>
               : <span className="adventure-slot is-open">{STATUS[adventure.status]}</span>,

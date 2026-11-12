@@ -11,6 +11,7 @@ import WorldLocationLayout from '../components/dreamworld/WorldLocationLayout';
 import NutrientMemoryScreen, { STANDALONE_NUTRIENT_MEMORY } from '../pages/NutrientMemoryScreen';
 import { createNutrientDeck, memoryConfigIssues } from '../data/cooking/nutrientMemory';
 import CookbookScreen from '../pages/CookbookScreen';
+import CookingKitchen from '../pages/CookingKitchen';
 import { MATH_GAMES } from '../games/math/config';
 import { AdventureClipboard } from '../components/dreamworld/LocationAdventureWidgets';
 
@@ -93,16 +94,15 @@ test('recipe deep links open the existing overview without starting a journey', 
   }
 });
 
-test('de bakkerij heeft de toonbank en het taartenatelier, met vier avonturen die nog komen', () => {
+test('de bakkerij heeft drie werkende bestemmingen zonder vergrendelde voorstellen', () => {
   const location = WORLD_LOCATIONS.find(item => item.id === 'coco')!;
-  // Geen losse activiteitenkaarten meer: wat je hier doet begint bij een
-  // bestelling, en voedingsstoffen staat in de encyclopedie in de bovenbalk.
+  // Drie bestemmingen, elk met een directe werkende ingang.
   assert.deepEqual(location.activities, []);
   const previews = location.adventurePreviews!;
-  assert.equal(previews.length, 6);
-  assert.equal(new Set(previews.map(item => item.id)).size, 6);
-  // Twee avonturen spelen echt; de rest staat nog op slot.
-  const speelbaar = ['bestellingen', 'taartenatelier'];
+  assert.equal(previews.length, 3);
+  assert.equal(new Set(previews.map(item => item.id)).size, 3);
+  // Geen kaartjes voor nog ongebouwde spellen.
+  const speelbaar = ['bestellingen', 'kookboek', 'voeding'];
   assert.deepEqual(previews.filter(item => item.status !== 'locked').map(item => item.id), speelbaar);
   for (const preview of previews) {
     assert.equal(preview.status, speelbaar.includes(preview.id) ? 'available' : 'locked');
@@ -114,9 +114,23 @@ test('de bakkerij heeft de toonbank en het taartenatelier, met vier avonturen di
     assert.doesNotMatch(clipboard, /role="progressbar"|Start avontuur/);
   }
   const html = renderToStaticMarkup(<WorldLocationLayout location={location} onNavigate={() => undefined} />);
-  assert.equal((html.match(/aria-pressed="true"/g) ?? []).length, 1);
-  assert.equal((html.match(/aria-pressed="false"/g) ?? []).length, 5);
+  assert.equal((html.match(/aria-pressed="true"/g) ?? []).length, 0);
+  assert.equal((html.match(/aria-pressed="false"/g) ?? []).length, 0);
   assert.doesNotMatch(html, /location-panel--|Havermoutmuffins/);
   const source = readFileSync('components/dreamworld/LocationAdventureWidgets.tsx', 'utf8');
   assert.doesNotMatch(source, /AdventureEngine|localStorage|commitLocalState|analytics\(|location\.id\s*===/);
+});
+
+
+test('de kookstudio heeft de oorspronkelijke ingerichte keuken en behoudt receptcontext', () => {
+  assert.deepEqual(resolveRoute('/cooking/kitchen').route, { page: 'cooking-kitchen', path: '/cooking/kitchen' });
+  assert.equal(withLocationOrigin('/cooking/kitchen?recipe=banana-pancakes', 'coco'), '/cooking/kitchen?recipe=banana-pancakes&from=coco');
+  assert.equal(locationOrigin('?from=coco', '/cooking/kitchen'), 'coco');
+  const html = renderToStaticMarkup(<CookingKitchen onNavigate={() => undefined} />);
+  assert.match(html, /kitchen-furnished\.webp/);
+  assert.match(html, /aria-label="Kookeiland openen"/);
+  assert.match(html, /aria-label="Kookplaat openen"/);
+  assert.match(html, /aria-label="Mijn boodschappen openen"/);
+  assert.match(html, /aria-label="Mijn Kookboek openen"/);
+  assert.doesNotMatch(html, /Kamerinrichting|Mijn rugzak openen/);
 });

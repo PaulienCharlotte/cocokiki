@@ -1,3 +1,4 @@
+import { GEZONDE_ASSETS } from './cooking/healthyPreparations';
 import { SHOP_PRICES } from './shopPricing';
 import { BAKING_ASSETS } from './cooking/muffinIngredients';
 
@@ -26,6 +27,7 @@ export const SHOP_CATEGORIES: Array<{ id: 'all' | ShopCategory; label: string }>
 ];
 
 const PRODUCT_PACKAGES: Record<string, [number, ProductUnit, string]> = {
+  'wholewheat-pasta': [500, 'gram', '500 g'], 'brown-rice': [500, 'gram', '500 g'], chickpeas: [200, 'gram', '200 g uitlekgewicht'],
   'sunflower-oil': [1000, 'milliliter', '1 liter'], 'baking-powder': [90, 'gram', '6 x 15 g'], salt: [500, 'gram', '500 g'], 'vanilla-extract': [35, 'milliliter', '35 ml'],
   tomato: [1, 'piece', 'per stuk'], carrot: [1, 'piece', 'per stuk'], pepper: [1, 'piece', 'per stuk'], cucumber: [1, 'piece', 'per stuk'],
   potato: [1, 'piece', 'per stuk'], onion: [1, 'piece', 'per stuk'], garlic: [1, 'piece', 'per bol'], broccoli: [1, 'piece', 'per stuk'],
@@ -45,7 +47,7 @@ const product = (id: string, name: string, category: ShopCategory): ShopProduct 
   id,
   name,
   category,
-  image: BAKING_ASSETS[id as keyof typeof BAKING_ASSETS] ?? `/games/shop/products/${id}.webp?v=2`,
+  image: ({ 'wholewheat-pasta': GEZONDE_ASSETS.pasta, 'brown-rice': GEZONDE_ASSETS.rijst, chickpeas: GEZONDE_ASSETS.kikkererwten } as Record<string, string>)[id] ?? BAKING_ASSETS[id as keyof typeof BAKING_ASSETS] ?? `/games/shop/products/${id}.webp?v=2`,
   unitAmount,
   unit,
   packageLabel,
@@ -55,6 +57,9 @@ const product = (id: string, name: string, category: ShopCategory): ShopProduct 
 };
 
 export const SHOP_PRODUCTS: ShopProduct[] = [
+  product('wholewheat-pasta', 'Volkoren pasta', 'pantry'),
+  product('brown-rice', 'Zilvervliesrijst', 'pantry'),
+  product('chickpeas', 'Gare kikkererwten zonder toegevoegd zout', 'pantry'),
   product('sunflower-oil', 'Zonnebloemolie', 'pantry'),
   product('baking-powder', 'Bakpoeder', 'pantry'),
   product('salt', 'Zout', 'pantry'),

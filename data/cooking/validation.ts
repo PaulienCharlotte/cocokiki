@@ -20,6 +20,7 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
   }
   for (const step of recipe.preparation?.steps ?? []) {
     paths.push(step.asset);
+    if (step.cooktop) paths.push(step.cooktop.panAsset);
     if (step.mechanic === 'collect') paths.push(...step.tools.map(item => item.asset));
     if (step.mechanic === 'drag' && step.dropTarget.asset) paths.push(step.dropTarget.asset);
     if (step.mechanic === 'repeat') paths.push(...(step.vesselByCount ?? []), ...(step.toolByCount ?? []), ...(step.tapTool ? [step.tapTool.asset] : []));
@@ -27,7 +28,7 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
     if (step.mechanic === 'timed') paths.push(step.pouredAsset, step.cookedAsset);
     if (step.mechanic === 'measure') paths.push(step.vesselAsset);
     if (step.mechanic === 'portion') paths.push(step.panAsset, step.linerAsset, step.toppingAsset, ...(step.linerFilledAsset ? [step.linerFilledAsset] : []));
-    if (step.mechanic === 'oven') paths.push(step.panAsset, step.resultAsset, '/assets/library/treehouse/furnishings/oven.webp', '/assets/library/treehouse/furnishings/oven-open.webp');
+    if (step.mechanic === 'oven') paths.push(step.panAsset, step.resultAsset, ...(step.rawAsset ? [step.rawAsset] : []), '/assets/library/treehouse/furnishings/oven.webp', '/assets/library/treehouse/furnishings/oven-open.webp');
   }
   return [...new Set(paths)];
 }

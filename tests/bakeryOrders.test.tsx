@@ -12,10 +12,10 @@ import { createEmptyCookingProgress, migrateCookingProgress } from '../services/
 
 const leeg = () => createEmptyCookingProgress();
 
-test('elke bestelling heeft precies één passend recept om uit te kiezen', () => {
+test('elke bestelling heeft minstens één passend recept om uit te kiezen', () => {
   for (const bestelling of BESTELLINGEN) {
     const passend = RECIPES.filter(recipe => recipe.contentStatus === 'ready' && pastBijBestelling(bestelling, recipe));
-    assert.equal(passend.length, 1, `${bestelling.id} hoort bij precies één recept, nu ${passend.map(item => item.id).join(', ')}`);
+    assert.ok(passend.length >= 1, `${bestelling.id} moet een passend recept hebben`);
   }
 });
 
@@ -157,9 +157,12 @@ test('de wens is in gewone taal samen te vatten', () => {
 });
 
 test('de keuze aan de toonbank blijft een keuze die een kind overziet', () => {
-  const recepten = keuzeRecepten(leeg());
-  assert.ok(recepten.length >= 2 && recepten.length <= 4, `twee tot vier recepten om uit te kiezen, nu ${recepten.length}`);
-  assert.ok(recepten.every(recipe => recipe.contentStatus === 'ready'));
+  for (const bestelling of openBestellingen(leeg())) {
+    const recepten = keuzeRecepten(neemBestellingAan(leeg(), bestelling.id));
+    assert.ok(recepten.length >= 2 && recepten.length <= 4, `twee tot vier recepten om uit te kiezen, nu ${recepten.length}`);
+    assert.ok(recepten.every(recipe => recipe.contentStatus === 'ready'));
+    assert.ok(recepten.some(recipe => pastBijBestelling(bestelling, recipe)));
+  }
 });
 
 test('de bestelschermen gebruiken de gedeelde vormtaal', () => {

@@ -97,6 +97,7 @@ export function OvenInteraction({ step, oven, onOvenChange, onComplete }: {
   onOvenChange: (patch: Partial<OvenState>) => void; onComplete: () => void;
 }) {
   const c = step.oven;
+  const ovenschaal = step.trayKind === 'dish';
   const baking = oven.status === 'baking';
   const finished = oven.status === 'finished';
   const progress = Math.min(1, oven.elapsedMinutes / c.minimumMinutes);
@@ -104,7 +105,7 @@ export function OvenInteraction({ step, oven, onOvenChange, onComplete }: {
   return <div className="baking-interaction">
     <div className={`baking-oven${oven.powered ? ' is-warm' : ''}`}>
       <img src={`/assets/library/treehouse/furnishings/oven${oven.doorOpen ? '-open' : ''}.webp`} alt={oven.doorOpen ? 'Open oven' : 'Gesloten oven'} />
-      {oven.trayPlaced && <div className="baking-oven__tray"><img src={step.panAsset} alt="Bakvorm in de oven" /><span className="baking-oven__food" style={{ gridTemplateColumns: `repeat(${Math.min(4, step.portions)}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${Math.ceil(step.portions / 4)}, minmax(0, 1fr))`, transform: `scaleY(${.45 + progress * .55})`, filter: `brightness(${oven.result === 'dark' ? .55 : .85 + progress * .15})` }}>{Array.from({ length: step.portions }, (_, i) => <span key={i} className="baking-oven__piece"><i style={{ opacity: 1 - progress }} /><img src={step.resultAsset} alt="" style={{ opacity: progress }} /></span>)}</span></div>}
+      {oven.trayPlaced && (ovenschaal ? <div className="baking-oven__tray"><img src={progress >= 1 ? step.resultAsset : step.rawAsset ?? step.panAsset} alt="Ovenschaal in de oven" /></div> : <div className="baking-oven__tray"><img src={step.panAsset} alt="Bakvorm in de oven" /><span className="baking-oven__food" style={{ gridTemplateColumns: `repeat(${Math.min(4, step.portions)}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${Math.ceil(step.portions / 4)}, minmax(0, 1fr))`, transform: `scaleY(${.45 + progress * .55})`, filter: `brightness(${oven.result === 'dark' ? .55 : .85 + progress * .15})` }}>{Array.from({ length: step.portions }, (_, i) => <span key={i} className="baking-oven__piece"><i style={{ opacity: 1 - progress }} /><img src={step.resultAsset} alt="" style={{ opacity: progress }} /></span>)}</span></div>)}
     </div>
     {step.action !== 'cool' && <label className="baking-slider"><Thermometer aria-hidden="true" /> Oven: {oven.temperature} °C
       <input type="range" min={c.minimumTemperature} max={c.maximumTemperature} step={c.temperatureStep} value={Math.max(c.minimumTemperature, oven.temperature)} aria-label="Oventemperatuur" disabled={baking} onChange={e => onOvenChange({ temperature: Number(e.target.value), preheated: false, ...(oven.powered ? { status: 'preheating' } : {}) })} />
@@ -113,19 +114,19 @@ export function OvenInteraction({ step, oven, onOvenChange, onComplete }: {
     {step.action === 'preheat' && <>
       <p>Verwarm voor op {c.targetTemperature} °C.</p>
       {!oven.powered ? <Button startIcon={<Power />} disabled={oven.temperature !== c.targetTemperature} onClick={() => onOvenChange({ powered: true, status: 'preheating', chosenMinutes: c.minimumMinutes })}>Oven aan</Button>
-        : <Button disabled={oven.temperature !== c.targetTemperature} onClick={onComplete}>Verder met het beslag</Button>}
+        : <Button disabled={oven.temperature !== c.targetTemperature} onClick={onComplete}>{ovenschaal ? 'Verder met de ingrediënten' : 'Verder met het beslag'}</Button>}
     </>}
     {step.action === 'bake' && <>
       <p role="status">{finished ? feedback : oven.preheated ? 'De oven is warm.' : 'De oven warmt op.'}</p>
       {!(finished && oven.result === 'good') && <div className="baking-controls"><Button variant="quiet" startIcon={<DoorOpen />} disabled={baking} onClick={() => onOvenChange({ doorOpen: !oven.doorOpen })}>{oven.doorOpen ? 'Deur sluiten' : 'Deur openen'}</Button>
-        {oven.doorOpen && <Button variant="quiet" disabled={oven.trayPlaced} onClick={() => onOvenChange({ trayPlaced: true })}>Bakvorm plaatsen</Button>}</div>}
+        {oven.doorOpen && <Button variant="quiet" disabled={oven.trayPlaced} onClick={() => onOvenChange({ trayPlaced: true })}>{ovenschaal ? 'Ovenschaal plaatsen' : 'Bakvorm plaatsen'}</Button>}</div>}
       {!finished && <label className="baking-slider"><Timer aria-hidden="true" /> Baktijd: {oven.chosenMinutes} minuten
         <input type="range" min={c.minimumSelectableMinutes} max={c.maximumSelectableMinutes} step="1" aria-label="Baktijd in minuten" value={oven.chosenMinutes || c.minimumMinutes} disabled={baking} onChange={e => onOvenChange({ chosenMinutes: Number(e.target.value) })} />
       </label>}
       <span className="baking-caption">Recept: {c.minimumMinutes}–{c.maximumMinutes} minuten · 1 bakminuut duurt hier {c.gameSecondsPerMinute} seconden.</span>
       {baking ? <><progress max={oven.chosenMinutes} value={oven.elapsedMinutes} aria-label="Bakvoortgang" /><output>{oven.elapsedMinutes.toFixed(1)} / {oven.chosenMinutes} bakminuten</output></>
         : !finished ? <Button startIcon={<Play />} disabled={!ovenCanStart(oven, c)} onClick={() => onOvenChange({ status: 'baking', result: null })}>Start bakken</Button>
-        : oven.result === 'good' ? <Button onClick={onComplete}>Haal ze uit de oven</Button>
+        : oven.result === 'good' ? <Button onClick={onComplete}>{ovenschaal ? 'Haal de schaal uit de oven' : 'Haal ze uit de oven'}</Button>
         : oven.result === 'underdone' ? <Button disabled={!ovenCanStart({ ...oven, chosenMinutes: oven.elapsedMinutes + 3 }, c)} onClick={() => onOvenChange({ chosenMinutes: Math.min(90, oven.elapsedMinutes + 3), status: 'baking', result: null })}>Nog 3 bakminuten</Button>
         : <Button startIcon={<RotateCcw />} onClick={() => onOvenChange({ status: 'ready', result: null, elapsedMinutes: 0, heatExposure: 0, chosenMinutes: c.minimumMinutes })}>Oefen het bakken opnieuw</Button>}
     </>}

@@ -16,7 +16,11 @@ import MatenChallenge from './MatenChallenge';
 import MathHelp from './MathHelp';
 import { techniqueHint } from './techniqueHint';
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+import { analytics } from '../../services/analytics';
+
 export default function MathSession({ game, level, onFinish, onSound = () => undefined, onVraag }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void }) {
+  useActivityAnalytics(game === 'maten' ? null : `math:${game}`);
   const [questions] = useState(() => game === 'add-subtract' ? maakRedactiedeck(level) : game === 'maten' ? maakMatendeck(level) : createQuestionDeck(game, level));
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number>();
@@ -38,10 +42,10 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
   const foutenMogen = game === 'add-subtract';
   useEffect(() => { if (index && keyboard.current) workspace.current?.querySelector<HTMLButtonElement>('.math-challenge button:not(:disabled)')?.focus(); }, [index]);
   const volgende = useCallback(() => {
-    if (index === 9) { if (!finished.current) { finished.current = true; finishRef.current({ ...stats.current }); } return; }
+    if (index === 9) { if (!finished.current) { finished.current = true; if (game !== 'maten') analytics().complete(`math:${game}`); finishRef.current({ ...stats.current }); } return; }
     answered.current = false; hadMistake.current = false;
     setIndex(current => current + 1); setSelected(undefined); setFeedback(null); setHint(false);
-  }, [index]);
+  }, [index, game]);
   const verderRef = useRef(volgende); verderRef.current = volgende;
   useEffect(() => {
     if (feedback !== 'correct' || foutenMogen) return;

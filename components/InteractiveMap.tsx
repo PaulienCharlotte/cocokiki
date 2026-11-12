@@ -1,3 +1,4 @@
+import { loadStaticJson } from '../services/staticJson';
 
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
@@ -105,15 +106,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const handleZoomOut = () => { if (mapRef.current) mapRef.current.zoomOut(); };
 
   useEffect(() => {
+    if (worksheet.dataset) return;
     let cancelled = false;
-    fetch('/data/geojson/nl-all.geo.json')
-      .then(res => res.json())
+    const needsNetherlands = selectedProvince === 'all' || selectedProvince === 'water-nl' || !WORLD_AREA_IDS.has(selectedProvince);
+    if (needsNetherlands && !usesEuropeanBorders) loadStaticJson('/data/geojson/nl-all.geo.json')
       .then(data => { if (!cancelled) setGeoData(data); }).catch(() => {});
-    fetch('/data/geojson/europe-countries.geo.json')
-      .then(res => res.json())
+    // Europa is ook de bestaande contextlaag rond Nederlandse kaarten.
+    loadStaticJson('/data/geojson/europe-countries.geo.json')
       .then(data => { if (!cancelled) setEuropeGeoData(data); }).catch(() => {});
     return () => { cancelled = true; };
-  }, []);
+  }, [selectedProvince, usesEuropeanBorders, worksheet.dataset]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;

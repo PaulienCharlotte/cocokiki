@@ -30,3 +30,15 @@ dist-ssr
 
 # De contactvellen voor het taartenatelier zijn bronmateriaal, geen app-bestanden.
 _inbox-taartenatelier/
+
+# Lokale publicatiepakketten en herstelkopieën; de bronbestanden staan wel in Git.
+/output/deploy/
+/components/cooking/NutrientMemoryFlow 2.tsx
+/components/treehouse/InventorySellButton 2.tsx
+/components/treehouse/RoomNavigation 2.tsx
+/scripts/exportHomeRecipes 2.mjs
+
+# Alleen het voorbeeldbestand mag publieke configuratie bevatten.
+.env
+.env.*
+!.env.example

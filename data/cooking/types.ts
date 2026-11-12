@@ -2,7 +2,7 @@ import type { CookingSession, PreparationConfig } from './preparation';
 import type { NutrientMemoryConfig } from './nutrients';
 import type { CookingTip } from './tips';
 export type RecipeId = string;
-export type RecipeCategory = 'breakfast' | 'snack' | 'baking';
+export type RecipeCategory = 'breakfast' | 'snack' | 'baking' | 'cooking';
 export type RecipeAvailability = 'playable' | 'preview' | 'locked';
 export type ContentStatus = 'ready' | 'pending';
 
@@ -184,7 +184,7 @@ export interface RecipeConfig {
   preparation?: PreparationConfig;
   education?: { math: MathChallengeConfig[]; nutrientMemory?: NutrientMemoryConfig };
   cookingTips?: CookingTip[];
-  homeRecipe?: { introduction: string; steps: string[]; safety: string; servingTip: string; allergens: string[]; optionalIngredients?: string[]; extraEquipment?: string[] };
+  homeRecipe?: { nutrition?: Array<{ title: string; text: string }>; sources?: Array<{ title: string; url: string }>; introduction: string; steps: string[]; safety: string; servingTip: string; allergens: string[]; optionalIngredients?: string[]; extraEquipment?: string[] };
 }
 
 export type JourneyStage = 'overview' | 'discovery' | 'nutrient-memory' | 'challenges' | 'shopping' | 'cooking' | 'complete';

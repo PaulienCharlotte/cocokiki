@@ -6,3 +6,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# De production build genereert dist/_headers met exacte gehashte assetpaden.
+# HTML en vaste public-URL's worden opnieuw gevalideerd; geen immutable op /assets/*.
+# Handmatige deployments blijven een projectinstelling in Netlify; hier niet wijzigen.
