@@ -1,0 +1,14 @@
+Use case: stylized-concept
+Asset type: transparent square game-menu illustration for CocoKiki, matching the existing wooden 3D math icons (honey balance and blueberry baskets).
+Primary request: one coherent, friendly miniature still-life representing measurement of length, capacity and mass: a chunky wooden ruler resting diagonally behind a clear measuring jug with a muted eucalyptus-green handle and some soft blue-green water, beside a small warm brass calibration weight. Three immediately recognizable objects, tightly grouped as one icon, with a few tiny sage leaves at the base like the existing natural CocoKiki illustrations.
+Style: polished storybook 3D illustration, warm carved wood with visible grain, rounded crafted shapes, tactile material details, soft upper-left lighting and gentle ambient shadows. Consistent perspective, slightly elevated three-quarter view. Natural wood, moss/eucalyptus greens, soft ochre brass, warm cream. Child-friendly and clearly readable when small.
+Composition: centered and fully visible, square canvas, generous transparent margin, no scene background, no frame or panel. Objects occupy about 80 percent of the square. The ruler, jug and weight must each remain distinct. Weight has a simple rounded lifting knob; jug has a pouring spout and handle. Ruler and jug have sparse regular tick marks only; the asset is decorative, not an actual measurement tool.
+Constraints: true transparent background, clean alpha edges, no baked checkerboard, no floor plane, no cast shadow extending far outside the objects. No people, characters, faces, text, numbers, letters, labels, logos or mathematical symbols. Avoid neon colors and flat clipart. Do not crop any object.
+
+Generation: built-in image_gen, 2026-11-12. No CLI/API fallback.
+Final asset: public/games/school/math/icons/maten.webp (768x768, transparent WebP).
+
+Integration completed locally after synchronizing main c4fb792:
+- Removed tekening: false from the maten entry.
+- Removed temporary Ruler placeholders from MathHub and WorldLocationLayout.
+- The mathIcon path is /games/school/math/icons/maten.webp.

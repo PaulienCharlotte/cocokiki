@@ -10,6 +10,7 @@ import './flashcard.css';
 import { mathEnvironments } from './assets';
 import { useMathSound } from './useMathSound';
 import { CURRENCY_CHANGE_EVENT, loadCurrency } from '../../services/currency';
+import { analytics } from '../../services/analytics';
 const BabyLua = lazy(() => import('../red-baby-lua/RedBabyLuaGame'));
 
 export default function MathModule({ onBack = () => undefined, onHome = onBack, initialGame }: { onBack?: () => void; onHome?: () => void; initialGame?: MathGameId }) {
@@ -34,6 +35,7 @@ export default function MathModule({ onBack = () => undefined, onHome = onBack, 
   }, [game, level]);
   const start = (id: MathGameId, nextLevel: MathLevel) => {
     if (!levelUnlocked(loadMathProgress(), id, nextLevel)) return;
+    if (id !== 'race' && id !== 'multiply' && id !== 'maten') analytics().start(`math:${id}`, true);
     setGame(id); setLevel(nextLevel); setAttempt(value => value + 1); setOutcome(null);
   };
   const [vraag, setVraag] = useState('');

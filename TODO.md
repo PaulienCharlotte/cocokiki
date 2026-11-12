@@ -1,6 +1,6 @@
 # CocoKiki backlog
 
-Laatst bijgewerkt: 21 oktober 2026
+Laatst bijgewerkt: 31 oktober 2026
 
 De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarna de visuele basis, vervolgens merkonderdelen en ten slotte het interactieve spelmaatje.
 
@@ -59,3 +59,42 @@ De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarn
   - Gebruik dezelfde plaatsenset en spelregels; alleen het type weetje verandert.
   - Laat de definitieve weetjes per interessegebied eerst inhoudelijk samenstellen en controleren voordat ze in het spel komen.
   - Bewaar de gekozen interesse lokaal, maar bied altijd een neutrale standaardset met algemene aardrijkskundige weetjes.
+
+## 7. Privacy en analytics - uitgesteld
+
+Besluit van 31 oktober 2026: pas hervatten als CocoKiki serieuzer wordt.
+De huidige concept-privacypagina en nieuwe analyticscode niet publiceren.
+Geen persoonlijke beheerdergegevens openbaar maken zonder afzonderlijke
+goedkeuring. Analytics uit laten; geen deployment of databasewijziging uitvoeren
+op basis van deze backlog. De Supabase-serverfunctie is al gedeployed, maar
+staat uit. De privacypagina is lokaal bereikbaar op `/privacy`.
+
+Resterende acties, in deze volgorde:
+
+1. [ ] Bij hervatting eerst de werkelijke live status opnieuw controleren:
+   activatievlaggen, gepubliceerde code, toegangsrechten en eventuele Cron-taak.
+   De verwijdermigratie is voorbereid, maar uitvoering en actieve planning zijn
+   niet bevestigd; niet aannemen dat de bewaartermijn al wordt gehandhaafd.
+2. [ ] Bepalen welke beheerder- en contactgegevens noodzakelijk zijn en hoe
+   privacyvragen kunnen worden afgehandeld met zo weinig mogelijk publieke
+   persoonsgegevens. Geen KvK-inschrijving of bedrijfsgegevens veronderstellen.
+   Daarna pas het privacyconcept afronden, inclusief grondslag, belangen van
+   kinderen, eventuele toestemming en beoordeling van de DPIA-noodzaak.
+3. [ ] Open leveranciers- en beveiligingspunten afronden: Netlify/Supabase-logs
+   en back-ups, Esri/unpkg, regio, doorgiften en afspraken waar nodig;
+   beheerderstoegang beperken en MFA controleren. Deze controles zijn nog niet
+   volledig afgerond.
+4. [ ] Na vaststelling van de termijn de voorbereide verwijdermigratie
+   `supabase/migrations/202610310002_activity_events_retention.sql` uitvoeren.
+   Eerst in een testproject de SQL-integratietest draaien; daarna de dagelijkse
+   planning, historie, verwijdergrens en behouden RLS-rechten controleren.
+   De SQL is geimplementeerd als bestand, niet op Supabase getest.
+5. [ ] End-to-end testen met synthetische events: succesvolle opslag,
+   ontdubbeling, limiet van 120 nieuwe events per minuut, toegangsweigering,
+   netwerkuitval en verwijdering. Lokale applicatietests/build zijn eerder
+   geslaagd; succesvolle live ingestie en automatische verwijdering zijn nog
+   niet bevestigd. Publicatie en activatie pas na afzonderlijke goedkeuring.
+
+Uitwerking: `docs/privacy-activation-checklist.md` en
+`docs/supabase-analytics.md`. Deze documenten en de privacypagina bevatten nog
+open TODO's en zijn geen juridische vrijgave.

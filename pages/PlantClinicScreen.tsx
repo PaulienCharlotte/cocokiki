@@ -92,6 +92,8 @@ function gereedschapKeuze(juist: TreatmentId): TreatmentId[] {
 }
 
 /** Het spreekuur: Kiki brengt een zieke plant binnen en het kind is de dokter. */
+import { useActivityAnalytics } from '../services/useActivityAnalytics';
+
 export default function PlantClinicScreen() {
   const [clinic, setClinic] = useState<ClinicState>(loadClinic);
   const [patient, setPatient] = useState<Patient | null>(() => nextPatient(loadClinic()));
@@ -103,6 +105,7 @@ export default function PlantClinicScreen() {
   const [hint, setHint] = useState<string | null>(null);
   const [melding, setMelding] = useState<string | null>(null);
   const [afloop, setAfloop] = useState<{ coins: number; stampEarned: boolean } | null>(null);
+  useActivityAnalytics(patient ? 'plant-clinic' : null, patient?.consultId, afloop !== null);
   const [consult, setConsult] = useState(1);
   const [oogst, setOogst] = useState({ coins: 0, stamps: 0 });
   const [loep, setLoep] = useState<'blad' | 'aarde' | null>(null);

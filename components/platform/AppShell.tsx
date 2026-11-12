@@ -1,5 +1,6 @@
 import React from 'react';
 import WorldTopBar from './WorldTopBar';
+import SiteFooter from './SiteFooter';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -17,5 +18,6 @@ export default function AppShell({ children, coins, onHome, onBack, backLabel = 
       <WorldTopBar coins={coins} onHome={onHome} onBack={onBack} backLabel={backLabel} onNavigate={onNavigate} activePath={activePath} embedded worldShortcut />
     </div>
     {children}
+    <SiteFooter onNavigate={onNavigate} />
   </div>;
 }

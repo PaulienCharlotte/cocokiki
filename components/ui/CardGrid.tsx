@@ -52,7 +52,7 @@ export default function CardGrid({ cards, onChoose, kolommen = 3, label, classNa
       >
         {/* Een tekening vult het bovenvlak; een icoon krijgt een klein vierkantje. */}
         {(kaart.beeld || kaart.icoon) && <span className={`ck-kaart__beeld${kaart.beeld ? '' : ' is-icoon'}`}>
-          {kaart.beeld ? <img src={kaart.beeld} alt="" /> : kaart.icoon}
+          {kaart.beeld ? <img src={kaart.beeld} alt="" loading="lazy" decoding="async" /> : kaart.icoon}
         </span>}
         <span className="ck-kaart__tekst">
           <strong>{kaart.titel}</strong>

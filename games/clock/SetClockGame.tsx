@@ -15,6 +15,8 @@ interface SetClockGameProps {
 
 const ROUND_COUNT = 5;
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+
 export default function SetClockGame({ initialLevel, completedLevels, onBack, onComplete }: SetClockGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [target, setTarget] = useState(() => generateTime(initialLevel));
@@ -24,6 +26,7 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
   const [hint, setHint] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
   const roundId = useRef(crypto.randomUUID());
+  useActivityAnalytics('clock:set-clock', roundId.current, reward !== null);
   const revealed = useRef(false), eligible = useRef(0);
 
   const reset = (nextLevel = level) => {

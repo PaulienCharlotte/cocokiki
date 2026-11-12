@@ -19,7 +19,14 @@ export function pastBijBestelling(bestelling: Bestelling, recipe: RecipeConfig):
 
 /** De recepten waaruit een kind mag kiezen: wat het nu kan maken. */
 export function keuzeRecepten(progress: CookingProgressState): RecipeConfig[] {
-  return RECIPES.filter(recipe => getRecipeAccess(recipe, progress).playable);
+  const recepten = RECIPES.filter(recipe => getRecipeAccess(recipe, progress).playable);
+  const bestelling = lopendeBestelling(progress)?.bestelling;
+  if (!bestelling) return recepten;
+  // Met een groter kookboek blijven er maximaal vier keuzes aan de toonbank.
+  // Er staat altijd een passend recept tussen, ook als dat achteraan staat.
+  const passend = recepten.filter(recipe => pastBijBestelling(bestelling, recipe)).slice(0, 2);
+  const anders = recepten.filter(recipe => !pastBijBestelling(bestelling, recipe));
+  return [...passend, ...anders.slice(0, 4 - passend.length)];
 }
 
 /**
@@ -44,7 +51,7 @@ export function keerOpties(bestelling: Bestelling, recipe: RecipeConfig): number
  * bij hoort zou een kind vastzetten, dus die wacht tot het zover is.
  */
 export function openBestellingen(progress: CookingProgressState): Bestelling[] {
-  const haalbaar = keuzeRecepten(progress);
+  const haalbaar = RECIPES.filter(recipe => getRecipeAccess(recipe, progress).playable);
   return BESTELLINGEN.filter(bestelling => progress.orders?.[bestelling.id]?.status !== 'geleverd'
     && haalbaar.some(recipe => pastBijBestelling(bestelling, recipe)));
 }

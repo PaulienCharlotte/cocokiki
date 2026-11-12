@@ -1,5 +1,5 @@
 import React, { useId, useState } from 'react';
-import { ArrowLeft, BookOpen, Calculator, ClipboardList, Clock3, Compass, CookingPot, Flower2, HeartPulse, Leaf, Ruler, Sprout } from 'lucide-react';
+import { ArrowLeft, BookOpen, Calculator, ClipboardList, Clock3, Compass, CookingPot, Flower2, HeartPulse, Leaf, Sprout } from 'lucide-react';
 import { Button } from '../../design-system';
 import { ACTIVITIES_BY_ID, type ActivityDefinition } from '../../platform/activityRegistry';
 import type { LocationIcon, WorldLocation } from '../../platform/worldLocations';
@@ -15,9 +15,6 @@ import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
  * Het klembord is de opdracht die aan de balie binnenkomt: er staat iemand met
  * een wens, en daar hoort een knop bij. Welke knop, staat hieronder.
  */
-/** Tot er een tekening is, krijgt een kaart een icoon in een vierkantje. */
-const ZONDER_TEKENING: Record<string, React.ReactNode> = { 'math:maten': <Ruler size={26} aria-hidden="true" /> };
-
 const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
   bestellingen: { label: 'Naar de toonbank', pad: '/treehouse/cookbook?toonbank=1' },
   plantendokter: { label: 'Naar het spreekuur', pad: '/plantendokter' },
@@ -29,6 +26,10 @@ const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
  * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
  */
 const DIRECTE_AVONTUREN: Record<string, string> = {
+  bestellingen: '/treehouse/cookbook?toonbank=1',
+  kookboek: '/treehouse/cookbook',
+  voeding: '/cooking/discover',
+  keuken: '/cooking/kitchen',
   taartenatelier: '/games/taartenatelier',
 };
 
@@ -61,12 +62,11 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         titel: activity.title,
         onder: activity.status === 'coming-soon' ? 'Binnenkort beschikbaar' : activity.subtitle,
         beeld: activity.image,
-        icoon: ZONDER_TEKENING[activity.id],
       }))}
       onChoose={id => open(ACTIVITIES_BY_ID[id])}
     />;
   };
-  if (location.presentation === 'game') return <main className="world-location world-location--game" aria-label={location.name} style={{
+  if (location.presentation === 'game') return <main className={`world-location world-location--game world-location--${location.id}`} aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
     ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),

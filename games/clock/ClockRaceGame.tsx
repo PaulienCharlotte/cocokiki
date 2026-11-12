@@ -20,6 +20,8 @@ const MODES: Array<{ id: ClockRaceMode; label: string }> = [
   { id: 'mixed', label: 'Allebei' },
 ];
 
+import { useActivityAnalytics } from '../../services/useActivityAnalytics';
+
 export default function ClockRaceGame({ initialLevel, completedLevels, onBack, onComplete }: ClockRaceGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [mode, setMode] = useState<ClockRaceMode>(loadClockRaceMode);
@@ -29,6 +31,7 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
   const [wrongSelections, setWrongSelections] = useState<string[]>([]);
   const [reward, setReward] = useState<number | null>(null);
   const roundId = useRef(crypto.randomUUID());
+  useActivityAnalytics('clock:race', roundId.current, reward !== null);
 
   const reset = (nextLevel = level) => {
     roundId.current = crypto.randomUUID();

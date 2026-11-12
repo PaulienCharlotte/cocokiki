@@ -143,7 +143,7 @@ test('journey stages are sequential and known ingredients can be skipped explici
 });
 
 test('ingredient discovery content defines the three requested questions and rewards', () => {
-  assert.deepEqual(new Set(INGREDIENT_DISCOVERIES.map(item => item.ingredientId)), new Set(['banana', 'eggs', 'oats', 'yogurt', 'strawberry', 'flour', 'sugar', 'milk', 'blueberry', 'sunflower-oil', 'baking-powder', 'salt', 'vanilla-extract']));
+  assert.deepEqual(new Set(INGREDIENT_DISCOVERIES.map(item => item.ingredientId)), new Set(['banana', 'eggs', 'oats', 'yogurt', 'strawberry', 'flour', 'sugar', 'milk', 'blueberry', 'sunflower-oil', 'baking-powder', 'salt', 'vanilla-extract', 'wholewheat-pasta', 'brown-rice', 'chickpeas', 'tomato', 'pepper', 'spinach', 'apple', 'olive-oil']));
   assert.ok(INGREDIENT_DISCOVERIES.every(item => item.rewardCoins === 5));
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.banana.questions[0].correctOptionId, 'tropical');
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.eggs.questions[0].correctOptionId, 'chicken');

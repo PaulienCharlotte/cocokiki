@@ -1,9 +1,11 @@
+import { GEZONDE_ONTDEKKINGEN } from './healthyDiscoveries';
 import { COOKING_ASSETS } from './catalog';
 import type { IngredientDiscoveryConfig } from './types';
 import { MUFFIN_DISCOVERIES } from './muffinIngredients';
 
 export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
   ...MUFFIN_DISCOVERIES,
+  ...GEZONDE_ONTDEKKINGEN,
   {
     ingredientId: 'banana',
     title: 'Ontdek de banaan!',

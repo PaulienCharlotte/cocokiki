@@ -24,6 +24,7 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
   const [over, setOver] = useState(false);
   const timerRef = useRef<number | null>(null);
   const landedRef = useRef(false);
+  const gesleept = useRef(false);
   useEffect(() => () => { if (timerRef.current !== null) window.clearTimeout(timerRef.current); }, []);
 
   const isOverTarget = (point: { x: number; y: number }) => {
@@ -52,13 +53,18 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
         dragMomentum={false}
         whileTap={{ scale: .97 }}
         whileDrag={{ scale: 1.1, zIndex: 3 }}
+        onPointerDown={() => { gesleept.current = false; }}
+        onDragStart={() => { gesleept.current = true; }}
         onDrag={(_, info: PanInfo) => setOver(isOverTarget(info.point))}
         onDragEnd={(_, info: PanInfo) => {
           if (isOverTarget(info.point)) return land();
           setOver(false);
           onMiss();
         }}
-        onClick={land}
+        onClick={event => {
+          // Loslaten na een sleepgebaar is geen tweede tik op het ingrediënt.
+          if (!gesleept.current || event.detail === 0) land();
+        }}
         aria-label={`${sourceLabel} naar ${targetLabel.toLowerCase()}`}
       >
         <CookingAssetImage src={sourceAsset} alt="" />

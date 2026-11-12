@@ -20,7 +20,7 @@ export default function RecipeCard({ recipe, journey, progress, compact = false,
   return <article className={`recipe-card${compact ? ' recipe-card--compact' : ''}${locked ? ' is-locked' : ''}`}>
     <button type="button" className="recipe-card__button" onClick={() => onOpen(recipe)} aria-label={`${recipe.name}: ${status}`}>
       <span className="recipe-card__visual">
-        <CookingAssetImage className="recipe-card__art" src={recipe.image} alt="" />
+        <CookingAssetImage loading="lazy" className="recipe-card__art" src={recipe.image} alt="" />
         <span className={`recipe-card__status recipe-card__status--${statusClass}`}>
           {access.completed || journey?.status === 'completed' ? <Check size={14} /> : locked ? <LockKeyhole size={14} /> : access.playable ? <Play size={14} /> : null}
           {status}

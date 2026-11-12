@@ -7,6 +7,7 @@ import { FLAG_CONTINENTS, FLAG_MEMORY_PAIRS, continentFlagPairs, nextFlagRound, 
 import type { MemoryPair } from '../data/learning';
 import { PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
 import { awardCurrencyOnce } from '../services/currency';
+import { analytics } from '../services/analytics';
 
 export { FLAG_MEMORY_PAIRS } from '../data/flagCatalog';
 
@@ -20,6 +21,7 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
     awardCurrencyOnce(`flags-memory:${roundId}:${id}`, points);
   }, [roundId]);
   const start = (next: MemoryPair[]) => {
+    analytics().start('flags-memory', true);
     setPairs(next); setRound(value => value + 1); setRoundId(crypto.randomUUID());
   };
   const choose = (id: FlagContinent) => { setContinent(id); start(nextFlagRound(id, readProgress())); };
@@ -43,7 +45,7 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
   </main>;
   return <main className="dream-flags-memory" aria-label="Vlaggenmemory">
     <div className="flag-continents__toolbar"><IconButton label="Terug naar de werelddelen" icon={<ArrowLeft size={19} />} onClick={() => setContinent(null)} /><strong>{FLAG_CONTINENTS.find(item => item.id === continent)?.label}</strong><span>{continentFlagPairs(continent).length} vlaggen</span></div>
-    <React.Fragment key={round}><LocationMemoryGame mode="memory" pairs={pairs} choicePool={FLAG_MEMORY_PAIRS} onAnswer={answer}
+    <React.Fragment key={round}><LocationMemoryGame analyticsId="flags-memory" mode="memory" pairs={pairs} choicePool={FLAG_MEMORY_PAIRS} onAnswer={answer}
       onContinue={() => start(nextFlagRound(continent, readProgress()))}
       onRepeat={() => start(pairs)} onRetry={ids => start(pairs.filter(pair => ids.includes(pair.id)))} onExit={() => setContinent(null)} /></React.Fragment>
   </main>;

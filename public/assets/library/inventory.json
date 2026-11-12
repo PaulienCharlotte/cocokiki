@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T12:58:17.211Z",
-  "count": 591,
+  "generatedAt": "2026-11-11T10:35:26.920Z",
+  "count": 607,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -173,6 +173,102 @@
     {
       "id": "assets:library:cooking:fruit-yogurt:yogurt-bowl",
       "path": "/assets/library/cooking/fruit-yogurt/yogurt-bowl.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:apple-oat-bake",
+      "path": "/assets/library/cooking/healthy/apple-oat-bake.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:apple-oat-cooked",
+      "path": "/assets/library/cooking/healthy/apple-oat-cooked.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:baking-dish",
+      "path": "/assets/library/cooking/healthy/baking-dish.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:brown-rice-chickpeas",
+      "path": "/assets/library/cooking/healthy/brown-rice-chickpeas.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:brown-rice",
+      "path": "/assets/library/cooking/healthy/brown-rice.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:chickpeas",
+      "path": "/assets/library/cooking/healthy/chickpeas.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:oat-bake-raw",
+      "path": "/assets/library/cooking/healthy/oat-bake-raw.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:omelette-raw",
+      "path": "/assets/library/cooking/healthy/omelette-raw.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:pasta-pot",
+      "path": "/assets/library/cooking/healthy/pasta-pot.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:prep-board",
+      "path": "/assets/library/cooking/healthy/prep-board.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:rice-pot",
+      "path": "/assets/library/cooking/healthy/rice-pot.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:stockpot",
+      "path": "/assets/library/cooking/healthy/stockpot.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:vegetable-omelette",
+      "path": "/assets/library/cooking/healthy/vegetable-omelette.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:vegetable-pan",
+      "path": "/assets/library/cooking/healthy/vegetable-pan.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:wholewheat-pasta",
+      "path": "/assets/library/cooking/healthy/wholewheat-pasta.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:wholewheat-vegetable-pasta",
+      "path": "/assets/library/cooking/healthy/wholewheat-vegetable-pasta.webp",
       "category": "cooking",
       "format": "webp"
     },

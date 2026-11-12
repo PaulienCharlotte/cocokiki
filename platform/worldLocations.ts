@@ -70,24 +70,20 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   {
     id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
     background: '/dreamworld/locations/coco-bakery.webp',
-    backgroundPosition: { desktop: 'center', mobile: '28% center' },
+    backgroundPosition: { desktop: '28% center', mobile: '18% center' },
     clipboard: '/assets/library/cooking/klembord.webp',
     accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
-    // Geen losse activiteitenkaarten: twee van de drie beloofden alleen
-    // "binnenkort", en voedingsstoffen staat al in de encyclopedie in de
-    // bovenbalk. Wat je hier doet begint bij een bestelling.
+    // Vaste bestemmingen openen rechtstreeks; de toonbank bevat de opdrachten.
     activities: [],
     featuredActivities: RECIPES.map(recipe => `recipe:${recipe.id}`),
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],
     adventurePreviews: [
-      { id: 'bestellingen', title: 'Bestellingen', description: 'Er staat iemand aan de toonbank met een wens. Zoek uit welk recept erbij past en hoe vaak je moet bakken.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'available' },
-      { id: 'taartenatelier', title: 'De verjaardagstaart', description: 'Er is iemand jarig. Kies een taart, teken erop met de spuitzak en leg er versieringen op. Net zo gek als je zelf wilt.', image: '/assets/library/cooking/versieringen/toef-roze.webp', tone: 'berry', status: 'available' },
-      { id: 'secret-recipe', title: 'Het geheime recept', description: 'Coco heeft een oud recept gevonden. Wat zou er op de ontbrekende stukjes staan?', image: '/assets/library/cooking/baking/vanilla-extract.webp', tone: 'sage', status: 'locked' },
-      { id: 'missing-ingredients', title: 'De verdwenen ingrediënten', description: 'De bakkerij gaat bijna open, maar een paar ingrediënten zijn zoek. Waar zijn ze gebleven?', image: '/games/shop/products/blueberry.webp', tone: 'sky', status: 'locked' },
-      { id: 'delivery-chaos', title: 'De bezorgchaos', description: 'De bestellingen staan klaar. Alleen zijn de pakketjes door elkaar geraakt!', image: '/assets/library/cooking/baking/muffin-pan.webp', tone: 'sage', status: 'locked' },
-      { id: 'baking-contest', title: 'De bakwedstrijd', description: 'Er komt een bakwedstrijd aan. Coco zoekt een bakmaatje voor een heerlijke inzending.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'honey', status: 'locked' },
+      { id: 'bestellingen', title: 'De toonbank', description: 'Help een klant met een kookopdracht of een verjaardagstaart.', image: '/assets/library/cooking/klembord.webp', tone: 'honey', status: 'available' },
+      { id: 'kookboek', title: 'Het kookboek', description: 'Kies een recept of versier vrij een taart.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'sage', status: 'available' },
+      { id: 'taartenatelier', title: 'Taart versieren', description: 'Maak en versier je eigen feestelijke taart.', image: '/assets/library/cooking/taarten/roze-rand.webp', tone: 'berry', status: 'available' },
+      { id: 'voeding', title: 'Ontdek je eten', description: 'Ontdek samen met Coco wat je lichaam met eten doet.', image: '/assets/library/cooking/healthy/wholewheat-pasta.webp', tone: 'sage', status: 'available' },
     ],
   },
   {

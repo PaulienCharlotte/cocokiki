@@ -1,3 +1,4 @@
+import worldMap from '../assets/world-map-v2.webp';
 import { ASSET_LIBRARY as A } from '../data/assetLibrary';
 import { mathIcon, MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
 
@@ -23,7 +24,7 @@ export interface DreamIsland {
   activities: IslandActivity[];
   future: readonly string[];
 }
-export const DREAMWORLD_IMAGE = '/dreamworld/world-map-v2.png';
+export const DREAMWORLD_IMAGE = worldMap;
 export const DREAMWORLD_RATIO = 1672 / 941;
 
 export interface WorldDestination {
@@ -77,6 +78,7 @@ export function islandForActivity(path: string): DreamIsland | undefined {
   const explicit = DREAM_ISLANDS.find(island => island.activities.some(item => item.path.split('?')[0] === pathname));
   if (pathname === '/encyclopedie') return ISLANDS_BY_ID[path.includes('tab=voeding') ? 'cooking' : 'plants'];
   if (explicit) return explicit;
+  if (pathname === '/cooking/kitchen') return ISLANDS_BY_ID.cooking;
   if (pathname.startsWith('/treehouse')) return ISLANDS_BY_ID.home;
   if (pathname.startsWith('/school/math') || pathname === '/games/red-baby-lua') return ISLANDS_BY_ID.math;
   return undefined;

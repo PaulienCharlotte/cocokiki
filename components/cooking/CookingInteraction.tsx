@@ -8,8 +8,12 @@ import { IngredientVessel, MeasureInteraction, OvenInteraction, PortionInteracti
 import CookingAssetImage from './CookingAssetImage';
 import DragToTarget from './DragToTarget';
 import KitchenScale from './KitchenScale';
+import HeatInteraction from './HeatInteraction';
+import CooktopStepInteraction from './CooktopStepInteraction';
+import type { CooktopZoneId } from '../../data/cooking/cooktopScene';
 
 interface Props {
+  cooktopZone?: CooktopZoneId;
   step: CookingStepConfig;
   state: CookingStepState;
   onChange: (patch: Partial<CookingStepState>) => void;
@@ -21,7 +25,7 @@ interface Props {
 function frameFor(frames: string[] | undefined, count: number, fallback: string) {
   return frames?.length ? frames[Math.min(count, frames.length - 1)] : fallback;
 }
-export default function CookingInteraction({ step, state, onChange, onComplete, onMiss, oven, onOvenChange }: Props) {
+export default function CookingInteraction({ step, state, onChange, onComplete, onMiss, oven, onOvenChange, cooktopZone = 'large' }: Props) {
   const toolControls = useAnimationControls();
   const vesselControls = useAnimationControls();
   const reduced = useReducedMotion();
@@ -33,6 +37,7 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
     return () => window.clearTimeout(timer);
   }, [step.id, state.phase, state.readyAt, onChange]);
 
+  if (step.mechanic === 'timed' || step.cooktop) return <CooktopStepInteraction step={step} state={state} zoneId={cooktopZone} onChange={onChange} onComplete={onComplete} />;
   if (step.mechanic === 'oven') return <OvenInteraction step={step} oven={oven ?? emptyOven()} onOvenChange={onOvenChange ?? (() => undefined)} onComplete={() => onComplete({ count: 1 })} />;
   if (step.mechanic === 'measure') return <MotionConfig reducedMotion="user"><MeasureInteraction step={step} state={state} onChange={onChange} onComplete={() => onComplete()} /></MotionConfig>;
   if (step.mechanic === 'portion') return <MotionConfig reducedMotion="user"><PortionInteraction step={step} state={state} onChange={onChange} onComplete={() => onComplete({ choice: state.choice ?? 'plain' })} /></MotionConfig>;
@@ -83,20 +88,7 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
         {state.quantity === step.target ? `Precies ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'}!` : `Maak er ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'} van`}
       </Button></div>;
   }
-  if (step.mechanic === 'heat') return <div className="cooking-heating">
-    <motion.div className="cooking-heating__pan" animate={state.count > 0 ? { scale: [1, 1.05, 1] } : {}} transition={{ duration: .4 }}><CookingAssetImage src={step.asset} /></motion.div>
-    <button type="button" className={`cooking-choice${state.count > 0 ? ' is-selected' : ''}`} onClick={() => onChange({ count: 1 })}><img src={step.addition.asset} alt="" /><span>{step.addition.label}</span>{state.count > 0 && <i className="cooking-tool__check" aria-hidden="true"><Check /></i>}</button>
-    <div className="cooking-heating__levels" role="group" aria-label="Warmtestand">{step.levels.map(level => <button key={level.value} type="button" className={`cooking-chip${state.heat === level.value ? ' is-selected' : ''}`} onClick={() => onChange({ heat: level.value })}>{level.label}</button>)}</div>
-    <button type="button" className="cooking-button" disabled={state.count === 0 || state.heat !== step.target} onClick={() => onComplete()}>{step.buttonLabel}</button>
-  </div>;
-  if (step.mechanic === 'timed') return <div className="cooking-baking"><div className="cooking-baking__pan">
-    <CookingAssetImage src={state.phase === 'flip' ? step.cookedAsset : step.asset} />
-    {state.phase === 'wait' && <motion.span className="cooking-baking__pancake" initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 18 }}><CookingAssetImage src={step.pouredAsset} /></motion.span>}
-  </div>
-    {state.phase === 'pour' && <button type="button" className="cooking-button" onClick={() => onChange({ phase: 'wait', readyAt: Date.now() + step.durationMs })}>{step.startLabel}</button>}
-    {state.phase === 'wait' && <span className="cooking-baking__timer" role="status">Even wachten…</span>}
-    {state.phase === 'flip' && <button type="button" className="cooking-button" onClick={() => onComplete()}>{step.finishLabel}</button>}
-  </div>;
+  if (step.mechanic === 'heat') return <HeatInteraction step={step} state={state} onChange={onChange} onComplete={onComplete} onMiss={onMiss} />;
   if (step.mechanic === 'optional') return <div className="cooking-baking"><CookingAssetImage className="cooking-baking__art" src={step.asset} /><div className="cooking-choices">
     {step.choices.map((choice, index) => <button key={choice.id} type="button" className={`cooking-button${index ? ' is-quiet' : ''}`} onClick={() => onComplete({ choice: choice.id })}>{choice.label}</button>)}
   </div></div>;

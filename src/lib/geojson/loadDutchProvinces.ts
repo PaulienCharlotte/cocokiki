@@ -1,3 +1,4 @@
+import { loadStaticJson } from '../../../services/staticJson';
 // Province borders for the Netherlands, used by topo maps, puzzles and province selection.
 export interface DutchProvinceFeature {
   type: 'Feature';
@@ -18,10 +19,5 @@ export interface DutchProvincesGeoJson {
 }
 
 export async function loadDutchProvincesGeoJson(): Promise<DutchProvincesGeoJson> {
-  const response = await fetch('/data/geojson/nl-provincies-2026.geojson');
-  if (!response.ok) {
-    throw new Error(`Kon Nederlandse provinciegrenzen niet laden: ${response.status}`);
-  }
-
-  return response.json() as Promise<DutchProvincesGeoJson>;
+  return loadStaticJson<DutchProvincesGeoJson>('/data/geojson/nl-provincies-2026.geojson');
 }

@@ -1,0 +1,102 @@
+{
+  "generator": "built-in image_gen",
+  "style": "CocoKiki, softly painted storybook, isolated objects, three-quarter view, natural muted colors, transparent background, no text or people",
+  "assets": [
+    {
+      "id": "wholewheat-pasta",
+      "subject": "A small open unlabelled paper bag with a pile of dry WHOLEWHEAT brown penne pasta, visibly brown wholegrain textured tubes. Ingredient only, no cooked dish.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-45834fc5-52e2-4d45-93e8-64a214660f3f.png",
+      "path": "public/assets/library/cooking/healthy/wholewheat-pasta.webp"
+    },
+    {
+      "id": "brown-rice",
+      "subject": "A shallow cream ceramic bowl filled with uncooked brown rice, visibly tan long grains retaining bran. Ingredient only.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-67832634-8510-42ab-98ca-d3a4c229ec65.png",
+      "path": "public/assets/library/cooking/healthy/brown-rice.webp"
+    },
+    {
+      "id": "chickpeas",
+      "subject": "A small cream ceramic bowl of drained cooked chickpeas, warm beige round chickpeas with characteristic pointed beaks. Ingredient only.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-c54b9409-61e4-4777-98a9-30b1ecec3902.png",
+      "path": "public/assets/library/cooking/healthy/chickpeas.webp"
+    },
+    {
+      "id": "wholewheat-vegetable-pasta",
+      "subject": "Finished meal: cream shallow bowl of cooked brown wholewheat penne with chunky red tomato sauce, red bell pepper pieces and beige chickpeas. No cheese, no herbs required.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-89877e10-6c28-452b-b969-0a33f377e148.png",
+      "path": "public/assets/library/cooking/healthy/wholewheat-vegetable-pasta.webp"
+    },
+    {
+      "id": "brown-rice-chickpeas",
+      "subject": "Finished meal: cream bowl of brown rice, beige chickpeas, red bell pepper pieces and wilted spinach leaves, ingredients mixed together.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-aba48666-908c-43a1-9803-3a4b2c635a13.png",
+      "path": "public/assets/library/cooking/healthy/brown-rice-chickpeas.webp"
+    },
+    {
+      "id": "vegetable-omelette",
+      "subject": "Finished meal: fully cooked golden yellow omelette with red tomato pieces and dark green spinach, on a small plain cream ceramic plate. Firm cooked egg, no runny egg.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-cb9f82dc-2ebf-40f0-849a-a2e710bb4aaa.png",
+      "path": "public/assets/library/cooking/healthy/vegetable-omelette.webp"
+    },
+    {
+      "id": "apple-oat-bake",
+      "subject": "Finished meal: small oval cream ceramic baking dish filled with softly baked golden oatmeal with red-skinned apple cubes, a spoonful of plain white yogurt on the side. No crumble, no cake, no nuts.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-91c85fca-1c8c-4daa-8888-9a1092e7e511.png",
+      "path": "public/assets/library/cooking/healthy/apple-oat-bake.webp"
+    },
+    {
+      "id": "stockpot",
+      "subject": "One empty stainless steel cooking pot with two short wooden handles, open top, no lid, no contents.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-c2ef9cf1-2865-47fd-a4d4-c604407897f6.png",
+      "path": "public/assets/library/cooking/healthy/stockpot.webp"
+    },
+    {
+      "id": "prep-board",
+      "subject": "One small wooden cutting board with a safe kitchen knife resting beside it. No food.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-bf050173-4df3-4178-9e65-6b863ea7af0c.png",
+      "path": "public/assets/library/cooking/healthy/prep-board.webp"
+    },
+    {
+      "id": "baking-dish",
+      "subject": "One empty oval cream ceramic oven dish with two small handles. No food.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-3b4ca4c8-233f-4eec-97a8-dcfd98586082.png",
+      "path": "public/assets/library/cooking/healthy/baking-dish.webp"
+    },
+    {
+      "id": "vegetable-pan",
+      "subject": "A dark grey frying pan with wooden handle containing chopped red tomatoes and red bell pepper pieces in a little olive oil. No rice, no pasta, no egg.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-893988df-c920-4b2d-8ed6-9922511b13a0.png",
+      "path": "public/assets/library/cooking/healthy/vegetable-pan.webp"
+    },
+    {
+      "id": "omelette-raw",
+      "subject": "A dark grey frying pan with wooden handle containing uncooked beaten yellow egg mixed with red tomato pieces and spinach leaves. Liquid uncooked egg, not browned.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-d63bd02c-f97f-4539-93b0-12f5d7613a4e.png",
+      "path": "public/assets/library/cooking/healthy/omelette-raw.webp"
+    },
+    {
+      "id": "oat-bake-raw",
+      "subject": "An oval cream ceramic oven dish with two small handles containing uncooked oat flakes soaked in milk and red-skinned apple cubes. Pale wet unbaked oatmeal, no yogurt, no nuts.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-2e0c78c1-b732-47f3-b55f-c35ed1a0ee44.png",
+      "path": "public/assets/library/cooking/healthy/oat-bake-raw.webp"
+    },
+    {
+      "id": "pasta-pot",
+      "subject": "One open stainless steel cooking pot with two short wooden handles containing brown wholewheat penne cooking in water, no sauce.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-89f0af98-b909-452a-877d-6ab88053de98.png",
+      "path": "public/assets/library/cooking/healthy/pasta-pot.webp"
+    },
+    {
+      "id": "rice-pot",
+      "subject": "One open stainless steel cooking pot with two short wooden handles containing brown rice cooking in water, no other ingredients.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-39f20c0c-8353-483a-83f4-99be62b4cda6.png",
+      "path": "public/assets/library/cooking/healthy/rice-pot.webp"
+    },
+    {
+      "id": "apple-oat-cooked",
+      "subject": "An oval cream baking dish of baked apple oatmeal, without yogurt or toppings.",
+      "source": "/Users/charlottepaulien/.codex/generated_images/01a1ca18-2edf-77e3-8b8b-8d2003cf85c7/exec-cce6eed2-4075-4eda-9595-c603c04a5a36.png",
+      "path": "public/assets/library/cooking/healthy/apple-oat-cooked.webp"
+    }
+  ]
+}

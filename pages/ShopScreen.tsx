@@ -111,14 +111,15 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
       : progress;
     if (next !== progress && !commitProgress(next)) return;
     setCheckoutComplete(false);
-    if (onNavigate) onNavigate('/treehouse/kitchen');
-    else window.location.assign('/treehouse/kitchen');
+    const kitchenPath = `/cooking/kitchen?recipe=${encodeURIComponent(journeyRecipeId)}`;
+    if (onNavigate) onNavigate(kitchenPath);
+    else window.location.assign(kitchenPath);
   };
   const seasonLabel = session.priceSnapshot.season === 'summer' ? 'In het seizoen' : 'Seizoensproduct';
   const backToOverview = () => {
     if (ownerReturn) return ownerReturn.onReturn();
     setCheckoutComplete(false);
-    if (initialStore && recipeId && onNavigate) onNavigate('/treehouse/kitchen');
+    if (initialStore && recipeId && onNavigate) onNavigate('/cooking/kitchen');
     else if ((recipeId || initialStore) && onExit) onExit();
     else setActiveStore(null);
   };
@@ -177,7 +178,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
       <div className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
         {products.map(item => <article className="shop-product" role="listitem" key={item.id}>
           {item.id === 'strawberry' && <span className="shop-product__badge">{seasonLabel}</span>}
-          <img className="shop-product__art" src={item.image} alt="" /><strong>{item.name}</strong><small>{item.packageLabel}</small>
+          <img className="shop-product__art" src={item.image} alt="" loading="lazy" decoding="async" /><strong>{item.name}</strong><small>{item.packageLabel}</small>
           <div className="shop-product__buy"><span><CocoCoin size={18} />{session.priceSnapshot.prices[item.id]}</span><button type="button" onClick={() => updateSession(adjustBasket(session, item.id, 1))} aria-label={`Voeg ${item.name} toe`}><Plus /></button></div>
         </article>)}
       </div>

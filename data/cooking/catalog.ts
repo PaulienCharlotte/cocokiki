@@ -1,3 +1,5 @@
+import { GEZONDE_SPULLEN } from './healthyPreparations';
+import { GEZONDE_INGREDIENTEN, GEZONDE_RECEPTEN } from './healthyRecipes';
 import { BANANA_PREPARATION } from './bananaPancakeCooking';
 import { BANANA_PANCAKE_MATH_CHALLENGES } from './mathChallenges';
 import { FRUIT_YOGURT_MATH, FRUIT_YOGURT_PREPARATION } from './fruitYogurt';
@@ -19,11 +21,11 @@ export const COOKING_ASSETS: CookingAssetRegistry = {
     'oat-muffins': '/games/cooking/oat-muffins.webp',
   },
   ingredients: {
-    banana: '/games/shop/products/banana.webp?v=2',
-    eggs: '/games/shop/products/eggs.webp?v=2',
-    oats: '/games/shop/products/oats.webp?v=2',
-    yogurt: '/games/shop/products/yogurt.webp?v=2',
-    strawberry: '/games/shop/products/strawberry.webp?v=2',
+    banana: '/games/shop/products/banana.webp',
+    eggs: '/games/shop/products/eggs.webp',
+    oats: '/games/shop/products/oats.webp',
+    yogurt: '/games/shop/products/yogurt.webp',
+    strawberry: '/games/shop/products/strawberry.webp',
   },
   equipment: {
     bowl: '/games/cooking/equipment/mixing-bowl.webp',
@@ -36,6 +38,7 @@ export const COOKING_ASSETS: CookingAssetRegistry = {
 
 export const INGREDIENTS: IngredientEntry[] = [
   ...MUFFIN_INGREDIENTS,
+  ...GEZONDE_INGREDIENTEN,
   {
     id: 'banana', name: 'Banaan', image: COOKING_ASSETS.ingredients.banana, contentStatus: 'ready', nutrientIds: ['carbohydrates', 'fiber'],
     origin: 'Bananen groeien aan grote kruidenplanten in warme gebieden.',
@@ -68,6 +71,7 @@ export const INGREDIENTS: IngredientEntry[] = [
 ];
 
 export const EQUIPMENT: EquipmentItem[] = [
+  ...GEZONDE_SPULLEN,
   ...Object.entries({ whisk: ['Garde', '/assets/library/cooking/kit/whisk.webp'], scale: ['Weegschaal', '/assets/library/cooking/kit/scale.webp'], 'measuring-jug': ['Maatbeker', BAKING_ASSETS.jug], 'muffin-pan': ['Muffinbakvorm', BAKING_ASSETS.pan] }).map(([id, [name, image]]) => ({ id, name, image, contentStatus: 'ready' as const, permanent: true as const })),
   { id: 'bowl', name: 'Mengkom', image: COOKING_ASSETS.equipment.bowl, contentStatus: 'ready', permanent: true },
   { id: 'fork', name: 'Vork', image: COOKING_ASSETS.equipment.fork, contentStatus: 'ready', permanent: true },
@@ -98,6 +102,7 @@ const bananaPancakeActions = [
 
 export const RECIPES: RecipeConfig[] = [
   BLUEBERRY_MUFFINS,
+  ...GEZONDE_RECEPTEN,
   {
     id: 'banana-pancakes', name: 'Bananenpannenkoekjes', category: 'breakfast', availability: 'playable', requiredCompletedRecipes: 0, level: 1,
     shortDescription: 'Zachte pannenkoekjes van banaan, ei en havermout.', preparationMinutes: 15, servings: 2,
@@ -171,4 +176,5 @@ export const RECIPE_CATEGORIES: Array<{ id: 'all' | RecipeConfig['category']; la
   { id: 'breakfast', label: 'Ontbijt' },
   { id: 'snack', label: 'Tussendoor' },
   { id: 'baking', label: 'Bakken' },
+  { id: 'cooking', label: 'Koken' },
 ];

@@ -1,3 +1,4 @@
+import { loadStaticJson } from '../services/staticJson';
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
@@ -48,6 +49,8 @@ const getCountryLocationForFeature = (feature: any) => {
 
 // ── ToetsGame ────────────────────────────────────────────────────────────────
 
+import { analytics } from '../services/analytics';
+
 const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, registerExit, onExit, onPractice }) => {
   const containerRef    = useRef<HTMLDivElement>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -87,11 +90,12 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
   }, [isFullscreen]);
 
   useEffect(() => {
-    fetch('/data/geojson/nl-all.geo.json')
-      .then(r => r.json()).then(setGeoData);
-    fetch('/data/geojson/europe-countries.geo.json')
-      .then(r => r.json()).then(setEuropeGeoData);
-  }, []);
+    if (worksheet.dataset) return;
+    let cancelled = false;
+    loadStaticJson(isEuropeSelected ? '/data/geojson/europe-countries.geo.json' : '/data/geojson/nl-all.geo.json')
+      .then(data => { if (!cancelled) { if (isEuropeSelected) setEuropeGeoData(data); else setGeoData(data); } }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [isEuropeSelected, worksheet.dataset]);
 
   const allLocations = useMemo((): Location[] => {
     if (studyPool) return studyPool;
@@ -127,6 +131,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       setPanel('resume');
       return;
     }
+    analytics().start('topo:test');
     setAnswers(draft.answers); setSubmitted(false); setRetryIds(draft.retryIds); setDeferredIds(draft.deferredIds ?? []);
   }, [ids]);
   const locations = useMemo(() => {
@@ -330,12 +335,12 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     setAnswers(next); setDeferredIds(pending); persist(next, submitted, retryIds, orderIds, pending);
   };
 
-  const submit = () => { setSubmitted(true); persist(answers, true, retryIds); setPanel(null); };
+  const submit = () => { analytics().complete('topo:test'); setSubmitted(true); persist(answers, true, retryIds); setPanel(null); };
   const shuffle = () => {
     const nextOrder = [cities, countries, waters, regions].flatMap(group => shuffledTestIds(group.map(location => location.id)));
     setOrderIds(nextOrder); persist(answers, submitted, retryIds, nextOrder); setPanel(null);
   };
-  const restart = () => { setSubmitted(false); setAnswers({}); setRetryIds(null); setActiveId(null); setDeferredIds([]); persist({}, false, null, orderIds, []); setPanel(null); };
+  const restart = () => { analytics().start('topo:test', true); setSubmitted(false); setAnswers({}); setRetryIds(null); setActiveId(null); setDeferredIds([]); persist({}, false, null, orderIds, []); setPanel(null); };
   const restoreResult = () => {
     const draft = previousResult.current;
     if (!draft) return;

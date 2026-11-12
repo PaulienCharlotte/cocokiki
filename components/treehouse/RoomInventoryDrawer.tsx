@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { Backpack, BringToFront, SendToBack, Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { Backpack, BringToFront, Check, SendToBack, Droplet, Info, Minus, MoreHorizontal, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { Button, Dialog, IconButton } from '../../design-system';
+import './room-placement.css';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
 import { layerRoomItem, roomItemDepth, availableRoomQuantity, loadRoomInventory, MAX_PLACEMENT_SCALE, MIN_PLACEMENT_SCALE, moveRoomItem, placeRoomItem, resizeRoomItem, returnRoomItem, ROOM_INVENTORY_CHANGE_EVENT, ROOM_INVENTORY_KEY, saveRoomInventory, turnRoomItem, type RoomInventoryState } from '../../services/roomInventory';
@@ -32,6 +34,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   const [open, setOpen] = useState(false);
   const [inventory, setInventory] = useState<RoomInventoryState>(loadRoomInventory);
   const [selected, setSelected] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [ghost, setGhost] = useState<{ product: DecorProduct; x: number; y: number; returnable: boolean } | null>(null);
   const [overReturn, setOverReturn] = useState(false);
   const [notice, setNotice] = useState('');
@@ -57,7 +60,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
     return bounds ? { x: (x - bounds.left) / bounds.width * 100, y: (y - bounds.top) / bounds.height * 100 } : null;
   }, [sceneRef]);
 
-  const place = useCallback((product: DecorProduct, x: number, y: number) => {
+  const place = useCallback((product: DecorProduct, x: number, y: number, showControls = true) => {
     const point = coordinates(x, y);
     if (!point) return;
     const id = crypto.randomUUID();
@@ -68,7 +71,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
         : undefined;
       return placeRoomItem(current, { id, productId: product.id, room, view: 0, scale: 1, plantId, ...point });
     });
-    setSelected(id);
+    setSelected(showControls ? id : null);
   }, [commit, coordinates, room]);
 
   const isReturnTarget = useCallback((x: number, y: number) => [triggerRef.current, returnRef.current].some(element => {
@@ -79,11 +82,14 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   useEffect(() => {
     setInventory(loadRoomInventory());
     setSelected(null);
+    setDetailsOpen(false);
     setOpen(false);
     drag.current = null;
     setGhost(null);
     setPreview(null);
   }, [room]);
+
+  useEffect(() => { setDetailsOpen(false); }, [selected]);
 
   useEffect(() => {
     const update = (event: Event) => setInventory((event as CustomEvent<RoomInventoryState>).detail ?? loadRoomInventory());
@@ -98,7 +104,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.room-placed-object') || target?.closest('.room-placed-object__tools') || target?.closest('.room-inventory-drawer')) return;
+      if (target?.closest('.room-placed-object, .room-placement-toolbar, .room-inventory-drawer, [role="dialog"]')) return;
       setSelected(null);
     };
     window.addEventListener('pointerdown', dismiss);
@@ -164,10 +170,10 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
             const point = coordinates(event.clientX, event.clientY);
             if (point) commit(current => moveRoomItem(current, active.placementId!, point.x - active.offsetX, point.y - active.offsetY));
           }
-          setSelected(active.placementId);
+          setSelected(active.active ? null : active.placementId);
         } else {
           const validDrop = event.clientY > 75 && event.clientX >= 0 && event.clientX <= window.innerWidth && event.clientY <= window.innerHeight;
-          if (!active.active || validDrop) place(active.product, active.active ? event.clientX : window.innerWidth / 2, active.active ? event.clientY : window.innerHeight * .72);
+          if (!active.active || validDrop) place(active.product, active.active ? event.clientX : window.innerWidth / 2, active.active ? event.clientY : window.innerHeight * .72, !active.active);
           setOpen(false);
         }
       }
@@ -248,23 +254,28 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
               {isSelected && <span className="room-placed-object__label">{plant.nickname}</span>}
             </>;
           })()}
-          {isSelected && !preview && !open && !plantCard && typeof document !== 'undefined' && createPortal(<div className="room-placed-object__tools room-placement-toolbar" role="toolbar" aria-label={`${product.name} aanpassen`}>
-            {/* Wat voor en wat achter staat is het enige wat je niet kunt zien
-                aan het icoon, dus staan die twee met zoveel woorden. */}
-            <span className="room-placement-toolbar__laag">
-              <button type="button" title="Naar voren" aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}><BringToFront aria-hidden="true" /><span>Voor</span></button>
-              <button type="button" title="Naar achteren" aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}><SendToBack aria-hidden="true" /><span>Achter</span></button>
-            </span>
-            {plantOf(item) && <button type="button" title="Water geven" aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}><Droplet /></button>}
-            {PLANT_SPECIES_BY_ID[product.id] && <button type="button" title="Meer over deze plant" aria-label={`Meer weten over ${plantOf(item)?.nickname ?? product.name}`} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })}><Info /></button>}
-            {product.views > 1 && <>
-              <button type="button" title="Draai naar links" aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}><RotateCcw /></button>
-              <button type="button" title="Draai naar rechts" aria-label={`${product.name} naar rechts draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, 1))}><RotateCw /></button>
-            </>}
-            <button type="button" title="Kleiner" aria-label={`${product.name} kleiner maken`} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))}><Minus /></button>
-            <button type="button" title="Groter" aria-label={`${product.name} groter maken`} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))}><Plus /></button>
-            <button type="button" title="Terug in voorraad" aria-label={`${product.name} terug in voorraad`} onClick={() => commit(current => returnRoomItem(current, item.id))}><PackagePlus /></button>
-          </div>, document.body)}
+          {isSelected && !preview && !open && !plantCard && <>
+            {typeof document !== 'undefined' && createPortal(<div className="room-placement-toolbar" role="toolbar" aria-label={`${product.name} aanpassen`}>
+              <IconButton label={`${product.name} kleiner maken`} title="Kleiner" icon={<Minus />} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))} />
+              <IconButton label={`${product.name} groter maken`} title="Groter" icon={<Plus />} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))} />
+              {product.views > 1 && <IconButton label={`${product.name} naar rechts draaien`} title="Draaien" icon={<RotateCw />} onClick={() => commit(current => turnRoomItem(current, item.id, 1))} />}
+              <IconButton label={`Meer opties voor ${product.name}`} title="Meer opties" icon={<MoreHorizontal />} aria-expanded={detailsOpen} onClick={() => setDetailsOpen(true)} />
+              <IconButton label="Klaar met aanpassen" title="Klaar" variant="primary" icon={<Check />} onClick={() => setSelected(null)} />
+            </div>, document.body)}
+            <Dialog open={detailsOpen} title={product.name} onClose={() => setDetailsOpen(false)} primaryAction={<Button onClick={() => setDetailsOpen(false)}>Verder inrichten</Button>}>
+              <div className="room-placement-options">
+                <div className="room-placement-options__laag" role="group" aria-label="Voor of achter andere spullen">
+                  <Button variant="secondary" startIcon={<BringToFront />} aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}>Voor</Button>
+                  <Button variant="secondary" startIcon={<SendToBack />} aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}>Achter</Button>
+                </div>
+                {product.views > 1 && <Button variant="quiet" startIcon={<RotateCcw />} aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}>Draai naar links</Button>}
+                {plantOf(item) && <Button variant="quiet" startIcon={<Droplet />} aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}>Water geven</Button>}
+                {PLANT_SPECIES_BY_ID[product.id] && <Button variant="quiet" startIcon={<Info />} onClick={() => { setDetailsOpen(false); setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname }); }}>Meer over deze plant</Button>}
+                <Button variant="quiet" startIcon={<PackagePlus />} aria-label={`${product.name} terug in voorraad`} onClick={() => { commit(current => returnRoomItem(current, item.id)); setDetailsOpen(false); setSelected(null); }}>Terug in berging</Button>
+              </div>
+            </Dialog>
+          </>}
+
         </div>;
       })}
     </div>

@@ -1,10 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BookOpen, House, Leaf, Stethoscope } from 'lucide-react';
 import { IconButton } from '../design-system';
 import { type TreehouseRoomId } from '../data/treehouse';
-import { createEmptyCookingProgress, loadCookingProgress, startJourney } from '../services/cookingProgress';
-import { RECIPES_BY_ID } from '../data/cooking/catalog';
-import InteractiveKitchen from '../components/treehouse/InteractiveKitchen';
 import RoomInventoryDrawer from '../components/treehouse/RoomInventoryDrawer';
 import { ownedRooms, loadRoomExpansions, ROOM_EXPANSIONS_KEY } from '../services/roomExpansions';
 import { subscribeLocalState } from '../services/localState';
@@ -30,17 +27,6 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
   const rooms = ownedRooms(expansions);
   const roomIndex = rooms.findIndex(item => item.id === room);
   const definition = rooms[roomIndex];
-  const progress = useMemo(() => {
-    if (import.meta.env.DEV && room === 'kitchen' && new URLSearchParams(window.location.search).get('cookingDemo') === '1') {
-      const demo = startJourney(createEmptyCookingProgress(), RECIPES_BY_ID['banana-pancakes']);
-      demo.activeRecipeId = 'banana-pancakes';
-      demo.journeys['banana-pancakes']!.stage = 'cooking';
-      demo.inventory.consumables = { banana: 1, eggs: 2, oats: 40 };
-      demo.inventory.equipmentIds = ['bowl', 'fork', 'pan', 'spatula'];
-      return demo;
-    }
-    return loadCookingProgress();
-  }, [room]);
 
   const updateScrollEdges = useCallback(() => {
     const viewport = viewportRef.current;
@@ -108,14 +94,13 @@ export default function TreehouseInterior({ room, onNavigate }: TreehouseInterio
       <img className="treehouse-interior__background" src={definition.background} alt={definition.alt} />
       <h1 id="treehouse-interior-title" className="treehouse-room__title">{definition.label}</h1>
 
-      {room === 'kitchen' && <InteractiveKitchen progress={progress} sceneRef={sceneRef} onNavigate={onNavigate} />}
       <RoomInventoryDrawer room={room} sceneRef={sceneRef} onNavigate={onNavigate} />
     </div>
     <RoomOptions key={room} roomId={room} onNavigate={onNavigate} />
     <div className="room-overview-link"><IconButton label="Mijn boomhut" icon={<House size={21} />} onClick={() => onNavigate('/treehouse')} /></div>
 
-    {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/treehouse/cookbook')} aria-label="Mijn Kookboek openen" title="Mijn Kookboek">
-      <BookOpen aria-hidden="true" /><span>Kookboek</span>
+    {room === 'kitchen' && <button className="kitchen-cookbook-trigger" type="button" onClick={() => onNavigate('/cooking/kitchen')} aria-label="De keuken in de kookstudio openen" title="De keuken">
+      <BookOpen aria-hidden="true" /><span>De keuken</span>
     </button>}
 
     {/* Planten horen bij het terras, net zoals koken bij de keuken hoort. */}

@@ -22,6 +22,8 @@ import './shoppingPractice.test';
 import './learningReward.test';
 import './treehouseUnits.test';
 import './quiz.test';
+import './analytics.test';
+import './privacy.test';
 import './worldLocations.test';
 import './adventures.test';
 import './cookingStorage.test';
@@ -29,3 +31,13 @@ import './muffinAdventure.test';
 import './shopLayout.test';
 import './geobas.test';
 import './topoExperience.test';
+
+import "./healthyRecipes.test";
+
+import "./foodEducation.test";
+
+import "./foodGlossary.test";
+
+import "./networkOptimizations.test";
+
+import "./redactieNavigation.test";

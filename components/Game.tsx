@@ -15,6 +15,7 @@ import { useTopoHeaderBottom } from './topography/useTopoLayout';
 import TopoExitDialog from './topography/TopoExitDialog';
 import { registerNavigationGuard } from '../services/navigationGuard';
 import { locationFact } from '../data/topography/facts';
+import { analytics } from '../services/analytics';
 
 const InteractiveMap = lazy(() => import('./InteractiveMap'));
 const GameEngine = lazy(() => import('./GameEngine'));
@@ -142,6 +143,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       ? sourcePairs.filter(pair => retryIds.includes(pair.id))
       : nextBatch<MemoryPair>(sourcePairs, requestedMode === 'memory' ? Math.min(8, sourcePairs.length) : 10, progress, pair => pair.id);
 
+    if (requestedMode !== 'test') analytics().start(`topo:${requestedMode}`, true);
     setSession({ id: Date.now(), mode: requestedMode, locations: sessionLocations, pairs: sessionPairs, practiceIds: focused ? retryIds : undefined });
     window.scrollTo({ top: 0 });
   };

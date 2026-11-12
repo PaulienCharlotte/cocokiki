@@ -10,6 +10,10 @@ export const COCOCOINS_PER_EURO = 10;
 export const SHOP_PRICE_VERSION = '2026.1';
 
 export const SHOP_PRICES: Record<string, ProductPriceConfig> = {
+  // Voorlopige spelprijzen voor de nieuwe voorraad, geen geverifieerde winkelprijzen.
+  'wholewheat-pasta': { cocoCoins: 10, provisional: true },
+  'brown-rice': { cocoCoins: 12, provisional: true },
+  chickpeas: { cocoCoins: 8, provisional: true },
   // Indicative AH reference prices, checked 2026-10-29; existing 10 coins/euro economy.
   'sunflower-oil': { cocoCoins: 14, provisional: true },
   'baking-powder': { cocoCoins: 4, provisional: true },
