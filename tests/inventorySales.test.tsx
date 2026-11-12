@@ -15,9 +15,12 @@ import WorldTopBar from '../components/platform/WorldTopBar';
 import CookingTipCard from '../components/cooking/CookingTipCard';
 import DecorAsset from '../components/shop/DecorAsset';
 
-test('bathroom furniture has twelve purchasable products and crops individual rotation views', () => {
+test('bathroom furniture includes the Japandi essentials and crops individual rotation views', () => {
   const products = Object.values(DECOR_PRODUCTS_BY_ID).filter(product => product.category === 'bathroom');
-  assert.equal(products.length, 12);
+  assert.ok(products.length >= 16);
+  for (const id of ['japandi-toilet', 'japandi-round-mirror', 'japandi-toilet-roll-holder', 'japandi-bath-mat']) {
+    assert.ok(products.some(product => product.id === id), id);
+  }
   for (const product of products) {
     assert.equal(product.store, 'furniture');
     assert.ok(product.price > 0);

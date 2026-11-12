@@ -35,9 +35,19 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
     if (!element) return;
     const wheel = (event: WheelEvent) => {
       event.preventDefault();
-      const rect = element.getBoundingClientRect();
-      const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.height : 1);
-      setView(current => zoomAt(current, current.scale * Math.exp(-delta * .002), event.clientX - rect.left - size.width / 2, event.clientY - rect.top - size.height / 2));
+      const eenheid = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.height : 1;
+      const dx = event.deltaX * eenheid;
+      const dy = event.deltaY * eenheid;
+      if (event.ctrlKey || event.metaKey) {
+        const rect = element.getBoundingClientRect();
+        setView(current => zoomAt(current, current.scale * Math.exp(-dy * .002), event.clientX - rect.left - size.width / 2, event.clientY - rect.top - size.height / 2));
+        return;
+      }
+      setView(current => {
+        // Een muiswiel kan ook langs de brede kaart als er verticaal geen ruimte is.
+        const horizontaal = event.shiftKey || height * current.scale <= size.height + 1;
+        return constrain({ ...current, x: current.x - dx - (horizontaal ? dy : 0), y: current.y - (horizontaal ? 0 : dy) });
+      });
     };
     element.addEventListener('wheel', wheel, { passive: false });
     return () => element.removeEventListener('wheel', wheel);

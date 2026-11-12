@@ -30,9 +30,10 @@ function memory(run: (values: Map<string, string>, fail: (value: boolean) => voi
   finally { if (original) Object.defineProperty(globalThis, 'localStorage', original); else Reflect.deleteProperty(globalThis, 'localStorage'); }
 }
 
-test('every expansion interior matches its module and repeated room types share their interior', () => {
+test('expansion interiors match their room type while the greenhouse keeps its own glazing', () => {
   for (const template of ROOM_TEMPLATES) {
-    assert.equal(template.background, ROOM_MODULE_INTERIORS[ROOM_TEMPLATE_ASSETS[template.id]], template.id);
+    const interior = template.id === 'greenhouse' ? 'greenhouse' : ROOM_TEMPLATE_ASSETS[template.id];
+    assert.equal(template.background, ROOM_MODULE_INTERIORS[interior], template.id);
     assert.ok(existsSync(`public${template.background}`));
     assert.ok(!template.background.includes('/units/'));
   }
@@ -59,7 +60,7 @@ test('legacy closed balcony supports keep their saved coordinates and owned room
   assert.equal(loaded.length, rooms.length);
   assert.equal(loaded.find(room => room.id === 'extra-1')?.asset, 'room');
   assert.equal(loaded.find(room => room.id === 'extra-2')?.floor, 2);
-  assert.equal(ownedRooms().find(room => room.id === 'extra-1')?.background, ROOM_MODULE_INTERIORS.garden);
+  assert.equal(ownedRooms().find(room => room.id === 'extra-1')?.background, ROOM_MODULE_INTERIORS.greenhouse);
 }));
 
 test('room and balcony purchases have separate prices, stable instances and atomic duplicate protection', () => memory(() => {
