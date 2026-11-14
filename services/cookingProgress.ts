@@ -299,6 +299,8 @@ export function saveCookingProgress(progress: CookingProgressState, spend?: { id
     const completion = progress.completions[recipeId];
     const reward = RECIPES_BY_ID[recipeId]?.rewardCoins;
     if (completion?.rewardClaimed && reward) operations.push({ id: `cooking-complete:${recipeId}`, amount: reward });
+    const dish = progress.preparationSessions[recipeId];
+    if (dish?.completed && dish.redeemedCoins) operations.push({ id: `cooking-dish:${recipeId}:${dish.attemptId}`, amount: dish.redeemedCoins });
   }
   // De bonus voor een bestelling die in één keer goed ging. Eén transactie per
   // bestelling, dus herladen of twee keer opslaan betaalt niet opnieuw uit.
@@ -409,14 +411,26 @@ function nextUndiscoveredForRecipe(progress: CookingProgressState, recipeId: Rec
   return RECIPES_BY_ID[recipeId].ingredients.find(item => !journey.discoveredIngredientIds.includes(item.ingredientId))?.ingredientId ?? null;
 }
 
-export function beginDiscoveryStage(progress: CookingProgressState, recipeId: RecipeId, now = new Date().toISOString()): CookingProgressState {
+export function beginDiscoveryStage(progress: CookingProgressState, recipeId: RecipeId, now = new Date().toISOString(), reviewKnown = false): CookingProgressState {
   const journey = progress.journeys[recipeId];
   if (!journey) return progress;
   let next = progress;
   if (journey.stage === 'overview') next = advanceJourney(progress, recipeId, 'discovery', now);
   const active = next.journeys[recipeId];
   if (!active || active.stage !== 'discovery') return next;
-  if (active.discovery.currentIngredientId || active.discovery.step === 'complete') return next;
+  if (!reviewKnown) {
+    next = clone(next);
+    const current = next.journeys[recipeId]!;
+    for (const item of RECIPES_BY_ID[recipeId].ingredients) {
+      if (next.discoveredIngredientIds.includes(item.ingredientId) && !current.discoveredIngredientIds.includes(item.ingredientId)) current.discoveredIngredientIds.push(item.ingredientId);
+    }
+    if (current.discovery.currentIngredientId && next.discoveredIngredientIds.includes(current.discovery.currentIngredientId)) {
+      current.discovery.currentIngredientId = null;
+      current.discovery.questionIndex = 0;
+    }
+  }
+  const synced = next.journeys[recipeId]!;
+  if (synced.discovery.currentIngredientId || synced.discovery.step === 'complete') return next;
   const ingredientId = nextUndiscoveredForRecipe(next, recipeId);
   const result = clone(next);
   result.journeys[recipeId]!.discovery.currentIngredientId = ingredientId;
@@ -434,7 +448,7 @@ export function createDiscoveryReplay(progress: CookingProgressState, recipeId: 
   replayJourney.discoveredIngredientIds = [];
   replayJourney.discovery = createEmptyDiscoveryState();
   replayJourney.updatedAt = now;
-  return beginDiscoveryStage(replay, recipeId, now);
+  return beginDiscoveryStage(replay, recipeId, now, true);
 }
 
 export type MathChallengeAnswer = number | Record<string, number> | string[];

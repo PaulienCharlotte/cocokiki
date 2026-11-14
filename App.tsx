@@ -12,8 +12,10 @@ import './components/dreamworld/dreamworld.css';
 import './components/memory-compact.css';
 import { analytics } from './services/analytics';
 import { WORLD_LOCATIONS } from './platform/worldLocations';
+import { roomReturn, shopDestination } from './services/shopNavigation';
 import { LOCATION_ORIGINS, locationOrigin, withLocationOrigin } from './services/locationNavigation';
 
+const TasksScreen = lazy(() => import('./pages/TasksScreen'));
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const PrivacyScreen = lazy(() => import('./pages/PrivacyScreen'));
 const DestinationScreen = lazy(() => import('./pages/DestinationScreen'));
@@ -29,6 +31,7 @@ const MathModule = lazy(() => import('./games/math/MathModule'));
 const IslandEnvironment = lazy(() => import('./pages/IslandEnvironment'));
 const DecorShop = lazy(() => import('./components/shop/DecorShop'));
 const PlantFamilyPanel = lazy(() => import('./components/plants/PlantFamilyPanel'));
+const GardenScreen = lazy(() => import('./pages/GardenScreen'));
 const FlagsMemory = lazy(() => import('./pages/FlagsMemory'));
 const WorldLocationLayout = lazy(() => import('./components/dreamworld/WorldLocationLayout'));
 const FoodDiscoveryScreen = lazy(() => import('./pages/FoodDiscoveryScreen'));
@@ -103,7 +106,7 @@ const App: React.FC = () => {
 
   const navigate = useCallback((path: string) => {
     guardedNavigation(() => {
-      const requested = new URL(path, window.location.origin);
+      const requested = new URL(shopDestination(path, window.location.pathname, window.location.search), window.location.origin);
       const next = resolveRoute(requested.pathname);
       const source = locationOrigin(requested.search) ?? locationOrigin(window.location.search);
       window.history.pushState({}, '', withLocationOrigin(`${next.route.path}${requested.search}`, source));
@@ -123,10 +126,13 @@ const App: React.FC = () => {
   const origin = locationOrigin(window.location.search, current.route.path);
   const sourceLocation = origin ? LOCATION_ORIGINS[origin] : undefined;
   const residentLocation = current.route.page === 'island' ? WORLD_LOCATIONS.find(location => location.islandId === current.route.islandId) : undefined;
-  const backTarget = sourceLocation ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
+  const shopRoom = (current.route.page === 'store' || current.route.path === '/shop') ? roomReturn(window.location.search) : null;
+  const backTarget = (shopRoom ? { path: shopRoom, label: 'Verder inrichten' } : undefined) ?? sourceLocation ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      : current.route.page === 'tasks'
+      ? <TasksScreen onNavigate={navigate} />
       : current.route.page === 'privacy'
       ? <PrivacyScreen />
       : current.route.page === 'food-discovery'
@@ -140,9 +146,11 @@ const App: React.FC = () => {
       : current.route.page === 'math'
       ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={sourceLocation ? back : () => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'
-      ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} onBack={back} onNavigate={navigate} />
+      ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} backLabel={shopRoom ? 'Verder inrichten' : undefined} onBack={back} onNavigate={navigate} />
       : current.route.page === 'plant-collection'
       ? <div className="dream-plant-collection"><PlantFamilyPanel onNavigate={navigate} onClose={sourceLocation ? back : () => navigate('/')} /></div>
+      : current.route.page === 'garden'
+      ? <GardenScreen onNavigate={navigate} />
       : current.route.page === 'flags-memory'
       ? <FlagsMemory onBack={back} />
       : current.route.page === 'game' && GameModule

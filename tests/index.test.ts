@@ -41,3 +41,6 @@ import "./foodGlossary.test";
 import "./networkOptimizations.test";
 
 import "./redactieNavigation.test";
+import './garden.test';
+
+import './tasks.test';

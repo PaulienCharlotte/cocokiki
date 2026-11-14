@@ -1,40 +1,17 @@
-# World Map Navigation
+# Wereldkaart en navigatie — 14 november 2026
 
-The homepage uses one 1672 x 940 image at
-`public/dreamworld/world-map-modern.webp`. It was encoded from the supplied
-original at WebP quality 94, without resizing or separating the islands.
+De homepage gebruikt nu de vierkante, vrijstaande planeet `assets/world-map-v2-planet.webp`, op basis van de eerdere wereldkaart. De oude kaart blijft behouden. Alle vijf locaties zijn herkenbaar gebleven. `WORLD_DESTINATIONS` bevat de nieuwe genormaliseerde coördinaten; kaart en raakvlakken delen dezelfde transformatie.
 
-`WORLD_DESTINATIONS` in `platform/dreamworld.ts` owns the normalized centres
-and hit areas of the six illustrated buttons. The briefing lists the home
-destination twice; both home functions belong to the same treehouse.
+De volledige planeet kan met lucht rondom in beeld komen. De minimale zoom gebruikt 80% van de passende breedte/hoogte. Bij openen start de wereld als overzicht; terugkeren uit een locatie onthoudt de gekozen zoom en positie in geheugen. Centreren toont de hele wereld. Verder inzoomen kan tot 2,5× de oorspronkelijke kaartmaat. Slepen vereist ingedrukt houden; muiswiel, pinch, toetsenbord en de bestaande zoomknoppen blijven werken. Raakvlakken en locatie-iconen houden hun bruikbare schermgrootte.
 
-| Destination | Existing Route |
-| --- | --- |
-| Cooking | `/treehouse/cookbook` |
-| Treehouse | `/treehouse` |
-| Mathematics | `/islands/math` |
-| Plants | `/plantendokter` |
-| Geography and clocks | `/islands/discovery` |
-| Language placeholder | `/islands/language` |
+Een vaste luchtlaag vult het hele venster. Overdag is deze lichtblauw met wolken; 's nachts donker blauwgrijs met sterren. Bij openen kiest de kaart nacht vóór 07:00 en vanaf 19:00 lokale tijd. Met de zon/maan-knop kan het kind de weergave zelf wisselen. Dit verandert geen spelvoortgang en kent geen tijdsdruk. Er is geen continue animatie.
 
-The treehouse toolbar links to `/shop/furniture`. The shared navigation keeps
-all stores and the encyclopedia available; the mobile menu also links directly
-to the cookbook. Existing aliases, activities, game logic and storage keys are
-unchanged.
+De winkelknop onthoudt de boomhutkamer. Opdrachten staan achter het klembord; de encyclopedie in het profielmenu. Bestaande spelroutes, voortgang en saldi blijven behouden. Afbeeldingsfouten tonen nog steeds een toegankelijke bestemmingenlijst.
 
-`WorldMapViewer` reuses the existing cover sizing and bounded viewport helpers.
-Image and transparent buttons share a single transform. Minimum zoom fits the
-entire image inside the viewport; maximum zoom is 2.5 times the initial crop,
-with wheel zoom anchored at the pointer and pinch zoom anchored between the
-two contacts. Dragging suppresses accidental navigation. Keyboard focus brings
-off-screen destinations into view. Reset restores the initial centred crop.
-Reduced-motion preferences disable transform transitions.
+De planeet en het rechte Lua-portret zijn met de ingebouwde image_gen gegenereerd. De PNG-bronnen en promptset staan in `output/world-planet-2026-11-14/`. Lua's profielbestand is `public/images/avatars/lua-profile.webp`; het oude bestand blijft behouden.
 
-Views are remembered in memory, not in saved game data. The stable image URL
-allows normal browser image caching. If loading fails, an accessible list of
-the same destinations remains available.
+## Verfijning lucht en eilanden
 
-Verified at 375, 768 and 1440 CSS pixels: six routes, wheel and native touch
-pinch gestures, mobile menu, touch navigation while zoomed, furniture access,
-unchanged local storage and balance, and failed-image fallback. Unit tests also
-cover normalized destinations and viewport limits.
+De lucht gebruikt nu echte illustratiebestanden in `public/dreamworld/sky/day.webp` en `night.webp`; de eenvoudige CSS-wolken en sterpunten zijn verwijderd. Bronbeelden en prompts: `output/world-skies-2026-11-14/`. Op desktop liggen de eilandkeuzes als horizontaal schuifbare strook onderin, met het klembord voor opdrachten bij zowel Coco als Kiki. De bestaande mobiele kaartenindeling blijft behouden. De losse Privacy-link is verwijderd; de bestaande privacypagina en opgeslagen spelgegevens zijn niet gewijzigd.
+
+Weersuggesties zijn een concept in de backlog: een ouder kiest eventueel een plaats; de app kan dan vrijwillige buitenactiviteiten voorstellen. Er is nog geen weerkoppeling of locatieverzoek toegevoegd.

@@ -1,0 +1,22 @@
+.ingredient-explorer { display: grid; width: 100%; gap: var(--space-3); text-align: left; }
+.ingredient-explorer .ingredient-lesson__hero { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-3); padding-bottom: var(--space-3); border-color: var(--color-border); }
+.ingredient-explorer .ingredient-lesson__hero > img { width: 100%; height: 4rem; min-height: 0; filter: none; }
+.ingredient-explorer .ingredient-lesson__hero p { color: var(--color-primary); font-size: var(--font-size-xs); }
+.ingredient-explorer .ingredient-lesson__hero h1 { font-size: var(--font-size-xl); }
+.ingredient-explorer__dots { display: flex; justify-content: center; gap: var(--space-2); }
+.ingredient-explorer__dots span { width: var(--space-2); height: var(--space-2); border-radius: var(--radius-pill); background: var(--color-border); }
+.ingredient-explorer__dots .is-current { background: var(--color-primary); }
+.ingredient-explorer__page { display: grid; gap: var(--space-3); }
+.ingredient-explorer .food-illustration img { height: clamp(6rem, 16vh, 8rem); }
+.ingredient-explorer__fact { display: block; margin-top: var(--space-2); }
+.ingredient-explorer__fact:first-child { margin-top: 0; }
+.ingredient-explorer__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); }
+.ingredient-explorer__actions > .ck-button:last-child { flex: 1; }
+.discovery-card__content > .ck-zegt, .discovery-card__content > .ck-keuzes { width: 100%; text-align: left; }
+.discovery-answer-buttons { display: grid; width: 100%; gap: var(--space-3); }
+.discovery-answer-button.ck-button { justify-content: flex-start; padding: var(--space-3) var(--space-4); text-align: left; line-height: var(--line-height-default); font-weight: var(--font-weight-medium); }
+.discovery-answer-button .ck-button__label { flex: 1; }
+.discovery-answer-button__letter { color: var(--color-primary); font-weight: var(--font-weight-bold); }
+.discovery-answer-button.ck-button:disabled { opacity: 1; cursor: default; }
+.discovery-answer-button.is-wrong { background: var(--color-error-soft); border-color: var(--color-error); color: var(--color-error); }
+.discovery-answer-button.is-correct { background: var(--color-success-soft); border-color: var(--color-primary); }

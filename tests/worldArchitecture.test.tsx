@@ -90,13 +90,13 @@ test('Dreamworld renders one intact world image, five hotspots and compact tools
   assert.match(html, /world-map-v2[^" ]*\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.webp/);
-  assert.match(html, /images\/avatars\/coco\.webp/);
+  assert.match(html, /images\/avatars\/coco-profile\.webp/);
   assert.doesNotMatch(html, /games\/world-hub\/(coins|settings)-control\.webp/);
 });
 
 test('profile avatar catalog contains stable, unique local options', () => {
   assert.equal(PROFILE_AVATAR_KEY, 'cocokiki:profile-avatar:v1');
-  assert.deepEqual(PROFILE_AVATARS.map(avatar => avatar.id), ['coco', 'kiki', 'lua', 'samen', 'stokstaartje', 'avonturier']);
+  assert.deepEqual(PROFILE_AVATARS.map(avatar => avatar.id), ['coco', 'kiki', 'lua', 'samen', 'stokstaartje', 'luna', 'avonturier']);
   assert.equal(new Set(PROFILE_AVATARS.map(avatar => avatar.image)).size, PROFILE_AVATARS.length);
   assert.ok(PROFILE_AVATARS.every(avatar => avatar.image.startsWith('/images/avatars/')));
   assert.equal(PROFILE_AVATARS.find(avatar => avatar.id === 'lua')?.image, ASSET_LIBRARY.avatars.sloth);

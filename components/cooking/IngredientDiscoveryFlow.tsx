@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Check, RotateCcw, SkipForward, Sparkles } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles, X } from 'lucide-react';
 import { Button, ProgressIndicator, IconButton } from '../../design-system';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
@@ -20,6 +20,7 @@ import RecipeOverviewDialog from './RecipeOverviewDialog';
 import RewardToast from './RewardToast';
 import { discoveryOptions } from '../../data/cooking/discoveryOptions';
 import { nextRequiredStage } from '../../services/cookingProgress';
+import SpeechBubble from '../ui/SpeechBubble';
 
 interface IngredientDiscoveryFlowProps {
   recipe: RecipeConfig;
@@ -32,7 +33,7 @@ interface IngredientDiscoveryFlowProps {
 
 export default function IngredientDiscoveryFlow({ recipe, progress, onProgressChange, onExit, onReplay = onExit, replay = false }: IngredientDiscoveryFlowProps) {
   const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [reviewing, setReviewing] = useState(false);
   const [toastCoins, setToastCoins] = useState(0);
   const [showRecipe, setShowRecipe] = useState(false);
   const [pendingSave, setPendingSave] = useState<CookingProgressState | null>(null);
@@ -49,7 +50,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     cardRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
-  }, [discovery?.step, ingredientId]);
+  }, [discovery?.step, ingredientId, reviewing]);
 
   const commit = (next: CookingProgressState) => {
     if (!replay && !saveCookingProgress(next)) { setPendingSave(next); return false; }
@@ -59,15 +60,10 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   };
 
   useEffect(() => {
-    if (discovery?.step !== 'correct' || !ingredientId) return;
-    const timer = window.setTimeout(() => {
-      const collected = showIngredientCollection(progress, recipe.id);
-      commit(collectCurrentIngredient(collected, recipe.id));
-      setSelectedAnswer(null);
-      setToastCoins(0);
-    }, 1000);
-    return () => window.clearTimeout(timer);
-  }, [discovery?.step, ingredientId]);
+    setWrongAnswer(null);
+    setReviewing(false);
+    setToastCoins(0);
+  }, [ingredientId, discovery?.questionIndex]);
 
   if (!journey) return null;
   if (pendingSave) return <main className="discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
@@ -120,14 +116,12 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
       return;
     }
     setWrongAnswer(null);
-    setSelectedAnswer(optionId);
     setToastCoins(result.coinDelta);
   };
 
   const skip = () => {
     if (!commit(skipKnownIngredient(progress, recipe.id))) return;
     setWrongAnswer(null);
-    setSelectedAnswer(null);
     setToastCoins(0);
   };
 
@@ -144,27 +138,36 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
       </div>
 
       <div className="discovery-card__content" key={`${ingredientId}-${discovery.step}`}>
-        {discovery.step === 'learn' && <>
+        {(discovery.step === 'learn' || reviewing) && <>
           {alreadyCollected && <span className="discovery-collected-badge"><Check size={16} />Al verzameld</span>}
-          <IngredientDiscoveryCard config={config} ingredient={ingredient} />
-          <Button size="large" onClick={() => commit(showDiscoveryQuestion(progress, recipe.id))}>{alreadyCollected ? 'Bekijk de vraag' : 'Naar de vraag'}</Button>
+          <IngredientDiscoveryCard key={ingredientId} config={config} ingredient={ingredient} initialPage={reviewing && question.learningGoal === 'nutrition' ? 1 : 0} onReady={() => {
+            setReviewing(false); setWrongAnswer(null);
+            if (discovery.step === 'learn') commit(showDiscoveryQuestion(progress, recipe.id));
+          }} />
         </>}
 
-        {(discovery.step === 'question' || discovery.step === 'correct') && <>
+        {!reviewing && (discovery.step === 'question' || discovery.step === 'correct') && <>
           <CookingAssetImage className="discovery-card__ingredient" src={ingredient.image} alt={ingredient.name} />
-          <p className="discovery-card__eyebrow">{ingredient.name} · vraag {completedCount + 1} van {recipeIngredientIds.length}</p>
-          <h1 id="discovery-title">{question.prompt}</h1>
-          <div className="discovery-options" aria-busy={discovery.step === 'correct'}>
-            {discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map((option, index) => <button
-              type="button"
-              key={option.id}
-              disabled={discovery.step === 'correct'}
-              className={`${wrongAnswer === option.id ? 'is-wrong' : ''}${selectedAnswer === option.id ? ' is-correct' : ''}`}
-              onClick={() => answer(option.id)}
-            ><span>{String.fromCharCode(65 + index)}</span>{option.label}</button>)}
+          <p className="discovery-card__eyebrow">{ingredient.name} · vraag {discovery.questionIndex + 1} van {config.questions.length}</p>
+          <SpeechBubble character="coco" label="Denk mee" textId="discovery-title">{question.prompt}</SpeechBubble>
+          <div className="discovery-answer-buttons" role="group" aria-label="Kies je antwoord">
+            {discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map((option, index) => {
+              const wrong = wrongAnswer === option.id;
+              const correct = discovery.step === 'correct' && question.correctOptionId === option.id;
+              return <Button key={option.id} variant="quiet" fullWidth
+                className={`discovery-answer-button${wrong ? ' is-wrong' : ''}${correct ? ' is-correct' : ''}`}
+                disabled={Boolean(wrongAnswer) || discovery.step === 'correct'} onClick={() => answer(option.id)}
+                startIcon={<span className="discovery-answer-button__letter" aria-hidden="true">{String.fromCharCode(65 + index)}</span>}
+                endIcon={wrong ? <X size={18} aria-label="Niet juist" /> : correct ? <Check size={18} aria-label="Goed" /> : undefined}
+              >{option.label}</Button>;
+            })}
           </div>
-          {wrongAnswer && <div className="discovery-feedback discovery-feedback--wrong" role="alert"><RotateCcw size={20} /><span><strong>Nog niet.</strong> {config.educationalText}</span></div>}
-          {discovery.step === 'correct' && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
+          {(wrongAnswer || discovery.step === 'correct') && <p role="status">{question.feedbackExplanation}</p>}
+          {wrongAnswer && <Button onClick={() => setReviewing(true)}>Bekijk de ontdekking opnieuw</Button>}
+          {discovery.step === 'correct' && <>
+            {toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
+            <Button size="large" onClick={() => commit(collectCurrentIngredient(showIngredientCollection(progress, recipe.id), recipe.id))}>{discovery.questionIndex + 1 < config.questions.length ? 'Volgende vraag' : completedCount + 1 === recipeIngredientIds.length ? 'Ontdekken afronden' : 'Volgend ingrediënt'}</Button>
+          </>}
         </>}
         {alreadyCollected && (discovery.step === 'learn' || discovery.step === 'question') && <Button variant="quiet" startIcon={<SkipForward size={18} />} onClick={skip}>Ingrediënt overslaan</Button>}
       </div>

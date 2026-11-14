@@ -1,0 +1,12 @@
+Gemaakt met de ingebouwde image_gen-tool. Achtergrond zonder transparantie;
+radijs en bonen met transparent_background=true. PNG-bronnen lokaal bewaard,
+de app gebruikt WebP met behoud van het alfakanaal.
+
+BACKGROUND
+CocoKiki educational children's garden game background, muted Japandi soft rounded high-quality 3D illustration, warm natural textures. Wide landscape frontal slightly elevated view from inside a cozy kitchen garden looking at a low wooden fence, soft trees, a small potting shed at far left and a glass greenhouse at far right, pale blue sky. Central and lower 70 percent is a spacious empty pale warm grassy garden clearing for interactive vegetable beds rendered separately in game. No beds or crops in central foreground, no UI, no labels, no characters, no lamps, no writing. Calm sage moss cream oak terracotta, warm diffuse morning light. Polished inviting child friendly 7-12, wide landscape 3:2.
+
+RADISH
+ONE isolated fresh round red radish with small white root tip and a few attached green leaves, CocoKiki soft rounded 3D food game illustration, warm gently realistic natural textures, muted berry-red and sage-green. Clearly recognizable single radish fully visible, no face no eyes no text no bowl no floor no cast shadow. Genuine transparent alpha background, clean crisp cutout with generous margins, square composition.
+
+BEANS
+ONE small bunch of three fresh green French bean pods as a single food asset, CocoKiki soft rounded 3D illustration warm gentle natural textures muted leafy green. Long thin slender closed green pods with subtle seed bulges, recognizable sperziebonen, no peas spilling out. Genuine transparent alpha background, no plate no floor no cast shadow, no face no text, crisp cutout, all tips fully visible with generous margin.

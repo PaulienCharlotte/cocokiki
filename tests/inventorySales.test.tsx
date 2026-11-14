@@ -8,7 +8,7 @@ import { commitLocalState } from '../services/localState';
 import { loadCurrency } from '../services/currency';
 import { COOKING_PROGRESS_KEY, createEmptyCookingProgress, loadCookingProgress, restartJourney, startJourney, nextRequiredStage, migrateCookingProgress } from '../services/cookingProgress';
 import { RECIPES_BY_ID } from '../data/cooking/catalog';
-import { DECOR_PRODUCTS_BY_ID } from '../data/decorCatalog';
+import { DECOR_PRODUCTS_BY_ID, DECOR_SHOP_PRODUCTS } from '../data/decorCatalog';
 import { SHOP_PRODUCTS_BY_ID } from '../data/shopCatalog';
 import { rewardClockRound, loadClockProgress, clockLevelReward } from '../games/clock/clockProgress';
 import WorldTopBar from '../components/platform/WorldTopBar';
@@ -45,6 +45,29 @@ function stored(run: () => void) {
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: (key: string) => map.get(key) ?? null, setItem: (key: string, value: string) => map.set(key, value) } });
   try { run(); } finally { Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: previous }); }
 }
+
+test('retired rugs leave the shop while existing ownership and placements survive', () => stored(() => {
+  const ids = ['japandi-bath-mat', 'japandi-woven-rug', 'flower-rug', 'jute-rug', 'leaf-rug', 'pink-rug'];
+  for (const id of ids) {
+    assert.ok(DECOR_PRODUCTS_BY_ID[id]);
+    assert.ok(!DECOR_SHOP_PRODUCTS.some(product => product.id === id));
+  }
+  const state = createEmptyRoomInventory();
+  state.owned['leaf-rug'] = 1;
+  state.placements = [{ id: 'rug', productId: 'leaf-rug', room: 'living-room', x: 50, y: 70, view: 0, scale: 1 }];
+  commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify(state) });
+  assert.equal(loadRoomInventory().owned['leaf-rug'], 1);
+  assert.deepEqual(loadRoomInventory().placements, state.placements);
+}));
+
+test('Christmas decor is available in the furniture shop with fixed front views', () => {
+  const products = DECOR_SHOP_PRODUCTS.filter(product => product.category === 'christmas');
+  assert.equal(products.length, 5);
+  for (const product of products) {
+    assert.equal(product.store, 'furniture');
+    assert.equal(product.views, 1);
+  }
+});
 
 test('decor sales pay seventy percent exactly once and preserve placed items', () => stored(() => {
   const state = createEmptyRoomInventory();

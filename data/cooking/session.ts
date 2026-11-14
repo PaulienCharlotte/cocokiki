@@ -30,7 +30,7 @@ export function migrateCookingSession(value: unknown, recipe: RecipeConfig): Coo
   const completedStepIds = Array.isArray(source.completedStepIds) ? [...new Set(source.completedStepIds.filter(id => ids.has(id)))] : [];
   // Terugkijken mag alleen naar een stap die je al gehad hebt.
   const viewStepId = typeof source.viewStepId === 'string' && completedStepIds.includes(source.viewStepId) ? source.viewStepId : undefined;
-  return { ...empty, ...(viewStepId ? { viewStepId } : {}), attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
+  return { ...empty, ...(typeof source.redeemedCoins === 'number' && source.redeemedCoins > 0 ? { redeemedCoins: integer(source.redeemedCoins) } : {}), ...(viewStepId ? { viewStepId } : {}), attemptId: typeof source.attemptId === 'string' && source.attemptId ? source.attemptId : empty.attemptId,
     stepId: steps.find(step => !completedStepIds.includes(step.id))?.id ?? steps[steps.length - 1].id,
     completedStepIds, steps: states, ...(empty.oven ? { oven: restoreOven(source.oven ?? empty.oven) } : {}), completed: source.completed === true && steps.every(step => completedStepIds.includes(step.id)),
     seenTipIds: Array.isArray(source.seenTipIds) ? [...new Set(source.seenTipIds.filter(id => typeof id === 'string'))] : [],

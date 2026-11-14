@@ -19,6 +19,28 @@ import { HomeRecipeContent } from '../components/cooking/HomeRecipe';
 import CookingInteraction from '../components/cooking/CookingInteraction';
 import { COMPACT_COOKTOP_ZONES, COOKTOP_ZONES, cooktopPanFrame, nearestCooktopZone } from '../data/cooking/cooktopScene';
 
+test('een voedingsverband is nodig voor verzamelen en beloont alleen de laatste vraag', () => {
+  const recipe = GEZONDE_RECEPTEN.find(recipe => recipe.id === 'apple-oat-bake')!;
+  let progress = beginDiscoveryStage(startJourney(createEmptyCookingProgress(), recipe), recipe.id);
+  const config = INGREDIENT_DISCOVERIES_BY_ID.apple;
+  assert.equal(config.questions.length, 2);
+  assert.equal(config.questions[1].learningGoal, 'nutrition');
+  progress = showDiscoveryQuestion(progress, recipe.id);
+  const first = answerDiscoveryQuestion(progress, recipe.id, config.questions[0].correctOptionId);
+  assert.equal(first.coinDelta, 0);
+  progress = collectCurrentIngredient(showIngredientCollection(first.progress, recipe.id), recipe.id);
+  assert.ok(!progress.discoveredIngredientIds.includes('apple'));
+  assert.equal(progress.journeys[recipe.id]!.discovery.questionIndex, 1);
+  const wrong = answerDiscoveryQuestion(progress, recipe.id, 'ander-verband');
+  assert.equal(wrong.coinDelta, 0);
+  assert.equal(wrong.correct, false);
+  const final = answerDiscoveryQuestion(wrong.progress, recipe.id, config.questions[1].correctOptionId);
+  assert.equal(final.coinDelta, 5);
+  assert.equal(answerDiscoveryQuestion(final.progress, recipe.id, config.questions[1].correctOptionId).coinDelta, 0);
+  progress = collectCurrentIngredient(showIngredientCollection(final.progress, recipe.id), recipe.id);
+  assert.ok(progress.discoveredIngredientIds.includes('apple'));
+});
+
 for (const recipe of GEZONDE_RECEPTEN) {
   test(`${recipe.name}: volledige reis van ontdekken tot serveren`, () => {
     assert.deepEqual(getRecipeIssues(recipe), [], recipe.id);
@@ -94,7 +116,8 @@ test('volkoren uitleg blijft beschikbaar in de download en als Coco-tip', () => 
   const html = renderToStaticMarkup(<HomeRecipeContent recipe={pasta} />);
   assert.ok(html.includes('meer vezels dan witte pasta'));
   assert.ok(pasta.cookingTips!.some(tip => tip.text.includes('meer vezels dan witte pasta')));
-  assert.ok(html.includes('Voedingscentrum'));
+  assert.ok(!html.includes('Voedingscentrum'));
+  assert.ok(!html.includes('target="_blank"'));
 });
 
 test('koken toont een hele pan zonder de pannenkoeklaag', () => {

@@ -80,13 +80,9 @@ Dat kan met `ChoiceList` plus iconen, maar het is een eigen klus.
 **Doen:** eerst het kookspel (`.cooking-choices`, de kleinste), dan het
 spreekuur. Per gebied, niet alles tegelijk.
 
-## 6. Twee Kiki's
+## 6. Profielavatars — opgelost op 14 november 2026
 
-`public/images/avatars/kiki.webp` is blond met een knot.
-`public/images/avatars/kiki/kiki-*.png` heeft bruine krullen en een donkerrood
-pak. De plantenwereld gebruikt de krullen, het topmenu de knot.
-
-**Doen:** Charlotte kiest welke de echte is, dan gaat de ander eruit.
+Coco en Kiki hebben nu transparante profielportretten op basis van hun daadwerkelijke personages. De blonde afwijkende Kiki wordt niet meer aangeboden als Kiki. Luna is toegevoegd als eigen blonde avatar; bestaande profiel-id's blijven behouden. Baby Lua en Seb zijn visueel gecontroleerd en hun verwisselde afbeeldingskoppelingen zijn gecorrigeerd.
 
 ## 7. De menu's zijn nog niet allemaal hetzelfde
 

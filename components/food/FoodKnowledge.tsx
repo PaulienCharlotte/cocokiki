@@ -5,6 +5,7 @@ import { FOOD_TERMS_BY_ID, foodTextParts } from '../../data/cooking/foodGlossary
 import { PRODUCT_KNOWLEDGE } from '../../data/cooking/productKnowledge';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
 import CookingAssetImage from '../cooking/CookingAssetImage';
+import FoodIllustration from './FoodIllustration';
 import './food-knowledge.css';
 
 export function FoodText({ text, onTerm, exclude }: { text: string; onTerm: (id: string) => void; exclude?: string }) {
@@ -31,11 +32,11 @@ export default function FoodKnowledgeDialog({ ingredient, termId, onClose }: { i
     primaryAction={<Button onClick={canBack ? back : onClose}>{canBack ? `Terug naar ${path.length > 1 ? FOOD_TERMS_BY_ID[path[path.length - 2]]?.title.toLowerCase() : root?.toLowerCase()}` : 'Klaar'}</Button>}
   >
     {term ? <div className="food-article">
+      <FoodIllustration termId={term.id} />
       <p><strong><FoodText text={term.summary} onTerm={openTerm} exclude={term.id} /></strong></p>
       <p><FoodText text={term.explanation} onTerm={openTerm} exclude={term.id} /></p>
       <p><FoodText text={term.example} onTerm={openTerm} exclude={term.id} /></p>
       <nav className="food-related" aria-label="Ontdek verder">{term.related.map(id => <Button key={id} variant="quiet" size="small" onClick={() => openTerm(id)}>{FOOD_TERMS_BY_ID[id]?.title}</Button>)}</nav>
-      <a className="food-source" href={term.source} target="_blank" rel="noreferrer">Bron voor begeleiders</a>
     </div> : ingredient && <div className="food-article">
       <CookingAssetImage className="food-article__image" src={ingredient.image} alt={ingredient.name} />
       <nav className="food-sections" aria-label="Wat wil je over dit product weten?">

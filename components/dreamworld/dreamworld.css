@@ -120,3 +120,14 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
   .dreamworld .world-profile__trigger > svg, .dream-app .world-profile__trigger > svg { display: none; }
   .dream-flags-memory { padding-top: calc(var(--space-12) + var(--space-8)); }
 }
+
+/* De lucht vult de ruimte rondom de vrijstaande planeet, ook volledig uitgezoomd. */
+.dream-map__sky { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(var(--color-sky), var(--color-background-calm)); }
+.dream-map.is-night .dream-map__sky { background: linear-gradient(color-mix(in srgb, var(--color-sky) 30%, var(--color-text)), color-mix(in srgb, var(--color-sky) 60%, var(--color-text))); }
+.dream-map__image-plane > img { filter: drop-shadow(0 var(--space-6) var(--space-8) var(--color-overlay)); }
+.dream-map.is-night .dream-map__image-plane > img { filter: brightness(.8) drop-shadow(0 var(--space-6) var(--space-8) var(--color-overlay)); }
+
+.dream-map .dream-island-icon { width: var(--space-12); height: var(--space-12); }
+.dreamworld + .site-footer { position: fixed; bottom: var(--space-1); left: var(--space-3); z-index: 1; background: transparent; }
+.dreamworld:has(.dream-map.is-night) + .site-footer a { color: var(--color-on-primary); }
+.dream-map__sky > img { width: 100%; height: 100%; object-fit: cover; }

@@ -1,0 +1,11 @@
+CocoKiki natural garden assets — 14 November 2026
+
+Shared art direction: exact orthographic vertical overhead view, muted natural greens, warm cozy premium soft 3D illustration for children 7–12, believable natural materials, no text or UI.
+
+Terrain: wide 3:2 empty lawn with thousands of fine short grass blades, moss and muted green variations. Worn pale gravel border, tiny stones, aged low timber fence, small overhead wooden water barrel top left and leafy shrubs only at outer corners. Central 80% unobstructed for interactive beds. Gentle morning ambient occlusion. No beds, crops, people, sky or horizon.
+
+Bed: one isolated horizontal rectangular raised vegetable bed, width to height 1.6. Rich tactile moist dark earth, fine crumbs, irregular clods, shallow furrows and organic fibers. Rounded pale oak border with visible grain and small knots. Strict overhead parallel edges. Transparent alpha outside entire object and generous margin. No grass, plants, seeds, labels, haze or external shadows.
+
+Seedling: one overhead young vegetable seedling with four curved fresh leaves, subtle veins, slightly irregular edges and small central bud. Muted moss and sage greens, believable dimensional leaf material. Transparent alpha including gaps. No pot, soil, ground, external shadow, haze or text.
+
+Generated PNG sources retained beside this file. Public WebP assets use the same pixels with alpha preserved.

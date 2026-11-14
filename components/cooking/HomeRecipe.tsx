@@ -15,7 +15,6 @@ export function HomeRecipeContent({ recipe, embedded = false }: { recipe: Recipe
     <h3>Veilig koken</h3><p>{home.safety}</p>
     <h3>Serveertip</h3><p>{home.servingTip}</p>
     <h3>Allergenen</h3><p>{home.allergens.join(' · ')}</p>
-    {home.sources && <p>Meer weten? {home.sources.map((bron, index) => <React.Fragment key={bron.url}>{index > 0 && " · "}<a href={bron.url} target="_blank" rel="noreferrer">{bron.title}</a></React.Fragment>)}</p>}
   </article>;
 }
 export default function HomeRecipe({ recipe }: { recipe: RecipeConfig }) {

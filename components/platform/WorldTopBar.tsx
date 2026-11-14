@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -68,9 +68,9 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </button>
       </div>
       <div className="world-hud__tools">
-        {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
+        {!onBack && (worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Opdrachten openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>
@@ -111,8 +111,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
             {onNavigate && <>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/treehouse/cookbook'); }}><ChefHat />Kookboek</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}><BookOpen />Encyclopedie</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />Opdrachten</button>
             </>}
           </nav>}
         </div>

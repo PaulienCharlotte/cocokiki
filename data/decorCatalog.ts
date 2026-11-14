@@ -1,5 +1,5 @@
 export type DecorStoreId = 'furniture' | 'plants';
-export type DecorCategory = 'bathroom' | 'sleeping' | 'seating' | 'storage' | 'tables' | 'rugs' | 'lighting' | 'large-plants' | 'hanging-plants' | 'flowering-plants' | 'small-plants';
+export type DecorCategory = 'christmas' | 'bathroom' | 'sleeping' | 'seating' | 'storage' | 'tables' | 'rugs' | 'lighting' | 'large-plants' | 'hanging-plants' | 'flowering-plants' | 'small-plants';
 
 export interface SpriteCrop {
   x: number;
@@ -9,6 +9,8 @@ export interface SpriteCrop {
 }
 
 export interface DecorProduct {
+  /** Uit het aanbod; bestaande aankopen blijven bruikbaar. */
+  retired?: boolean;
   sheet?: { columns: number; rows: number; width: number; height: number; frames?: SpriteCrop[] };
   id: string;
   name: string;
@@ -55,6 +57,7 @@ export const DECOR_STORES: Record<DecorStoreId, { label: string; eyebrow: string
 export const DECOR_CATEGORIES: Record<DecorStoreId, Array<{ id: 'all' | DecorCategory; label: string }>> = {
   furniture: [
     { id: 'all', label: 'Alles' },
+    { id: 'christmas', label: 'Kerst' },
     { id: 'bathroom', label: 'Badkamer' },
     { id: 'sleeping', label: 'Bedden' },
     { id: 'seating', label: 'Zitten' },
@@ -142,6 +145,11 @@ const turnable = (id: string, name: string, category: DecorCategory, price: numb
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  { ...furniture('christmas-japandi-tree', 'Knusse kerstboom', 'christmas', 85), roomWidth: 19 },
+  { ...furniture('christmas-fir-wreath', 'Groene kerstkrans', 'christmas', 35), roomWidth: 11 },
+  { ...furniture('christmas-oak-star', 'Houten kerstster', 'christmas', 25), roomWidth: 10 },
+  { ...furniture('christmas-wrapped-gifts', 'Kerstcadeautjes', 'christmas', 30), roomWidth: 11 },
+  { ...furniture('christmas-felt-garland', 'Vilten kerstslinger', 'christmas', 25), roomWidth: 24 },
   { ...furniture('japandi-toilet', 'Japandi toilet', 'bathroom', 90), roomWidth: 12 },
   { ...furniture('japandi-round-mirror', 'Japandi badkamerspiegel', 'bathroom', 40), roomWidth: 13 },
   { ...furniture('japandi-toilet-roll-holder', 'Japandi toiletrolhouder', 'bathroom', 20), roomWidth: 6 },
@@ -230,4 +238,11 @@ export const DECOR_PRODUCTS: DecorProduct[] = [
 export const DECOR_PRODUCTS_BY_ID = Object.fromEntries(
   DECOR_PRODUCTS.map(product => [product.id, product]),
 ) as Record<string, DecorProduct>;
+
+// Deze vloerassets hebben een te hoog camerastandpunt voor de huidige kamers.
+const retiredRugs = new Set(['japandi-bath-mat', 'japandi-woven-rug', 'flower-rug', 'jute-rug', 'leaf-rug', 'pink-rug']);
+for (const product of DECOR_PRODUCTS) {
+  if (retiredRugs.has(product.id)) product.retired = true;
+}
+export const DECOR_SHOP_PRODUCTS = DECOR_PRODUCTS.filter(product => !product.retired);
 

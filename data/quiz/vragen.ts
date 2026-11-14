@@ -109,7 +109,7 @@ function etenVragen(items: IngredientEntry[]): QuizVraag[] {
 function voedingVragen(stoffen: NutrientDefinition[]): QuizVraag[] {
   return stoffen.map((stof, index) => ({
     id: `voeding:${stof.id}:functie`, bron: 'voeding' as const,
-    vraag: stof.bodyFunction.replace(stof.name, 'Welke voedingsstof').replace(/\.$/, '?'),
+    vraag: `${stof.bodyFunction.replace(stof.name, 'Deze voedingsstof').replace(/\bhelpen\b/g, 'helpt').replace(/\bleveren\b/g, 'levert')} Welke is het?`,
     antwoord: stof.name,
     opties: keuzes(stof.name, stoffen.map(ander => ander.name), index),
     toelichting: `Je vindt het in ${stof.foodExamples.join(', ').toLowerCase()}.`,

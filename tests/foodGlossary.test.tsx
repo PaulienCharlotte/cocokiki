@@ -6,6 +6,9 @@ import { FOOD_TERMS, FOOD_TERMS_BY_ID, foodTextParts } from '../data/cooking/foo
 import { PRODUCT_KNOWLEDGE } from '../data/cooking/productKnowledge';
 import { INGREDIENTS_BY_ID } from '../data/cooking/catalog';
 import { FoodText } from '../components/food/FoodKnowledge';
+import FoodIllustration from '../components/food/FoodIllustration';
+import { FOOD_VISUALS } from '../data/cooking/foodVisuals';
+import { existsSync, readFileSync } from 'node:fs';
 
 test('begrippen kunnen zonder ontbrekende links verder worden uitgelegd', () => {
   assert.equal(new Set(FOOD_TERMS.map(term => term.id)).size, FOOD_TERMS.length);
@@ -25,4 +28,17 @@ test('woorden blijven heel en specifieke begrippen winnen van algemene woorden',
   assert.match(html, /Wat betekent Rode bloedcellen/);
   assert.match(html, /Wat betekent zuurstof/);
   assert.doesNotMatch(html, /role="dialog"/);
+});
+
+test('ieder doorklikbegrip krijgt een bestaand beeld met een begrijpelijk bijschrift', () => {
+  for (const term of FOOD_TERMS) {
+    const visual = FOOD_VISUALS[term.id];
+    assert.ok(visual, term.id);
+    assert.ok(existsSync(`public${visual.image}`), visual.image);
+    assert.ok(readFileSync(`public${visual.image}`).subarray(0, 200).includes('ALPH'), `${term.id}: mist transparantie`);
+    assert.ok(visual.alt && visual.caption, term.id);
+    const html = renderToStaticMarkup(<FoodIllustration termId={term.id} />);
+    assert.match(html, /<img/);
+    assert.match(html, /<figcaption/);
+  }
 });

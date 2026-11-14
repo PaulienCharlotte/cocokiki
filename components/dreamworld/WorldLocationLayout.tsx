@@ -16,8 +16,9 @@ import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
  * een wens, en daar hoort een knop bij. Welke knop, staat hieronder.
  */
 const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
-  bestellingen: { label: 'Naar de toonbank', pad: '/treehouse/cookbook?toonbank=1' },
-  plantendokter: { label: 'Naar het spreekuur', pad: '/plantendokter' },
+  moestuin: { label: 'Naar mijn moestuin', pad: '/plants/garden' },
+  bestellingen: { label: 'Naar de toonbank', pad: '/opdrachten?gebied=bakken' },
+  plantendokter: { label: 'Kies een plantenopdracht', pad: '/opdrachten?gebied=planten' },
 };
 
 /**
@@ -26,7 +27,9 @@ const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
  * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
  */
 const DIRECTE_AVONTUREN: Record<string, string> = {
-  bestellingen: '/treehouse/cookbook?toonbank=1',
+  plantendokter: '/opdrachten?gebied=planten',
+  moestuin: '/plants/garden',
+  bestellingen: '/opdrachten?gebied=bakken',
   kookboek: '/treehouse/cookbook',
   voeding: '/cooking/discover',
   keuken: '/cooking/kitchen',
