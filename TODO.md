@@ -1,8 +1,73 @@
 # CocoKiki backlog
 
-Laatst bijgewerkt: 31 oktober 2026
+Laatst bijgewerkt: 14 november 2026
 
 De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarna de visuele basis, vervolgens merkonderdelen en ten slotte het interactieve spelmaatje.
+
+## Nieuwe klusjes — spelevaring en navigatie (14 november 2026)
+
+Uitgevoerd op 14 november 2026: winkelretour, centraal opdrachtenoverzicht, vijf dagelijkse kennisvragen, compact hoofdmenu en de avatarset inclusief Luna. De reeks gebruikt de bestaande kennisvragen; adaptieve niveaus zijn een mogelijk vervolg. Oudere afgeronde punten beschrijven de situatie van toen.
+
+### Wereldkaart en Lua — toegevoegd op 14 november
+
+- [x] Maak uitzoomen mogelijk naar een complete ronde wereld, met lucht rondom in plaats van rechthoekige afbeeldingsranden.
+  - De vijf locaties blijven bereikbaar; daglicht met wolken en een wisselbare nachtweergave met sterren.
+  - Behoud zoomen, slepen met ingedrukte klik, pinch en toetsenbordnavigatie.
+- [x] Maak Lua's profielportret rechtop en gecentreerd, met behoud van zijn herkenbare uiterlijk.
+
+### Eerst: makkelijk winkelen tijdens het inrichten
+
+- [x] Rechtstreeks van een boomhutkamer naar de meubelwinkel en terug naar dezelfde kamer.
+  - Onthoud de kamer en de inrichtmodus als terugkeerbestemming, ook na een aankoop.
+  - Behoud de geplaatste meubels en de huidige inrichting.
+  - Terug uit de winkel mag niet via het speloverzicht lopen.
+  - Controleer ook rechtstreeks geopende winkels: zonder kamercontext werkt de gewone terugroute.
+
+### Eén plek voor opdrachten
+
+- [x] Breng de bak- en plantenopdrachten samen onder ‘Opdrachten’ in het hoofdmenu.
+  - Aanleiding: de huidige toonbanken verschillen in presentatie en bediening.
+  - Toon opdrachten voor bakken, tuinieren en inrichten met dezelfde schermopbouw; bouw voort op bestaande opdrachtlogica.
+  - Voorstel: één centraal overzicht met gebiedsfilters. Een eiland mag een snelkoppeling hebben naar hetzelfde overzicht, al gefilterd op dat eiland. Geen aparte opdrachtvoorraad, voortgang of beloningslogica per ingang.
+  - Een gekozen opdracht opent in het juiste gebied; lopende opdrachten zijn terug te vinden en te hervatten.
+  - Kies één herkenbaar opdrachtenicoon met toegankelijk label en een korte zichtbare naam bij de eerste kennismaking.
+  - Vervang bestaande toonbankingangen pas als de nieuwe route en terugnavigatie werken.
+
+### Vijf dagelijkse oefeningen
+
+- [x] Verplaats het losse dagelijkse quizelement uit de encyclopedie naar een dagelijkse oefenreeks.
+  - Wens: vijf oefeningen met een hogere beloning, bijvoorbeeld dubbel.
+  - Voorstel: ‘Vandaag’ binnen Opdrachten, zonder extra hoofdmenu-icoon.
+  - Houd de encyclopedie gericht op opzoeken en ontdekken.
+  - De eerste reeks gebruikt vijf afwisselende planten- en voedingsvragen uit de bestaande kennisbank en is hervatbaar.
+  - [ ] Vervolg: maak de dagelijkse kennisvragen aanpasbaar aan het niveau van het kind.
+  - Voorstel beloning: 2× de gewone oefenbeloning voor zelfstandig opgeloste oefeningen; de exacte bedragen en hulpregels vooraf vastleggen.
+  - Keer de bonus maximaal eenmaal per oefening per dag uit, ook na herladen of via een tweede ingang.
+  - Geen inhaalplicht, verloren reeks of straf als een kind een dag overslaat.
+
+### Schaalbare, rustige navigatie
+
+- [x] Herbekijk het hoofdmenu en de snelkoppelingen als één geheel.
+  - Voorstel vaste basis: wereld/terug, Opdrachten, winkel met terugkeercontext, muntensaldo en profiel.
+  - Voorstel profielmenu: encyclopedie, avatar, instellingen en overige persoonlijke opties. Controleer of kinderen de encyclopedie daar nog makkelijk vinden; een boekicoon is eventueel duidelijker dan verstoppen onder profiel.
+  - Plaats gebiedsbediening bij het spel, bijvoorbeeld tuinbediening links. Voeg geen hoofdmenu-icoon toe voor iedere nieuwe functie.
+  - Geef dezelfde bestemming altijd hetzelfde icoon en dezelfde naam. Voorkom meerdere terugknoppen met onduidelijke bestemmingen.
+  - Toets het voorstel aan drie routes: opdracht kiezen → uitvoeren → beloning; kamer → winkel → dezelfde kamer; spelen → kennis opzoeken → terug.
+  - Controleer desktop en 360px, raakvlakken, toetsenbord en herkenbaarheid van iconen.
+
+### Avatars corrigeren en uitbreiden
+
+- [x] Laat de profielavatars van Coco en Kiki overeenkomen met hun daadwerkelijke personages.
+  - Controleer de gebruikte afbeeldingen visueel, niet alleen op bestandsnaam; de bestaande bibliotheek bevat afwijkende afbeeldingen en verwisselde namen.
+  - Kiki heeft de bekende bruine krullen, niet het blonde haar van de huidige afwijkende profielavatar.
+  - Gebruik de echte Coco en Kiki als beeldreferentie en één centrale koppeling voor de avatarselectie en het profielmenu.
+  - Behoud bestaande profielkeuzes via een migratie indien ids of paden wijzigen.
+- [x] Maak een nieuwe blonde avatar met de naam **Luna**, in dezelfde CocoKiki-stijl.
+  - Luna is een eigen profielavatar; houd haar apart van Baby Lua.
+  - Genereer een transparant portret met dezelfde uitsnede en schaal als de andere profielavatars; controleer het op klein formaat.
+  - Voeg Luna toe aan de bestaande avatarkiezer en test kiezen, opslaan en herladen.
+
+Voorgestelde uitvoervolgorde: winkelretour → navigatie/opdrachtenstructuur → dagelijkse oefeningen. De avatarcorrecties en Luna kunnen als aparte, kleine wijziging worden uitgevoerd.
 
 ## 1. Navigatie
 
@@ -45,7 +110,8 @@ De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarn
   - Bepaal uiterlijk, poses, toestanden en gedrag voordat de interface wordt gebouwd.
   - Leg vast welke hulp Kiki per scherm kan bieden.
 
-- [ ] Implementeer Kiki als vaste hulpavatar.
+- [ ] Herzie het oude voorstel voor Kiki als vaste hulpavatar vóór uitvoering.
+  - De huidige gebiedsafspraken gaan voor: Coco bij koken, Kiki bij planten, Baby Lua bij rekenen en Seb bij topografie. Geen universele Kiki-overlay invoeren op basis van dit oude punt.
   - Kiki blijft rechtsonder zichtbaar op de homepage en in alle spellen.
   - Kiki biedt op verzoek contextuele, kindvriendelijke hulp.
   - Kiki mag spelbediening of belangrijke inhoud niet afdekken, ook niet op mobiel en tablet.
@@ -98,3 +164,11 @@ Resterende acties, in deze volgorde:
 Uitwerking: `docs/privacy-activation-checklist.md` en
 `docs/supabase-analytics.md`. Deze documenten en de privacypagina bevatten nog
 open TODO's en zijn geen juridische vrijgave.
+
+## Verfijning eilanden en lucht — 14 november 2026
+
+- [x] Verwijder de losse Privacy-link uit de spelomgeving.
+- [x] Herstel het planten-klembord als ingang voor opdrachten.
+- [x] Zet de eilandkeuzes op desktop in een horizontaal schuifmenu onderin; behoud mobiel.
+- [x] Vervang de eenvoudige lucht door geïllustreerde dag- en nachtachtergronden.
+- [ ] Verken een vrijwillig gekozen plaats voor actuele weersuggesties en passende buitenactiviteiten. Eerst het concept uitwerken; geen automatische locatievolging toevoegen.

@@ -125,7 +125,8 @@ test('cooking location is addressable while the original cookbook stays availabl
 });
 test('plant location is addressable and discovery offers real flag memory', () => {
   assert.deepEqual(resolveRoute('/islands/plants'), { route: { page: 'island', path: '/islands/plants', islandId: 'plants' }, redirect: false });
-  assert.deepEqual(ISLANDS_BY_ID.plants.activities.map(item => item.id), ['clinic']);
+  assert.deepEqual(ISLANDS_BY_ID.plants.activities.map(item => item.id), ['garden', 'clinic']);
+  assert.equal(resolveRoute('/plants/garden').route.page, 'garden');
   assert.equal(resolveRoute('/games/flags-memory').route.page, 'flags-memory');
   assert.ok(ISLANDS_BY_ID.discovery.activities.some(item => item.path === '/games/flags-memory'));
   assert.ok(ISLANDS_BY_ID.discovery.activities.every(item => item.path !== '/travel'));
@@ -224,4 +225,16 @@ test('language stays honest about future functionality and no games disappear', 
   assert.doesNotMatch(html, /dream-location/);
   assert.equal(ISLANDS_BY_ID.discovery.modules.includes('world-times'), true);
   assert.equal(ISLANDS_BY_ID.discovery.future.includes('world-times'), false);
+});
+
+test('ronde wereld laat bij overzichtszoom lucht rondom vrij op desktop en mobiel', () => {
+  for (const [width, height] of [[360, 800], [1440, 900]]) {
+    const image = worldImageSize(width, height, 1);
+    const minimum = worldMinimumScale(width, height, image.width, image.height, .8);
+    const view = clampWorldView({ scale: 0, x: 9999, y: 9999 }, width, height, image.width, image.height, .8);
+    assert.equal(view.scale, minimum);
+    assert.equal(view.x, 0); assert.equal(view.y, 0);
+    assert.ok(image.width * view.scale <= width * .8 + .001);
+    assert.ok(image.height * view.scale <= height * .8 + .001);
+  }
 });

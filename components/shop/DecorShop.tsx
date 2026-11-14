@@ -17,6 +17,7 @@ import { subscribeLocalState } from '../../services/localState';
 interface DecorShopProps {
   store: DecorStoreId;
   onBack: () => void;
+  backLabel?: string;
   onNavigate?: (path: string) => void;
 }
 
@@ -26,7 +27,7 @@ function createTransactionId(store: DecorStoreId): string {
   return `decor:${store}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps) {
+export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Terug naar winkeloverzicht' }: DecorShopProps) {
   const [backpackOpen, setBackpackOpen] = useState(false);
   const [inventory, setInventory] = useState(loadRoomInventory);
   useEffect(() => subscribeLocalState(() => setInventory(loadRoomInventory()), ROOM_INVENTORY_KEY), []);
@@ -90,10 +91,10 @@ export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps)
 
   return <main className={`shop-room decor-shop decor-shop--${store}`}>
     <img className="shop-room__background" src="/games/shop/shop-street.webp" alt="Het gezellige winkelplein" />
-    <button className="shop-dismiss" type="button" onClick={onBack} aria-label="Terug naar het winkelplein" />
+    <button className="shop-dismiss" type="button" onClick={onBack} aria-label={backLabel} />
     <section className="shop-catalog decor-shop__catalog" aria-labelledby="decor-shop-title">
       <header className="shop-catalog__header">
-        <button className="shop-icon-button" type="button" onClick={onBack} aria-label="Terug naar winkeloverzicht" title="Terug naar winkeloverzicht"><ArrowLeft /></button>
+        <button className="shop-icon-button" type="button" onClick={onBack} aria-label={backLabel} title={backLabel}><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><Icon size={21} /></span>
         <div className="decor-shop__heading"><h1 id="decor-shop-title">{definition.label}</h1></div>
         <div className="shop-catalog__actions">
@@ -138,7 +139,7 @@ export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps)
     {familyOpen && <PlantFamilyPanel onClose={() => setFamilyOpen(false)} />}
     {adopted.length > 0 && <PlantAdoptionDialog plants={adopted} onName={nameAdopted} onDone={() => { setAdopted([]); setSuccess(true); }} />}
 
-    {success && <PurchaseSuccess title="Toegevoegd aan je voorraad" description={store === 'furniture' ? 'Je meubels staan klaar in je boomhut.' : 'Je planten staan klaar in je voorraad.'} onContinue={() => setSuccess(false)} onOverview={onBack} />}
+    {success && <PurchaseSuccess title="Toegevoegd aan je voorraad" description={store === 'furniture' ? 'Je meubels staan klaar in je boomhut.' : 'Je planten staan klaar in je voorraad.'} onContinue={() => setSuccess(false)} onOverview={onBack} overviewLabel={backLabel} />}
   </main>;
 }
 

@@ -75,3 +75,16 @@
 @media (max-width: 700px) {
   .world-location--coco .location-game__heading { min-height: 58svh; }
 }
+
+/* Op desktop blijven de bewoners zichtbaar boven één horizontale keuzestrook. */
+@media (min-width: 701px) {
+  .world-location--game .location-game { display: block; min-height: 100svh; padding: 0; }
+  .world-location--game .adventure-shelf { position: absolute; left: var(--space-6); right: var(--space-6); bottom: var(--space-4); margin: 0; }
+  .world-location--game .adventure-shelf .ck-kaarten { display: flex; gap: var(--space-3); overflow-x: auto; padding: var(--space-2); margin: 0; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+  .world-location--game .adventure-shelf .ck-kaarten > li { flex: 0 0 11rem; scroll-snap-align: start; }
+  .world-location--game .adventure-shelf .ck-kaart { padding: var(--space-2); }
+  .world-location--game .adventure-shelf .ck-kaart__beeld { height: calc(var(--space-12) + var(--space-6)); min-height: 0; }
+  .world-location--game .adventure-shelf .ck-kaart__beeld img { height: 100%; object-fit: contain; }
+  .world-location--game .adventure-shelf .ck-kaart__tekst { padding: var(--space-2); }
+  .world-location--game .adventure-shelf .ck-kaart__meta { display: none; }
+}

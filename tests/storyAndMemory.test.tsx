@@ -280,8 +280,8 @@ test('cookie hints give the inverse calculation and coaches use distinct avatars
   assert.match(techniqueHint(question), /42 \+ 16/);
   const lua = renderToStaticMarkup(<TipCoach coach="lua">Reken terug</TipCoach>);
   const seb = renderToStaticMarkup(<TipCoach coach="seb">Kijk op de kaart</TipCoach>);
-  assert.match(lua, /Baby Lua/); assert.match(lua, /luiaard.webp/);
-  assert.match(seb, /Seb/); assert.match(seb, /avatars\/lua.webp/);
+  assert.match(lua, /Baby Lua/); assert.match(lua, /avatars\/lua-profile.webp/);
+  assert.match(seb, /Seb/); assert.match(seb, /avatars\/luiaard.webp/);
 });
 
 test('memory boards retain every pair, keep partners together and only advance after a full board', () => {

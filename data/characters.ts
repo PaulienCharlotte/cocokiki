@@ -16,9 +16,8 @@ export interface Character {
 
 export const CHARACTERS: Record<CharacterId, Character> = {
   kiki: { naam: 'Kiki', beeld: '/images/avatars/kiki/kiki-plant.webp', gebied: 'planten' },
-  coco: { naam: 'Coco', beeld: '/images/avatars/coco.webp', gebied: 'koken' },
-  // De bestandsnamen van Lua en Seb staan verwisseld in de oude map; de
-  // paden hieronder zijn de plaatjes die er echt bij horen.
-  lua: { naam: 'Baby Lua', beeld: '/images/avatars/luiaard.webp', gebied: 'rekenen' },
-  seb: { naam: 'Seb', beeld: '/images/avatars/lua.webp', gebied: 'topografie' },
+  coco: { naam: 'Coco', beeld: '/images/avatars/coco-profile.webp', gebied: 'koken' },
+  // Visueel gecontroleerd: Lua is de luiaard, luiaard.webp het stokstaartje.
+  lua: { naam: 'Baby Lua', beeld: '/images/avatars/lua-profile.webp', gebied: 'rekenen' },
+  seb: { naam: 'Seb', beeld: '/images/avatars/luiaard.webp', gebied: 'topografie' },
 };

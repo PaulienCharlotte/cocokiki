@@ -1,0 +1,7 @@
+Ingebouwde image_gen-tool, transparent_background=true, originele PNG per illustratie als referentie.
+
+Spijsvertering: Remove the entire cream background from this educational illustration. Preserve stomach, intestines, apple and oats exactly. True transparent alpha background including all gaps between separate objects. No floor, no ambient haze, no shadow outside objects, no colored rectangle, no checkerboard. Keep whole objects visible, add transparent margin around all objects.
+
+Bloed: Make this blood oxygen educational illustration a clean isolated cutout with TRUE transparent alpha background. Keep red blood cells and blue oxygen dots within a short curved open blood vessel segment. Fit the entire vessel segment fully within the image with transparent margins; it must not touch or be cropped by any image border. Remove all cream background, no floor, no outer glow or haze, no shadows outside objects, no text or checkerboard. Keep same soft 3D illustration style.
+
+Groei: Remove the entire cream background from this educational illustration. Keep arm, magnifying glass, muscle cells, egg, yogurt and beans exactly. True transparent alpha cutout including gaps between objects. No floor, no haze, no glow, no cast shadows outside objects, no colored rectangular background, no checkerboard. Whole composition fully visible with transparent margins.

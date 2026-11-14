@@ -1,4 +1,4 @@
-import worldMap from '../assets/world-map-v2.webp';
+import worldMap from '../assets/world-map-v2-planet.webp';
 import { ASSET_LIBRARY as A } from '../data/assetLibrary';
 import { mathIcon, MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
 
@@ -25,7 +25,7 @@ export interface DreamIsland {
   future: readonly string[];
 }
 export const DREAMWORLD_IMAGE = worldMap;
-export const DREAMWORLD_RATIO = 1672 / 941;
+export const DREAMWORLD_RATIO = 1;
 
 export interface WorldDestination {
   id: IslandId;
@@ -37,11 +37,11 @@ export interface WorldDestination {
 
 // Normalized image coordinates; navigation remains independent React controls.
 export const WORLD_DESTINATIONS: WorldDestination[] = [
-  { id: 'cooking', label: 'Coco’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .39, width: .058, height: .104 }, enabled: true },
-  { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: .51, y: .40, width: .058, height: .104 }, enabled: true },
-  { id: 'math', label: 'Rekenwerkplaats', route: '/islands/math', position: { x: .85, y: .40, width: .058, height: .104 }, enabled: true },
-  { id: 'plants', label: 'Kiki’s Plantenkas', route: '/islands/plants', position: { x: .17, y: .65, width: .058, height: .104 }, enabled: true },
-  { id: 'discovery', label: 'Reizen en topografie', route: '/islands/discovery', position: { x: .85, y: .69, width: .058, height: .104 }, enabled: true },
+  { id: 'cooking', label: 'Coco’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .36, width: .075, height: .075 }, enabled: true },
+  { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: .51, y: .27, width: .075, height: .075 }, enabled: true },
+  { id: 'math', label: 'Rekenwerkplaats', route: '/islands/math', position: { x: .79, y: .36, width: .075, height: .075 }, enabled: true },
+  { id: 'plants', label: 'Kiki’s Plantenkas', route: '/islands/plants', position: { x: .22, y: .57, width: .075, height: .075 }, enabled: true },
+  { id: 'discovery', label: 'Reizen en topografie', route: '/islands/discovery', position: { x: .76, y: .60, width: .075, height: .075 }, enabled: true },
 ];
 export const WORLD_SHOPS = [
   { id: 'groceries', label: 'Boodschappen', path: '/shop/groceries' },
@@ -61,6 +61,7 @@ export const DREAM_ISLANDS: DreamIsland[] = [
     activity('recipes', 'Mijn kookboek', '/treehouse/cookbook', A.treehouse.collections.cookbook, 50, 50),
   ] },
   { id: 'plants', label: 'Planteneiland', path: '/islands/plants', spot: { x: .825, y: .76, width: .27, height: .31 }, background: '/dreamworld/plant-clinic.webp', backgroundAlt: 'Een zonnige plantenkas met een ronde werktafel en groene planten', modules: ['plant-family', 'plant-clinic', 'plant-shop', 'plant-knowledge'], status: 'available', future: [], activities: [
+    activity('garden', 'Mijn moestuin', '/plants/garden', '/assets/library/plants/garden/navigation.webp', 72, 44),
     activity('clinic', 'Plantendokter', '/plantendokter', A.avatars.kikiPoses.plant, 26, 44),
   ] },
   { id: 'discovery', label: 'Ontdekkingseiland', path: '/islands/discovery', spot: { x: .24, y: .75, width: .31, height: .28 }, background: '/dreamworld/topo-interior.webp', backgroundAlt: 'Een zonnige ontdekkingskamer met wereldkaarten, wereldbollen en een telescoop met uitzicht op bergen en water', modules: ['topo', 'clock', 'world-times', 'travel'], status: 'available', future: ['journeys'], activities: [

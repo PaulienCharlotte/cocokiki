@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, LocateFixed, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, LocateFixed, Minus, Plus, Moon, Sun } from 'lucide-react';
 import { IconButton } from '../../design-system';
 import { clampWorldView, worldImageSize, worldMinimumScale, type WorldView } from '../../services/worldViewport';
 import type { MapSpot } from '../../platform/dreamworld';
@@ -10,6 +10,8 @@ const rememberedViews = new Map<string, WorldView>();
 
 /** Beeld en raakvlakken delen altijd dezelfde transformatie en afmetingen. */
 export default function WorldMapViewer({ image, alt, ratio, locations, onNavigate }: Props) {
+  const [night, setNight] = useState(() => { const hour = new Date().getHours(); return hour < 7 || hour >= 19; });
+  const initialized = useRef(rememberedViews.has(image));
   const viewport = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
   const [view, setView] = useState<WorldView>(() => rememberedViews.get(image) ?? { scale: 1, x: 0, y: 0 });
@@ -23,8 +25,8 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
   const [imageFailed, setImageFailed] = useState(false);
   const debug = import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('hotspots');
   const { width, height } = worldImageSize(size.width, size.height, ratio);
-  const minimumScale = worldMinimumScale(size.width, size.height, width, height);
-  const constrain = (next: WorldView) => clampWorldView(next, size.width, size.height, width, height);
+  const minimumScale = worldMinimumScale(size.width, size.height, width, height, .8);
+  const constrain = (next: WorldView) => clampWorldView(next, size.width, size.height, width, height, .8);
   const zoomAt = (current: WorldView, scale: number, x: number, y: number): WorldView => {
     const nextScale = Math.max(minimumScale, Math.min(2.5, scale));
     const factor = nextScale / current.scale;
@@ -59,7 +61,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
     observer.observe(viewport.current);
     return () => observer.disconnect();
   }, []);
-  useEffect(() => { if (size.width > 1) setView(current => clampWorldView(current, size.width, size.height, width, height)); }, [size.width, size.height, width, height]);
+  useEffect(() => { if (size.width > 1) { const first = !initialized.current; initialized.current = true; setView(current => clampWorldView(first ? { scale: minimumScale, x: 0, y: 0 } : current, size.width, size.height, width, height, .8)); } }, [size.width, size.height, width, height]);
   const focus = (spot: MapSpot) => setView(current => constrain({ ...current, x: (.5 - spot.x) * width * current.scale, y: (.5 - spot.y) * height * current.scale }));
   const zoom = (delta: number) => setView(current => constrain({ ...current, scale: current.scale + delta }));
   const pan = (direction: -1 | 1) => setView(current => constrain({ ...current, x: current.x - direction * size.width * .7 }));
@@ -73,7 +75,7 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
     if (!remaining) setDragging(false);
   };
 
-  return <div ref={viewport} className={`dream-map${debug ? ' dream-map--debug' : ''}${dragging ? ' is-dragging' : ''}`} aria-label="Dreamworld-kaart"
+  return <div ref={viewport} className={`dream-map${night ? ' is-night' : ' is-day'}${debug ? ' dream-map--debug' : ''}${dragging ? ' is-dragging' : ''}`} aria-label="Dreamworld-kaart"
     onPointerDown={event => {
       if (event.button !== 0 || (event.target as HTMLElement).closest('.dream-map__controls, .dream-map__pan')) return;
       pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -117,11 +119,12 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
       const deltas: Record<string, [number, number]> = { ArrowLeft: [80, 0], ArrowRight: [-80, 0], ArrowUp: [0, 80], ArrowDown: [0, -80] };
       if (deltas[event.key]) { event.preventDefault(); const [x, y] = deltas[event.key]; setView(current => constrain({ ...current, x: current.x + x, y: current.y + y })); }
     }} tabIndex={0}>
+    <div className="dream-map__sky" aria-hidden="true"><img src={night ? '/dreamworld/sky/night.webp' : '/dreamworld/sky/day.webp'} alt="" /></div>
     <div className="dream-map__image-plane" style={{ width, height, '--map-icon-scale': 1 / view.scale, transform: `translate(-50%, -50%) translate(${view.x}px, ${view.y}px) scale(${view.scale})` } as React.CSSProperties}>
       <img src={image} alt={alt} draggable={false} fetchPriority="high" onError={() => setImageFailed(true)} />
       <nav aria-label="Eilanden in Dreamworld">
         {locations.map(location => <button type="button" key={location.id} className="dream-hotspot" aria-label={`${location.label} openen`} title={`${location.label}${location.comingSoon ? ' · Binnenkort' : ''}`}
-          style={{ left: `${location.spot.x * 100}%`, top: `${location.spot.y * 100}%`, width: `${location.spot.width * 100}%`, height: `${location.spot.height * 100}%`, minWidth: (location.icon ? 64 : 44) / view.scale, minHeight: (location.icon ? 64 : 44) / view.scale }}
+          style={{ left: `${location.spot.x * 100}%`, top: `${location.spot.y * 100}%`, width: `${location.spot.width * 100}%`, height: `${location.spot.height * 100}%`, minWidth: (location.icon ? 48 : 44) / view.scale, minHeight: (location.icon ? 48 : 44) / view.scale }}
           onFocus={event => { if (event.currentTarget.matches(':focus-visible')) focus(location.spot); }}
           onClick={event => { if (event.detail === 0 || !suppressClick.current) onNavigate(location.path); }}>
           {location.icon}
@@ -130,8 +133,9 @@ export default function WorldMapViewer({ image, alt, ratio, locations, onNavigat
     </div>
     {imageFailed && <nav className="dream-map__fallback" aria-label="Bestemmingen"><p>De kaart kon niet laden.</p>{locations.map(location => <button key={location.id} type="button" onClick={() => onNavigate(location.path)}>{location.label}</button>)}</nav>}
     <div className="dream-map__controls" aria-label="Kaartweergave">
+      <IconButton label={night ? 'Daglicht tonen' : 'Nachtlucht tonen'} icon={night ? <Sun /> : <Moon />} onClick={() => setNight(value => !value)} />
       <IconButton label="Uitzoomen" icon={<Minus />} onClick={() => zoom(-.25)} disabled={view.scale <= minimumScale + .001} />
-      <IconButton label="Hele wereld centreren" icon={<LocateFixed />} onClick={() => setView({ scale: 1, x: 0, y: 0 })} />
+      <IconButton label="Hele wereld centreren" icon={<LocateFixed />} onClick={() => setView({ scale: minimumScale, x: 0, y: 0 })} />
       <IconButton label="Inzoomen" icon={<Plus />} onClick={() => zoom(.25)} disabled={view.scale >= 2.5} />
     </div>
     <nav className="dream-map__pan" aria-label="Beweeg over de wereldkaart">

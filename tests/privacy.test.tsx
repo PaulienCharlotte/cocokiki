@@ -21,11 +21,11 @@ test('privacy page explains actual storage and labels unresolved legal details',
   assert.doesNotMatch(html, /<form|type="email"|sb_secret_|service_role|sb_publishable_/);
 });
 
-test('a real, discrete privacy link exists in the home and shared footer', () => {
+test('privacy-link is op verzoek niet zichtbaar in de spelomgeving', () => {
   const footer = renderToStaticMarkup(<SiteFooter />);
-  assert.match(footer, /<footer[^>]*><a href="\/privacy">Privacy<\/a><\/footer>/);
-  assert.match(renderToStaticMarkup(<WorldHub coins={0} onNavigate={() => undefined} />), /href="\/privacy"/);
-  assert.match(renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined}>Inhoud</AppShell>), /href="\/privacy"/);
+  assert.equal(footer, '');
+  assert.doesNotMatch(renderToStaticMarkup(<WorldHub coins={0} onNavigate={() => undefined} />), /href="\/privacy"/);
+  assert.doesNotMatch(renderToStaticMarkup(<AppShell coins={0} onHome={() => undefined}>Inhoud</AppShell>), /href="\/privacy"/);
 });
 
 test('retention migration is private, scheduled and leaves game tables and RLS alone', () => {

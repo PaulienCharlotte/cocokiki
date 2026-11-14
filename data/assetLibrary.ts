@@ -5,8 +5,8 @@ export const ASSET_LIBRARY = {
     coinCompass: '/images/logo-compas-geel.svg',
   },
   avatars: {
-    coco: '/images/avatars/coco.webp',
-    kiki: '/images/avatars/kiki.webp',
+    coco: '/images/avatars/coco-profile.webp',
+    kiki: '/images/avatars/kiki-profile.webp',
     /** Kiki als plantengids. Coco is een ander meisje; niet verwisselen. */
     kikiPoses: {
       plant: '/images/avatars/kiki/kiki-plant.webp',
@@ -15,9 +15,9 @@ export const ASSET_LIBRARY = {
       explore: '/images/avatars/kiki/kiki-explore.webp',
       worried: '/images/avatars/kiki/kiki-worried.webp',
     },
-    lua: '/images/avatars/luiaard.webp',
+    lua: '/images/avatars/lua-profile.webp',
     together: '/images/avatars/samen.webp',
-    sloth: '/images/avatars/luiaard.webp',
+    sloth: '/images/avatars/lua-profile.webp',
     adventurer: '/images/avatars/avonturier.webp',
   },
   world: {

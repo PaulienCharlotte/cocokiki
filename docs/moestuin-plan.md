@@ -1,6 +1,21 @@
 # Kiki’s moestuin — afgesproken uitbreiding
 
-Status: productplan; de moestuin en onderstaande rekenopdrachten zijn nog niet gebouwd.
+Status: eerste speelbare versie gebouwd op `/plants/garden`, bereikbaar bij Kiki.
+Zes vakken en gewassen, groeistappen, meetlat, maatbeker, drie rekenniveaus,
+spelkalender, ruimte/licht bij buren, oogst verkopen of naar Coco brengen en
+een eigen encyclopedie-afdeling zijn aangesloten. Het speelveld en de houten
+plantbedden worden recht van boven bekeken. De CTA gebruikt een aparte, eenvoudige
+vrijstaande plantenbak in plaats van de tuinachtergrond. De spelplanten gebruiken
+gedeelde kiemplantillustraties van bovenaf; oogst heeft eigen gewasillustraties. Er zijn
+geen echte wachttijden of verliezen door afwezigheid. Zie `moestuin-inhoud.md`
+voor de inhoudscontrole en de huidige grenzen van de keukenvoorraad.
+
+De opdrachtinterface toont één taak tegelijk: plaatsen en omrekenen zijn apart,
+net als omrekenen en water afmeten. De knop ‘Ik kom er niet uit’ toont uitleg én
+antwoord en slaat het hulpgebruik meteen op. Verdergaan met hulp laat de plant
+groeien zonder opdrachtbeloning. Zelf opgelost levert per deelopdracht eenmalig
+2 CocoCoins op. Oogst verkopen is een aparte opbrengst. Gras, aarde, hout en
+kiemplanten gebruiken nu gelaagde illustraties met natuurlijke materiaalstructuur.
 
 ## Speelronde
 
@@ -58,3 +73,7 @@ Maak één speelbare ronde met zaaiafstand, water afmeten en oogsten. Werk daarn
 de zes gewassen, kalender, plantcombinaties en koppeling met de keuken uit.
 Gebruik de bestaande CocoKiki-vormtaal, tokens en componenten; controleer desktop
 en 360px, opslag/herladen, juiste omrekeningen en eenmalige beloningen.
+
+Tuindagen gaan alleen handmatig verder als alle onvoltooide gewassen verzorgd zijn. Lege en oogstrijpe vakken blokkeren niet. Echte tijd verandert niets aan de planten. Compacte gewasbordjes hergebruiken de bestaande productplaatjes; verzorging staat als icoon op het bordje.
+
+Tuinbediening staat links verticaal, met de tuindag in het kalendericoon. De losse paginakop en onderbalk zijn verwijderd. Gewasbordjes zijn compact en staan met vaste tussenruimte onder de bakken. Het bestaande Maten-component uit de rekenspellen is beschikbaar via de meetlat en naast een omrekenantwoord; de gedeelde CSS wordt door het component zelf geladen.

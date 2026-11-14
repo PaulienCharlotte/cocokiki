@@ -4,7 +4,6 @@ import { loadFoodKnowledge } from '../services/foodKnowledge';
 import React, { useState } from 'react';
 import { CakeSlice, Leaf, Lock, Stamp, Trash2 } from 'lucide-react';
 import CookingAssetImage from '../components/cooking/CookingAssetImage';
-import VraagVanDeDag from '../components/quiz/VraagVanDeDag';
 import { Button, Dialog } from '../design-system';
 import { INGREDIENTS } from '../data/cooking/catalog';
 import type { IngredientEntry } from '../data/cooking/types';
@@ -14,12 +13,15 @@ import { plantFirstAid, PLANT_PROBLEM_LABEL } from '../data/plants/firstAid';
 import { KNOWLEDGE_HINT, KNOWLEDGE_LABEL, knowledgeProgress, plantKnowledge, type PlantKnowledge } from '../services/plantKnowledge';
 import { STAMPS_NEEDED } from '../services/plantClinic';
 import { laadGalerij, verwijderUitGalerij, type BewaardeTaart } from '../services/cakeStudio';
+import { GARDEN_CROPS, type GardenCrop } from '../data/plants/garden';
+import { loadGarden } from '../services/garden';
+import GardenCropFacts from '../components/plants/GardenCropFacts';
 
 interface EncyclopediaScreenProps {
   onNavigate: (path: string) => void;
 }
 
-type Afdeling = 'planten' | 'voeding' | 'taarten';
+type Afdeling = 'planten' | 'voeding' | 'taarten' | 'moestuin';
 
 /**
  * De encyclopedie is de plek waar alles samenkomt wat een kind geleerd heeft,
@@ -29,10 +31,12 @@ type Afdeling = 'planten' | 'voeding' | 'taarten';
  * het overzicht blijft een overzicht.
  */
 export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenProps) {
+  const [garden] = useState(loadGarden);
+  const [openCrop, setOpenCrop] = useState<GardenCrop | null>(null);
   const [foodKnowledge] = useState(loadFoodKnowledge);
   const [progress] = useState(loadCookingProgress);
   const [planten] = useState(() => plantKnowledge());
-  const [afdeling, setAfdeling] = useState<Afdeling>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'voeding' ? 'voeding' : 'planten');
+  const [afdeling, setAfdeling] = useState<Afdeling>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'moestuin' ? 'moestuin' : typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'voeding' ? 'voeding' : 'planten');
   const [openPlant, setOpenPlant] = useState<PlantKnowledge | null>(() => {
     if (typeof window === 'undefined') return null;
     const gevraagd = new URLSearchParams(window.location.search).get('plant');
@@ -53,17 +57,17 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
         </div>
       </header>
 
-      <VraagVanDeDag />
 
       <div className="encyclopedie__tabs" role="tablist" aria-label="Afdelingen">
         <Tab id="planten" actief={afdeling} op={setAfdeling} label="Planten" teller={`${stand.open}/${stand.totaal}`} />
+        <Tab id="moestuin" actief={afdeling} op={setAfdeling} label="Moestuin" teller={`${garden.discovered.length}/${GARDEN_CROPS.length}`} />
         <Tab id="voeding" actief={afdeling} op={setAfdeling} label="Voeding" teller={`${ingredienten.length}/${INGREDIENTS.length}`} />
         <Tab id="taarten" actief={afdeling} op={setAfdeling} label="Mijn taarten" teller={`${taarten.length}`} />
       </div>
 
       {afdeling === 'voeding' && <Button variant="secondary" onClick={() => onNavigate('/cooking/discover')}>Ontdek je eten · {foodKnowledge.length}/{FOOD_LESSONS.length} ontdekt</Button>}
 
-      {afdeling === 'taarten' ? (taarten.length ? <div
+      {afdeling === 'moestuin' ? <div role="tabpanel" id="afdeling-moestuin" aria-labelledby="tab-moestuin"><div className="encyclopedie__raster">{GARDEN_CROPS.map(crop => garden.discovered.includes(crop.id) ? <button key={crop.id} type="button" className="encyclopedie__tegel" onClick={() => setOpenCrop(crop)}><img src={crop.image} alt="" /><strong>{crop.name}</strong><small>Zelf geoogst</small></button> : <div key={crop.id} className="encyclopedie__tegel is-slot" aria-label="Nog niet geoogst"><Lock aria-hidden="true" /></div>)}</div><Button variant="quiet" onClick={() => onNavigate('/plants/garden')}>Naar mijn moestuin</Button></div> : afdeling === 'taarten' ? (taarten.length ? <div
         className="encyclopedie__raster"
         role="tabpanel"
         id="afdeling-taarten"
@@ -119,6 +123,7 @@ export default function EncyclopediaScreen({ onNavigate }: EncyclopediaScreenPro
     </Dialog>
 
     {openEten && <FoodKnowledgeDialog ingredient={openEten} onClose={() => setOpenEten(null)} />}
+    <Dialog primaryAction={null} open={Boolean(openCrop)} title={openCrop?.name ?? ''} onClose={() => setOpenCrop(null)}>{openCrop && <GardenCropFacts crop={openCrop} />}</Dialog>
   </main>;
 }
 

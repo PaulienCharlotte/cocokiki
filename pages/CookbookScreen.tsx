@@ -174,7 +174,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     }}
     onStart={recipe => { setAtToonbank(false); handleStart(recipe); }}
     onCakeOrder={() => onNavigate?.('/games/taartenatelier?order=seb-birthday')}
-    onExit={() => { setAtToonbank(false); onNavigate?.('/islands/cooking'); }}
+    onExit={() => { setAtToonbank(false); onNavigate?.('/opdrachten?gebied=bakken'); }}
   />;
 
   return <main className="cooking-room cookbook-library-room">
@@ -184,7 +184,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       {(lopend?.bestelling ?? wachtend[0]) && <OrderInvite
         bestelling={lopend?.bestelling ?? wachtend[0]}
         lopend={Boolean(lopend)}
-        onOpen={() => setAtToonbank(true)}
+        onOpen={() => onNavigate?.('/opdrachten?gebied=bakken')}
       />}
         <nav className="recipe-categories recipe-library__filters" aria-label="Receptcategorieën">
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
