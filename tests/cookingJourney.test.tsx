@@ -118,7 +118,7 @@ test('banana pancake cooking session resumes safely and completes once', () => {
   assert.strictEqual(advanceCookingSession(session), session);
 });
 
-test('journey stages are sequential and known ingredients can be skipped explicitly', () => {
+test('journey stages are sequential and known ingredients are skipped automatically', () => {
   const recipe = RECIPES_BY_ID['banana-pancakes'];
   const started = startJourney(createEmptyCookingProgress(), recipe, '2026-01-01T00:00:00.000Z');
   assert.equal(nextRequiredStage(started, recipe.id), 'discovery');
@@ -137,9 +137,27 @@ test('journey stages are sequential and known ingredients can be skipped explici
   const knownStart = startJourney(known, recipe);
   assert.equal(nextRequiredStage(knownStart, recipe.id), 'discovery');
   let reviewing = beginDiscoveryStage(knownStart, recipe.id);
+  assert.equal(reviewing.journeys[recipe.id]?.discovery.currentIngredientId, null);
+  assert.equal(reviewing.journeys[recipe.id]?.discovery.step, 'complete');
   for (const ingredient of recipe.ingredients) reviewing = skipKnownIngredient(reviewing, recipe.id);
   assert.equal(reviewing.journeys[recipe.id]?.discovery.step, 'complete');
   assert.equal(nextRequiredStage(reviewing, recipe.id), 'nutrient-memory');
+});
+
+test('een hervat recept slaat een inmiddels bekend ingrediënt over en opnieuw ontdekken blijft beschikbaar', () => {
+  const recipe = RECIPES_BY_ID['banana-pancakes'];
+  let state = beginDiscoveryStage(startJourney(createEmptyCookingProgress(), recipe), recipe.id);
+  assert.equal(state.journeys[recipe.id]!.discovery.currentIngredientId, 'banana');
+  state.discoveredIngredientIds = ['banana'];
+  state = beginDiscoveryStage(state, recipe.id);
+  assert.equal(state.journeys[recipe.id]!.discovery.currentIngredientId, 'eggs');
+  assert.ok(state.journeys[recipe.id]!.discoveredIngredientIds.includes('banana'));
+  state.discoveredIngredientIds = recipe.ingredients.map(item => item.ingredientId);
+  state = beginDiscoveryStage(state, recipe.id);
+  assert.equal(state.journeys[recipe.id]!.discovery.step, 'complete');
+  const review = createDiscoveryReplay(state, recipe.id);
+  assert.equal(review.journeys[recipe.id]!.discovery.currentIngredientId, 'banana');
+  assert.equal(review.journeys[recipe.id]!.discovery.step, 'learn');
 });
 
 test('ingredient discovery content defines the three requested questions and rewards', () => {
@@ -434,14 +452,17 @@ test('discovery UI keeps one focused educational interaction visible', () => {
   const learn = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={state} onProgressChange={() => undefined} onExit={() => undefined} />);
   assert.match(learn, /Banaan/);
   assert.match(learn, /Oorsprong/);
-  assert.match(learn, /Kalium/);
-  assert.match(learn, /spieren en zenuwen/);
-  assert.match(learn, /Wist je dat/);
+  assert.match(learn, /Ontdek de voeding/);
+  assert.match(learn, /Ontdekking 1 van 3/);
+  assert.doesNotMatch(learn, /Naar de vraag/);
+  assert.doesNotMatch(learn, /spieren en zenuwen/);
   assert.doesNotMatch(learn, /Waarom groeien bananen goed in tropische gebieden/);
   const questionState = showDiscoveryQuestion(state, recipe.id);
   const question = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={questionState} onProgressChange={() => undefined} onExit={() => undefined} />);
   assert.match(question, /Waarom groeien bananen goed in tropische gebieden/);
   assert.match(question, /Ze hebben warmte en voldoende water nodig/);
+  assert.match(question, /discovery-answer-buttons/);
+  assert.doesNotMatch(question, /ck-keuzes/);
 });
 
 test('seasonal prices follow the configured catalog and remain stable per session', () => {

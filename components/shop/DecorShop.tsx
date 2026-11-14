@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Backpack as BackpackIcon, Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
-import { DECOR_CATEGORIES, DECOR_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
+import { DECOR_CATEGORIES, DECOR_SHOP_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';
 import { loadCurrency, spendCurrencyOnce } from '../../services/currency';
 import { addRoomPurchasesOnce, loadRoomInventory, ROOM_INVENTORY_KEY } from '../../services/roomInventory';
 import DecorAsset from './DecorAsset';
@@ -40,12 +40,13 @@ export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps)
   const [familyOpen, setFamilyOpen] = useState(false);
   const [adopted, setAdopted] = useState<AdoptedPlant[]>([]);
   const definition = DECOR_STORES[store];
-  const products = useMemo(() => DECOR_PRODUCTS.filter(product => product.store === store && (category === 'all' || product.category === category)), [category, store]);
+  const products = useMemo(() => DECOR_SHOP_PRODUCTS.filter(product => product.store === store && (category === 'all' || product.category === category)), [category, store]);
   const count = Object.values(basket).reduce<number>((total, amount) => total + Number(amount), 0);
   const total = Object.entries(basket).reduce<number>((sum, [id, amount]) => sum + DECOR_PRODUCTS_BY_ID[id].price * Number(amount), 0);
   const Icon = store === 'furniture' ? Armchair : Sprout;
 
   const adjust = (id: string, delta: number) => {
+    if (!DECOR_PRODUCTS_BY_ID[id] || DECOR_PRODUCTS_BY_ID[id].retired) return;
     setNotice('');
     setBasket(current => {
       const amount = Math.max(0, Math.min(9, (current[id] ?? 0) + delta));
@@ -102,7 +103,7 @@ export default function DecorShop({ store, onBack, onNavigate }: DecorShopProps)
         </div>
       </header>
       <nav className="shop-categories" aria-label={`${definition.label} categorieën`}>
-        {DECOR_CATEGORIES[store].map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
+        {DECOR_CATEGORIES[store].filter(option => option.id === 'all' || DECOR_SHOP_PRODUCTS.some(product => product.store === store && product.category === option.id)).map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
       </nav>
       <div className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
         {products.map(product => <article className="shop-product decor-product" role="listitem" key={product.id}>

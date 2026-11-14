@@ -1620,19 +1620,18 @@
   .world-hud .world-hud__balance { gap: 2px; }
   .world-hud .world-hud__balance strong { min-width: 2ch; font-size: 14px; }
 }
-.decor-shop .shop-catalog__header { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; }
+.decor-shop .shop-catalog__header { display: grid; grid-template-columns: var(--touch-target) minmax(0, 1fr); gap: var(--space-3); }
 .decor-shop .shop-catalog__mark { display: none; }
-.decor-shop .decor-shop__heading h1 { margin: 0; font-size: 24px; line-height: 1.2; overflow-wrap: anywhere; }
-.decor-shop .shop-catalog__actions { flex-shrink: 0; margin: 0; justify-content: flex-end; }
+.decor-shop .decor-shop__heading h1 { margin: 0; font-size: var(--font-size-xl); line-height: 1.2; white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+.decor-shop .shop-catalog__actions { grid-column: 1 / -1; flex-shrink: 0; margin: 0; justify-content: flex-end; }
 .decor-shop .shop-categories button { min-height: 44px; }
 .decor-shop .decor-product { grid-template-rows: 140px 44px; min-height: 208px; align-items: center; padding: 8px 8px 12px; }
 .decor-shop .decor-product .shop-product__art { height: 132px; }
 .decor-shop .shop-product__buy { margin: 0; height: 44px; gap: 8px; }
 .decor-shop .shop-product__buy > button { width: 44px; height: 44px; flex: 0 0 44px; }
-@container (max-width: 420px) {
-  .decor-shop .shop-catalog__header { grid-template-columns: 44px minmax(0, 1fr); gap: 8px 12px; }
-  .decor-shop .shop-catalog__actions { grid-column: 1 / -1; }
-  .decor-shop .decor-shop__heading h1 { font-size: 22px; }
+@container (min-width: 36rem) {
+  .decor-shop .shop-catalog__header { grid-template-columns: var(--touch-target) minmax(0, 1fr) auto; }
+  .decor-shop .shop-catalog__actions { grid-column: 3; }
 }
 /* ---------------------------------------------------------------------------
    De vraag van de dag: één vraag, gemaakt uit wat de app al weet.

@@ -87,6 +87,10 @@ test('fruit yogurt discoveries have valid answers and never reward the known ban
   let state = beginDiscoveryStage(startJourney(unlocked(), recipe), recipe.id);
   let reward = 0;
   for (const item of recipe.ingredients) {
+    if (state.discoveredIngredientIds.includes(item.ingredientId)) {
+      assert.ok(state.journeys[recipe.id]!.discoveredIngredientIds.includes(item.ingredientId));
+      continue;
+    }
     const config = INGREDIENT_DISCOVERIES_BY_ID[item.ingredientId];
     for (const question of config.questions) {
       assert.ok(question.options.some(option => option.id === question.correctOptionId));

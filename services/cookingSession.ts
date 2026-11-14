@@ -6,6 +6,15 @@ import { getRecipeIssues } from '../data/cooking/validation';
 import { completeJourney } from './cookingProgress';
 import { consumeRecipeIngredients, missingIngredientMessage } from './recipeInventory';
 import { ovenResult } from '../data/cooking/oven';
+import { cookedDishValue } from '../data/cooking/dishValue';
+
+export function redeemCookedDish(progress: CookingProgressState, recipe: RecipeConfig): CookingProgressState {
+  const session = progress.preparationSessions[recipe.id];
+  if (!session?.completed || session.redeemedCoins || !recipe.preparation?.steps.every(step => session.completedStepIds.includes(step.id))) return progress;
+  const next = structuredClone(progress);
+  next.preparationSessions[recipe.id]!.redeemedCoins = cookedDishValue(recipe);
+  return next;
+}
 
 export function beginCookingAttempt(progress: CookingProgressState, recipe: RecipeConfig, replay = false): CookingProgressState {
   if (getRecipeIssues(recipe).length || !progress.journeys[recipe.id]) return progress;

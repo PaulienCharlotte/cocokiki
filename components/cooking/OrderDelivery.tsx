@@ -19,6 +19,8 @@ import './orders.css';
  * er hebt gemaakt. Daarna is de bestelling echt van de toonbank af.
  */
 interface OrderDeliveryProps {
+  message?: string | null;
+  dishCoins?: number;
   bestelling: Bestelling;
   recipe: RecipeConfig;
   /** Hoe vaak er gebakken is; samen met de porties het aantal dat je brengt. */
@@ -30,7 +32,7 @@ interface OrderDeliveryProps {
   onClose: () => void;
 }
 
-export default function OrderDelivery({ bestelling, recipe, keer, bonus, inEenKeer, onClose }: OrderDeliveryProps) {
+export default function OrderDelivery({ bestelling, recipe, keer, bonus, inEenKeer, onClose, dishCoins = 0, message }: OrderDeliveryProps) {
   const klant = CHARACTERS[bestelling.klant];
   const stuks = (recipe.servings ?? 1) * keer;
   return <section className="bestel-aflevering" aria-live="polite">
@@ -48,7 +50,8 @@ export default function OrderDelivery({ bestelling, recipe, keer, bonus, inEenKe
         <div><dt>De wens</dt><dd>{inEenKeer ? 'Meteen goed' : 'Na even zoeken goed'}</dd></div>
       </dl>
       {bonus > 0 && <p className="bestel-bonus"><CocoCoin size={19} />+{bonus} erbij, omdat je het in één keer goed had</p>}
-      <Button size="large" onClick={onClose}>Terug naar de toonbank</Button>
+      {message && <p role="alert">{message}</p>}
+      <Button size="large" onClick={onClose}>{dishCoins > 0 ? `Afleveren voor ${dishCoins} CocoCoins` : 'Terug naar de toonbank'}</Button>
     </article>
   </section>;
 }

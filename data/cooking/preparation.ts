@@ -37,6 +37,7 @@ export interface CookingStepState {
   lined?: number[];
 }
 export interface CookingSession {
+  redeemedCoins?: number;
   seenTipIds?: string[];
   dismissedTipIds?: string[];
   oven?: OvenState;

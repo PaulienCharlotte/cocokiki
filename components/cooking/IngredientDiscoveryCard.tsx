@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
 import FoodKnowledgeDialog, { FoodText } from '../food/FoodKnowledge';
-import { Globe2, Leaf, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { Button, IconButton } from '../../design-system';
+import SpeechBubble from '../ui/SpeechBubble';
+import FoodIllustration from '../food/FoodIllustration';
+import { foodTextParts } from '../../data/cooking/foodGlossary';
 import type { IngredientDiscoveryConfig, IngredientEntry } from '../../data/cooking/types';
 import CookingAssetImage from './CookingAssetImage';
+import './ingredient-discovery.css';
 
 interface IngredientDiscoveryCardProps {
+  key?: string;
   config: IngredientDiscoveryConfig;
   ingredient: IngredientEntry;
+  onReady?: () => void;
+  initialPage?: 0 | 1 | 2;
 }
 
-export function NutritionFact({ nutrient, role }: { nutrient: string; role: string }) {
+export default function IngredientDiscoveryCard({ config, ingredient, onReady, initialPage = 0 }: IngredientDiscoveryCardProps) {
+  const [page, setPage] = useState<number>(initialPage);
   const [term, setTerm] = useState<string | null>(null);
-  return <li><span aria-hidden="true"><Sparkles /></span><p><strong><FoodText text={nutrient} onTerm={setTerm} /></strong><small><FoodText text={role} onTerm={setTerm} /></small></p>{term && <FoodKnowledgeDialog termId={term} onClose={() => setTerm(null)} />}</li>;
-}
-
-export default function IngredientDiscoveryCard({ config, ingredient }: IngredientDiscoveryCardProps) {
-  return <div className="ingredient-lesson">
+  const nutritionTerm = config.nutrition.flatMap(item => foodTextParts(item.nutrient)).find(part => part.termId)?.termId;
+  const labels = [config.origin.label, 'In je lichaam', config.foodKnowledge.label];
+  return <div className="ingredient-explorer">
     <header className="ingredient-lesson__hero">
       <CookingAssetImage src={ingredient.image} alt={ingredient.name} />
-      <div><p>Ingrediënt</p><h1 id="discovery-title">{ingredient.name}</h1><strong>{config.heroFact}</strong></div>
+      <div><p>Ontdek het ingrediënt</p><h1 id="discovery-title">{ingredient.name}</h1></div>
     </header>
-    <div className="ingredient-lesson__sections">
-      <section><span aria-hidden="true"><Globe2 /></span><div><h2>{config.origin.label}</h2><p>{config.origin.text}</p></div></section>
-      <section className="ingredient-lesson__nutrition"><span aria-hidden="true"><Leaf /></span><div><h2>Voeding</h2><ul>{config.nutrition.map(item => <React.Fragment key={item.nutrient}><NutritionFact {...item} /></React.Fragment>)}</ul></div></section>
-      <section><span aria-hidden="true"><Sparkles /></span><div><h2>{config.foodKnowledge.label}</h2><p>{config.foodKnowledge.text}</p></div></section>
+    <div className="ingredient-explorer__dots" aria-label={`Ontdekking ${page + 1} van 3`}>{labels.map((label, index) => <span key={index} className={index === page ? 'is-current' : ''} title={label} />)}</div>
+    <div className="ingredient-explorer__page" key={page}>
+      {page === 1 && nutritionTerm && <FoodIllustration termId={nutritionTerm} caption={false} />}
+      <SpeechBubble character="coco" label={labels[page]}>
+        {page === 0 ? <FoodText text={config.origin.text} onTerm={setTerm} /> : page === 2 ? <FoodText text={config.foodKnowledge.text} onTerm={setTerm} /> : config.nutrition.length ? config.nutrition.map(item => <span className="ingredient-explorer__fact" key={item.nutrient}><strong><FoodText text={item.nutrient} onTerm={setTerm} /></strong><br /><FoodText text={item.role} onTerm={setTerm} /></span>) : 'Dit ingrediënt gebruiken we vooral voor smaak of om het bakken te laten lukken.'}
+      </SpeechBubble>
     </div>
+    <div className="ingredient-explorer__actions">
+      {page > 0 && <IconButton label="Vorige ontdekking" icon={<ArrowLeft size={16} />} onClick={() => setPage(page - 1)} />}
+      <Button size="large" onClick={() => page < 2 ? setPage(page + 1) : onReady?.()}>{page === 0 ? 'Ontdek de voeding' : page === 1 ? 'Ontdek de keukentip' : 'Probeer de vragen'}</Button>
+    </div>
+    {term && <FoodKnowledgeDialog termId={term} onClose={() => setTerm(null)} />}
   </div>;
 }

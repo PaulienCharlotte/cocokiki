@@ -11,6 +11,24 @@ import { createIsolatedCookingStorage, ISOLATED_COOKING_KEY, ISOLATED_COOKING_LO
 import { createEmptyCookingProgress, startJourney, saveCookingProgress, loadCookingProgress, COOKING_PROGRESS_KEY } from '../services/cookingProgress';
 import { commitLocalState, LOCAL_STATE_KEY, readDocument, readLocalState } from '../services/localState';
 import CookingExperience from '../components/cooking/CookingExperience';
+import { redeemCookedDish } from '../services/cookingSession';
+import { cookedDishValue } from '../data/cooking/dishValue';
+import { loadCurrency } from '../services/currency';
+import { createShoppingSession, adjustBasket, basketTotal } from '../services/shopping';
+import { ingredientRequirements } from '../services/recipeInventory';
+import { SHOP_PRODUCTS_BY_ID } from '../data/shopCatalog';
+
+test('inwisselen dekt een complete boodschappenmand plus winst in ieder seizoen', () => {
+  for (const recipe of Object.values(RECIPES_BY_ID).filter(recipe => recipe.contentStatus === 'ready' && recipe.preparation)) {
+    for (const season of ['spring', 'summer', 'autumn', 'winter'] as const) {
+      let basket = createShoppingSession('recipe', recipe.id, new Date('2026-11-14'), season);
+      for (const item of ingredientRequirements(recipe, createEmptyCookingProgress())) {
+        basket = adjustBasket(basket, item.ingredientId, Math.ceil(item.required / SHOP_PRODUCTS_BY_ID[item.ingredientId].unitAmount));
+      }
+      assert.ok(cookedDishValue(recipe) >= basketTotal(basket) + 20, `${recipe.id}: ${season}`);
+    }
+  }
+});
 
 const recipe = RECIPES_BY_ID['blueberry-muffins'];
 const context = { runId: 'technical-test-run', stepId: 'cooking', cookingAttemptId: 'technical-test-cook', recipeId: recipe.id };
@@ -56,6 +74,35 @@ function seed(stock = true) {
   commitLocalState({ 'other-game': '{"best":12}' }, [{ id: 'existing-coins', amount: 50 }]);
   return progress;
 }
+
+test('een gerecht wisselt per echte kookpoging eenmaal in, ook na herladen en opnieuw bakken', () => memory(async (_values, fail) => {
+  let progress = seed();
+  assert.equal(redeemCookedDish(progress, recipe), progress);
+  let result = defaultCookingStorage.complete(progress, recipe, finished(progress.preparationSessions[recipe.id]!));
+  assert.equal(result.ok, true);
+  assert.equal(saveCookingProgress(result.progress), true);
+  const before = loadCurrency();
+  const claimed = redeemCookedDish(loadCookingProgress(), recipe);
+  fail(true);
+  assert.equal(saveCookingProgress(claimed), false);
+  fail(false);
+  assert.equal(loadCurrency(), before);
+  assert.equal(loadCookingProgress().preparationSessions[recipe.id]!.redeemedCoins, undefined);
+  assert.equal(saveCookingProgress(claimed), true);
+  assert.equal(loadCurrency(), before + cookedDishValue(recipe));
+  const restored = loadCookingProgress();
+  assert.equal(restored.preparationSessions[recipe.id]!.redeemedCoins, cookedDishValue(recipe));
+  assert.equal(redeemCookedDish(restored, recipe), restored);
+  assert.equal(saveCookingProgress(restored), true);
+  assert.equal(loadCurrency(), before + cookedDishValue(recipe));
+  progress = defaultCookingStorage.begin(loadCookingProgress(), recipe, true);
+  assert.equal(progress.preparationSessions[recipe.id]!.redeemedCoins, undefined);
+  assert.equal(saveCookingProgress(progress), true);
+  result = defaultCookingStorage.complete(progress, recipe, finished(progress.preparationSessions[recipe.id]!));
+  assert.equal(result.ok, true);
+  assert.equal(saveCookingProgress(redeemCookedDish(result.progress, recipe)), true);
+  assert.equal(loadCurrency(), before + 2 * cookedDishValue(recipe));
+}));
 async function prepare(adapter = createIsolatedCookingStorage(recipe, context, { now })) {
   const progress = adapter.begin(adapter.load(), recipe);
   assert.equal(await adapter.save(progress, true), true);

@@ -15,6 +15,8 @@ import Confetti from './Confetti';
 import { Button, Dialog, IconButton } from '../../design-system';
 import SpeechBubble from '../ui/SpeechBubble';
 import CookingAssetImage from './CookingAssetImage';
+import { cookedDishValue } from '../../data/cooking/dishValue';
+import { redeemCookedDish } from '../../services/cookingSession';
 import CookingInteraction from './CookingInteraction';
 import CookingTipCard from './CookingTipCard';
 import HomeRecipe from './HomeRecipe';
@@ -94,7 +96,7 @@ export default function CookingExperience(props: Props) {
     const nextSession = next.preparationSessions[recipe.id];
     const nextStep = recipe.preparation?.steps.find(item => item.id === nextSession?.stepId);
     const ovenWacht = nextStep?.mechanic === 'oven' && nextSession?.oven?.status === 'baking';
-    const tip = nextSession && !visibleTip && (ovenWacht || !(nextStep?.mechanic === 'oven')) && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
+    const tip = nextSession && !nextSession.completed && !visibleTip && (ovenWacht || !(nextStep?.mechanic === 'oven')) && !(nextStep?.mechanic === 'timed' && nextSession.steps[nextStep.id]?.phase === 'wait') ? eligibleCookingTip(recipe.cookingTips ?? [], nextSession) : undefined;
     if (tip) next = { ...next, preparationSessions: { ...next.preparationSessions, [recipe.id]: presentCookingTip(nextSession, tip) } };
     if (!await write(next, presentationOnly)) { setMessage('Opslaan lukt even niet. Je voorraad en munten blijven bewaard. Probeer opnieuw.'); setRetry(value => value + 1); return false; }
     accept(next);
@@ -179,6 +181,7 @@ export default function CookingExperience(props: Props) {
   // die erop wacht. Afleveren haalt de bestelling van de toonbank en betaalt
   // de bonus uit; daarna is dit weer een gewoon klaargemaakt recept.
   if (session.completed && bestelling) return <OrderDelivery
+    message={message}
     bestelling={bestelling.bestelling}
     recipe={recipe}
     keer={bestelling.voortgang.keerGekozen ?? 1}
@@ -187,7 +190,7 @@ export default function CookingExperience(props: Props) {
     onClose={() => {
       // Via de opslag van dit spel, niet rechtstreeks: een avontuur kan in
       // een eigen opslag draaien en mag de gewone voortgang niet raken.
-      const uitkomst = leverBestellingAf(storage.load());
+      const uitkomst = leverBestellingAf(redeemCookedDish(storage.load(), recipe));
       if (uitkomst.bestelling) {
         if (storage.save(uitkomst.progress) === false) { setMessage('Afleveren lukt even niet. Probeer het nog eens.'); return; }
         setProgress(uitkomst.progress);
@@ -195,6 +198,7 @@ export default function CookingExperience(props: Props) {
       }
       onClose();
     }}
+    dishCoins={session.redeemedCoins ? 0 : cookedDishValue(recipe)}
   />;
 
   if (session.completed) return <section className="cooking-stage cooking-stage--done" aria-live="polite">
@@ -203,8 +207,13 @@ export default function CookingExperience(props: Props) {
       <div className="celebration-card__stage"><Confetti /><motion.div className="celebration-card__dish" initial={{ scale: .72, rotate: -6, y: 14 }} animate={{ scale: 1, rotate: 0, y: 0 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}>
         <CookingAssetImage src={preparation.finishedAsset} alt={preparation.finishedAlt} />
       </motion.div></div><h1>Klaar, chef!</h1>
+      <p>{session.redeemedCoins ? `${session.redeemedCoins} CocoCoins ontvangen voor je gerecht.` : 'Wissel je gerecht in. Je boodschappen zijn terugverdiend, met winst erbij!'}</p>
       {message && <p role="alert">{message}</p>}
-      <div className="cooking-card__actions"><button type="button" className="cooking-button" onClick={onClose}>Terug naar de keuken</button><button type="button" className="cooking-button is-quiet" onClick={replay}>Opnieuw</button></div>
+      <div className="cooking-card__actions">
+        {!session.redeemedCoins && <Button onClick={async () => { const current = read(); if (current && await persist(redeemCookedDish(current, recipe))) setMessage(null); }}>Inwisselen voor {cookedDishValue(recipe)} CocoCoins</Button>}
+        <Button variant={session.redeemedCoins ? 'primary' : 'quiet'} onClick={onClose}>Terug naar de keuken</Button>
+        {session.redeemedCoins && <Button variant="quiet" onClick={replay}>Opnieuw</Button>}
+      </div>
     </article>{visibleTip && <CookingTipCard tip={visibleTip} onDismiss={closeTip} />}</div>
   </section>;
 
