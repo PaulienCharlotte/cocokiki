@@ -31,7 +31,9 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
  * Zie `.claude/skills/cocokiki-ui`, sectie 4.
  */
 export default function LocationGameView({ location, onOpen, onDirect, renderClipboard, initialTab = 'activities' }: { location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
-  const previews = location.adventurePreviews ?? [];
+  const allPreviews = location.adventurePreviews ?? [];
+  const clipboard = allPreviews.find(item => item.id === 'bestellingen' || item.id === 'plantenopdrachten');
+  const previews = allPreviews.filter(item => item !== clipboard);
   const [selectedId, setSelectedId] = useState(previews[0]?.id);
   // Zonder activiteiten valt er niets te kiezen; dan is er ook geen tabblad.
   const heeftActiviteiten = location.activities.length > 0;
@@ -69,6 +71,7 @@ export default function LocationGameView({ location, onOpen, onDirect, renderCli
         }}
       />
     </div>}
+    {clipboard && <button type="button" className="location-game__clipboard" aria-label="To Do openen" onClick={() => onDirect?.(clipboard.id)}><img src={location.clipboard ?? clipboard.image} alt="" /><span>To Do</span></button>}
     <div id={`${id}-adventures`} className="location-game__stories">
       {selected && (renderClipboard ? renderClipboard(selected) : <AdventureClipboard adventure={selected} />)}
       <section className="adventure-shelf" aria-labelledby={`${id}-shelf-title`}>

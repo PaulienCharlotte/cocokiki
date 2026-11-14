@@ -52,3 +52,15 @@ test('inrichtopdracht controleert echte plaatsingen en beloont eenmaal', () => s
   assert.equal(commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify(inventory) }).status, 'applied'); assert.ok(decorTaskState().ready);
   assert.ok(claimDecorTask()); assert.equal(loadCurrency(), 15); assert.equal(claimDecorTask(), false);
 }));
+
+test('opdrachtantwoorden gebruiken losse knoppen en Winkelgekte toont geen overbodige hulpmiddelen', async () => {
+  const React = await import('react');
+  const { renderToStaticMarkup } = await import('react-dom/server');
+  const { default: ChoiceList } = await import('../components/ui/ChoiceList');
+  const { MathHeader } = await import('../games/math/MathControls');
+  const { emptyMathProgress } = await import('../games/math/progress');
+  const choices = renderToStaticMarkup(React.createElement(ChoiceList, { layout: 'buttons', choices: [{ id: 'a', label: 'Eerste' }, { id: 'b', label: 'Tweede' }], onChoose: () => {} }));
+  assert.match(choices, /ck-answer-buttons/); assert.equal((choices.match(/<button/g) ?? []).length, 2);
+  const header = renderToStaticMarkup(React.createElement(MathHeader, { game: 'race', level: 1, progress: emptyMathProgress(), onBack: () => {}, onLevel: () => {}, onSound: () => {} }));
+  assert.doesNotMatch(header, /Maten omrekenen|Geluid aanzetten|Geluid uitzetten/);
+});

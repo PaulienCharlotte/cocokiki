@@ -256,3 +256,7 @@ volgend avontuur. Niet zelf weggooien: het is het werk van een andere agent.
 - De plaatjes van de personages stonden los in drie bestanden. Ze staan nu in
   `data/characters.ts`, met hun gebied erbij, en een test let erop dat Kiki
   bij de planten blijft.
+
+## Antwoordknoppen bij opdrachten — 14 november 2026
+
+Op expliciet verzoek gebruiken bakbestellingen en dagelijkse opdrachten voortaan losse antwoordknoppen met ruimte ertussen, zoals de bakstudio. Dit loopt via `ChoiceList layout="buttons"`; de lijstvariant voor andere bestaande spellen blijft behouden.

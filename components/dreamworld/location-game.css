@@ -88,3 +88,9 @@
   .world-location--game .adventure-shelf .ck-kaart__tekst { padding: var(--space-2); }
   .world-location--game .adventure-shelf .ck-kaart__meta { display: none; }
 }
+
+.location-game__clipboard { position: absolute; right: var(--space-8); bottom: calc(var(--space-12) * 4); width: min(24vw, 19rem); aspect-ratio: 1494 / 1008; padding: 0; border: 0; background: transparent; cursor: pointer; font: inherit; color: var(--color-primary); }
+.location-game__clipboard img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.location-game__clipboard span { position: absolute; left: 22%; right: 22%; top: 48%; text-align: center; font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); }
+.location-game__clipboard:focus-visible { outline: var(--space-1) solid var(--color-focus); border-radius: var(--radius-control); }
+@media (max-width: 700px) { .location-game__clipboard { position: relative; right: auto; bottom: auto; width: min(85%, 23rem); align-self: center; margin-bottom: var(--space-3); } }

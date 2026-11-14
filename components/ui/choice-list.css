@@ -21,3 +21,10 @@
 .ck-keuze.is-goed > svg { color: var(--color-primary); }
 .ck-keuze.is-mis { background: var(--color-error-soft); box-shadow: inset 3px 0 0 var(--color-error); color: var(--color-error); }
 .ck-keuze:disabled.is-goed, .ck-keuze:disabled.is-mis { opacity: 1; }
+
+.ck-answer-buttons { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.ck-answer-button.ck-button { padding: var(--space-3) var(--space-4); text-align: left; justify-content: flex-start; line-height: var(--line-height-default); font-weight: var(--font-weight-medium); }
+.ck-answer-button .ck-button__label { flex: 1; }
+.ck-answer-button.ck-button:disabled { opacity: 1; }
+.ck-answer-button.is-goed { background: var(--color-success-soft); border-color: var(--color-primary); }
+.ck-answer-button.is-mis { background: var(--color-error-soft); color: var(--color-error); border-color: var(--color-error); }

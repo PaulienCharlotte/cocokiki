@@ -157,3 +157,10 @@
   .bestel-scherm { padding-right: var(--space-3); padding-left: var(--space-3); }
   .dream-app .bestel-scherm { padding-top: calc(var(--space-12) + var(--space-8)); }
 }
+
+.bestel-scherm { background: var(--color-honey) url('/dreamworld/to-do-board.webp') center / cover fixed; }
+.bestel-kaart { background: var(--color-surface-soft); }
+.bestel-kaart .ck-zegt__gids { width: calc(var(--space-12) * 2); height: calc(var(--space-12) * 2); background: transparent; }
+.bestel-kaart .ck-zegt__wolk { background: var(--color-surface); }
+.bestel-briefje { background: transparent; padding: 0 var(--space-2); }
+@media (max-width: 600px) { .bestel-kaart .ck-zegt__gids { width: calc(var(--space-8) * 2); height: calc(var(--space-8) * 2); } }

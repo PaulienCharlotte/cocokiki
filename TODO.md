@@ -172,3 +172,19 @@ open TODO's en zijn geen juridische vrijgave.
 - [x] Zet de eilandkeuzes op desktop in een horizontaal schuifmenu onderin; behoud mobiel.
 - [x] Vervang de eenvoudige lucht door geïllustreerde dag- en nachtachtergronden.
 - [ ] Verken een vrijwillig gekozen plaats voor actuele weersuggesties en passende buitenactiviteiten. Eerst het concept uitwerken; geen automatische locatievolging toevoegen.
+
+## Opdrachten verder uitbouwen
+
+- [x] Winkelgekte bereikbaar maken vanuit het opdrachtenoverzicht.
+- [ ] Pilot ‘Een maaltijd voor de buurt’: porties plannen → moestuin aanleggen → oogsten → boodschappen → koken → afleveren. Uitwerking: `docs/langlopende-opdrachten.md`.
+- [ ] Opgeslagen missieruns en stapbewijzen koppelen aan bestaande spelservices, met eenmalige beloningen en echte voorraadtransacties.
+
+## Speeltestverfijning 14 november, middag
+
+- [x] Saldo in nachtmodus op een helder contrastrijk vlak tonen.
+- [x] Plantendokter rechtstreeks op het planteneiland terugzetten, naast opdrachten en moestuin.
+- [x] Losse antwoordknoppen uit de bakstudio hergebruiken bij dagelijkse vragen en bakbestellingen.
+- [x] Kookboek ontdoen van de opdrachtbanner en de knop voor vrij taart versieren.
+- [x] Geluid en meetlint verbergen in Winkelgekte.
+- [x] Kas en tuinkamer een leeg houten/glazen interieur geven dat bij de gedeelde kasgevel past.
+- [x] Vijf voor vandaag bovenaan uitlichten en de groene zithoek een bestaande bankafbeelding geven.

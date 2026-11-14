@@ -20,3 +20,6 @@
 .ck-zegt.is-alert .ck-zegt__uitslag { color: var(--color-error); }
 .ck-zegt__erbij { margin-left: auto; font-variant-numeric: tabular-nums; }
 .ck-zegt__tekst { margin: var(--space-1) 0 0; color: var(--color-text); font-size: var(--font-size-md); line-height: var(--line-height-default); overflow-wrap: anywhere; }
+
+.ck-zegt__gids { width: calc(var(--space-8) * 2); height: calc(var(--space-8) * 2); object-position: center; }
+@media (max-width: 600px) { .ck-zegt__gids { width: calc(var(--space-6) * 2); height: calc(var(--space-6) * 2); } }

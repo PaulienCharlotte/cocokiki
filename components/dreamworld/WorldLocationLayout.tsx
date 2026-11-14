@@ -27,7 +27,8 @@ const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
  * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
  */
 const DIRECTE_AVONTUREN: Record<string, string> = {
-  plantendokter: '/opdrachten?gebied=planten',
+  plantenopdrachten: '/opdrachten?gebied=planten',
+  plantendokter: '/plantendokter',
   moestuin: '/plants/garden',
   bestellingen: '/opdrachten?gebied=bakken',
   kookboek: '/treehouse/cookbook',

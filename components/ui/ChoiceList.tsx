@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../../design-system';
 import { Check, X } from 'lucide-react';
 import './choice-list.css';
 
@@ -26,9 +27,11 @@ interface ChoiceListProps {
   /** Wat een voorleesprogramma zegt over de lijst. */
   label?: string;
   className?: string;
+  layout?: 'list' | 'buttons';
 }
 
-export default function ChoiceList({ choices, onChoose, disabled = false, label, className }: ChoiceListProps) {
+export default function ChoiceList({ choices, onChoose, disabled = false, label, className, layout = 'list' }: ChoiceListProps) {
+  if (layout === 'buttons') return <ul className="ck-answer-buttons" aria-label={label}>{choices.map((choice, i) => <li key={choice.id}><Button variant="quiet" fullWidth disabled={disabled} className={`ck-answer-button${choice.staat ? ` is-${choice.staat}` : ''}`} onClick={() => onChoose(choice.id)} startIcon={<span aria-hidden="true">{String.fromCharCode(65 + i)}</span>} endIcon={choice.staat === 'goed' ? <Check size={18} /> : choice.staat === 'mis' ? <X size={18} /> : undefined}>{choice.label}</Button></li>)}</ul>;
   return <ul className={`ck-keuzes${className ? ` ${className}` : ''}`} aria-label={label}>
     {choices.map(keuze => <li key={keuze.id}>
       <button

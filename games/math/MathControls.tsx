@@ -25,10 +25,10 @@ export function MathHeader({ game, level, progress, onBack, onHome = onBack, onL
     {game === 'add-subtract' && <button type="button" className="math-icon-tool" aria-label="Rekenmachine openen" title="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={20} aria-hidden="true" /></button>}
     {/* Maten zijn naslag, geen hulp bij het antwoord: die staan bij elk
         rekenspel klaar. */}
-    {game && <button type="button" className="math-icon-tool" aria-label="Maten omrekenen" title="Maten" aria-haspopup="dialog" onClick={() => setMaten(true)}><Ruler size={20} aria-hidden="true" /></button>}
+    {game && game !== 'race' && <button type="button" className="math-icon-tool" aria-label="Maten omrekenen" title="Maten" aria-haspopup="dialog" onClick={() => setMaten(true)}><Ruler size={20} aria-hidden="true" /></button>}
     {rekenmachine && <Rekenmachine som={vraag} onClose={() => setRekenmachine(false)} />}
     {maten && <Maten onClose={() => setMaten(false)} />}
-    {onSound && <button type="button" className="math-icon-tool" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} title={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={onSound}>{sound ? <Volume2 size={20} /> : <VolumeX size={20} />}</button>}
+    {onSound && game !== 'race' && <button type="button" className="math-icon-tool" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} title={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={onSound}>{sound ? <Volume2 size={20} /> : <VolumeX size={20} />}</button>}
   </header>;
 }
 /**

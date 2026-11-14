@@ -17,7 +17,7 @@ export default function DailyPractice() {
   };
   return <section className="daily-practice">
     <SpeechBubble character={q.bron === 'planten' ? 'kiki' : 'coco'} label="Vandaag" aside={`${index + 1}/${questions.length}`}>{q.vraag}</SpeechBubble>
-    <ChoiceList label="Kies je antwoord" disabled={Boolean(answered)} onChoose={choice => choose(choice)} choices={q.opties.map(choice => ({ id: choice, label: choice, staat: answered ? choice === q.antwoord ? 'goed' : choice === answered.choice ? 'mis' : undefined : undefined }))} />
+    <ChoiceList layout="buttons" label="Kies je antwoord" disabled={Boolean(answered)} onChoose={choice => choose(choice)} choices={q.opties.map(choice => ({ id: choice, label: choice, staat: answered ? choice === q.antwoord ? 'goed' : choice === answered.choice ? 'mis' : undefined : undefined }))} />
     {error && <p role="alert">{error}</p>}
     {answered ? <><p role="status">{answered.helped ? `Met hulp: ${q.antwoord}. Geen CocoCoins voor deze oefening.` : answered.choice === q.antwoord ? `Goed! +${DAILY_REWARD} CocoCoins.` : `Het antwoord is: ${q.antwoord}.`}{q.toelichting && ` ${q.toelichting}`}</p><Button onClick={() => setIndex(index + 1)}>Verder</Button></> : <><small>Dubbele beloning: {DAILY_REWARD} CocoCoins per goed antwoord.</small><Button variant="quiet" onClick={() => choose(q.antwoord, true)}>Ik kom er niet uit</Button></>}
   </section>;

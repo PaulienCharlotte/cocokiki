@@ -80,7 +80,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],
     adventurePreviews: [
-      { id: 'bestellingen', title: 'Opdrachten', description: 'Help een klant met een kookopdracht of een verjaardagstaart.', image: '/assets/library/cooking/klembord.webp', tone: 'honey', status: 'available' },
+      { id: 'bestellingen', title: 'To Do', description: 'Help een klant met een kookopdracht of een verjaardagstaart.', image: '/assets/library/cooking/klembord.webp', tone: 'honey', status: 'available' },
       { id: 'kookboek', title: 'Het kookboek', description: 'Kies een recept of versier vrij een taart.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'sage', status: 'available' },
       { id: 'taartenatelier', title: 'Taart versieren', description: 'Maak en versier je eigen feestelijke taart.', image: '/assets/library/cooking/taarten/roze-rand.webp', tone: 'berry', status: 'available' },
       { id: 'voeding', title: 'Ontdek je eten', description: 'Ontdek samen met Coco wat je lichaam met eten doet.', image: '/assets/library/cooking/healthy/wholewheat-pasta.webp', tone: 'sage', status: 'available' },
@@ -98,7 +98,8 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     // /plants/collection en /encyclopedie blijven gewoon werken.
     activities: [], featuredActivities: [], practiceActivities: [], adventures: [],
     adventurePreviews: [
-      { id: 'plantendokter', title: 'Opdrachten', description: 'Er staat een plant klaar die het niet goed doet. Kijk wat er mis is en bedenk wat hij nodig heeft.', image: '/assets/library/plants/klembord.webp', tone: 'sage', status: 'available' },
+      { id: 'plantendokter', title: 'De plantendokter', description: 'Help een plant in het spreekuur.', image: '/assets/library/plants/gereedschap/plantenspuit.webp', tone: 'sage', status: 'available' },
+      { id: 'plantenopdrachten', title: 'To Do', description: 'Er staat een plant klaar die het niet goed doet. Kijk wat er mis is en bedenk wat hij nodig heeft.', image: '/assets/library/plants/klembord.webp', tone: 'sage', status: 'available' },
       { id: 'moestuin', title: 'Mijn moestuin', description: 'Plant een rij, meet water af en oogst je eigen groenten.', image: '/assets/library/plants/garden/navigation.webp', tone: 'sage', status: 'available' },
     ],
   },

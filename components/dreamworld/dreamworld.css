@@ -131,3 +131,5 @@ body:has(.dream-app) .treehouse-kitchen-station, body:has(.dream-app) .cooking-s
 .dreamworld + .site-footer { position: fixed; bottom: var(--space-1); left: var(--space-3); z-index: 1; background: transparent; }
 .dreamworld:has(.dream-map.is-night) + .site-footer a { color: var(--color-on-primary); }
 .dream-map__sky > img { width: 100%; height: 100%; object-fit: cover; }
+
+.dreamworld:has(.dream-map.is-night) .world-hud__balance { background: var(--color-surface); color: var(--color-text); border-radius: var(--radius-pill); padding: var(--space-1) var(--space-2); }

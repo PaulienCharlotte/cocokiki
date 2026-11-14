@@ -1,4 +1,5 @@
 import React from 'react';
+import { PROFILE_AVATARS } from '../../services/profile';
 import { CHARACTERS, type CharacterId } from '../../data/characters';
 import './speech-bubble.css';
 
@@ -26,7 +27,7 @@ interface SpeechBubbleProps {
 export default function SpeechBubble({ character, label, aside, tone = 'default', textId, children, className }: SpeechBubbleProps) {
   const { naam, beeld } = CHARACTERS[character];
   return <div className={`ck-zegt${tone === 'default' ? '' : ` is-${tone}`}${className ? ` ${className}` : ''}`} role="status">
-    <img className="ck-zegt__gids" src={beeld} alt={naam} />
+    <img className="ck-zegt__gids" src={PROFILE_AVATARS.find(avatar => avatar.id === (character === 'seb' ? 'stokstaartje' : character))?.image ?? beeld} alt={naam} />
     <div className="ck-zegt__wolk">
       <p className="ck-zegt__naam">
         <strong>{naam}</strong>{label && <span> · {label}</span>}

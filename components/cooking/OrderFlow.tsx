@@ -93,11 +93,11 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
       <section className="bestel-kaart">
         {terugNaarToonbank}
         <SpeechBubble character={bestelling.klant} label="de bestelling" aside={<span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>}>
-          {bestelling.wens}
+          {bestelling.korteWens ?? bestelling.wens}
         </SpeechBubble>
         <p className="bestel-briefje"><strong>{eisInWoorden(bestelling)}</strong><span>voor {bestelling.eters} mensen</span></p>
         {melding && <p className="bestel-melding" role="alert">{melding}</p>}
-        <ChoiceList
+        <ChoiceList layout="buttons"
           label="Welk recept past hierbij?"
           choices={recepten.map(recipe => ({
             id: recipe.id,
@@ -128,14 +128,14 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
       <SpeechBubble character="coco" label="hoeveel maak je er" tone={klaar ? 'goed' : 'default'}>
         {klaar
           ? `${goed} keer bakken dus. Dan heb je er genoeg. Zet hem maar klaar.`
-          : `Je maakt ${gekozenRecept.name.toLowerCase()}. Eén keer bakken geeft ${gekozenRecept.servings} ${gekozenRecept.servings === 1 ? 'portie' : 'porties'}, en er komen ${bestelling.eters} mensen. Hoe vaak moet je bakken?`}
+          : `Voor ${bestelling.eters} mensen. Eén baksel geeft ${gekozenRecept.servings} porties. Hoe vaak bak je?`}
       </SpeechBubble>
       <figure className="bestel-gerecht"><CookingAssetImage src={gekozenRecept.image} alt={gekozenRecept.name} /></figure>
       {melding && <p className="bestel-melding" role="alert">{melding}</p>}
       {klaar
         ? <Button size="large" onClick={() => onStart(gekozenRecept, bestelling)}>Beginnen voor {CHARACTERS[bestelling.klant].naam}</Button>
         : <>
-          <ChoiceList
+          <ChoiceList layout="buttons"
             label="Hoe vaak moet je bakken?"
             choices={keerOpties(bestelling, gekozenRecept).map(keer => ({
               id: String(keer),

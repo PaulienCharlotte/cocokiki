@@ -27,6 +27,7 @@ export interface Bestelling {
   aanleiding: string;
   /** Wat de klant zelf zegt. Dit is de opdracht. */
   wens: string;
+  korteWens?: string;
   /** Voor hoeveel mensen. Hieruit volgt hoe vaak je moet bakken. */
   eters: number;
   eis: BestellingEis;
@@ -45,6 +46,7 @@ export interface Bestelling {
 export const BESTELLINGEN: Bestelling[] = [
   {
     id: 'kiki-kas',
+    korteWens: 'Maak je iets zonder zuivel voor ons vieren?',
     klant: 'kiki',
     aanleiding: 'Kiki heeft de hele ochtend in de kas gewerkt.',
     wens: 'Ik kom zo langs met drie mensen uit de kas. Maak je iets voor ons vieren? Alleen: ik kan geen zuivel hebben, dus kijk goed wat erin zit.',
@@ -56,6 +58,7 @@ export const BESTELLINGEN: Bestelling[] = [
   },
   {
     id: 'seb-verjaardag',
+    korteWens: 'Bak je iets uit de oven voor veertien kinderen?',
     klant: 'seb',
     aanleiding: 'Het zusje van Seb is zaterdag jarig.',
     wens: 'Er komen veertien kinderen. Iets uit de oven, dat vinden ze het leukst. Zorg dat er voor iedereen een is.',
@@ -67,6 +70,7 @@ export const BESTELLINGEN: Bestelling[] = [
   },
   {
     id: 'lua-tussendoor',
+    korteWens: 'Iets voor ons drieën, klaar in tien minuten. Wat kies jij?',
     klant: 'lua',
     aanleiding: 'Baby Lua moet zo weer verder met de tafels.',
     wens: 'Ik heb maar tien minuten, en we zijn met zijn drieën. Iets wat snel klaar is, anders haal ik het niet.',

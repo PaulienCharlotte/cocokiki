@@ -181,17 +181,11 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in Coco’s kookstudio" />
     <section className="recipe-library" aria-labelledby="cooking-title">
       <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>
-      {(lopend?.bestelling ?? wachtend[0]) && <OrderInvite
-        bestelling={lopend?.bestelling ?? wachtend[0]}
-        lopend={Boolean(lopend)}
-        onOpen={() => onNavigate?.('/opdrachten?gebied=bakken')}
-      />}
         <nav className="recipe-categories recipe-library__filters" aria-label="Receptcategorieën">
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>
           <button type="button" aria-pressed={category === 'preparing'} onClick={() => setCategory('preparing')}>Bereiden</button>
         </nav>
-      <Button variant="secondary" onClick={() => onNavigate?.('/games/taartenatelier')}>Vrij een taart versieren</Button>
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
         {notice && <p role="alert">{notice}</p>}
         {recipes.map(recipe => <div role="listitem" key={recipe.id}><RecipeCard recipe={recipe} progress={progress} journey={progress.journeys[recipe.id]} onOpen={setSelected} /></div>)}

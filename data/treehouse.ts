@@ -7,8 +7,8 @@ export const ROOM_MODULE_INTERIORS = {
   terrace: '/assets/library/treehouse/rooms/terrace-front-v1.webp',
   bathroom: '/assets/library/treehouse/rooms/bathroom-front-v1.webp',
   blush: '/assets/library/treehouse/rooms/blush-front-v1.webp',
-  garden: '/assets/library/treehouse/rooms/garden-room-front-v1.webp',
-  greenhouse: '/assets/library/treehouse/rooms/greenhouse-front-v1.webp',
+  garden: '/assets/library/treehouse/rooms/greenhouse-front-v2.webp',
+  greenhouse: '/assets/library/treehouse/rooms/greenhouse-front-v2.webp',
 } as const;
 
 export type BaseRoomId = 'living-room' | 'kitchen' | 'bathroom' | 'bedroom' | 'terrace';

@@ -70,7 +70,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
       <div className="world-hud__tools">
         {!onBack && (worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Opdrachten openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="To Do openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         <span className="world-hud__balance" aria-label={`${coins} CocoCoins`}>
           <span className="world-hud__coin" aria-hidden="true">★</span>
           <strong>{coins}</strong>
@@ -111,7 +111,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
             {onNavigate && <>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />Opdrachten</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />To Do</button>
             </>}
           </nav>}
         </div>
