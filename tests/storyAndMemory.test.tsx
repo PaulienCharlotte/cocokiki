@@ -38,7 +38,8 @@ test('elke redactiesom draagt zijn eigen aanpak, stappen en getallen', () => {
       assert.ok(question.stappen.length >= 2);
       assert.equal(question.answer, question.stappen.at(-1)?.antwoord);
       assert.ok(question.stappen.every(stap => Number.isFinite(stap.antwoord) && stap.antwoord >= 0));
-      assert.ok(question.stappen.every(stap => stap.tip && stap.vraag && stap.eenheid));
+      assert.ok(question.stappen.every(stap => stap.tip && stap.vraag));
+      assert.ok(question.stappen.at(-1)!.eenheid, 'de laatste stap hoort een eenheid te hebben');
       assert.ok(question.zoek && question.controle);
       // Elk getal dat je moet aanstrepen staat ook echt in het verhaal.
       assert.ok(question.nodig.length >= 2);
@@ -115,8 +116,11 @@ test('het matenspel stelt alleen vragen die bij het niveau passen', () => {
     for (const vraag of deck) {
       if (vraag.soort === 'omrekenen') {
         assert.ok(bekend.has(vraag.van) && bekend.has(vraag.naar), `${vraag.van}→${vraag.naar} hoort niet bij niveau ${level}`);
-        // Het antwoord mag geen eindeloos kommagetal zijn.
-        assert.ok(String(vraag.answer).replace('-', '').replace('.', '').length <= 8, `${vraag.answer} is te lang`);
+        // Geen eindeloze kommagetallen, en geen antwoord waar niemand iets
+        // van leert.
+        const decimalen = (String(vraag.answer).split('.')[1] ?? '').length;
+        assert.ok(decimalen <= 4, `${vraag.answer} heeft te veel decimalen`);
+        assert.ok(Math.abs(vraag.answer) <= 10_000_000, `${vraag.answer} is te groot`);
       } else {
         assert.ok(vraag.keuzes.length >= 3);
         assert.ok(vraag.keuzes[vraag.answer], 'het juiste antwoord ontbreekt in de keuzes');
@@ -161,23 +165,25 @@ test('de paaltjessom telt er één bij, maar rondom niet', () => {
   assert.equal(rond.stappen.at(-1)!.antwoord, rond.stappen.at(-2)!.antwoord);
 });
 
-test('de ritjessom rondt alleen naar boven als er iets overblijft', () => {
+test('de ritjessom deelt eerst en rondt daarna af', () => {
   let metRest = 0, zonderRest = 0;
   for (let index = 0; index < 12; index++) {
     const kort = ritten.maak(4, index, Math.random);
-    assert.equal(kort.stappen.length, 2, 'vanaf niveau 3 hoort de rest niet meer uitgeschreven te worden');
-    const [vol, beslissing] = kort.stappen;
-    assert.ok(beslissing.verborgen, 'de beslissing mag niet voorgezegd worden');
-    const totaal = Number(kort.nodig[0]), perKeer = Number(kort.nodig[1]);
-    const rest = totaal - vol.antwoord * perKeer;
-    assert.ok(rest >= 0 && rest < perKeer);
-    assert.equal(beslissing.antwoord, vol.antwoord + (rest > 0 ? 1 : 0));
-    if (rest > 0) metRest++; else zonderRest++;
+    assert.equal(kort.stappen.length, 2, 'vanaf niveau 3 zijn het delen en afronden');
+    const [deling, afronden] = kort.stappen;
+    assert.equal(afronden.afronden, 'boven');
+    assert.ok(afronden.verborgen, 'de beslissing mag niet voorgezegd worden');
+    // De deling komt netjes uit op hoogstens twee decimalen.
+    const decimalen = (String(deling.antwoord).split('.')[1] ?? '').length;
+    assert.ok(decimalen <= 2, `${deling.antwoord} heeft te veel decimalen`);
+    assert.equal(afronden.antwoord, Math.ceil(deling.antwoord));
+    if (decimalen > 0) metRest++; else zonderRest++;
 
+    // Op niveau 1 en 2 blijft het bij hele keren met een rest.
     const lang = ritten.maak(2, index, Math.random);
-    assert.equal(lang.stappen.length, 4, 'op niveau 1 en 2 blijft de rest zichtbaar');
+    assert.equal(lang.stappen.length, 4);
+    assert.ok(Number.isInteger(lang.stappen[0].antwoord));
   }
-  // Allebei de gevallen moeten voorkomen, anders leert een kind 'altijd +1'.
   assert.ok(metRest > 0 && zonderRest > 0, `${metRest} met rest, ${zonderRest} zonder`);
 });
 

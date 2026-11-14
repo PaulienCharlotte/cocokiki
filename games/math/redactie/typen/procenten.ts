@@ -8,6 +8,7 @@ import { euro, heelGetal, kiesUit, maakSom, type Sometype } from '../types';
  * daarna pas kijken wat de vraag er precies mee wil.
  */
 const DELERS: Record<number, { deler: number; woord: string }> = {
+  5: { deler: 20, woord: 'de helft van 10%' },
   10: { deler: 10, woord: 'een tiende' },
   20: { deler: 5, woord: 'een vijfde' },
   25: { deler: 4, woord: 'een kwart' },
@@ -21,7 +22,7 @@ export const procenten: Sometype = {
   valkuil: 'Stoppen bij het deel. De vraag is vaak hoeveel er ná de korting overblijft.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {
-    const percentage = level === 3 ? 10 : kiesUit([10, 20, 25, 50], random);
+    const percentage = level === 3 ? 10 : level === 4 ? kiesUit([10, 20, 25, 50], random) : kiesUit([5, 10, 20, 25, 50], random);
     const { deler, woord } = DELERS[percentage];
     const vorm = index % 3;
     if (vorm === 0) {
@@ -30,7 +31,7 @@ export const procenten: Sometype = {
       return maakSom({
         typeId: 'procenten', id: `procenten:korting:${level}:${index}:${prijs}:${percentage}`,
         verhaal: `Een mountainbike kost ${euro(prijs)}. In de uitverkoop krijg je ${percentage}% korting. Hoeveel kost de fiets nu?`,
-        nodig: [String(prijs), String(percentage)],
+        nodig: [prijs.toFixed(2).replace('.', ','), String(percentage)],
         zoek: 'de nieuwe prijs van de fiets',
         aanpak: procenten.aanpak,
         stappen: [

@@ -131,3 +131,38 @@ De planten die het hardst nodig zijn, omdat ze deze oorzaken ook echt vaak
 krijgen: de varen, de twee palmen, de monstera, de lepelplant (`white-flower`)
 en de orchidee voor droge lucht; de sansevieria, het citrusboompje en de twee
 cactussen voor kou.
+
+## Het onderzoek: zelf kijken, dan vragen
+
+Vroeger vertelde Kiki wat je zag zodra je de plant aanraakte, en wees een
+handje de volgende aanwijzing aan. Dan hoef je niet te kijken maar te
+volgen, en krijg je de halve diagnose cadeau.
+
+Nu is het onderzoek in tweeën gedeeld, zoals een dokter ook werkt:
+
+1. **Zelf kijken.** Eén vraag: *wat zie je aan de plant?* Drie
+   beschrijvingen, waarvan er twee bij een ander probleem van dezelfde soort
+   horen. Aanraken vergroot dat stuk van de plant. Dit is het enige dat echt
+   te zien is, dus het enige waar een vraag van gemaakt is.
+2. **Voelen aan de aarde.** Je kunt niet door een scherm voelen, en op de
+   tekening is kurkdroog niet van gewoon vochtig te onderscheiden. Daar een
+   keuzevraag van maken is gokken. Je drukt op de knop en Kiki vertelt wat
+   je onder je vingers merkt.
+3. **Het baasje vragen.** Waar de plant staat en wanneer hij water kreeg kun
+   je al helemaal niet zien. Eén knop, geen quiz.
+
+De vraag heet bewust *wat zie je aan de plant* en niet *aan de blaadjes*:
+een cactus heeft geen blaadjes.
+
+**Nog op te ruimen:** sommige EHBO-teksten noemen behalve de plant ook de
+aarde of het seizoen ("bruine punten, bij aarde die gewoon vochtig is").
+Daarmee verklapt de keuze iets wat je daarna pas zou voelen of vragen. Dat
+is een tekstklus door `data/plants/firstAid.ts` heen.
+
+**Mis kijken telt niet als misser.** Verkeerd kijken is iets anders dan
+verkeerd redeneren; wie erop afgerekend wordt gaat gokken in plaats van
+kijken. Je krijgt een zachte wenk en het vergrootglas blijft staan.
+
+De keuzes staan in `data/plants/clinic.ts`: `AARDE_KORT` voor de aarde en
+`bladKeuzes()` voor de blaadjes. Beide komen uit de gegevens die er al
+waren, dus een nieuwe patiënt krijgt ze vanzelf.

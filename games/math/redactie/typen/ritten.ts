@@ -1,4 +1,4 @@
-import { heelGetal, kiesUit, maakSom, type Sometype } from '../types';
+import { getal, heelGetal, kiesUit, maakSom, type Sometype } from '../types';
 
 /**
  * Delen met een rest, en dan naar boven afronden.
@@ -17,50 +17,73 @@ const SOORTEN = [
 export const ritten: Sometype = {
   id: 'ritten',
   naam: 'Ritjessom',
-  aanpak: 'Deel eerst en kijk wat er overblijft. Blijft er iets over, dan komt er nog één keer bij — ook al is die niet vol.',
+  aanpak: 'Deel eerst. Blijft er een stukje over, dan is er nog een hele keer nodig — ook al is die niet vol. Komt het precies uit, dan niet.',
   valkuil: 'De rest laten liggen. Een halve rit bestaat niet, dus altijd naar boven.',
   niveaus: [1, 2, 3, 4, 5],
   maak(level, index, random) {
     const soort = kiesUit(SOORTEN, random);
-    const perKeer = level <= 2 ? kiesUit([5, 6, 8, 10], random) : kiesUit([12, 15, 24, 32, 45], random);
-    const vol = heelGetal(level <= 2 ? 3 : 8, level <= 2 ? 9 : 25, random);
-    // Niet elke deling heeft een rest. Komt het precies uit, dan is er géén
-    // keer extra nodig — anders leert een kind 'altijd eentje erbij', en dat
-    // is precies de fout die bij de paaltjessom wél het goede antwoord geeft.
+    // Vanaf niveau 3 deel je gewoon en rond je daarna af. Dan moet de deling
+    // wel netjes uitkomen op twee decimalen, anders typt een kind 20,8333.
+    if (level >= 3) {
+      const perKeer = kiesUit([4, 5, 8, 10, 12, 15, 20, 24, 25, 32], random);
+      const breuken = [0.25, 0.5, 0.75, 0.2, 0.4, 0.6, 0.8].filter(deel => Number.isInteger(perKeer * deel));
+      // Eén op de vier komt precies uit: dan hoeft er níéts bij.
+      const breuk = index % 4 === 3 || breuken.length === 0 ? 0 : kiesUit(breuken, random);
+      const heel = heelGetal(level === 3 ? 4 : 8, level === 3 ? 12 : 30, random);
+      const totaal = heel * perKeer + perKeer * breuk;
+      const keer = heel + (breuk > 0 ? 1 : 0);
+      return maakSom({
+        typeId: 'ritten', id: `ritten:${level}:${index}:${totaal}:${perKeer}`,
+        verhaal: soort.zin(totaal, perKeer),
+        nodig: [String(totaal), String(perKeer)],
+        zoek: `het aantal ${soort.keer}`,
+        aanpak: ritten.aanpak,
+        controle: breuk > 0
+          ? `${totaal} ÷ ${perKeer} = ${getal(heel + breuk)}. Dat stukje erbij kan niet half, dus het worden er ${keer}.`
+          : `${totaal} ÷ ${perKeer} = ${heel}, precies. Er blijft niets over, dus er komt geen keer bij.`,
+        stappen: [
+          {
+            vraag: `Deel eerst. Hoeveel is ${totaal} ÷ ${perKeer}?`, som: `${totaal} ÷ ${perKeer}`,
+            antwoord: heel + breuk, eenheid: '',
+            tip: `Reken de deling gewoon uit, ook als er een komma in komt.`,
+          },
+          {
+            vraag: `Hoeveel ${soort.keer} zijn het dan in totaal?`, som: '{1}', antwoord: keer,
+            eenheid: soort.keer, verborgen: true, afronden: 'boven',
+            tip: `Een halve keer bestaat niet. Blijft er een stukje over, dan is er nog een hele keer nodig; komt het precies uit, dan niet.`,
+          },
+        ],
+      });
+    }
+    // Op niveau 1 en 2 deel je nog niet met kommagetallen: daar zoek je
+    // hoeveel hele keren erin passen en wat er overblijft.
+    const perKeer = kiesUit([5, 6, 8, 10], random);
+    const heel = heelGetal(3, 9, random);
     const rest = index % 4 === 3 ? 0 : heelGetal(1, perKeer - 1, random);
-    const totaal = vol * perKeer + rest;
-    const keer = vol + (rest > 0 ? 1 : 0);
-    const beslissing = {
-      vraag: `Hoeveel ${soort.keer} zijn het dan in totaal?`,
-      som: `{1} + ${rest > 0 ? 1 : 0}`, antwoord: keer, eenheid: soort.keer, verborgen: true,
-      tip: `Blijft er nog iets over, dan is er nog één keer nodig. Komt het precies uit, dan niet.`,
-    } as const;
-    const controle = rest > 0
-      ? `${vol} volle keren van ${perKeer} is ${vol * perKeer}, plus ${rest} over: samen ${totaal}.`
-      : `${vol} keren van ${perKeer} is precies ${totaal}. Er blijft niets over, dus er komt geen keer bij.`;
-    const kop = {
+    const totaal = heel * perKeer + rest;
+    const keer = heel + (rest > 0 ? 1 : 0);
+    return maakSom({
       typeId: 'ritten', id: `ritten:${level}:${index}:${totaal}:${perKeer}`,
       verhaal: soort.zin(totaal, perKeer),
       nodig: [String(totaal), String(perKeer)],
       zoek: `het aantal ${soort.keer}`,
       aanpak: ritten.aanpak,
-      controle,
-    };
-    const delen = {
-      vraag: `Hoeveel volle keren van ${perKeer} gaan eruit?`, som: `${totaal} ÷ ${perKeer}`,
-      antwoord: vol, eenheid: 'vol', afronden: 'beneden',
-      tip: `Zoek het grootste getal dat je met ${perKeer} kunt vermenigvuldigen zonder boven ${totaal} te komen.`,
-    } as const;
-    // Op niveau 1 en 2 schrijven we de rest uit; daarna hoort een kind die
-    // zelf uit de deling te halen en blijven er twee stappen over.
-    if (level >= 3) return maakSom({ ...kop, stappen: [delen, beslissing] });
-    return maakSom({
-      ...kop,
+      controle: rest > 0
+        ? `${heel} hele keren van ${perKeer} is ${heel * perKeer}, plus ${rest} over: samen ${totaal}.`
+        : `${heel} keren van ${perKeer} is precies ${totaal}. Er blijft niets over, dus er komt geen keer bij.`,
       stappen: [
-        delen,
-        { vraag: `Hoeveel ${soort.ding} gaan er in die volle keren mee?`, som: `{1} × ${perKeer}`, antwoord: vol * perKeer, eenheid: soort.ding, tip: `Zoveel volle keren van ${perKeer}: dat is keersommen.` },
+        {
+          vraag: `Hoeveel hele keren van ${perKeer} passen er in ${totaal}?`, som: `${totaal} ÷ ${perKeer}`,
+          antwoord: heel, eenheid: 'hele keren', afronden: 'beneden',
+          tip: `Zoek het grootste getal dat je met ${perKeer} kunt vermenigvuldigen zonder boven ${totaal} te komen.`,
+        },
+        { vraag: `Hoeveel ${soort.ding} gaan er in die hele keren mee?`, som: `{1} × ${perKeer}`, antwoord: heel * perKeer, eenheid: soort.ding, tip: `Zoveel hele keren van ${perKeer}: dat is keersommen.` },
         { vraag: `Hoeveel ${soort.ding} blijven er dan over?`, som: `${totaal} − {2}`, antwoord: rest, eenheid: soort.ding, tip: `Haal van de ${totaal} af wat al mee is.` },
-        beslissing,
+        {
+          vraag: `Hoeveel ${soort.keer} zijn het dan in totaal?`, som: `{1} + ${rest > 0 ? 1 : 0}`,
+          antwoord: keer, eenheid: soort.keer, verborgen: true,
+          tip: `Blijft er nog iets over, dan is er nog één keer nodig. Komt het precies uit, dan niet.`,
+        },
       ],
     });
   },

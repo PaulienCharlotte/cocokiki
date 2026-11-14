@@ -1,5 +1,33 @@
 /* De meerkeuzelijst. Zie components/ui/ChoiceList.tsx; elke vraag gebruikt deze. */
 .ck-keuzes { margin: 0; padding: 0; list-style: none; border-radius: var(--radius-control); background: var(--color-background-soft); overflow: hidden; }
+/*
+ * Losse antwoorden: elk in een eigen vak met een letter ervoor, zoals het
+ * kookavontuur. Charlotte kiest deze vorm voor vragen met een verhaal
+ * erin; de blokvorm blijft voor korte keuzes.
+ */
+.ck-keuzes.is-los { display: grid; gap: var(--space-2); border-radius: 0; background: none; overflow: visible; }
+.ck-keuzes.is-los li + li { border-top: 0; }
+.ck-keuzes.is-los .ck-keuze {
+  min-height: calc(var(--space-12) + var(--space-1));
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  font-weight: var(--font-weight-bold);
+}
+.ck-keuzes.is-los .ck-keuze:hover:not(:disabled) { border-color: var(--color-border-strong); background: var(--color-background-soft); }
+.ck-keuzes.is-los .ck-keuze.is-goed { border-color: var(--color-primary); background: var(--color-success-soft); }
+.ck-keuzes.is-los .ck-keuze.is-mis { border-color: var(--color-error); background: var(--color-error-soft); }
+.ck-keuze__letter {
+  flex: none;
+  width: var(--space-8);
+  height: var(--space-8);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-success-soft);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+}
 .ck-keuzes li + li { border-top: 1px solid #0000000f; }
 
 .ck-keuze {

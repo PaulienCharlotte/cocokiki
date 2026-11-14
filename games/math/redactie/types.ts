@@ -25,8 +25,8 @@ export interface Stap {
   antwoord: number;
   eenheid: string;
   soort?: Soort;
-  /** 'beneden' voor een deling waarbij alleen de hele keren tellen. */
-  afronden?: 'beneden';
+  /** Afronden na de som: 'beneden' op hele keren, 'boven' als een restje toch meetelt. */
+  afronden?: 'beneden' | 'boven';
   /**
    * De som niet laten zien tijdens het rekenen, alleen de vraag. Voor een
    * stap waarin de beslissing zélf de oefening is: '12 + 1' verklapt dat er
@@ -46,6 +46,13 @@ export interface Redactiesom extends MathQuestion {
   stappen: Stap[];
   /** Hoe je achteraf controleert of het klopt. */
   controle: string;
+  /**
+   * Vraag vooraf welk soort som dit is. Alleen bij de eerste som van een
+   * soort in een ronde: tien keer dezelfde vraag wordt klikken in plaats
+   * van denken, en vooraf helpt het je bij het oplossen — achteraf is het
+   * alleen een overhoring.
+   */
+  vraagSoort?: boolean;
 }
 
 export interface Sometype {
@@ -61,6 +68,8 @@ export interface Sometype {
 }
 
 export const euro = (bedrag: number) => `€ ${bedrag.toFixed(2).replace('.', ',')}`;
+/** Nederlandse komma; 20.25 leest als 20,25. */
+export const getal = (waarde: number) => waarde.toLocaleString('nl-NL', { maximumFractionDigits: 6 });
 export const kiesUit = <T,>(lijst: readonly T[], random: () => number): T => lijst[Math.floor(random() * lijst.length)];
 export const heelGetal = (van: number, tot: number, random: () => number) => van + Math.floor(random() * (tot - van + 1));
 
@@ -110,7 +119,7 @@ export function somTekst(
     // Het getal dat het kind zelf invulde, zodat het verder rekent met zijn
     // eigen som. Pas bij het nakijken zie je of dat klopte.
     const waarde = eigen[plek] ?? bron.antwoord;
-    return bron.soort === 'euro' ? euro(waarde) : String(waarde);
+    return bron.soort === 'euro' ? euro(waarde) : getal(waarde);
   });
 }
 
@@ -121,7 +130,7 @@ export function somTekst(
  * naar rechts rekenen genoeg: er zijn geen rekenregels nodig. Zo kunnen we
  * ook zien of een kind ná een fout wél goed is doorgerekend.
  */
-export function evalueerSom(som: string, eerdere: Array<number | null>, afronden?: 'beneden'): number | null {
+export function evalueerSom(som: string, eerdere: Array<number | null>, afronden?: 'beneden' | 'boven'): number | null {
   const ingevuld = som.replace(/\{(\d+)\}/g, (_hele, nummer) => {
     const waarde = eerdere[Number(nummer) - 1];
     return waarde === null || waarde === undefined ? 'leeg' : String(waarde);
@@ -139,7 +148,9 @@ export function evalueerSom(som: string, eerdere: Array<number | null>, afronden
     else return null;
   }
   if (!Number.isFinite(uitkomst)) return null;
-  return afronden === 'beneden' ? Math.floor(uitkomst) : Math.round(uitkomst * 1e6) / 1e6;
+  if (afronden === 'beneden') return Math.floor(uitkomst);
+  if (afronden === 'boven') return Math.ceil(uitkomst - 1e-9);
+  return Math.round(uitkomst * 1e6) / 1e6;
 }
 
 /**
