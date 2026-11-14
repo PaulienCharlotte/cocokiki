@@ -7,9 +7,11 @@ import { PLANT_SPECIES, PLANT_SPECIES_BY_ID } from '../data/plants/species';
 import { plantFirstAid, PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../data/plants/firstAid';
 import { PLANTENWIJZER, WIJZER_BY_CAUSE } from '../data/plants/wijzer';
 import {
+  baasjeTekst,
   clueText,
   diagnoseKeuzes,
   maakGeval,
+  wanneerGegoten,
   GEREEDSCHAP_PLAATJE,
   OORZAAK_PLAATJE,
   naamKeuzes,
@@ -29,6 +31,15 @@ import {
   STAMPS_NEEDED,
 } from '../services/plantClinic';
 import PlantClinicScreen from '../pages/PlantClinicScreen';
+
+test('Kiki zegt gisteren, geen 1 dagen geleden', () => {
+  assert.equal(wanneerGegoten(0), 'vandaag');
+  assert.equal(wanneerGegoten(1), 'gisteren');
+  assert.equal(wanneerGegoten(5), '5 dagen geleden');
+  const kind = PATIENT_KINDS[0];
+  const geval = { ...maakGeval(kind, () => 0), dagenGeleden: 1 };
+  assert.match(baasjeTekst(PLANT_SPECIES_BY_ID[kind.speciesId], geval), /gisteren/);
+});
 
 test('er komen alleen patiënten waar ook echt een ziek plaatje van is', () => {
   assert.ok(PATIENT_KINDS.length >= 20, `te weinig patiënten: ${PATIENT_KINDS.length}`);
@@ -174,10 +185,15 @@ test('het spreekuur overleeft een herstart en beschadigde opslag', () => {
 
 test('het spreekuur begint met onderzoeken, niet met gokken', () => {
   const scherm = renderToStaticMarkup(<PlantClinicScreen />);
-  assert.match(scherm, /Raak de plant aan/);
-  assert.match(scherm, /Kijk naar de bladeren/);
-  assert.match(scherm, /Voel aan de aarde/);
-  assert.match(scherm, /Vraag het aan Kiki/);
+  // Het spreekuur begint met zelf kijken: eerst de aarde, met drie keuzes.
+  // Je begint met het enige dat echt te zien is: de blaadjes. Voelen aan de
+  // aarde kan niet door een scherm, dus daar is geen vraag van gemaakt.
+  assert.match(scherm, /Wat zie je aan de plant\?/);
+  assert.doesNotMatch(scherm, /Hoe voelt de aarde\?/);
+  // Het wijzende handje is weg: volgen is geen onderzoeken.
+  assert.doesNotMatch(scherm, /clinic__handje/);
+  // Pas als je gekeken hebt mag je zeggen dat je genoeg weet.
+  assert.match(scherm, /Ik weet genoeg<\/span><\/button>/);
   // De plantennaam staat bovenaan; een losse schermtitel leidt alleen af.
   assert.doesNotMatch(scherm, />Plantendokter</);
   // De diagnose en de behandeling komen pas later.
@@ -213,8 +229,10 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   assert.equal(scherm.split('clinic__card').length - 1, 1);
   // Kiki is de enige stem: precies één tekstballon op de kaart.
   assert.equal(scherm.split('clinic__bubbel').length - 1, 1);
-  // Drie chips in plaats van drie tekstblokken.
-  assert.equal(scherm.split('clinic__chip"').length - 1 + scherm.split('clinic__chip ').length - 1, 3);
+  // De chips komen pas als je alles bekeken hebt; aan het begin is er één
+  // vraag en verder niets.
+  assert.equal(scherm.split('clinic__chip').length - 1, 0);
+  assert.equal(scherm.split('ck-keuzes').length - 1, 1);
   // De knoppen komen uit het ontwerpsysteem, niet uit eigen maaksel.
   assert.match(scherm, /ck-button ck-button--primary/);
   assert.match(scherm, /ck-button ck-button--quiet/);
@@ -225,9 +243,10 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   // Kiki brengt de patiënt binnen; Coco hoort bij de keuken, niet hier.
   assert.match(scherm, /avatars\/kiki/);
   assert.doesNotMatch(scherm, /avatars\/coco/);
-  assert.match(scherm, /Raak de plant aan/);
+  // Aanraken vergroot; de waarneming leg je zelf vast in de keuzelijst.
   assert.match(scherm, /clinic__raak--blad/);
   assert.match(scherm, /clinic__raak--aarde/);
+  assert.match(scherm, /van dichtbij bekijken/);
 });
 
 test('de bonusvraag biedt drie namen met precies één goede', () => {

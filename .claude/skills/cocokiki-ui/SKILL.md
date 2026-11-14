@@ -92,10 +92,19 @@ stand). Het personage *is* de kop: zet er nooit een titel boven die hetzelfde
 zegt. Eén wolk per scherm. Hoort er een ander personage bij een ander stuk,
 dan is dat een ander scherm.
 
-**De antwoorden.** Eén blok met `--color-background-soft`, haarlijnen tussen
-de regels, geen rand of schaduw om de losse antwoorden. Het moet lezen als
-één keuze, niet als drie knoppen. Dus: geen `Button` voor antwoorden, geen
-pillen naast elkaar, geen raster van kaartjes.
+**De antwoorden.** Altijd `ChoiceList`, in één van twee vormen. Geen `Button`
+voor antwoorden, geen pillen naast elkaar, geen raster van kaartjes.
+
+- `vorm="blok"` (de standaard): één blok met `--color-background-soft` en
+  haarlijnen tussen de regels. Voor korte antwoorden — een woord, een getal,
+  een naam. Het leest als één keuze.
+- `vorm="los"`: elk antwoord in een eigen omlijnd vak met een letter ervoor
+  (A, B, C). Voor antwoorden die hele zinnen zijn, zoals de vragen in het
+  kookavontuur en bij de plantendokter. Drie zinnen aan elkaar in één blok
+  lopen in elkaar over; los van elkaar zijn ze te overzien.
+
+Kies op de lengte van het antwoord, niet op smaak, zodat hetzelfde soort
+vraag er overal hetzelfde uitziet.
 
 - Twee tot vier antwoorden. Meer kan een kind niet overzien.
 - **Een icoon dat op elk kaartje hetzelfde is, zegt niets.** Zes werelddelen

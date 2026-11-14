@@ -18,7 +18,7 @@ export const paaltjes: Sometype = {
   naam: 'Paaltjessom',
   aanpak: 'Reken eerst uit hoeveel stukken er tussen passen. Tel er dan één bij, want aan het begin staat er ook een.',
   valkuil: 'De paal aan het begin vergeten. Zes stukken hebben zeven palen.',
-  niveaus: [2, 3, 4, 5],
+  niveaus: [1, 2, 3, 4, 5],
   maak(level, index, random) {
     const rond = level === 5 && index % 3 === 2;
     if (rond) {
@@ -42,8 +42,8 @@ export const paaltjes: Sometype = {
       });
     }
     const vorm = kiesUit(RECHT, random);
-    const stap = kiesUit(level <= 2 ? [5, 10] : [3, 4, 5, 25], random);
-    const stukken = heelGetal(level <= 2 ? 4 : 6, level <= 2 ? 9 : 50, random);
+    const stap = kiesUit(level <= 1 ? [5, 10] : level <= 2 ? [5, 10, 4] : [3, 4, 5, 25], random);
+    const stukken = heelGetal(level <= 1 ? 3 : level <= 2 ? 4 : 6, level <= 1 ? 6 : level <= 2 ? 9 : 50, random);
     const lengte = stukken * stap;
     return maakSom({
       typeId: 'paaltjes', id: `paaltjes:${level}:${index}:${lengte}:${stap}`,

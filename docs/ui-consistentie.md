@@ -260,3 +260,15 @@ volgend avontuur. Niet zelf weggooien: het is het werk van een andere agent.
 - De plaatjes van de personages stonden los in drie bestanden. Ze staan nu in
   `data/characters.ts`, met hun gebied erbij, en een test let erop dat Kiki
   bij de planten blijft.
+
+## Antwoorden in twee vormen
+
+`ChoiceList` heeft sinds november 2026 een tweede vorm: `vorm="los"` zet elk
+antwoord in een eigen omlijnd vak met een letter ervoor, zoals het
+kookavontuur dat al deed met zijn eigen `discovery-options`. De
+plantendokter gebruikt hem nu ook.
+
+Nog te doen: het kookavontuur zelf laten overstappen van `discovery-options`
+op `ChoiceList vorm="los"`, zodat er één component overblijft in plaats van
+twee die op elkaar lijken. Dat bestand is in handen van Codex, dus dat kan
+pas als hij eruit is.

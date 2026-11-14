@@ -206,6 +206,9 @@
 .story-stappen li.is-nu { background: var(--color-success-soft); box-shadow: inset 3px 0 0 var(--color-primary); }
 .story-stappen li.is-later { opacity: .55; }
 .story-stappen__kop { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+.redactie .story-stappen__kop { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text); font-size: var(--font-size-md); font-weight: var(--font-weight-medium); }
+.redactie .story-stappen__kop b { flex: none; width: var(--space-6); height: var(--space-6); display: grid; place-items: center; border-radius: 50%; background: var(--color-background-soft); color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.redactie .story-stappen li.is-nu .story-stappen__kop b { background: var(--color-primary); color: var(--color-on-primary); }
 .story-stappen output { min-width: calc(var(--space-12) + var(--space-5)); padding: var(--space-1) var(--space-3); border-radius: var(--radius-control); background: var(--color-surface); text-align: center; }
 .story-stappen li.is-klaar output { color: var(--color-primary); }
 @media (max-width: 600px) {
@@ -401,6 +404,7 @@
 .redactie-nakijk span { color: var(--color-text); font-size: var(--font-size-lg); }
 .redactie-nakijk small { color: var(--color-text-muted); font-size: var(--font-size-sm); }
 .redactie-nakijk em { grid-column: 2 / -1; color: var(--color-error); font-size: var(--font-size-sm); font-style: normal; }
+
 .redactie-oordeel {
   margin: 0;
   padding: var(--space-3) var(--space-4);

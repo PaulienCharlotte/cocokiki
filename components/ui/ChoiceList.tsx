@@ -20,6 +20,11 @@ export interface Choice {
 
 interface ChoiceListProps {
   choices: Choice[];
+  /**
+   * 'los' zet elk antwoord in een eigen omlijnd vak met een letter ervoor,
+   * zoals het kookavontuur. 'blok' is één vlak met haarlijnen ertussen.
+   */
+  vorm?: 'blok' | 'los';
   onChoose: (id: string) => void;
   /** Gekozen is klaar: daarna kijk je alleen nog naar het antwoord. */
   disabled?: boolean;
@@ -28,15 +33,16 @@ interface ChoiceListProps {
   className?: string;
 }
 
-export default function ChoiceList({ choices, onChoose, disabled = false, label, className }: ChoiceListProps) {
-  return <ul className={`ck-keuzes${className ? ` ${className}` : ''}`} aria-label={label}>
-    {choices.map(keuze => <li key={keuze.id}>
+export default function ChoiceList({ choices, onChoose, disabled = false, label, className, vorm = 'blok' }: ChoiceListProps) {
+  return <ul className={`ck-keuzes is-${vorm}${className ? ` ${className}` : ''}`} aria-label={label}>
+    {choices.map((keuze, index) => <li key={keuze.id}>
       <button
         type="button"
         className={`ck-keuze${keuze.staat ? ` is-${keuze.staat}` : ''}`}
         disabled={disabled}
         onClick={() => onChoose(keuze.id)}
       >
+        {vorm === 'los' && <b className="ck-keuze__letter" aria-hidden="true">{String.fromCharCode(65 + index)}</b>}
         {keuze.icoon && <img src={keuze.icoon} alt="" />}
         <span>{keuze.label}</span>
         {keuze.staat === 'goed' && <Check size={18} aria-hidden="true" />}

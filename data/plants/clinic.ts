@@ -78,7 +78,7 @@ export const CLUE_KORT: Record<ClueSpot, string> = {
 
 /** Wat Kiki vraagt bij elke stap; zij is de enige stem op de kaart. */
 export const KIKI_VRAAG = {
-  onderzoek: 'Raak de plant aan. Wat zie je?',
+  onderzoek: 'Kijk zelf goed en vul in wat je ziet.',
   diagnose: 'Wat is er aan de hand met deze plant?',
   behandeling: 'Wat ga je doen om hem te helpen?',
 } as const;
@@ -182,13 +182,20 @@ export function maakGeval(kind: PatientKind, kiesGetal: () => number = Math.rand
 }
 
 /** Wat je bij déze plant aan de bladeren ziet; dat verschilt per soort. */
+/** 'gisteren' leest beter dan '1 dagen geleden'. */
+export function wanneerGegoten(dagen: number): string {
+  if (dagen <= 0) return 'vandaag';
+  if (dagen === 1) return 'gisteren';
+  return `${dagen} dagen geleden`;
+}
+
 export function clueText(species: PlantSpecies, geval: Geval, spot: ClueSpot): string {
   if (spot === 'blad') {
     return plantFirstAid(species.id).find(probleem => probleem.cause === geval.cause)?.signs
       ?? 'Er is iets met de bladeren, maar wat precies is lastig te zeggen.';
   }
   if (spot === 'aarde') {
-    return `${AARDE_TEKST[geval.aarde]} Hij kreeg ${geval.dagenGeleden} dagen geleden voor het laatst water.`;
+    return AARDE_TEKST[geval.aarde];
   }
   // Kiki noemt alleen feiten; welke oorzaak het is zegt ze niet.
   return `Het baasje zegt: ${PLEK_TEKST[geval.plek]}, en ${SEIZOEN_TEKST[geval.seizoen]}.`;
@@ -343,3 +350,40 @@ export function diagnoseKeuzes(geval: Geval): PlantProblemCause[] {
 }
 
 export { PLANT_PROBLEM_LABEL, PLANT_SPECIES_BY_ID };
+
+/** Wat het baasje vertelt: de plek, het seizoen en wanneer hij water kreeg. */
+export function baasjeTekst(species: PlantSpecies, geval: Geval): string {
+  return `${clueText(species, geval, 'plek')} Hij kreeg ${wanneerGegoten(geval.dagenGeleden)} voor het laatst water.`;
+}
+
+/* ------------------------------------------------------------------ *
+ * Zelf waarnemen
+ *
+ * Vroeger vertelde Kiki wat je zag zodra je de plant aanraakte. Dan krijgt
+ * een kind de halve diagnose cadeau, want waarnemen ís het werk van een
+ * dokter. Nu kijkt het kind zelf naar de blaadjes en kiest wat het ziet.
+ *
+ * Alleen de blaadjes: hoe de aarde voelt kun je niet van een plaatje
+ * aflezen, en daar een vraag van maken is gokken. Dat voel je, en dan
+ * vertelt Kiki wat je merkt.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Drie beschrijvingen van de blaadjes, waarvan er één klopt. De andere twee
+ * horen bij een ander probleem van dezelfde soort, zodat het echt om kijken
+ * gaat en niet om de gekste eruit pikken.
+ */
+export function bladKeuzes(species: PlantSpecies, geval: Geval, kiesGetal: () => number = Math.random): string[] {
+  const alle = plantFirstAid(species.id);
+  const juist = clueText(species, geval, 'blad');
+  const anderen = alle.filter(probleem => probleem.cause !== geval.cause).map(probleem => probleem.signs);
+  const gekozen: string[] = [juist];
+  for (let ronde = 0; gekozen.length < 3 && anderen.length > 0 && ronde < 20; ronde++) {
+    const kandidaat = anderen.splice(Math.floor(kiesGetal() * anderen.length), 1)[0];
+    if (kandidaat && !gekozen.includes(kandidaat)) gekozen.push(kandidaat);
+  }
+  // Volgorde vastzetten op het geval, zodat het juiste antwoord niet steeds
+  // op dezelfde plek staat maar wel hetzelfde blijft bij opnieuw tekenen.
+  const plek = Math.floor(kiesGetal() * gekozen.length);
+  return [...gekozen.slice(plek), ...gekozen.slice(0, plek)];
+}

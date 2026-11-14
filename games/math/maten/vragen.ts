@@ -53,7 +53,9 @@ function maak(deel: {
 /** 30 cm = ? dm — met getallen die netjes uitkomen, ook als je deelt. */
 export function omrekenvraag(level: MathLevel, index: number, random: () => number): Maatvraag {
   const trap = kies(trappenVoor(level), random);
-  const maxStappen = level <= 1 ? 1 : level <= 3 ? 2 : 3;
+  // Bij een grote stap loopt het antwoord snel uit de hand: van m³ naar mm³
+  // is keer een miljard, en daar leert niemand iets van.
+  const maxStappen = Math.min(level <= 1 ? 1 : level <= 3 ? 2 : 3, trap.factor >= 100 ? 2 : 3);
   const stappen = Math.min(maxStappen, trap.maten.length - 1);
   const sprong = 1 + Math.floor(random() * stappen);
   const naarRechts = level <= 2 ? true : random() < .5;
@@ -61,7 +63,11 @@ export function omrekenvraag(level: MathLevel, index: number, random: () => numb
     ? Math.floor(random() * (trap.maten.length - sprong))
     : sprong + Math.floor(random() * (trap.maten.length - sprong));
   const naarIndex = naarRechts ? vanIndex + sprong : vanIndex - sprong;
-  const net = kies(level >= 4 ? [...NET, ...HALF] : NET, random);
+  // Bij een sprong van duizend of meer blijft het getal klein, anders staat
+  // er zoiets als 75.000.000 op het scherm.
+  const sprongmaat = trap.factor ** sprong;
+  const net = kies(sprongmaat >= 1000 ? [1, 2, 3, 4, 5]
+    : level >= 4 && trap.factor === 10 ? [...NET, ...HALF] : NET, random);
   // Naar links wordt gedeeld; dan kiezen we de uitkomst en rekenen terug,
   // zodat er nooit een eindeloze kommagetal uitrolt.
   const aantal = naarRechts ? net : reken(net, sprong, trap.factor);

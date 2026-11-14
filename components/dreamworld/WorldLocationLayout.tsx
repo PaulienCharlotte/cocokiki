@@ -77,6 +77,12 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
       : <LocationGameView
         location={location}
         onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
+        onKaart={adventureId => {
+          const actie = KLEMBORD_ACTIES[adventureId];
+          if (!actie) return false;
+          onNavigate(withLocationOrigin(actie.pad, location.id));
+          return true;
+        }}
         onDirect={(adventureId, alleenVragen) => {
           const pad = DIRECTE_AVONTUREN[adventureId];
           if (!pad) return false;

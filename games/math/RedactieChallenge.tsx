@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Check, Highlighter, Info, X } from 'lucide-react';
 import MathHelp from './MathHelp';
 import { REDACTIE_TYPEN, REDACTIE_TYPEN_BY_ID, type Steun } from './redactie/catalogus';
-import { euro, evalueerSom, planOpties, somTekst, type Redactiesom } from './redactie/types';
+import { euro, evalueerSom, getal, planOpties, somTekst, type Redactiesom } from './redactie/types';
 
 /**
  * Een redactiesom, in de volgorde waarin je hem hoort aan te pakken.
@@ -21,9 +21,9 @@ const GETAL = /(\d+(?:[.,]\d+)?)/g;
 /** Zo lang staat de laatste tip op slot: even denken voor je hem opent. */
 const DENKTIJD_MS = 3000;
 
-type Fase = 'markeren' | 'plan' | 'rekenen' | 'nakijken';
+type Fase = 'markeren' | 'soort' | 'plan' | 'rekenen' | 'nakijken';
 
-const schrijf = (waarde: number, euroTeken?: boolean) => (euroTeken ? euro(waarde) : String(waarde));
+const schrijf = (waarde: number, euroTeken?: boolean) => (euroTeken ? euro(waarde) : getal(waarde));
 
 export default function RedactieChallenge({ question, steun, locked, onAnswer, onVerder }: {
   question: Redactiesom; steun: Steun; locked: boolean;
@@ -50,7 +50,8 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
   const planZelf = steun !== 'volledig';
   const opties = useMemo(() => planOpties(question.stappen[0].som, question.id), [question]);
 
-  useEffect(() => { if (teGaan === 0 && fase === 'markeren') setFase(planZelf ? 'plan' : 'rekenen'); }, [teGaan, fase, planZelf]);
+  const naMarkeren: Fase = question.vraagSoort && planZelf ? 'soort' : planZelf ? 'plan' : 'rekenen';
+  useEffect(() => { if (teGaan === 0 && fase === 'markeren') setFase(naMarkeren); }, [teGaan, fase, naMarkeren]);
   useEffect(() => {
     if (trede < 2) return;
     const timer = window.setTimeout(() => setMag3(true), DENKTIJD_MS);
@@ -60,6 +61,13 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
   const tik = (deel: string, i: number) => {
     if (nodig.has(deel)) setGemarkeerd(lijst => (lijst.includes(i) ? lijst : [...lijst, i]));
     else setMis(lijst => (lijst.includes(i) ? lijst : [...lijst, i]));
+  };
+
+  /** Herkennen wat voor som dit is; dat scheelt je het bedenken van de stap. */
+  const kiesSoort = (keuze: string) => {
+    setSoort(keuze);
+    if (keuze === question.typeId) { setFase('rekenen'); setUitleg(null); return; }
+    setUitleg(keuze);
   };
 
   const kiesPlan = (optie: string) => {
@@ -90,7 +98,10 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
     return hoort !== null && Math.abs(gegeven - hoort) < 0.005;
   });
   const eersteFout = oordeel.findIndex(goed => goed === false);
-  const helemaalGoed = antwoorden.length > 0 && Math.abs((antwoorden.at(-1) ?? NaN) - question.answer) < 0.005;
+  // Alleen helemaal goed als élke stap klopte. Het eindantwoord kan per
+  // ongeluk goed uitkomen terwijl er onderweg iets misging.
+  const eindGoed = antwoorden.length > 0 && Math.abs((antwoorden.at(-1) ?? NaN) - question.answer) < 0.005;
+  const helemaalGoed = eindGoed && oordeel.every(goed => goed !== false);
 
   const tipTekst = trede === 1
     ? `Kijk nog eens naar wat je weet. Je zoekt ${question.zoek}.`
@@ -119,7 +130,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
       <ol className="redactie-nakijk">
         {question.stappen.map((item, i) => <li key={i} className={oordeel[i] ? 'is-goed' : 'is-mis'}>
           {oordeel[i] ? <Check size={17} aria-hidden="true" /> : <X size={17} aria-hidden="true" />}
-          <span>{somTekst(question.stappen, i, question.stappen.length, true, antwoorden)} = <strong>{schrijf(antwoorden[i] ?? 0, item.soort === 'euro')}</strong></span>
+          <span>{item.verborgen ? item.vraag : `${somTekst(question.stappen, i, question.stappen.length, true, antwoorden)} =`} <strong>{schrijf(antwoorden[i] ?? 0, item.soort === 'euro')}</strong></span>
           <small>{item.eenheid}</small>
           {!oordeel[i] && <em>hier hoort {schrijf(evalueerSom(item.som, antwoorden.slice(0, i), item.afronden) ?? item.antwoord, item.soort === 'euro')}</em>}
         </li>)}
@@ -127,39 +138,15 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
       <p className="redactie-oordeel" role="status">
         {helemaalGoed ? 'Helemaal goed gerekend.'
           : eersteFout >= 0 && eersteFout < question.stappen.length - 1 && oordeel.slice(eersteFout + 1).every(Boolean)
-            ? `Het ging mis bij stap ${eersteFout + 1}. Daarna heb je met jouw eigen getal wél goed doorgerekend.`
+            ? `Het ging mis bij stap ${eersteFout + 1}. Daarna heb je met jouw eigen getal wél goed doorgerekend.${eindGoed ? ' Je eindantwoord klopt toch.' : ''}`
             : `Het juiste antwoord is ${schrijf(question.answer, question.stappen.at(-1)?.soort === 'euro')}.`}
       </p>
 
       {type && <div className="redactie-aanpak">
-        {soort === null
-          ? <>
-              <p className="redactie-aanpak__naam">Wat voor soort som was dit?</p>
-              <div className="redactie-soorten">
-                {REDACTIE_TYPEN.slice(0, 4).map(keuze => <span key={keuze.id} className="redactie-soort">
-                  <button type="button" onClick={() => setSoort(keuze.id)}>{keuze.naam}</button>
-                  {/* Hoveren of tikken legt uit wat voor som dat is: de namen
-                      zeggen pas iets als je weet waar ze voor staan. */}
-                  <button
-                    type="button" className="redactie-soort__info" aria-label={`Wat is een ${keuze.naam.toLowerCase()}?`}
-                    aria-expanded={uitleg === keuze.id}
-                    onMouseEnter={() => setUitleg(keuze.id)} onMouseLeave={() => setUitleg(null)}
-                    onFocus={() => setUitleg(keuze.id)} onBlur={() => setUitleg(null)}
-                    onClick={() => setUitleg(uitleg === keuze.id ? null : keuze.id)}
-                  ><Info size={15} aria-hidden="true" /></button>
-                </span>)}
-              </div>
-              {uitleg && <p className="redactie-soort__uitleg" role="status">
-                <strong>{REDACTIE_TYPEN_BY_ID[uitleg]?.naam}:</strong> {REDACTIE_TYPEN_BY_ID[uitleg]?.aanpak}
-              </p>}
-            </>
-          : <>
-              <p className="redactie-aanpak__naam">{soort === type.id ? type.naam : `Het was een ${type.naam.toLowerCase()}`}</p>
-              <p>{type.aanpak}</p>
-              <p className="redactie-aanpak__controle">{question.controle}</p>
-            </>}
+        <p className="redactie-aanpak__naam">{type.naam}</p>
+        <p className="redactie-aanpak__controle">{question.controle}</p>
       </div>}
-      {soort !== null && <button type="button" className="redactie-verder" onClick={onVerder}>Volgende som<ArrowRight size={18} aria-hidden="true" /></button>}
+      <button type="button" className="redactie-verder" onClick={onVerder}>Volgende som<ArrowRight size={18} aria-hidden="true" /></button>
     </div>
   </div>;
 
@@ -170,6 +157,26 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
       <Highlighter size={18} aria-hidden="true" />
       Streep de getallen aan die je nodig hebt{steun === 'volledig' ? ` — er zijn er nog ${teGaan}` : ''}.
     </p>}
+
+    {fase === 'soort' && <div className="redactie-plan">
+      <p className="redactie-opdracht">Wat voor soort som is dit?</p>
+      <div className="redactie-soorten">
+        {REDACTIE_TYPEN.slice(0, 4).map(keuze => <span key={keuze.id} className="redactie-soort">
+          <button type="button" className={soort === keuze.id && keuze.id !== question.typeId ? 'is-mis' : undefined}
+            onClick={() => kiesSoort(keuze.id)}>{keuze.naam}</button>
+          <button
+            type="button" className="redactie-soort__info" aria-label={`Wat is een ${keuze.naam.toLowerCase()}?`}
+            aria-expanded={uitleg === keuze.id}
+            onMouseEnter={() => setUitleg(keuze.id)} onMouseLeave={() => soort !== keuze.id && setUitleg(null)}
+            onFocus={() => setUitleg(keuze.id)}
+            onClick={() => setUitleg(uitleg === keuze.id ? null : keuze.id)}
+          ><Info size={15} aria-hidden="true" /></button>
+        </span>)}
+      </div>
+      {uitleg && <p className="redactie-soort__uitleg" role="status">
+        <strong>{REDACTIE_TYPEN_BY_ID[uitleg]?.naam}:</strong> {REDACTIE_TYPEN_BY_ID[uitleg]?.aanpak}
+      </p>}
+    </div>}
 
     {fase === 'plan' && <div className="redactie-plan">
       <p className="redactie-opdracht">Wat doe je als eerste?</p>
@@ -189,7 +196,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
           const klaar = i < index, nu = i === index;
           if (!klaar && !nu && steun !== 'volledig') return null;
           return <li key={i} className={klaar ? 'is-klaar' : nu ? 'is-nu' : 'is-later'}>
-            <span className="story-stappen__kop">Stap {i + 1}{klaar || nu ? ` · ${item.vraag}` : ''}</span>
+            <span className="story-stappen__kop"><b aria-hidden="true">{i + 1}</b>{klaar || nu ? item.vraag : `Stap ${i + 1}`}</span>
             <span className="math-workbench__equation">
               {!item.verborgen && <span>{somTekst(question.stappen, i, index, false, antwoorden)} =</span>}
               {klaar

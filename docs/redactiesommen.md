@@ -35,11 +35,24 @@ Voor de score telt alleen het eindantwoord.
 3. **De stappen.** Elk met een eigen naam, een eigen som en een eigen
    eenheid. Een stap die nog moet komen laat een `?` zien op de plek van een
    uitkomst die je zelf nog moet berekenen.
-4. **Nakijken en terugblikken.** Je ziet per stap wat je opschreef en waar
-   het misging. Daarna één vraag: *wat voor soort som was dit?* Pas als je
-   die beantwoordt verschijnt de aanpak en de controle. Dat laatste is geen
-   versiering: beginners sorteren opgaven op de buitenkant (kratten, bussen),
-   experts op de techniek erachter, en die omslag oefen je hiermee.
+4. **Nakijken.** Je ziet per stap wat je opschreef en waar het misging,
+   daarna de naam van de techniek en hoe je het controleert. Eén knop verder.
+
+## Waar de soortvraag staat, en waarom
+
+*Wat voor soort som is dit?* stond eerst ná het rekenen, bij elke som. Dat
+was twee keer verkeerd. Tien keer dezelfde vraag wordt klikken in plaats van
+denken, en achteraf is het een overhoring: je hebt de som al opgelost, dus
+het antwoord helpt je nergens meer bij.
+
+De vraag staat nu **vóór** het rekenen, en alleen bij de **eerste som van
+elk soort** in een ronde. Dan is hij wat hij hoort te zijn: de eerste zet
+van de aanpak. Herken je dat het een ritjessom is, dan weet je dat je moet
+delen en afronden — precies waar het herkennen voor dient. Kies je mis, dan
+lees je wat dat andere soort dan wél is, en probeer je opnieuw.
+
+Bij die som vervalt de vraag 'wat doe je als eerste?': twee keer hetzelfde
+vragen is één keer te veel.
 
 ## De hintladder
 
@@ -128,3 +141,28 @@ rekenmachine het spel wegnemen.
 
 De maten staan in `games/math/Rekenmachine.tsx`. Komt er ooit een andere
 tekening, dan hoeven alleen die percentages opnieuw opgemeten te worden.
+
+## De ritjessom en het afronden
+
+Vanaf niveau 3 deel je gewoon: `138 ÷ 15 = 9,2`. Dat kommagetal is het goede
+antwoord op stap 1 — een kind dat de deling uitrekent krijgt geen kruisje
+meer. De tweede stap is de les: *een halve bus bestaat niet, hoeveel bussen
+zijn het dan?* Die stap rondt naar boven af (`afronden: 'boven'`) en laat
+zijn som niet zien.
+
+Daarvoor moet de deling wel netjes uitkomen, dus de deler en de rest worden
+zo gekozen dat er hoogstens twee decimalen uitrollen. Eén op de vier sommen
+komt precies uit, zodat naar boven afronden niet altijd opgaat.
+
+Op niveau 1 en 2 blijft het bij hele keren met een rest in vier stappen:
+daar deelt een kind nog niet met kommagetallen.
+
+## Geprobeerd en teruggedraaid
+
+Op 14 november 2026 zijn er vier varianten geprobeerd: een getekend plaatje
+per som (wagens, tijdlijn, strook), een kale versie daarvan, een versie
+waarin het plaatje zelf verdeelde, en een versie met één invulregel en
+bolletjes in Lua's wolk. Charlotte heeft ze alle vier afgekeurd en gevraagd
+terug te gaan naar de vorm die hierboven beschreven staat. De plaatjes
+klopten niet altijd en oogden niet modern; minder stappen maakte de som
+onduidelijker. Bouw geen van deze opnieuw zonder dat zij erom vraagt.

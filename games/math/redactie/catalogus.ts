@@ -39,5 +39,10 @@ export function maakRedactiedeck(level: MathLevel, random = Math.random): Redact
     gezien.add(som.prompt);
     deck.push(som);
   }
+  // De eerste som van elk soort vraagt vooraf om herkenning; de rest niet.
+  const eerder = new Set<string>();
+  for (const som of deck) {
+    if (!eerder.has(som.typeId)) { som.vraagSoort = true; eerder.add(som.typeId); }
+  }
   return deck;
 }

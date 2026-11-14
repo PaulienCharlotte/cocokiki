@@ -564,7 +564,7 @@
 .discovery-stage__topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .discovery-recipe-link, .discovery-skip { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 8px 10px; border: 0; background: transparent; color: #506950; font: inherit; font-size: .78rem; font-weight: var(--font-weight-bold); }
 .discovery-recipe-link:focus-visible, .discovery-skip:focus-visible, .discovery-options button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
-.journey-stages { width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 0 0 10px; padding: 0; list-style: none; }
+.journey-stages { width: 100%; display: grid; grid-template-columns: repeat(var(--stappen, 6), minmax(0, 1fr)); margin: 0 0 10px; padding: 0; list-style: none; }
 .journey-stages li { position: relative; z-index: 0; display: grid; justify-items: center; gap: 3px; color: #948a81; font-size: .58rem; font-weight: var(--font-weight-bold); text-align: center; }
 .journey-stages li:not(:last-child)::after { content: ''; position: absolute; z-index: -1; top: 15px; left: calc(50% + 15px); width: calc(100% - 30px); height: 2px; background: #d9d0c8; }
 .journey-stages__icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #e5ddd5; }
@@ -1353,11 +1353,6 @@
 .clinic__raak.is-done { border-color: transparent; }
 
 /* Een wijzend handje laat zonder woorden zien waar je moet tikken. */
-.clinic__handje { position: absolute; z-index: 3; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fffdf7; box-shadow: 0 4px 12px #3b241a38; color: #52694d; pointer-events: none; }
-.clinic__handje svg { width: 18px; height: 18px; }
-.clinic__handje--blad { top: 26%; left: 50%; margin-left: -16px; }
-.clinic__handje--aarde { bottom: 12%; left: 50%; margin-left: -16px; }
-.clinic__handje--helper { top: -6px; right: -8px; }
 
 /* Kiki is de enige stem op de kaart: vraag, aanwijzing en oordeel. */
 .clinic__gesprek { display: flex; align-items: flex-start; gap: var(--space-2); }
@@ -1648,3 +1643,7 @@
 .vraagdag.is-goed .ck-zegt__erbij { color: var(--color-primary); }
 
 .vraagdag__na { margin: 0; color: var(--color-text-soft); font-size: var(--font-size-sm); line-height: 1.45; }
+
+/* Het onderzoek: één vraag tegelijk, en een zachte wenk als je mis kijkt. */
+.clinic__onderzoek { display: grid; gap: var(--space-3); }
+.clinic__miskijk { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); text-align: center; }
