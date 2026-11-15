@@ -177,7 +177,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
   const zin = einde ? `Je hielp ${statistics.current.correct} ${statistics.current.correct === 1 ? 'klant' : 'klanten'}. ${uitslag?.passed && level < 5 ? 'Klaar voor een sneller niveau?' : 'Nog een keer?'}`
     : notice || (!started ? 'De band gaat bij elke klant een beetje sneller.'
     : wrong !== null ? techniqueHint(question)
-    : hint ? techniqueHint(question) : 'Reken mee op de band.');
+    : techniqueHint(question));
   const som = `${expressionText(question.left)} = ${expressionText(question.right)}`;
   const kaartjes = winkelKaartjes(question);
   const vrachtX = 12 + travel * 73;
@@ -218,10 +218,12 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
     </div>
 
     {/* 5. Personage linksonder: Lua stelt de vraag. */}
-    <div className={`ck-zone-personage wk-personage${blij || (einde && uitslag?.passed) ? ' is-blij' : ''}`}>
+    {/* Lua praat alleen als ze iets te zeggen heeft: voor de start, met een
+        hint na een fout, of aan het eind. Tijdens het spelen staat de som op de band. */}
+    {(!started || einde || notice || wrong !== null || hint) && <div className={`ck-zone-personage wk-personage${blij || (einde && uitslag?.passed) ? ' is-blij' : ''}`}>
       <img className="ck-ballon__gezicht" src={lua.beeld} alt={lua.naam} />
       <p className="ck-ballon__tekst" role="status" key={zin}><span className="ck-ballon__naam">BABY LUA</span>{zin}</p>
-    </div>
+    </div>}
 
     {/* 6. Antwoorden rechtsonder: tik een bel of sleep hem naar de boodschappen. Voor de start één hoofdknop. */}
     <div className="ck-zone-antwoord wk-antwoord">

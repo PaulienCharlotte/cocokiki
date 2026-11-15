@@ -1,92 +1,115 @@
 /* Wereldscherm (laag 2) in de CocoKiki-huisstijl: zie docs/HUISSTIJL.md,
-   "Schermtypes". De illustratie vult het scherm; een houten naambord, het
-   personage linksonder en de keuzes als zwevende glazen bollen in de ruimte,
-   zoals de wereldknoppen op het eiland. Geen witte vlakken over de tekening.
-   Alles schaalt mee met de breedte (cqw) binnen vaste grenzen.
+   "Schermtypes". De illustratie vult het scherm. Er staan maar twee dingen
+   op: een houten naambord, en één klembord in de wereld met alle keuzes als
+   ronde iconen op het papier. Geen spraakwolk, geen losse kaarten.
+   Het klembord is opgebouwd uit de huisstijl: hout, papier (room) en een klem
+   in de wereldkleur. Alles schaalt mee met de breedte (cqw) binnen grenzen.
    Alleen variabelen en klassen uit styles/cocokiki-tokens.css. */
 @import '../../styles/cocokiki-tokens.css';
 
 /* clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
 .wereld-scherm.ck-scherm {
   --wereld-boven: 80px;
-  --bol: clamp(96px, 9.5cqw, 150px);
+  --bol: clamp(72px, 7cqw, 112px);
   position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0;
   font-family: var(--ck-font-tekst); color: var(--ck-cacao);
 }
 
-/* De oude kolommen worden één laag over de tekening; alleen de bollen vangen tikken. */
+/* De oude kolommen worden één laag over de tekening; alleen het klembord vangt tikken. */
 .wereld-scherm .location-game, .wereld-scherm .world-location__dock { position: absolute; inset: 0; display: block; min-height: 0; padding: 0; margin: 0; pointer-events: none; background: none; }
 .wereld-scherm .location-game__stories, .wereld-scherm .adventure-shelf, .wereld-scherm .location-panel, .wereld-scherm .location-game__activities { position: static; display: block; padding: 0; margin: 0; background: none; box-shadow: none; }
-.wereld-scherm .location-game__heading, .wereld-scherm .location-panel__heading { display: none; }
+.wereld-scherm .location-game__heading, .wereld-scherm .location-panel__heading, .wereld-scherm .location-game__clipboard { display: none; }
 
 /* Naambord linksboven, onder de terugknop */
 .wereld-scherm .wereld-naambord { position: absolute; z-index: 20; left: var(--ck-rand); top: var(--wereld-boven); padding: 6px 22px; font-size: clamp(20px, 2.2cqw, 30px); line-height: 1.2; white-space: nowrap; animation: ck-pop .5s var(--ck-veer) both; }
 
-/* Personage linksonder */
-.wereld-scherm .wereld-personage { z-index: 12; max-width: min(34%, 440px); }
-.wereld-scherm .wereld-personage .ck-ballon__gezicht { width: clamp(72px, 9cqw, 130px); height: clamp(72px, 9cqw, 130px); object-position: top; }
-.wereld-scherm .wereld-personage .ck-ballon__tekst { margin: 0 0 3cqw; max-width: none; font-size: clamp(18px, 1.7cqw, 24px); animation: ck-pop .5s var(--ck-veer) .15s both; }
-.wereld-scherm .wereld-personage.is-getekend .ck-ballon__tekst { margin-bottom: 0; }
-
-/* Keuzes: glazen bollen in een golvende lijn rechtsonder */
-.wereld-scherm .ck-kaarten.is-plek {
-  position: absolute; right: calc(var(--ck-rand) * 2); bottom: calc(var(--ck-rand) * 1.5); z-index: 14;
-  display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: flex-end; gap: clamp(14px, 1.6cqw, 28px) clamp(16px, 2.2cqw, 36px);
-  width: auto; max-width: 60%; margin: 0; padding: 0; list-style: none; pointer-events: auto;
+/* ---- Het klembord: hout rondom, papier binnenin, een klem in de wereldkleur ---- */
+main.wereld-scherm.ck-scherm .ck-kaarten.is-plek {
+  position: absolute; z-index: 14; right: clamp(16px, 4cqw, 72px); bottom: clamp(16px, 4cqw, 64px);
+  width: clamp(300px, 32cqw, 470px); max-width: none; margin: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.4cqw, 22px) clamp(8px, 1cqw, 16px);
+  padding: clamp(30px, 3.4cqw, 48px) clamp(14px, 1.6cqw, 24px) clamp(16px, 1.8cqw, 26px);
+  list-style: none; pointer-events: auto; overflow: visible; scroll-snap-type: none;
+  background: var(--ck-room);
+  border: clamp(10px, 1.1cqw, 16px) solid var(--ck-hout);
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 2px var(--ck-hout-licht), 0 8px 0 var(--ck-hout-donker), 0 22px 40px rgba(40, 20, 5, .35);
+  transform: rotate(1.2deg); transform-origin: 50% 0;
+  animation: ck-pop .55s var(--ck-veer) .1s both;
 }
-.wereld-scherm .ck-kaarten.is-plek > li { flex: 0 0 auto; animation: ck-pop .55s var(--ck-veer) both; animation-delay: calc(var(--plek-index, 0) * 70ms + 150ms); }
-/* Om en om een stukje hoger: een speelse boog in plaats van een strakke rij. */
-.wereld-scherm .ck-kaarten.is-plek > li:nth-child(even) { margin-bottom: clamp(18px, 2.4cqw, 40px); }
-/* Veel keuzes (zoals bij Lua): kleinere bollen, vier per rij, zodat de ruimte zichtbaar blijft. */
-.wereld-scherm .ck-kaarten.is-plek:has(> li:nth-child(5)) { --bol: clamp(80px, 7cqw, 112px); max-width: 66%; gap: clamp(8px, 1cqw, 16px) clamp(10px, 1.2cqw, 20px); }
-.wereld-scherm .ck-kaarten.is-plek:has(> li:nth-child(5)) .wereld-plek { width: calc(var(--bol) + 52px); }
-.wereld-scherm .ck-kaarten.is-plek:has(> li:nth-child(5)) > li:nth-child(even) { margin-bottom: clamp(10px, 1.4cqw, 22px); }
+/* De klem bovenaan */
+main.wereld-scherm.ck-scherm .ck-kaarten.is-plek::before {
+  content: ""; position: absolute; left: 50%; top: calc(clamp(10px, 1.1cqw, 16px) * -1 - 14px); transform: translateX(-50%);
+  width: 38%; height: clamp(28px, 2.6cqw, 38px); border-radius: 12px 12px 8px 8px;
+  background: linear-gradient(180deg, var(--ck-actief), var(--ck-actief-rand));
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45), 0 4px 0 rgba(40, 20, 5, .25);
+}
+/* Precies drie keuzes: naast elkaar, zonder gat */
+main.wereld-scherm.ck-scherm .ck-kaarten.is-plek:has(> li:nth-child(3)):not(:has(> li:nth-child(4))) { grid-template-columns: repeat(3, minmax(0, 1fr)); width: clamp(330px, 36cqw, 520px); }
+/* Veel keuzes (zoals bij Lua): drie per rij */
+main.wereld-scherm.ck-scherm .ck-kaarten.is-plek:has(> li:nth-child(5)) { grid-template-columns: repeat(3, minmax(0, 1fr)); width: clamp(360px, 43cqw, 620px); }
 
-.wereld-plek { position: relative; display: grid; justify-items: center; gap: 8px; width: calc(var(--bol) + 64px); padding: 0; border: 0; background: none; color: var(--ck-cacao); cursor: pointer; }
+main.wereld-scherm.ck-scherm .ck-kaarten.is-plek > li { min-width: 0; align-self: start; animation: ck-pop .5s var(--ck-veer) both; animation-delay: calc(var(--plek-index, 0) * 60ms + 250ms); }
+
+/* Een keuze: rond icoon met de naam eronder, gewoon op het papier */
+.wereld-plek { display: grid; grid-template-rows: auto auto; align-content: start; justify-items: center; gap: 8px; width: 100%; padding: 4px 0; border: 0; border-radius: 18px; background: none; color: var(--ck-cacao); cursor: pointer; transition: background var(--ck-normaal); }
 .wereld-plek__bol {
   display: grid; place-items: center; width: var(--bol); height: var(--bol); border-radius: 50%;
-  animation: ck-zweef 3.4s ease-in-out infinite; animation-delay: calc(var(--plek-index, 0) * -.7s);
-  transition: transform var(--ck-normaal) var(--ck-veer), box-shadow var(--ck-normaal);
+  transition: transform var(--ck-normaal) var(--ck-veer);
 }
-/* Glimmend zoals de wereldknoppen op het eiland: lichte glazen kern met een rand in de wereldkleur. */
-.wereld-scherm .wereld-plek__bol.ck-glas { background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .9), rgba(255, 248, 236, .55) 62%, rgba(255, 248, 236, .35)); border: 3px solid var(--ck-wit); box-shadow: inset 0 -6px 14px rgba(255, 255, 255, .5), 0 0 0 4px var(--ck-actief), 0 7px 0 4px var(--ck-actief-rand), 0 16px 30px rgba(40, 20, 5, .3); }
-.wereld-scherm .wereld-plek__naam.ck-glas { background: var(--ck-glas); border-color: var(--ck-wit); }
-.wereld-plek__bol img { width: 84%; height: 84%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(40, 20, 5, .28)); transition: transform var(--ck-normaal) var(--ck-veer); }
-.wereld-plek__naam { padding: 5px 14px; border-radius: 999px; font-family: var(--ck-font-kop); font-weight: 800; font-size: clamp(16px, 1.45cqw, 21px); line-height: 1.15; text-align: center; max-width: 100%; }
-.wereld-scherm .wereld-plek:hover .wereld-plek__bol, .wereld-scherm .wereld-plek:focus-visible .wereld-plek__bol { animation-play-state: paused; transform: translateY(-6px) scale(1.08); }
-.wereld-plek:hover .wereld-plek__bol img { transform: rotate(-6deg) scale(1.06); }
-.wereld-plek:active .wereld-plek__bol { transform: scale(.96); }
-.wereld-plek:focus-visible { outline: none; }
-.wereld-plek:focus-visible .wereld-plek__naam { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
-.wereld-plek.is-actief .wereld-plek__bol { box-shadow: 0 0 0 4px var(--ck-actief), 0 12px 32px rgba(40, 20, 5, .25); }
+.wereld-scherm .wereld-plek__bol.ck-glas { background: radial-gradient(circle at 35% 28%, var(--ck-wit), var(--ck-plekje) 70%); border: 3px solid var(--ck-wit); box-shadow: 0 0 0 3px var(--ck-actief), 0 5px 0 3px var(--ck-actief-rand); }
+.wereld-scherm .wereld-plek__bol.ck-glas::before { display: none; }
+.wereld-plek__bol img { width: 84%; height: 84%; object-fit: contain; filter: drop-shadow(0 4px 5px rgba(40, 20, 5, .25)); transition: transform var(--ck-normaal) var(--ck-veer); }
+.wereld-scherm .wereld-plek__naam.ck-glas { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.wereld-scherm .wereld-plek__naam.ck-glas::before { display: none; }
+/* Elke titel krijgt ruimte voor twee regels: zo staan iconen en titels in
+   een rij op één lijn, ook als de ene titel kort is en de andere lang.
+   Afbreken gebeurt gebalanceerd, dus "Alle sommen / op tijd". */
+.wereld-plek__naam { display: flex; align-items: flex-start; justify-content: center; min-height: 2.2em; max-width: 14ch; font-family: var(--ck-font-kop); font-weight: 800; font-size: clamp(16px, 1.4cqw, 20px); line-height: 1.1; text-align: center; text-wrap: balance; hyphens: manual; overflow-wrap: normal; letter-spacing: .01em; }
+.wereld-plek:hover .wereld-plek__bol, .wereld-plek:focus-visible .wereld-plek__bol { transform: translateY(-4px) scale(1.07); }
+.wereld-plek:hover .wereld-plek__bol img { transform: rotate(-6deg); }
+.wereld-plek:active .wereld-plek__bol { transform: scale(.95); }
+.wereld-plek:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
 .wereld-plek__meta { font-size: var(--ck-maat-klein); font-weight: 900; }
-/* Wat op elke bol hetzelfde staat, zegt niets; alleen "vergrendeld" blijft. */
+/* Wat op elke keuze hetzelfde staat, zegt niets; alleen "vergrendeld" blijft. */
 .wereld-scherm .adventure-slot.is-open { display: none; }
 .wereld-scherm .adventure-slot { color: var(--ck-cacao); }
 
-/* Het To Do-klembord blijft een ding in de wereld, boven de bollen, en schaalt mee. */
-.wereld-scherm .location-game__clipboard {
-  position: absolute; right: calc(var(--ck-rand) * 2); bottom: calc(var(--ck-rand) * 2 + var(--bol) + 90px); top: auto;
-  width: clamp(150px, 15cqw, 240px); margin: 0; pointer-events: auto; z-index: 13;
-  animation: ck-pop .55s var(--ck-veer) .1s both; transition: transform var(--ck-normaal) var(--ck-veer);
-  filter: drop-shadow(0 10px 16px rgba(40, 20, 5, .3));
+/* ---- Getekend klembord (Coco, Kiki): de iconen liggen op het papier van de tekening.
+   Komt er voor een andere plek een tekening bij, zet dan `clipboard` in
+   worldLocations.ts; dan gebruikt die plek dit vanzelf. ---- */
+main.wereld-scherm.ck-scherm.heeft-klembord { --bol: clamp(58px, 5.2cqw, 88px); --kb: clamp(420px, 44cqw, 640px); }
+main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek,
+main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek:has(> li:nth-child(3)):not(:has(> li:nth-child(4))) {
+  width: var(--kb); aspect-ratio: 1494 / 1008; height: auto; min-height: 0;
+  /* Eén rij op het liggende vel: zo past alles op het papier van de tekening. */
+  grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);
+  /* Marges in delen van de klembordbreedte: zo vallen de iconen precies op het papier. */
+  padding: calc(var(--kb) * .22) calc(var(--kb) * .17) calc(var(--kb) * .14) calc(var(--kb) * .15); align-content: center; gap: 0 clamp(4px, .6cqw, 10px);
+  background: var(--location-clipboard) center / 100% 100% no-repeat; border: 0; border-radius: 0;
+  box-shadow: none; filter: drop-shadow(0 14px 22px rgba(40, 20, 5, .35));
 }
-.wereld-scherm .location-game__clipboard:hover { transform: translateY(-4px) rotate(-2deg); }
-.wereld-scherm .location-game__clipboard span { font-family: var(--ck-font-kop); font-size: clamp(18px, 1.8cqw, 26px); color: var(--ck-cacao); }
+main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek::before { display: none; }
+/* Op Kiki's klembord staat links een potje op het vel: daar begint het papier later. */
+main.wereld-scherm.ck-scherm.heeft-klembord.world-location--kiki .ck-kaarten.is-plek { padding-left: calc(var(--kb) * .21); padding-right: calc(var(--kb) * .13); }
+main.wereld-scherm.ck-scherm.heeft-klembord .wereld-plek { padding: 0; gap: 6px; }
 
-/* Telefoon: één schuifbare rij bollen onderin, het personage erboven */
+/* Telefoon: het klembord onderin over de hele breedte, alles past erop */
 @container (max-width: 640px) {
-  .wereld-scherm.ck-scherm { --bol: 84px; }
+  .wereld-scherm.ck-scherm { --bol: 58px; }
   .wereld-scherm .wereld-naambord { padding: 4px 14px; max-width: calc(100% - var(--ck-rand) * 2); overflow: hidden; text-overflow: ellipsis; }
-  .wereld-scherm .ck-kaarten.is-plek { left: 0; right: 0; bottom: 10px; max-width: none; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding: 18px var(--ck-rand) 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  .wereld-scherm .ck-kaarten.is-plek::-webkit-scrollbar { display: none; }
-  .wereld-scherm .ck-kaarten.is-plek > li { scroll-snap-align: start; }
-  .wereld-scherm .ck-kaarten.is-plek > li:nth-child(even) { margin-bottom: 14px; }
-  .wereld-plek { width: 104px; }
-  .wereld-plek__naam { font-size: 15px; padding: 4px 10px; }
-  .wereld-scherm .wereld-personage { max-width: none; right: var(--ck-rand); bottom: 196px; }
-  .wereld-scherm .wereld-personage .ck-ballon__gezicht { width: 64px; height: 64px; }
-  .wereld-scherm .wereld-personage .ck-ballon__tekst { margin-bottom: 0; }
-  .wereld-scherm .location-game__clipboard { right: var(--ck-rand); bottom: 300px; width: 128px; }
-  .wereld-scherm .location-game__clipboard span { font-size: 18px; }
+  main.wereld-scherm.ck-scherm .ck-kaarten.is-plek, main.wereld-scherm.ck-scherm .ck-kaarten.is-plek:has(> li:nth-child(5)) {
+    left: var(--ck-rand); right: var(--ck-rand); bottom: var(--ck-rand); width: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 6px; padding: 30px 10px 14px; transform: none;
+  }
+  main.wereld-scherm.ck-scherm .ck-kaarten.is-plek:has(> li:nth-child(4)):not(:has(> li:nth-child(5))) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .wereld-plek__naam { font-size: 16px; max-width: none; hyphens: auto; -webkit-hyphens: auto; }
+  /* Het getekende klembord mag hier iets hoger worden, zodat de namen leesbaar blijven. */
+  main.wereld-scherm.ck-scherm.heeft-klembord { --bol: 54px; --kb: calc(100cqw - var(--ck-rand) * 2); }
+  main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek,
+  main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek:has(> li:nth-child(4)):not(:has(> li:nth-child(5))),
+  main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek:has(> li:nth-child(3)):not(:has(> li:nth-child(4))) {
+    left: var(--ck-rand); right: var(--ck-rand); width: auto; aspect-ratio: auto;
+    grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: calc(var(--kb) * .2) calc(var(--kb) * .15) calc(var(--kb) * .13) calc(var(--kb) * .14); gap: 8px 4px;
+  }
 }

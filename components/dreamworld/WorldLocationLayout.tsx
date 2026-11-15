@@ -6,7 +6,6 @@ import type { LocationIcon, WorldLocation } from '../../platform/worldLocations'
 import { withLocationOrigin } from '../../services/locationNavigation';
 import './world-location.css';
 import './wereld-scherm.css';
-import { CHARACTERS } from '../../data/characters';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import LocationGameView, { AdventureClipboard } from './LocationAdventureWidgets';
 import CardGrid from '../ui/CardGrid';
@@ -45,30 +44,13 @@ const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
 };
 /** Elke plek hoort bij een wereldkleur uit de huisstijl. */
 const WERELD: Record<string, string> = { coco: 'keuken', kiki: 'tuin', lua: 'school', seb: 'wereld' };
-/** Wat het personage zegt als je binnenkomt: één korte zin. */
-const BEGROETING: Record<string, string> = {
-  coco: 'Wat gaan we vandaag bakken?',
-  kiki: 'Welke plant gaan we vandaag helpen?',
-  lua: 'Zin om te rekenen? Kies een spel.',
-  seb: 'Waar gaan we vandaag naartoe?',
-};
-
 /**
  * Wereldscherm (laag 2) uit de huisstijl: de illustratie vult het scherm, een
- * houten naambord, het personage linksonder en de keuzes als zwevende glazen bollen
- * rechts, nooit over het gezicht. Bij Coco en Kiki staat het personage al
- * groot in de tekening; daar praat alleen de ballon.
+ * houten naambord, en alle keuzes samen op één klembord in de wereld. Geen
+ * spraakwolk: het personage staat al in de tekening en hoeft niets te zeggen.
  */
 function WereldLaag({ location }: { location: WorldLocation }) {
-  const getekend = location.presentation === 'game';
-  const personage = CHARACTERS[location.character.id];
-  return <>
-    <div className="ck-hout wereld-naambord" aria-hidden="true">{location.name}</div>
-    <div className={`ck-zone-personage wereld-personage${getekend ? ' is-getekend' : ''}`}>
-      {!getekend && <img className="ck-ballon__gezicht" src={personage.beeld} alt="" />}
-      <p className="ck-ballon__tekst"><span className="ck-ballon__naam">{personage.naam.toUpperCase()}</span>{BEGROETING[location.id] ?? 'Kies wat je wilt doen.'}</p>
-    </div>
-  </>;
+  return <div className="ck-hout wereld-naambord" aria-hidden="true">{location.name}</div>;
 }
 
 export default function WorldLocationLayout({ location, onNavigate }: { location: WorldLocation; onNavigate: (path: string) => void }) {
@@ -101,7 +83,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
       vorm="plek"
     />;
   };
-  if (location.presentation === 'game') return <main className={`ck-scherm wereld-scherm world-location world-location--game world-location--${location.id}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-label={location.name} style={{
+  if (location.presentation === 'game') return <main className={`ck-scherm wereld-scherm world-location world-location--game world-location--${location.id}${location.clipboard ? ' heeft-klembord' : ''}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
     ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),

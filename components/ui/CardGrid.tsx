@@ -50,7 +50,7 @@ export default function CardGrid({ cards, onChoose, kolommen = 3, label, classNa
   if (plek) return <ul className={`ck-kaarten is-plek${className ? ` ${className}` : ''}`} aria-label={label}>
     {cards.map((kaart, index) => <li key={kaart.id} style={{ '--plek-index': index } as React.CSSProperties}>
       <button type="button" className={`wereld-plek${kaart.actief ? ' is-actief' : ''}`} aria-pressed={kaart.actief === undefined ? undefined : kaart.actief} aria-label={kaart.onder ? `${kaart.titel}, ${kaart.onder}` : kaart.titel} onClick={() => onChoose(kaart.id)}>
-        <span className="wereld-plek__bol ck-glas" aria-hidden="true">{kaart.beeld ? <img src={kaart.beeld} alt="" loading="lazy" decoding="async" /> : kaart.icoon}</span>
+        <span className="wereld-plek__bol ck-glas" aria-hidden="true">{kaart.beeld ? <img src={kaart.beeld} alt="" /> : kaart.icoon}</span>
         <span className="wereld-plek__naam ck-glas" aria-hidden="true">{kaart.titel}</span>
         {kaart.meta && <span className="wereld-plek__meta">{kaart.meta}</span>}
       </button>
