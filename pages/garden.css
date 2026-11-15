@@ -7,7 +7,7 @@
    (zone 1) en het menu (zone 3) al levert. */
 /* clip in plaats van hidden: anders kan focus het scherm opzij schuiven naar
    een dicht paneel buiten beeld. */
-.tuin.ck-scherm { --tuin-boven: 72px; position: fixed; inset: 0; z-index: 1; overflow: clip; font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); user-select: none; }
+.tuin.ck-scherm { --tuin-boven: 16px; position: fixed; inset: 0; z-index: 1; overflow: clip; font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); user-select: none; }
 .tuin__achtergrond { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
 /* 2. Statuseiland */
@@ -115,3 +115,7 @@
   .tuin .garden-ruler { width: calc(100% - 2 * var(--ck-rand)); grid-template-columns: repeat(7, minmax(0, 1fr)); }
   .tuin .tuin-paneel { left: var(--ck-rand); width: auto; }
 }
+
+/* De bovenkant van de app zweeft nu in losse zones; het statuseiland staat
+   ertussen in dezelfde rij. Op een smalle telefoon past dat niet: dan een rij lager. */
+@media (max-width: 600px) { .tuin.ck-scherm { --tuin-boven: 68px; } }

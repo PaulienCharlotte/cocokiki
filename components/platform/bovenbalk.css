@@ -1,0 +1,54 @@
+/* De bovenkant in de CocoKiki-huisstijl: geen balk over de hele breedte,
+   maar drie zwevende glazen zones (zie docs/HUISSTIJL.md, "Vaste plekken").
+   1 terug linksboven · 2 munten in het midden · 3 winkel, To Do, profiel rechts.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css.
+   "body" ervoor: deze regels moeten winnen van de oude world-hud-opmaak. */
+@import '../../styles/cocokiki-tokens.css';
+
+body .ck-bovenbalk.world-hud {
+  --bb-rand: 16px; --bb-hoogte: 52px;
+  position: fixed; z-index: 200; top: 0; left: 0; right: 0; transform: none;
+  width: auto; min-height: 0; height: calc(var(--bb-hoogte) + var(--bb-rand) * 2);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: var(--bb-rand); margin: 0;
+  border: 0; border-radius: 0; background: none; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  pointer-events: none; color: var(--ck-cacao); font-family: var(--ck-font-tekst);
+}
+body .ck-bovenbalk .world-hud__leading, body .ck-bovenbalk .world-hud__tools, body .ck-bovenbalk .ck-bovenbalk__munten { pointer-events: auto; }
+
+/* 1. Terug: één ronde glazen knop */
+body .ck-bovenbalk .world-hud__leading { gap: 0; }
+body .ck-bovenbalk .world-hud__back { width: var(--bb-hoogte); height: var(--bb-hoogte); min-width: var(--bb-hoogte); padding: 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .6); color: var(--ck-cacao); transition: transform .2s var(--ck-veer); }
+body .ck-bovenbalk .world-hud__back:hover { transform: scale(1.08); background: linear-gradient(135deg, rgba(255, 255, 255, .6), rgba(255, 255, 255, .3)); }
+body .ck-bovenbalk .world-hud__brand { width: 150px; filter: drop-shadow(0 4px 10px rgba(40, 20, 5, .3)); }
+
+/* 2. Munten in het statuseiland */
+body .ck-bovenbalk .ck-bovenbalk__munten { position: absolute; left: 50%; top: var(--bb-rand); transform: translateX(-50%); height: var(--bb-hoogte); display: flex; align-items: center; gap: 10px; padding: 0 20px 0 10px; border-radius: 999px; }
+body .ck-bovenbalk .ck-bovenbalk__munten strong, body .ck-bovenbalk .ck-bovenbalk__munten-klein strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; line-height: 1; min-width: 2ch; }
+body .ck-bovenbalk .ck-munt { width: 30px; height: 30px; flex: 0 0 30px; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15), 0 2px 6px rgba(215, 154, 20, .5); }
+body .ck-bovenbalk .ck-bovenbalk__munten-klein { display: none; min-height: 0; padding: 0 6px 0 2px; gap: 6px; background: none; }
+
+/* 3. Menu: één glazen pil */
+body .ck-bovenbalk .world-hud__tools { height: var(--bb-hoogte); display: flex; align-items: center; gap: 4px; padding: 0 5px; border-radius: 999px; }
+body .ck-bovenbalk .world-hud__tools .ck-icon-button, body .ck-bovenbalk .world-hud__tools > button { width: 42px; height: 42px; min-width: 42px; border: 0; border-radius: 50%; background: transparent; color: var(--ck-cacao); box-shadow: none; transition: transform .2s var(--ck-veer); }
+body .ck-bovenbalk .world-hud__tools .ck-icon-button:hover { transform: scale(1.1); background: rgba(255, 255, 255, .4); }
+body .ck-bovenbalk .world-profile__trigger { min-height: 42px; padding: 0 4px 0 0; border: 0; background: transparent; color: var(--ck-cacao); }
+body .ck-bovenbalk .world-profile__trigger img { width: 42px; height: 42px; border: 2px solid var(--ck-wit); border-radius: 50%; object-fit: cover; object-position: top; }
+body .ck-bovenbalk .world-hud__navigation, body .ck-bovenbalk .world-profile__menu { font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); }
+
+/* In een spel of opdracht met een eigen statuseiland (.ck-zone-status) staat
+   dat eiland in het midden; de munten schuiven dan het menu in. */
+body:has(.ck-scherm .ck-zone-status) .ck-bovenbalk .ck-bovenbalk__munten { display: none; }
+body:has(.ck-scherm .ck-zone-status) .ck-bovenbalk .ck-bovenbalk__munten-klein { display: flex; align-items: center; }
+
+/* Telefoon: kleiner, het logo past nog naast de munten */
+@media (max-width: 600px) {
+  body .ck-bovenbalk.world-hud { --bb-rand: 10px; --bb-hoogte: 48px; gap: 6px; }
+  body .ck-bovenbalk .world-hud__brand { width: 96px; }
+  body .ck-bovenbalk.is-thuis .ck-bovenbalk__munten { left: auto; right: auto; position: static; transform: none; margin-left: auto; }
+  body .ck-bovenbalk .ck-bovenbalk__munten { padding: 0 14px 0 8px; }
+  body .ck-bovenbalk .world-hud__tools .ck-icon-button, body .ck-bovenbalk .world-hud__tools > button { width: 40px; height: 40px; min-width: 40px; }
+  body .ck-bovenbalk .world-profile__trigger img { width: 38px; height: 38px; }
+  body .ck-bovenbalk .world-profile__trigger svg { display: none; }
+}

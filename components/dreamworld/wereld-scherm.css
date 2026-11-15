@@ -5,7 +5,7 @@
 @import '../../styles/cocokiki-tokens.css';
 
 /* clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
-.wereld-scherm.ck-scherm { --wereld-boven: 72px; position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.wereld-scherm.ck-scherm { --wereld-boven: 80px; position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
 
 /* De oude kolommen worden één laag over de tekening; alleen de kaartjes vangen tikken. */
 .wereld-scherm .location-game, .wereld-scherm .world-location__dock { position: absolute; inset: 0; display: block; min-height: 0; padding: 0; margin: 0; pointer-events: none; background: none; }
