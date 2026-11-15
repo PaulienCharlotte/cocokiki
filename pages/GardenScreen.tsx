@@ -34,10 +34,11 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
     <img className="garden__background" src="/assets/library/plants/garden/terrain-natural.webp" alt="" />
     <h1 id="garden-title" className="sr-only">Mijn moestuin</h1>
     <nav className="garden__toolbar" aria-label="Mijn moestuin">
+      <IconButton label="Rekenniveau instellen" icon={<Settings />} onClick={() => setSettings(true)} />
+      <span className="garden__day">Tuindag {state.day}<small>{SEASONS[season]}</small></span>
       <IconButton label={`Groeikalender, tuindag ${state.day}, ${SEASONS[season]}`} icon={<span className="garden-calendar-icon"><CalendarDays /><b>{state.day}</b></span>} onClick={() => setCalendar(true)} />
       <IconButton label={`Mijn oogst, ${harvests.length} mandjes`} icon={<ShoppingBasket />} onClick={() => setBasket(true)} />
       <IconButton label="Maten omrekenen" icon={<Ruler />} onClick={() => setMaten(true)} />
-      <IconButton label="Rekenniveau instellen" icon={<Settings />} onClick={() => setSettings(true)} />
       <IconButton label="Hoe werkt de moestuin?" icon={<HelpCircle />} onClick={() => setAbout(true)} />
       <IconButton label={gardenNeedsCare(state) ? 'Volgende tuindag, verzorg eerst je geplante vakken' : 'Volgende tuindag'} disabled={gardenNeedsCare(state)} icon={<ArrowRight />} onClick={() => act(nextGardenDay(), 'Een nieuwe tuindag.')} />
       <span className="sr-only" role="status">{gardenNeedsCare(state) ? 'Verzorg eerst je geplante vakken.' : notice}</span>
@@ -60,7 +61,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
 
     <Dialog primaryAction={null} open={selected !== null && !maten} title={crop ? `${crop.name} · vak ${(selected ?? 0) + 1}` : 'Wat wil je laten groeien?'} onClose={() => setSelected(null)}>
       {selected !== null && (!plot ? <>
-        <p>Starten in de {SEASONS[season].toLowerCase()}. Je plant gratis; oefenen en verzorgen leveren je oogst op.</p>
+        <SpeechBubble character="kiki" label="Zaaien">Het is {SEASONS[season].toLowerCase()}. Kies wat je in dit vak wilt laten groeien.</SpeechBubble>
         <CardGrid kolommen={3} label="Kies een gewas" cards={GARDEN_CROPS.map(crop => ({ id: crop.id, titel: crop.id === 'beans' ? 'Bonen' : crop.name, beeld: crop.image, onder: crop.start.includes(season) ? crop.method === 'plantjes' ? 'Begin met jonge plantjes' : 'Begin met zaadjes' : `Start in ${crop.start.map(index => SEASONS[index].toLowerCase()).join(' of ')}` }))} onChoose={id => { if (!GARDEN_CROPS_BY_ID[id].start.includes(season)) { setFacts(GARDEN_CROPS_BY_ID[id]); return; } act(plantGardenPlot(selected, id), 'Je vak is gekozen. Zet nu je rij uit.'); setSelected(selected); }} />
       </> : crop && <>
         {plot.step === 4 ? <div className="garden-ready"><img src={crop.image} alt={crop.name} /><SpeechBubble character="kiki" label="Oogsttijd">{crop.yieldLabel}! Je hebt je planten ruimte en water gegeven.</SpeechBubble><Button onClick={() => { const id = plot.id; act(harvestGarden(selected, id), 'Je oogst ligt in je mand. Verkoop hem of breng hem naar Coco.'); setBasket(true); }}>Oogsten</Button></div> : waiting ? <><SpeechBubble character="kiki" label="Verzorgd">Deze plant heeft vandaag water gehad. Nog meer is niet nodig. Verzorg een ander vak of begin de volgende tuindag.</SpeechBubble><Button onClick={() => setSelected(null)}>Naar mijn tuin</Button></> : <GardenTaskPanel key={`${plot.id}:${plot.step}:${currentGardenPart(plot)}:${state.level}`} plot={plot} crop={crop} level={state.level} onMaten={() => setMaten(true)} onHelp={() => {
@@ -125,7 +126,7 @@ export function GardenTaskPanel({ plot, crop, level, onMaten, onHelp, onSubmit }
     setError(result === 'wrong' ? 'Nog niet. Probeer het opnieuw of kies hulp.' : result === 'correct' ? '' : 'Opslaan lukte niet. Open dit vak opnieuw en probeer het nog eens.');
   };
   return <div className="garden-task">
-    <SpeechBubble character={part === 'conversion' ? 'lua' : 'kiki'} label={part === 'conversion' ? 'Rekenen' : planting ? 'Zaaien' : 'Water geven'}>{assisted ? explanation : prompt}</SpeechBubble>
+    <SpeechBubble character="kiki" label={part === 'conversion' ? 'Rekenen' : planting ? 'Zaaien' : 'Water geven'}>{assisted ? explanation : prompt}</SpeechBubble>
     {planting && <div className="garden-ruler" role="group" aria-label="Plant je rij op de meetlat">{Array.from({ length: 7 }, (_, index) => <button type="button" key={index} disabled={assisted} aria-label={`${formatGardenNumber(index * crop.spacing / 2)} cm${displayedPositions.includes(index) ? ', geplant' : ''}`} aria-pressed={displayedPositions.includes(index)} onClick={() => { if (index === 0) return; setPositions(current => current.includes(index) ? current.filter(value => value !== index) : current.length < 4 ? [...current, index] : current); setError(''); }}><span aria-hidden="true">{displayedPositions.includes(index) ? <Sprout /> : '·'}</span><small>{index % 2 === 0 ? formatGardenNumber(index * crop.spacing / 2) : ' '}</small></button>)}<span className="garden-ruler__unit">cm</span></div>}
     {measuring && <div className="garden-measure">
       <div className="garden-jug" role="img" aria-label={`Maatbeker gevuld met ${displayedWater} ml`}><span className="garden-jug__water" style={{ height: `${displayedWater / capacity * 100}%` }} />{[capacity, capacity * .75, capacity * .5, capacity * .25, 0].map(mark => <span className="garden-jug__mark" style={{ top: `${2 + (1 - mark / capacity) * 86}%` }} key={mark}>{mark} ml</span>)}</div>

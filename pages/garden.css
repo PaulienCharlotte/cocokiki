@@ -1,10 +1,13 @@
 .garden { position: relative; min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-4)) var(--space-4) var(--space-4); isolation: isolate; }
 .garden__background { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-.garden__toolbar { position: fixed; top: calc(var(--space-12) * 2 + var(--space-4)); left: var(--space-4); z-index: 2; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2); background: var(--color-surface-glass); border-radius: var(--radius-pill); }
+/* De tuin blijft het toneel; alle bediening deelt één rustige balk. */
+.garden__toolbar { position: relative; z-index: 2; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); max-width: 62rem; margin: 0 auto; padding: var(--space-3); background: var(--color-surface-glass); border-radius: var(--radius-card); }
+.garden__day { display: grid; margin-right: auto; padding: 0 var(--space-2); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
+.garden__day small { color: var(--color-text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); }
 .garden-calendar-icon { position: relative; display: grid; place-items: center; }
 .garden-calendar-icon svg { width: var(--space-6); height: var(--space-6); }
 .garden-calendar-icon b { position: absolute; bottom: var(--space-1); font-size: var(--font-size-xs); line-height: 1; background: var(--color-surface); }
- .garden__body { max-width: 62rem; margin: auto; padding-left: calc(var(--space-12) + var(--space-6)); display: grid; gap: var(--space-4); }
+ .garden__body { max-width: 62rem; margin: auto;  display: grid; gap: var(--space-4); }
 .garden-map { position: relative; min-height: 32rem; height: calc(100dvh - var(--space-12) * 3); }
 .garden__beds { position: absolute; inset: 6% 2% 18%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-12) var(--space-8); align-items: center; }
 .garden-bed { position: relative; display: block; width: 100%; aspect-ratio: 1.6; min-height: var(--touch-target); padding: 0; color: var(--color-text); background: transparent; border: 0; border-radius: var(--radius-control); cursor: pointer; font: inherit; }
@@ -20,7 +23,7 @@
 .garden-bed--3 .garden-bed__plant img { transform: scale(.8); }
 .garden-bed__seed { width: var(--space-2); height: var(--space-3); background: var(--color-cream); border-radius: var(--radius-pill); transform: rotate(-20deg); }
 .garden-bed__harvest { position: absolute; top: -8%; right: 0; width: 28%; height: 45%; object-fit: contain; pointer-events: none; }
-.garden-bed__label { position: absolute; top: calc(100% + var(--space-2)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-1); width: max-content; max-width: 120%; padding: var(--space-1) var(--space-2); background: var(--color-cream); border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); box-shadow: var(--shadow-soft); }
+.garden-bed__label { position: absolute; top: calc(100% + var(--space-2)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-1); width: max-content; max-width: 120%; padding: var(--space-1) var(--space-2); background: var(--color-surface-glass); border: 0; border-radius: var(--radius-control); }
 .garden-bed__label > img { width: var(--space-6); height: var(--space-6); object-fit: contain; }
 .garden-bed__care { display: flex; color: var(--color-primary); }
 .garden-bed__care svg { width: var(--space-4); height: var(--space-4); }
@@ -41,7 +44,7 @@
 .garden-task [role=alert] { color: var(--color-error); margin: 0; }
 .garden-task__solution { font-size: var(--font-size-xl); text-align: center; color: var(--color-primary); font-weight: var(--font-weight-bold); }
 .garden-task__help-note { color: var(--color-text-muted); text-align: center; font-size: var(--font-size-xs); }
-.garden-ruler { display: grid; grid-template-columns: repeat(7, minmax(var(--touch-target), 1fr)); overflow-x: auto; position: relative; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-strong); }
+.garden-ruler { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); overflow-x: auto; position: relative; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-strong); }
 .garden-ruler button { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-2) 0; min-height: var(--touch-target); color: var(--color-text); background: var(--color-background-soft); border: 0; border-right: 1px solid var(--color-border); font: inherit; cursor: pointer; }
 .garden-ruler button[aria-pressed=true] { background: var(--color-success-soft); color: var(--color-primary); }
 .garden-ruler button > span { height: var(--space-8); }
@@ -64,8 +67,9 @@
 .garden-calendar td, .garden-calendar th { padding: var(--space-2); text-align: left; border-bottom: 1px solid var(--color-border); }
 @media (max-width: 600px) {
   .garden { padding: calc(var(--space-12) * 2) var(--space-3) var(--space-3); }
-  .garden__toolbar { left: var(--space-2); gap: var(--space-1); padding: var(--space-1); }
-  .garden__body { padding-left: calc(var(--space-12) + var(--space-4)); }
+  .garden__toolbar { gap: var(--space-1); padding: var(--space-2); }
+  .garden__day { flex: 1; min-width: 40%; }
+  .garden__body { min-width: 0; }
   .garden-map { min-height: 36rem; height: calc(100dvh - var(--space-12) * 2); }
   .garden__beds { inset: 3% 0 10%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-12) var(--space-2); }
   .garden-bed { aspect-ratio: 1.4; }
@@ -75,3 +79,5 @@
   .garden-bed strong { font-size: var(--font-size-xs); }
   .garden-bed__plants > svg { width: var(--space-6); }
 }
+
+.garden-ruler button:focus-visible { outline: var(--space-1) solid var(--color-focus-ring); outline-offset: calc(-1 * var(--space-1)); }
