@@ -30,7 +30,7 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
  * tweede vormtaal naast het kaartraster dat de rest van de app gebruikt.
  * Zie `.claude/skills/cocokiki-ui`, sectie 4.
  */
-export default function LocationGameView({ location, onOpen, onDirect, onKaart, renderClipboard, initialTab = 'activities' }: { location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; onKaart?: (adventureId: string) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
+export default function LocationGameView({ location, onOpen, onDirect, onKaart, renderClipboard, initialTab = 'activities', vorm = 'kaart' }: { vorm?: 'kaart' | 'speelkaart'; location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; onKaart?: (adventureId: string) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
   const allPreviews = location.adventurePreviews ?? [];
   const clipboard = allPreviews.find(item => item.id === 'bestellingen' || item.id === 'plantenopdrachten');
   const previews = allPreviews.filter(item => item !== clipboard);
@@ -62,7 +62,7 @@ export default function LocationGameView({ location, onOpen, onDirect, onKaart, 
       }}>{value === 'activities' ? 'Activiteiten' : 'Avonturen'}</button>)}
     </div>}
     {location.activities.length > 0 && <div id={`${id}-activities`} className="location-game__activities">
-      <CardGrid
+      <CardGrid vorm={vorm}
         // De activiteiten staan in de smalle kolom naast de tekening; drie
         // naast elkaar breekt een woord als "Boodschappen" doormidden.
         kolommen={2}
@@ -84,7 +84,7 @@ export default function LocationGameView({ location, onOpen, onDirect, onKaart, 
       {selected && (renderClipboard ? renderClipboard(selected) : <AdventureClipboard adventure={selected} />)}
       <section className="adventure-shelf" aria-labelledby={`${id}-shelf-title`}>
         <h2 id={`${id}-shelf-title`} className="sr-only">Avonturen</h2>
-        <CardGrid
+        <CardGrid vorm={vorm}
           label="Kies een avontuur"
           cards={previews.map(adventure => ({
             id: adventure.id,

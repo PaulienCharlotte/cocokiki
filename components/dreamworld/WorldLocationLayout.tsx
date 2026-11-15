@@ -5,6 +5,8 @@ import { ACTIVITIES_BY_ID, type ActivityDefinition } from '../../platform/activi
 import type { LocationIcon, WorldLocation } from '../../platform/worldLocations';
 import { withLocationOrigin } from '../../services/locationNavigation';
 import './world-location.css';
+import './wereld-scherm.css';
+import { CHARACTERS } from '../../data/characters';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import LocationGameView, { AdventureClipboard } from './LocationAdventureWidgets';
 import CardGrid from '../ui/CardGrid';
@@ -41,6 +43,34 @@ const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
   recipes: CookingPot, orders: ClipboardList, math: Calculator, nutrition: Leaf,
   clinic: HeartPulse, plants: Flower2, book: BookOpen, grow: Sprout, clock: Clock3,
 };
+/** Elke plek hoort bij een wereldkleur uit de huisstijl. */
+const WERELD: Record<string, string> = { coco: 'keuken', kiki: 'tuin', lua: 'school', seb: 'wereld' };
+/** Wat het personage zegt als je binnenkomt: één korte zin. */
+const BEGROETING: Record<string, string> = {
+  coco: 'Wat gaan we vandaag bakken?',
+  kiki: 'Welke plant gaan we vandaag helpen?',
+  lua: 'Zin om te rekenen? Kies een spel.',
+  seb: 'Waar gaan we vandaag naartoe?',
+};
+
+/**
+ * Wereldscherm (laag 2) uit de huisstijl: de illustratie vult het scherm, een
+ * houten naambord, het personage linksonder en de keuzes als speelkaartjes
+ * rechts, nooit over het gezicht. Bij Coco en Kiki staat het personage al
+ * groot in de tekening; daar praat alleen de ballon.
+ */
+function WereldLaag({ location }: { location: WorldLocation }) {
+  const getekend = location.presentation === 'game';
+  const personage = CHARACTERS[location.character.id];
+  return <>
+    <div className="ck-hout wereld-naambord" aria-hidden="true">{location.name}</div>
+    <div className={`ck-zone-personage wereld-personage${getekend ? ' is-getekend' : ''}`}>
+      {!getekend && <img className="ck-ballon__gezicht" src={personage.beeld} alt="" />}
+      <p className="ck-ballon__tekst"><span className="ck-ballon__naam">{personage.naam.toUpperCase()}</span>{BEGROETING[location.id] ?? 'Kies wat je wilt doen.'}</p>
+    </div>
+  </>;
+}
+
 export default function WorldLocationLayout({ location, onNavigate }: { location: WorldLocation; onNavigate: (path: string) => void }) {
   const [tab, setTab] = useState<'activities' | 'adventures'>('activities');
   const [section, setSection] = useState<'main' | 'math'>('main');
@@ -68,17 +98,20 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         beeld: activity.image,
       }))}
       onChoose={id => open(ACTIVITIES_BY_ID[id])}
+      vorm="speelkaart"
     />;
   };
-  if (location.presentation === 'game') return <main className={`world-location world-location--game world-location--${location.id}`} aria-label={location.name} style={{
+  if (location.presentation === 'game') return <main className={`ck-scherm wereld-scherm world-location world-location--game world-location--${location.id}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-label={location.name} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
     ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),
   } as React.CSSProperties}>
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
+    <WereldLaag location={location} />
     {PLAYABLE_ADVENTURES.some(item => item.definition.locationId === location.id)
       ? <AdventureRunner location={location} onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }} />
       : <LocationGameView
+        vorm="speelkaart"
         location={location}
         onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
         onKaart={adventureId => {
@@ -103,11 +136,12 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         />}
       />}
   </main>;
-  return <main className={`world-location world-location--${location.id}`} aria-labelledby={`${id}-title`} style={{
+  return <main className={`ck-scherm wereld-scherm world-location world-location--${location.id}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-labelledby={`${id}-title`} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
   } as React.CSSProperties}>
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
+    <WereldLaag location={location} />
     <div className="world-location__scene"><h1 id={`${id}-title`} className="sr-only">{location.name}</h1></div>
     <div className="world-location__dock">
       {/* Een tabblad dat alleen "binnenkort" zegt, is een belofte en geen keuze.

@@ -1,0 +1,65 @@
+/* Wereldscherm (laag 2) in de CocoKiki-huisstijl: zie docs/HUISSTIJL.md,
+   "Schermtypes". De illustratie vult het scherm; een houten naambord, het
+   personage linksonder en de keuzes als speelkaartjes rechtsonder.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css. */
+@import '../../styles/cocokiki-tokens.css';
+
+/* clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
+.wereld-scherm.ck-scherm { --wereld-boven: 72px; position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+
+/* De oude kolommen worden één laag over de tekening; alleen de kaartjes vangen tikken. */
+.wereld-scherm .location-game, .wereld-scherm .world-location__dock { position: absolute; inset: 0; display: block; min-height: 0; padding: 0; margin: 0; pointer-events: none; background: none; }
+.wereld-scherm .location-game__stories, .wereld-scherm .adventure-shelf, .wereld-scherm .location-panel, .wereld-scherm .location-game__activities { position: static; display: block; padding: 0; margin: 0; background: none; box-shadow: none; }
+.wereld-scherm .location-game__heading, .wereld-scherm .location-panel__heading { display: none; }
+
+/* Naambord linksboven, onder de bovenbalk van de app (die terug en het menu levert) */
+.wereld-scherm .wereld-naambord { position: absolute; z-index: 20; left: var(--ck-rand); top: var(--wereld-boven); padding: 6px 22px; font-size: var(--ck-maat-kop); line-height: 1.2; white-space: nowrap; animation: ck-pop .5s var(--ck-veer) both; }
+
+/* Personage linksonder */
+.wereld-scherm .wereld-personage { z-index: 12; max-width: min(36%, 460px); }
+.wereld-scherm .wereld-personage .ck-ballon__gezicht { width: max(72px, 9.5cqw); height: max(72px, 9.5cqw); object-position: top; }
+.wereld-scherm .wereld-personage .ck-ballon__tekst { margin: 0 0 3cqw; max-width: none; font-size: max(18px, 1.7cqw); animation: ck-pop .5s var(--ck-veer) .15s both; }
+.wereld-scherm .wereld-personage.is-getekend .ck-ballon__tekst { margin-bottom: 0; }
+
+/* Keuzes: een rij speelkaartjes rechtsonder. Past het niet, dan schuif je opzij. */
+.wereld-scherm .ck-kaarten.is-speelkaart {
+  position: absolute; right: var(--ck-rand); bottom: var(--ck-rand); z-index: 14;
+  display: flex; gap: max(12px, 1.2cqw); width: auto; max-width: calc(100% - min(36%, 460px) - var(--ck-rand) * 3);
+  margin: 0; padding: 14px 6px 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  pointer-events: auto;
+}
+.wereld-scherm .ck-kaarten.is-speelkaart::-webkit-scrollbar { display: none; }
+.wereld-scherm .ck-kaarten.is-speelkaart > li { flex: 0 0 auto; width: max(160px, 12cqw); scroll-snap-align: end; animation: ck-pop .5s var(--ck-veer) both; }
+.wereld-scherm .ck-kaarten.is-speelkaart > li:nth-child(2) { animation-delay: .06s; } .wereld-scherm .ck-kaarten.is-speelkaart > li:nth-child(3) { animation-delay: .12s; } .wereld-scherm .ck-kaarten.is-speelkaart > li:nth-child(n+4) { animation-delay: .18s; }
+.wereld-scherm .ck-speelkaart { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 8px 8px 14px; border: 0; text-align: center; box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 12px 22px rgba(74, 42, 26, .18); }
+.wereld-scherm .ck-speelkaart:hover { transform: translateY(-6px) rotate(-1.5deg); box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 16px 26px rgba(74, 42, 26, .22); }
+.wereld-scherm .ck-speelkaart:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+.wereld-scherm .ck-speelkaart .ck-speelkaart__plaatje { width: 100%; margin: 0 0 4px; padding: 6px; aspect-ratio: 1.2; }
+.wereld-scherm .ck-speelkaart .ck-speelkaart__plaatje img { width: 100%; height: 100%; object-fit: contain; }
+.wereld-scherm .ck-speelkaart .ck-kaart__tekst { display: grid; gap: 2px; }
+.wereld-scherm .ck-speelkaart strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; overflow-wrap: normal; hyphens: manual; line-height: 1.15; color: var(--ck-cacao); }
+.wereld-scherm .ck-speelkaart small { font-family: var(--ck-font-tekst); font-weight: 800; font-size: var(--ck-maat-klein); line-height: 1.25; color: var(--ck-cacao-zacht); }
+.wereld-scherm .ck-speelkaart .ck-kaart__meta { font-weight: 900; font-size: var(--ck-maat-klein); color: var(--ck-actief-rand); }
+.wereld-scherm .adventure-slot, .wereld-scherm .adventure-slot.is-open { color: var(--ck-actief-rand); }
+
+/* Het To Do-klembord blijft een ding in de wereld; het moet wel te tikken zijn. */
+.wereld-scherm .location-game__clipboard { pointer-events: auto; z-index: 13; transition: transform var(--ck-normaal) var(--ck-veer); }
+.wereld-scherm .location-game__clipboard:hover { transform: translateY(-4px) rotate(-2deg); }
+.wereld-scherm .location-game__clipboard span { font-family: var(--ck-font-kop); color: var(--ck-cacao); }
+/* Wat op elk kaartje hetzelfde staat, zegt niets; alleen "vergrendeld" blijft. */
+.wereld-scherm .adventure-slot.is-open { display: none; }
+
+/* Telefoon: kaartjes als strook onderin, het personage erboven */
+@container (max-width: 640px) {
+  .wereld-scherm .wereld-naambord { font-size: 20px; padding: 4px 14px; max-width: calc(100% - var(--ck-rand) * 2); overflow: hidden; text-overflow: ellipsis; }
+  .wereld-scherm .ck-kaarten.is-speelkaart { left: 0; right: 0; bottom: 8px; max-width: none; padding: 14px var(--ck-rand) 10px; scroll-padding: 0 var(--ck-rand); }
+  .wereld-scherm .ck-kaarten.is-speelkaart > li { width: 130px; scroll-snap-align: start; }
+  .wereld-scherm .ck-speelkaart strong { font-size: 18px; }
+  .wereld-scherm .ck-speelkaart small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .wereld-scherm .wereld-personage { max-width: none; right: var(--ck-rand); bottom: 262px; }
+  .wereld-scherm .wereld-personage .ck-ballon__gezicht { width: 64px; height: 64px; }
+  .wereld-scherm .wereld-personage .ck-ballon__tekst { margin-bottom: 0; }
+  /* Het klembord is een klein ding rechts in de wereld, niet over het naambord of het gezicht. */
+  .wereld-scherm .location-game__clipboard { position: absolute; right: var(--ck-rand); top: auto; bottom: 350px; width: 132px; margin: 0; }
+  .wereld-scherm .location-game__clipboard span { font-size: 18px; }
+}
