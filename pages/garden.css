@@ -1,83 +1,117 @@
-.garden { position: relative; min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-4)) var(--space-4) var(--space-4); isolation: isolate; }
-.garden__background { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
-/* De tuin blijft het toneel; alle bediening deelt één rustige balk. */
-.garden__toolbar { position: relative; z-index: 2; display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); max-width: 62rem; margin: 0 auto; padding: var(--space-3); background: var(--color-surface-glass); border-radius: var(--radius-card); }
-.garden__day { display: grid; margin-right: auto; padding: 0 var(--space-2); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
-.garden__day small { color: var(--color-text-muted); font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); }
-.garden-calendar-icon { position: relative; display: grid; place-items: center; }
-.garden-calendar-icon svg { width: var(--space-6); height: var(--space-6); }
-.garden-calendar-icon b { position: absolute; bottom: var(--space-1); font-size: var(--font-size-xs); line-height: 1; background: var(--color-surface); }
- .garden__body { max-width: 62rem; margin: auto;  display: grid; gap: var(--space-4); }
-.garden-map { position: relative; min-height: 32rem; height: calc(100dvh - var(--space-12) * 3); }
-.garden__beds { position: absolute; inset: 6% 2% 18%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-12) var(--space-8); align-items: center; }
-.garden-bed { position: relative; display: block; width: 100%; aspect-ratio: 1.6; min-height: var(--touch-target); padding: 0; color: var(--color-text); background: transparent; border: 0; border-radius: var(--radius-control); cursor: pointer; font: inherit; }
-.garden-bed:focus-visible { outline: var(--space-1) solid var(--color-focus-ring); outline-offset: var(--space-1); }
-.garden-bed:hover .garden-bed__label { background: var(--color-surface); }
-.garden-bed__soil { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 var(--space-1) var(--space-1) var(--color-overlay)); }
-.garden-bed__number { position: absolute; top: 10%; left: 12%; z-index: 1; min-width: var(--space-5); color: var(--color-text); background: var(--color-surface-glass); border-radius: var(--radius-pill); font-size: var(--font-size-xs); }
-.garden-bed__plants { position: absolute; inset: 20% 18% 27%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); justify-items: center; align-items: center; gap: var(--space-1); color: var(--color-cream); pointer-events: none; }
-.garden-bed__plants > svg { grid-area: 1 / 1 / 3 / 3; width: var(--space-8); height: var(--space-8); }
-.garden-bed__plant { display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; }
-.garden-bed__plant img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.garden-bed--2 .garden-bed__plant img { transform: scale(.55); }
-.garden-bed--3 .garden-bed__plant img { transform: scale(.8); }
-.garden-bed__seed { width: var(--space-2); height: var(--space-3); background: var(--color-cream); border-radius: var(--radius-pill); transform: rotate(-20deg); }
-.garden-bed__harvest { position: absolute; top: -8%; right: 0; width: 28%; height: 45%; object-fit: contain; pointer-events: none; }
-.garden-bed__label { position: absolute; top: calc(100% + var(--space-2)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-1); width: max-content; max-width: 120%; padding: var(--space-1) var(--space-2); background: var(--color-surface-glass); border: 0; border-radius: var(--radius-control); }
-.garden-bed__label > img { width: var(--space-6); height: var(--space-6); object-fit: contain; }
-.garden-bed__care { display: flex; color: var(--color-primary); }
-.garden-bed__care svg { width: var(--space-4); height: var(--space-4); }
-.garden-bed strong { font-size: var(--font-size-sm); }
-.garden-bed small { color: var(--color-text-muted); font-size: var(--font-size-xs); white-space: nowrap; }
-.garden-bed--4 .garden-bed__label { background: var(--color-success-soft); }
-.garden__footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding: var(--space-3); background: transparent; border-radius: var(--radius-card); }
-.garden__feedback { align-self: center; font-size: var(--font-size-sm); padding: var(--space-2); background: var(--color-surface-glass); border-radius: var(--radius-control); }
-.garden__feedback:empty { display: none; }
-.garden-level { padding: var(--space-2); background: var(--color-surface-glass); border-radius: var(--radius-control); display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-sm); }
-.garden-level input { width: 7rem; min-height: var(--touch-target); }
-.garden__notice { background: var(--color-surface); border-radius: var(--radius-control); margin: 0; padding: var(--space-3); }
-.garden-task, .garden-ready { display: grid; gap: var(--space-4); }
-.garden-task form { display: grid; gap: var(--space-3); }
-.garden-task label { font-size: var(--font-size-md); line-height: var(--line-height-default); }
-.garden-task__answer { display: flex; align-items: center; gap: var(--space-2); }
-.garden-task__answer input { min-width: 0; width: 7rem; min-height: var(--touch-target); border: 1px solid var(--color-border); border-radius: var(--radius-control); padding: var(--space-2); background: var(--color-surface); color: var(--color-text); font: inherit; }
-.garden-task [role=alert] { color: var(--color-error); margin: 0; }
-.garden-task__solution { font-size: var(--font-size-xl); text-align: center; color: var(--color-primary); font-weight: var(--font-weight-bold); }
-.garden-task__help-note { color: var(--color-text-muted); text-align: center; font-size: var(--font-size-xs); }
-.garden-ruler { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); overflow-x: auto; position: relative; padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-border-strong); }
-.garden-ruler button { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-2) 0; min-height: var(--touch-target); color: var(--color-text); background: var(--color-background-soft); border: 0; border-right: 1px solid var(--color-border); font: inherit; cursor: pointer; }
-.garden-ruler button[aria-pressed=true] { background: var(--color-success-soft); color: var(--color-primary); }
-.garden-ruler button > span { height: var(--space-8); }
-.garden-ruler small { font-size: var(--font-size-xs); }
-.garden-ruler__unit { position: absolute; right: 0; bottom: 0; font-size: var(--font-size-xs); }
-.garden-measure { display: grid; grid-template-columns: 7rem 1fr; align-items: center; gap: var(--space-4); }
-.garden-jug { height: 10rem; position: relative; overflow: hidden; border: 2px solid var(--color-border-strong); border-radius: 0 0 var(--radius-control) var(--radius-control); margin: var(--space-3) 0; background: var(--color-background-soft); }
-.garden-jug__water { position: absolute; bottom: 0; width: 100%; background: var(--color-sky); }
-.garden-jug__mark { position: absolute; left: var(--space-2); font-size: var(--font-size-xs); }
-.garden-measure input { display: block; width: 100%; min-height: var(--touch-target); }
-.garden-measure__buttons { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.garden__details { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
-.garden-task .ck-button, .garden__details .ck-button { min-height: var(--touch-target); }
-.garden-harvests { display: grid; gap: var(--space-3); }
-.garden-ready > img { width: 100%; height: 9rem; object-fit: contain; }
-.garden-harvests > section { display: grid; gap: var(--space-2); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-4); }
-.garden-harvests img { width: 100%; height: 5rem; object-fit: contain; }
-.garden-calendar { overflow-x: auto; }
-.garden-calendar table { border-collapse: collapse; width: 100%; font-size: var(--font-size-sm); }
-.garden-calendar td, .garden-calendar th { padding: var(--space-2); text-align: left; border-bottom: 1px solid var(--color-border); }
-@media (max-width: 600px) {
-  .garden { padding: calc(var(--space-12) * 2) var(--space-3) var(--space-3); }
-  .garden__toolbar { gap: var(--space-1); padding: var(--space-2); }
-  .garden__day { flex: 1; min-width: 40%; }
-  .garden__body { min-width: 0; }
-  .garden-map { min-height: 36rem; height: calc(100dvh - var(--space-12) * 2); }
-  .garden__beds { inset: 3% 0 10%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-12) var(--space-2); }
-  .garden-bed { aspect-ratio: 1.4; }
-  .garden-bed__label { padding: var(--space-1); gap: 0; }
-  .garden-bed__label > img { width: var(--space-6); height: var(--space-6); }
-  .garden-bed__care { display: none; }
-  .garden-bed strong { font-size: var(--font-size-xs); }
-  .garden-bed__plants > svg { width: var(--space-6); }
-}
+/* De moestuin in de CocoKiki-huisstijl: zie docs/HUISSTIJL.md en
+   docs/voorbeelden/moestuin.html. Alleen variabelen en klassen uit
+   styles/cocokiki-tokens.css; hier staat alleen waar dingen in de tuin staan. */
+@import '../styles/cocokiki-tokens.css';
 
-.garden-ruler button:focus-visible { outline: var(--space-1) solid var(--color-focus-ring); outline-offset: calc(-1 * var(--space-1)); }
+/* De tuin vult het scherm onder de vaste bovenbalk van de app, die terug
+   (zone 1) en het menu (zone 3) al levert. */
+/* clip in plaats van hidden: anders kan focus het scherm opzij schuiven naar
+   een dicht paneel buiten beeld. */
+.tuin.ck-scherm { --tuin-boven: 72px; position: fixed; inset: 0; z-index: 1; overflow: clip; font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); user-select: none; }
+.tuin__achtergrond { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+/* 2. Statuseiland */
+.tuin .tuin-status { top: var(--tuin-boven); }
+.tuin .tuin-dag { font-family: var(--ck-font-kop); font-weight: 800; font-size: max(18px, 1.6cqw); line-height: 1; }
+.tuin .tuin-seizoen { font-size: max(16px, 1.2cqw); }
+.tuin .tuin-scheid { width: 1px; height: 50%; background: var(--ck-schaduw-rand); }
+.tuin .tuin-stippen { display: flex; align-items: center; gap: max(5px, .5cqw); }
+.tuin .tuin-niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+
+/* 4. Gereedschap */
+.tuin .tuin-gereedschap { top: calc(var(--tuin-boven) + max(48px, 4.4cqw) + var(--ck-rand)); }
+.tuin .tuin-mand { position: relative; }
+.tuin .tuin-mand__aantal { position: absolute; top: 2px; right: 2px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--ck-zon); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-size: 14px; line-height: 20px; }
+
+/* 7. Speelveld: de zes bakken tussen het statuseiland en Kiki */
+.tuin .tuin__veld { position: absolute; left: var(--ck-rand); right: calc(var(--ck-rand) * 2 + max(48px, 4cqw) + 1cqw); top: calc(var(--tuin-boven) + max(48px, 4.4cqw) + var(--ck-rand)); bottom: max(150px, 17cqw); z-index: 3; }
+.tuin .garden__beds { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 2cqw 3cqw; place-items: center; }
+.tuin .tuin-bak { position: relative; width: min(100%, 26cqw); display: grid; justify-items: center; }
+.tuin .garden-bed { position: relative; display: block; width: 100%; aspect-ratio: 1.6; padding: 0; background: transparent; border: 0; border-radius: var(--ck-rond-tegel); cursor: pointer; transition: transform var(--ck-normaal) var(--ck-veer); }
+.tuin .garden-bed:hover, .tuin .garden-bed.is-gekozen { transform: translateY(-4px) scale(1.04); }
+.tuin .garden-bed:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 4px; }
+.tuin .garden-bed__soil { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 8px 10px rgba(40, 20, 5, .3)); }
+.tuin .garden-bed__plants { position: absolute; inset: 20% 18% 27%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); place-items: center; color: var(--ck-room); pointer-events: none; }
+.tuin .garden-bed__plants > svg { grid-area: 1 / 1 / 3 / 3; width: max(28px, 3cqw); height: max(28px, 3cqw); }
+.tuin .garden-bed__plant { display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; animation: ck-pop .5s var(--ck-veer) both; }
+.tuin .garden-bed__plant:nth-child(2) { animation-delay: .08s; } .tuin .garden-bed__plant:nth-child(3) { animation-delay: .16s; } .tuin .garden-bed__plant:nth-child(4) { animation-delay: .24s; }
+.tuin .garden-bed__plant img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.tuin .garden-bed--2 .garden-bed__plant img { transform: scale(.55); }
+.tuin .garden-bed--3 .garden-bed__plant img { transform: scale(.8); }
+.tuin .garden-bed__seed { width: 8px; height: 12px; background: var(--ck-room); border-radius: 999px; transform: rotate(-20deg); }
+.tuin .garden-bed__harvest { position: absolute; top: -12%; right: 4%; width: 30%; height: 48%; object-fit: contain; pointer-events: none; animation: ck-zweef 3.2s ease-in-out infinite; }
+.tuin .garden-bed__care { position: absolute; top: 4%; right: 8%; display: flex; padding: 6px; border-radius: 50%; color: var(--ck-tuin-rand); }
+.tuin .garden-bed__care svg { width: 20px; height: 20px; }
+.tuin .tuin-doel { inset: -6% -4% 18%; pointer-events: none; }
+.tuin .tuin-bordje { margin-top: -6px; padding: 4px 14px; border-radius: 999px; font-family: var(--ck-font-kop); font-size: max(16px, 1.3cqw); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.tuin .tuin-hangkaartje { position: absolute; left: 50%; top: 100%; transform: translate(-50%, -18%); padding: 0; border: 0; background: none; color: var(--ck-cacao); cursor: pointer; z-index: 6; }
+.tuin .ck-hangkaartje__label { white-space: nowrap; }
+.tuin .ck-hangkaartje__label small { display: block; margin-top: -2px; font-family: var(--ck-font-tekst); font-weight: 900; font-size: max(14px, .95cqw); }
+
+/* 5. Kiki */
+.tuin .tuin-personage { z-index: 10; }
+.tuin .tuin-personage .ck-ballon__gezicht { width: max(64px, 9.5cqw); height: max(64px, 9.5cqw); object-position: top; transition: transform .4s var(--ck-veer); }
+.tuin .tuin-personage .ck-ballon__tekst { margin: 0 0 3cqw; max-width: min(40cqw, 520px); font-size: max(18px, 1.7cqw); animation: ck-pop .45s var(--ck-veer); }
+
+/* 6. Antwoorden of hoofdknop */
+.tuin .tuin-antwoord { flex-direction: column; align-items: flex-end; gap: 8px; }
+.tuin .tuin-bellen { display: flex; gap: max(10px, 1.4cqw); align-items: flex-end; }
+.tuin .ck-bel { padding: 0; border: 1px solid rgba(255, 255, 255, .6); isolation: isolate; font-size: max(24px, 2.6cqw); }
+.tuin .ck-bel:nth-child(2) { animation-delay: -.7s; } .tuin .ck-bel:nth-child(3) { animation-delay: -1.4s; } .tuin .ck-bel:nth-child(4) { animation-delay: -2.1s; }
+.tuin .ck-bel.is-slepen { animation: none; }
+.tuin .tuin-bel__eenheid { margin-left: 2px; align-self: flex-end; margin-bottom: 26%; font-size: max(14px, 1.2cqw); }
+.tuin .garden-task__help-note { padding: 4px 12px; border-radius: 999px; background: var(--ck-glas); font-size: var(--ck-maat-klein); font-weight: 900; }
+.tuin .ck-gereedschap:focus-visible, .tuin .ck-knop:focus-visible, .tuin .ck-bel:focus-visible, .tuin .ck-speelkaart:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+
+/* Opdrachten in de wereld: de meetlat, de maatbeker en het omreken-doel
+   zweven midden onderin het speelveld, boven Kiki en de bellen. */
+.tuin .garden-ruler, .tuin .garden-measure, .tuin .tuin-omreken-doel { position: absolute; left: 50%; bottom: max(160px, 18cqw); transform: translateX(-50%); z-index: 8; }
+.tuin .garden-ruler { display: grid; grid-template-columns: repeat(7, minmax(44px, 1fr)); width: min(560px, 60cqw); padding: 8px 10px 22px; }
+.tuin .garden-ruler button { display: grid; justify-items: center; align-content: end; gap: 4px; min-height: var(--ck-tik-min); padding: 0; border: 0; border-left: 2px solid var(--ck-hout-donker); background: transparent; color: var(--ck-tuin-rand); font-family: var(--ck-font-kop); cursor: pointer; }
+.tuin .garden-ruler button > span { height: 32px; animation: ck-pop .4s var(--ck-veer); }
+.tuin .garden-ruler button > span:empty { animation: none; }
+.tuin .garden-ruler button[aria-pressed=true] { background: radial-gradient(closest-side, rgba(255, 255, 255, .7), transparent); }
+.tuin .garden-ruler small { color: var(--ck-cacao); font-size: 16px; }
+.tuin .garden-ruler__unit { position: absolute; right: 12px; bottom: 2px; font-size: var(--ck-maat-klein); font-weight: 900; }
+.tuin .garden-measure { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; gap: 8px 14px; align-items: center; }
+.tuin .garden-jug { grid-row: 1 / 3; position: relative; width: max(90px, 8cqw); height: max(150px, 14cqw); overflow: hidden; border-radius: 8px 8px 22px 22px; cursor: ns-resize; touch-action: none; }
+.tuin .garden-jug__water { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(var(--ck-wereld), var(--ck-wereld-rand)); opacity: .85; transition: height var(--ck-normaal) var(--ck-veer); }
+.tuin .garden-jug__mark { position: absolute; left: 0; padding-left: 8px; border-top: 2px solid var(--ck-cacao); width: 40%; font-family: var(--ck-font-kop); font-size: 14px; line-height: 1.1; }
+.tuin .garden-measure__stand { font-family: var(--ck-font-kop); font-size: var(--ck-maat-speelgetal); color: var(--ck-wit); text-shadow: 0 2px 4px rgba(40, 20, 5, .5); }
+.tuin .garden-measure__buttons { display: flex; gap: 8px; }
+.tuin .tuin-omreken-doel { left: auto; right: calc(var(--ck-rand) + 6cqw); transform: none; bottom: max(100px, 11cqw); display: grid; place-items: center; width: max(140px, 14cqw); height: max(90px, 8cqw); }
+.tuin .tuin-omreken-doel span { font-family: var(--ck-font-kop); font-size: max(26px, 2.6cqw); color: var(--ck-wit); text-shadow: 0 2px 4px rgba(40, 20, 5, .5); }
+
+/* Panelen: glas van rechts, met speelkaartjes in plaats van tabellen */
+.tuin .tuin-paneel { z-index: 25; top: calc(var(--tuin-boven) + max(48px, 4.4cqw) + var(--ck-rand)); visibility: hidden; transition: transform .5s var(--ck-veer), visibility 0s .5s; }
+.tuin .tuin-paneel.is-open { visibility: visible; transition: transform .5s var(--ck-veer); }
+.tuin .tuin-paneel__kop { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.tuin .tuin-paneel__titel { margin: 0; padding: 6px 18px; font-size: var(--ck-maat-kop); }
+.tuin .tuin-paneel__tekst { margin: 0 0 14px; font-size: var(--ck-maat-tekst); }
+.tuin .tuin-kaarten { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+.tuin .tuin-kaart { display: grid; justify-items: center; gap: 4px; border: 0; }
+.tuin .tuin-kaart small { font-family: var(--ck-font-tekst); font-size: var(--ck-maat-klein); font-weight: 800; color: var(--ck-cacao-zacht); }
+.tuin .tuin-kaart.is-later { opacity: .8; }
+.tuin .ck-speelkaart__plaatje { width: 100%; }
+.tuin .ck-speelkaart__plaatje img { width: 80%; height: 80%; object-fit: contain; }
+.tuin .tuin-seizoenen { display: flex; gap: 6px; }
+.tuin .tuin-seizoenen__stip { width: 12px; height: 12px; border-radius: 50%; background: var(--ck-plekje); border: 2px solid var(--ck-schaduw-rand); }
+.tuin .tuin-seizoenen__stip.is-start { background: var(--ck-tuin); border-color: var(--ck-wit); }
+.tuin .tuin-seizoenen__stip.is-nu { transform: scale(1.3); border-color: var(--ck-tuin-rand); }
+.tuin .tuin-oogst__knop { min-height: 48px; padding: 6px 14px; font-size: 18px; }
+
+/* Telefoon: twee kolommen bakken, Kiki boven de antwoorden, paneel over de hele breedte */
+@container (max-width: 640px) {
+  .tuin .tuin__veld { right: calc(var(--ck-rand) + 56px); bottom: 210px; }
+  .tuin .garden__beds { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 6px 10px; }
+  .tuin .tuin-bak { width: 100%; }
+  .tuin .tuin-personage { right: var(--ck-rand); bottom: calc(var(--ck-rand) + 90px); }
+  .tuin .tuin-personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
+  .tuin .tuin-antwoord { left: var(--ck-rand); right: var(--ck-rand); align-items: center; }
+  .tuin .tuin-bellen { gap: 8px; }
+  .tuin .ck-bel { width: 68px; height: 68px; font-size: 22px; }
+  .tuin .garden-ruler, .tuin .garden-measure, .tuin .tuin-omreken-doel { bottom: 220px; }
+  .tuin .tuin-omreken-doel { left: 50%; right: auto; transform: translateX(-50%); }
+  .tuin .garden-ruler { width: calc(100% - 2 * var(--ck-rand)); grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .tuin .tuin-paneel { left: var(--ck-rand); width: auto; }
+}

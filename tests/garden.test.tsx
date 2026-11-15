@@ -170,5 +170,8 @@ test('beschadigde moestuindata wordt begrensd en het scherm toont zes bereikbare
   const html = renderToStaticMarkup(<GardenScreen onNavigate={() => {}} />);
   assert.match(html, /Mijn moestuin/);
   assert.match(html, /Vak 6:/);
-  assert.match(html, /Volgende tuindag/);
+  // Geen grijze uitgeschakelde knop: moet er eerst verzorgd worden, dan zegt Kiki dat.
+  assert.match(html, /Volgende tuindag|Verzorg eerst je geplante vakken/);
+  assert.match(html, /data-wereld="tuin"/);
+  assert.doesNotMatch(html, /<table/);
 }));
