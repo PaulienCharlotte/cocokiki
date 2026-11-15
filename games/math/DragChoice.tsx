@@ -1,14 +1,23 @@
 import React, { useRef, useState, type RefObject } from 'react';
 
 /** Pointer capture handles touch and mouse; native click/Enter is the parallel input path. */
-export default function DragChoice({ value, label, selected, disabled, targetRef, onChoose, onDrop, children }: {
-  value: number; label?: string; selected?: boolean; disabled?: boolean; targetRef: RefObject<HTMLElement | null>; onChoose: (value: number) => void; onDrop: (value: number, x: number, y: number) => void; children?: React.ReactNode;
+export default function DragChoice({ value, label, selected, disabled, targetRef, onChoose, onDrop, onOver, className = 'math-drag-tile', children }: {
+  key?: React.Key; value: number; label?: string; selected?: boolean; disabled?: boolean; targetRef: RefObject<HTMLElement | null>; onChoose: (value: number) => void; onDrop: (value: number, x: number, y: number) => void;
+  /** Meldt of het midden van het voorwerp nu boven het doel hangt. */
+  onOver?: (over: boolean) => void;
+  /** De vorm van het speelstuk; standaard de rekentegel, in de huisstijl een `.ck-bel`. */
+  className?: string; children?: React.ReactNode;
 }) {
+  const boven = (element: HTMLElement) => {
+    const tegel = element.getBoundingClientRect(), rect = targetRef.current?.getBoundingClientRect();
+    const midX = tegel.left + tegel.width / 2, midY = tegel.top + tegel.height / 2;
+    return !!rect && midX >= rect.left && midX <= rect.right && midY >= rect.top && midY <= rect.bottom;
+  };
   const origin = useRef<{ x: number; y: number; id: number } | null>(null);
   const suppressClick = useRef(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const moving = offset.x !== 0 || offset.y !== 0;
-  return <button type="button" className={`math-drag-tile${selected ? ' is-selected' : ''}${moving ? ' is-dragging' : ''}`} disabled={disabled}
+  return <button type="button" className={`${className}${selected ? ' is-selected' : ''}${moving ? ' is-dragging is-slepen' : ''}`} disabled={disabled}
     aria-label={label ?? `Getal ${value}`} aria-pressed={selected} style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
     onPointerDown={event => {
       if (event.button !== 0 || disabled || origin.current) return;
@@ -19,12 +28,12 @@ export default function DragChoice({ value, label, selected, disabled, targetRef
       const start = origin.current;
       if (!start || start.id !== event.pointerId) return;
       const x = event.clientX - start.x, y = event.clientY - start.y;
-      if (Math.hypot(x, y) > 7) setOffset({ x, y });
+      if (Math.hypot(x, y) > 7) { setOffset({ x, y }); onOver?.(boven(event.currentTarget)); }
     }} onPointerUp={event => {
       const start = origin.current;
       if (!start || start.id !== event.pointerId) return;
       const dragged = Math.hypot(event.clientX - start.x, event.clientY - start.y) > 7;
-      origin.current = null; setOffset({ x: 0, y: 0 });
+      origin.current = null; setOffset({ x: 0, y: 0 }); onOver?.(false);
       if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
       if (dragged) {
         suppressClick.current = true;

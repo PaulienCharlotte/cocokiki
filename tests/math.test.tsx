@@ -556,8 +556,11 @@ test('je kiest zelf welke tafels je oefent, ook meerdere tegelijk', () => {
 test('op een toneel staat niets los: twee vlakken, en een uitgang met een woord erbij', () => {
   // De streepjes en de tip staan samen in één balk, niet elk op een eigen chip.
   assert.match(readFileSync('games/math/MathSession.tsx', 'utf8'), /<div className="math-balk">/);
-  assert.match(readFileSync('games/math/RaceGame.tsx', 'utf8'), /checkout-paneel--boven/);
-  assert.match(readFileSync('games/math/RaceGame.tsx', 'utf8'), /checkout-paneel--onder/);
+  // Winkelgekte volgt de huisstijl: vaste zones, geen vlakken over de wereld.
+  const race = readFileSync('games/math/RaceGame.tsx', 'utf8');
+  for (const zone of ['ck-zone-status', 'ck-zone-gereedschap', 'ck-zone-personage', 'ck-zone-antwoord', 'ck-hangkaartje', 'ck-doel', 'ck-bel']) assert.match(race, new RegExp(zone));
+  assert.doesNotMatch(race, /checkout-paneel/);
+  assert.match(race, /data-wereld="school"/);
   // De uitgang is een rond icoon dat in elk spel op dezelfde plek staat.
   const header = renderToStaticMarkup(<MathHeader game="balance" level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
   assert.match(header, /aria-label="Terug naar het rekeneiland"/);

@@ -1,0 +1,74 @@
+/* Winkelgekte in de CocoKiki-huisstijl: zie docs/HUISSTIJL.md en
+   docs/voorbeelden/winkelgekte.html. Alleen variabelen en klassen uit
+   styles/cocokiki-tokens.css; hier staat alleen waar dingen in dit spel staan. */
+@import '../../styles/cocokiki-tokens.css';
+
+/* Het spel vult het hele scherm onder de vaste bovenbalk van de app, die
+   terug (zone 1) en het menu (zone 3) al levert. */
+.dream-app .math-adventure--race .math-game { padding: 0; }
+.winkelgekte.ck-scherm {
+  --wk-boven: 72px;
+  position: fixed; inset: 0; z-index: 1;
+  font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao);
+  user-select: none;
+}
+.winkelgekte .wk-wereld { position: absolute; inset: -2%; transform: translate(var(--wk-parallax, 0, 0)); transition: transform .4s ease-out; pointer-events: none; }
+
+/* 2. Statuseiland, onder de bovenbalk van de app */
+.winkelgekte .wk-status { top: var(--wk-boven); font-family: var(--ck-font-tekst); }
+.winkelgekte .wk-tijd, .winkelgekte .wk-plus { font-family: var(--ck-font-kop); font-weight: 800; font-size: max(18px, 1.6cqw); line-height: 1; }
+.winkelgekte .wk-scheid { width: 1px; height: 50%; background: var(--ck-schaduw-rand); }
+.winkelgekte .wk-stippen { display: flex; align-items: center; gap: max(5px, .5cqw); }
+.winkelgekte .wk-niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.winkelgekte .ck-status-extra { font-weight: 900; font-size: max(16px, 1.25cqw); }
+.winkelgekte .wk-kaartje { display: inline-flex; align-items: center; justify-content: center; width: max(26px, 2.6cqw); height: max(32px, 3.2cqw); border-radius: 8px; background: var(--ck-druif); box-shadow: 0 3px 0 var(--ck-druif-rand); color: var(--ck-wit); font-family: var(--ck-font-kop); }
+
+/* 4. Gereedschapsbalk */
+.winkelgekte .wk-gereedschap { top: calc(var(--wk-boven) + max(48px, 4.4cqw) + var(--ck-rand)); }
+.winkelgekte .wk-lijn { height: 1px; margin: 2px 10px; background: var(--ck-schaduw-rand); }
+.winkelgekte .ck-gereedschap:disabled { cursor: default; }
+.winkelgekte .ck-gereedschap:disabled:hover { transform: none; background: transparent; }
+
+/* 7. Speelveld: de band tussen statuseiland en de zones onderin */
+.winkelgekte .wk-speelveld { position: absolute; left: 0; right: 0; top: 34%; height: 34%; z-index: 3; pointer-events: none; }
+.winkelgekte .checkout-conveyor { position: absolute; inset: 0; width: 100%; aspect-ratio: auto; margin: 0; }
+.winkelgekte .checkout-conveyor__belt { top: 50%; }
+.winkelgekte .wk-vracht { position: absolute; top: 0; bottom: 34%; width: 28%; transform: translateX(-50%); transition: left 50ms linear; }
+.winkelgekte .wk-doel { inset: -6% -4% -4%; }
+.winkelgekte .wk-kaartjes { position: absolute; left: 0; right: 0; top: 4%; display: flex; justify-content: space-around; }
+.winkelgekte .wk-hangkaartje { position: relative; transform: none; }
+.winkelgekte .ck-hangkaartje__label { max-width: max(110px, 13cqw); white-space: nowrap; color: var(--ck-cacao); }
+.winkelgekte .ck-hangkaartje__label small { display: block; overflow: hidden; text-overflow: ellipsis; margin-top: -2px; font-family: var(--ck-font-tekst); font-weight: 900; font-size: max(14px, .95cqw); }
+
+/* 5. Personage: de ballon mag twee regels breed zijn */
+.winkelgekte .wk-personage .ck-ballon__gezicht { width: max(64px, 9.5cqw); height: max(64px, 9.5cqw); object-position: top; transition: transform .4s var(--ck-veer); }
+.winkelgekte .wk-personage .ck-ballon__tekst { margin-top: 0; max-width: min(40cqw, 520px); font-size: max(18px, 1.7cqw); animation: ck-pop .45s var(--ck-veer); }
+.winkelgekte .ck-getal { font-family: var(--ck-font-kop); }
+
+/* 6. Antwoorden of hoofdknop */
+.winkelgekte .wk-bellen { display: flex; gap: max(10px, 1.4cqw); align-items: flex-end; }
+.winkelgekte .ck-bel { padding: 0; border: 1px solid rgba(255, 255, 255, .6); isolation: isolate; }
+.winkelgekte .ck-bel:nth-child(2) { animation-delay: -.7s; }
+.winkelgekte .ck-bel:nth-child(3) { animation-delay: -1.4s; }
+.winkelgekte .ck-bel:nth-child(4) { animation-delay: -2.1s; }
+.winkelgekte .ck-bel.is-slepen { animation: none; }
+.winkelgekte .ck-bel:focus-visible, .winkelgekte .ck-gereedschap:focus-visible, .winkelgekte .ck-knop:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+
+/* Vonken bij een goed antwoord: alleen vaste kleuren */
+.winkelgekte .wk-vonk { position: absolute; width: max(9px, 1.1cqw); height: max(9px, 1.1cqw); border-radius: 50%; pointer-events: none; z-index: 40; }
+.winkelgekte .wk-vonk--0 { background: var(--ck-zon); }
+.winkelgekte .wk-vonk--1 { background: var(--ck-bes); }
+.winkelgekte .wk-vonk--2 { background: var(--ck-tuin); }
+.winkelgekte .wk-vonk--3 { background: var(--ck-wereld); }
+
+/* Telefoon: Lua boven de bellen, bellen in een rij van vier, niets overlapt */
+@container (max-width: 640px) {
+  .winkelgekte .wk-speelveld { top: 26%; height: 30%; }
+  .winkelgekte .wk-vracht { width: 56%; }
+  .winkelgekte .ck-hangkaartje__label { max-width: 100px; padding: 4px 8px; }
+  .winkelgekte .wk-personage { right: calc(var(--ck-rand) + 64px); bottom: calc(var(--ck-rand) + 96px); }
+  .winkelgekte .wk-personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
+  .winkelgekte .wk-antwoord { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
+  .winkelgekte .wk-bellen { gap: 8px; }
+  .winkelgekte .ck-bel { width: 68px; height: 68px; font-size: 26px; }
+}
