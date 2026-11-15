@@ -30,7 +30,7 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
  * tweede vormtaal naast het kaartraster dat de rest van de app gebruikt.
  * Zie `.claude/skills/cocokiki-ui`, sectie 4.
  */
-export default function LocationGameView({ location, onOpen, onDirect, onKaart, renderClipboard, initialTab = 'activities', vorm = 'kaart' }: { vorm?: 'kaart' | 'speelkaart'; location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; onKaart?: (adventureId: string) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
+export default function LocationGameView({ location, onOpen, onDirect, onKaart, renderClipboard, initialTab = 'activities', vorm = 'kaart' }: { vorm?: 'kaart' | 'plek'; location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; onKaart?: (adventureId: string) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
   const allPreviews = location.adventurePreviews ?? [];
   const clipboard = allPreviews.find(item => item.id === 'bestellingen' || item.id === 'plantenopdrachten');
   const previews = allPreviews.filter(item => item !== clipboard);

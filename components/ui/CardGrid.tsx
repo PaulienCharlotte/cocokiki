@@ -35,26 +35,38 @@ interface CardGridProps {
   /** Wat een voorleesprogramma zegt over het raster. */
   label?: string;
   className?: string;
-  /** `speelkaart`: het papieren speelkaartje uit de huisstijl, voor wereldschermen. */
-  vorm?: 'kaart' | 'speelkaart';
+  /**
+   * `plek`: een zwevende glazen bol met de tekening erin en een naamlabel,
+   * voor de wereldschermen uit de huisstijl. Geen wit vlak over de tekening.
+   */
+  vorm?: 'kaart' | 'plek';
 }
 
 export default function CardGrid({ cards, onChoose, kolommen = 3, label, className, vorm = 'kaart' }: CardGridProps) {
-  const speel = vorm === 'speelkaart';
+  const plek = vorm === 'plek';
   // Kaarten zonder tekening zijn laag; die mogen op een telefoon naast elkaar
   // blijven staan, anders wordt het één lange lijst om langs te scrollen.
   const compact = cards.every(kaart => !kaart.beeld);
-  return <ul className={`ck-kaarten is-${kolommen}${compact ? ' is-compact' : ''}${speel ? ' is-speelkaart' : ''}${className ? ` ${className}` : ''}`} aria-label={label}>
+  if (plek) return <ul className={`ck-kaarten is-plek${className ? ` ${className}` : ''}`} aria-label={label}>
+    {cards.map((kaart, index) => <li key={kaart.id} style={{ '--plek-index': index } as React.CSSProperties}>
+      <button type="button" className={`wereld-plek${kaart.actief ? ' is-actief' : ''}`} aria-pressed={kaart.actief === undefined ? undefined : kaart.actief} aria-label={kaart.onder ? `${kaart.titel}, ${kaart.onder}` : kaart.titel} onClick={() => onChoose(kaart.id)}>
+        <span className="wereld-plek__bol ck-glas" aria-hidden="true">{kaart.beeld ? <img src={kaart.beeld} alt="" loading="lazy" decoding="async" /> : kaart.icoon}</span>
+        <span className="wereld-plek__naam ck-glas" aria-hidden="true">{kaart.titel}</span>
+        {kaart.meta && <span className="wereld-plek__meta">{kaart.meta}</span>}
+      </button>
+    </li>)}
+  </ul>;
+  return <ul className={`ck-kaarten is-${kolommen}${compact ? ' is-compact' : ''}${className ? ` ${className}` : ''}`} aria-label={label}>
     {cards.map(kaart => <li key={kaart.id}>
       <button
         type="button"
-        className={`ck-kaart${speel ? ' ck-speelkaart' : ''}${kaart.actief ? ' is-actief' : ''}`}
+        className={`ck-kaart${kaart.actief ? ' is-actief' : ''}`}
         // Alleen waar een kaart aan of uit kan staan; anders zegt het niets.
         aria-pressed={kaart.actief === undefined ? undefined : kaart.actief}
         onClick={() => onChoose(kaart.id)}
       >
         {/* Een tekening vult het bovenvlak; een icoon krijgt een klein vierkantje. */}
-        {(kaart.beeld || kaart.icoon) && <span className={`ck-kaart__beeld${speel ? ' ck-speelkaart__plaatje' : ''}${kaart.beeld ? '' : ' is-icoon'}`}>
+        {(kaart.beeld || kaart.icoon) && <span className={`ck-kaart__beeld${kaart.beeld ? '' : ' is-icoon'}`}>
           {kaart.beeld ? <img src={kaart.beeld} alt="" loading="lazy" decoding="async" /> : kaart.icoon}
         </span>}
         <span className="ck-kaart__tekst">

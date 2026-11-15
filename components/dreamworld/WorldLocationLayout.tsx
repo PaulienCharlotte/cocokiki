@@ -55,7 +55,7 @@ const BEGROETING: Record<string, string> = {
 
 /**
  * Wereldscherm (laag 2) uit de huisstijl: de illustratie vult het scherm, een
- * houten naambord, het personage linksonder en de keuzes als speelkaartjes
+ * houten naambord, het personage linksonder en de keuzes als zwevende glazen bollen
  * rechts, nooit over het gezicht. Bij Coco en Kiki staat het personage al
  * groot in de tekening; daar praat alleen de ballon.
  */
@@ -98,7 +98,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         beeld: activity.image,
       }))}
       onChoose={id => open(ACTIVITIES_BY_ID[id])}
-      vorm="speelkaart"
+      vorm="plek"
     />;
   };
   if (location.presentation === 'game') return <main className={`ck-scherm wereld-scherm world-location world-location--game world-location--${location.id}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-label={location.name} style={{
@@ -111,7 +111,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     {PLAYABLE_ADVENTURES.some(item => item.definition.locationId === location.id)
       ? <AdventureRunner location={location} onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }} />
       : <LocationGameView
-        vorm="speelkaart"
+        vorm="plek"
         location={location}
         onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
         onKaart={adventureId => {

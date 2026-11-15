@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Lightbulb, Users, Volume2, VolumeX, Wallet } from 'lucide-react';
-import { validAnswer } from './engine';
+import { expressionText, resultStatus, validAnswer } from './engine';
 import DragChoice from './DragChoice';
 import type { MathLevel, MathQuestion, MathResult } from './types';
 import { MATH_LEVELS } from './types';
@@ -51,18 +51,17 @@ export function winkelKaartjes(question: MathQuestion): { tekst: string; onder?:
   }
 }
 
-/** Getallen in Lua's zin krijgen de zonnebloem-markering uit de huisstijl. */
-function metGetallen(zin: string) {
-  return zin.split(/(€?\d+)/).map((deel, i) => /\d/.test(deel) ? <span className="ck-getal" key={i}>{deel}</span> : deel);
-}
-
 const TITELS = ['Kassa-held', 'Snelle rekenaar', 'Winkelster'];
 const STIPPEN = 5;
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 import { analytics } from '../../services/analytics';
 
-export default function RaceGame({ level, onFinish, onSound = () => undefined, sound, onToggleSound, onLevel }: {
+/** Wat er na de ronde gebeurt; dat levert MathModule, die de munten bewaart. */
+export interface RaceEinde { reward: number; saved: boolean; onRetrySave: () => void; onReplay: () => void; onNext: () => void }
+
+export default function RaceGame({ level, onFinish, onSound = () => undefined, sound, onToggleSound, onLevel, einde }: {
+  einde?: RaceEinde;
   level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void;
   /** Geluid staat onderaan de gereedschapsbalk. */
   sound?: boolean; onToggleSound?: () => void;
@@ -173,11 +172,13 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
   };
   const begin = () => { analytics().start('math:race', true); orderDeadline.current = Date.now() + duur.current; setStarted(true); };
   const klaar = score % STIPPEN;
-  const zin = notice || (!started ? 'De band gaat bij elke klant een beetje sneller.'
-    : wrong !== null ? (hint ? techniqueHint(question) : 'Bijna. Kijk nog eens naar de kaartjes.')
-    // Na een goed antwoord loopt de band al door: Lua stelt meteen de nieuwe
-    // vraag, de beloning staat in het statuseiland en Lua springt op.
-    : hint ? techniqueHint(question) : question.prompt);
+  // De som staat op de band; Lua zegt alleen iets als het helpt.
+  const uitslag = einde ? resultStatus('race', level, statistics.current) : null;
+  const zin = einde ? `Je hielp ${statistics.current.correct} ${statistics.current.correct === 1 ? 'klant' : 'klanten'}. ${uitslag?.passed && level < 5 ? 'Klaar voor een sneller niveau?' : 'Nog een keer?'}`
+    : notice || (!started ? 'De band gaat bij elke klant een beetje sneller.'
+    : wrong !== null ? techniqueHint(question)
+    : hint ? techniqueHint(question) : 'Reken mee op de band.');
+  const som = `${expressionText(question.left)} = ${expressionText(question.right)}`;
   const kaartjes = winkelKaartjes(question);
   const vrachtX = 12 + travel * 73;
   const lua = CHARACTERS.lua;
@@ -185,7 +186,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
     <div className="wk-wereld" aria-hidden="true" />
 
     {/* 2. Statuseiland: tijd voor deze klant, voortgang als bolletjes en het niveau. */}
-    <div className={`ck-zone-status ck-glas wk-status${beloning !== null ? ' is-open' : ''}`}>
+    <div className={`ck-zone-status ck-glas wk-status${beloning !== null || einde ? ' is-open' : ''}`}>
       <b className="wk-tijd" aria-label={`${seconds} seconden voor deze klant`}>{seconds} s</b>
       <span className="wk-scheid" aria-hidden="true" />
       <span className="wk-stippen" role="img" aria-label={`${score} klanten geholpen`}>
@@ -194,7 +195,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
       {!started && onLevel
         ? <button type="button" className="ck-niveau wk-niveau" aria-label={`Niveau ${level}, tik voor een ander niveau`} onClick={() => onLevel(MATH_LEVELS[level % MATH_LEVELS.length])}>Niveau {level}</button>
         : <span className="ck-niveau">Niveau {level}</span>}
-      <span className="ck-status-extra" aria-live="polite">{beloning !== null && <><span className="wk-scheid" /><b className="wk-plus">+1</b>{beloning && <><span className="wk-kaartje" aria-hidden="true">★</span><span>{beloning}</span></>}</>}</span>
+      <span className="ck-status-extra" aria-live="polite">{einde ? <><span className="wk-scheid" /><span className="ck-munt wk-munt" aria-hidden="true" /><b className="wk-plus">{einde.saved ? `+${einde.reward}` : '…'}</b><span>{statistics.current.correct} klanten</span></> : beloning !== null && <><span className="wk-scheid" /><b className="wk-plus">+1</b>{beloning && <><span className="wk-kaartje" aria-hidden="true">★</span><span>{beloning}</span></>}</>}</span>
     </div>
 
     {/* 4. Gereedschap: alleen wat dit spel nodig heeft. Een rekenmachine zou de race wegnemen. */}
@@ -209,6 +210,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
       <CheckoutConveyor key={order.current} question={question} progress={travel} running={started && !finished.current} falling={falling} />
       {started && !falling && <div className="wk-vracht" style={{ left: `${vrachtX}%` }}>
         <div ref={doel} className={`ck-doel wk-doel${over ? ' is-over' : ''}`} aria-hidden="true" />
+        <div className="wk-som ck-glas" role="status" aria-label={question.prompt}>{som}</div>
         <div className="wk-kaartjes">{kaartjes.map((kaart, i) => <div className="ck-hangkaartje wk-hangkaartje" key={i} style={{ animationDelay: `${-i * 1.2}s` }}>
           <span className="ck-hangkaartje__touw" /><span className="ck-hangkaartje__label ck-glas">{kaart.tekst}{kaart.onder && <small>{kaart.onder}</small>}</span>
         </div>)}</div>
@@ -216,14 +218,19 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
     </div>
 
     {/* 5. Personage linksonder: Lua stelt de vraag. */}
-    <div className={`ck-zone-personage wk-personage${blij ? ' is-blij' : ''}`}>
+    <div className={`ck-zone-personage wk-personage${blij || (einde && uitslag?.passed) ? ' is-blij' : ''}`}>
       <img className="ck-ballon__gezicht" src={lua.beeld} alt={lua.naam} />
-      <p className="ck-ballon__tekst" role="status" key={zin}><span className="ck-ballon__naam">BABY LUA</span>{metGetallen(zin)}</p>
+      <p className="ck-ballon__tekst" role="status" key={zin}><span className="ck-ballon__naam">BABY LUA</span>{zin}</p>
     </div>
 
     {/* 6. Antwoorden rechtsonder: tik een bel of sleep hem naar de boodschappen. Voor de start één hoofdknop. */}
     <div className="ck-zone-antwoord wk-antwoord">
-      {!started ? <button className="ck-knop ck-knop--hoofd" type="button" onClick={begin}>Open de winkel</button>
+      {einde ? <div className="wk-einde">
+          {!einde.saved ? <button className="ck-knop ck-knop--hoofd" type="button" onClick={einde.onRetrySave}>Opnieuw opslaan</button>
+            : <>{uitslag?.passed && level < 5 && <button className="ck-knop ck-knop--zacht" type="button" onClick={einde.onReplay}>Nog een keer</button>}
+              <button className="ck-knop ck-knop--hoofd" type="button" onClick={uitslag?.passed && level < 5 ? einde.onNext : einde.onReplay}>{uitslag?.passed && level < 5 ? `Naar niveau ${level + 1}` : 'Nog een keer'}</button></>}
+        </div>
+        : !started ? <button className="ck-knop ck-knop--hoofd" type="button" onClick={begin}>Open de winkel</button>
         : <div className="wk-bellen" role="group" aria-label="Antwoorden" key={order.current}>
           {question.options.map((value, i) => <DragChoice key={value} value={value} label={`€${value}`} className={`ck-bel ck-glas ck-bel--${i + 1}${wrong === value ? ' is-fout' : ''}`}
             disabled={finished.current || falling} targetRef={doel} onOver={setOver} onChoose={answer} onDrop={value => answer(value)}>

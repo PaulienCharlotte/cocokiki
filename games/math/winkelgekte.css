@@ -35,6 +35,9 @@
 .winkelgekte .checkout-conveyor__belt { top: 50%; }
 .winkelgekte .wk-vracht { position: absolute; top: 0; bottom: 34%; width: 28%; transform: translateX(-50%); transition: left 50ms linear; }
 .winkelgekte .wk-doel { inset: -6% -4% -4%; }
+/* De som zelf staat groot op een glazen bord boven de boodschappen: daar kijk
+   je toch al naar. Het vraagteken is wat jij uitrekent. */
+.winkelgekte .wk-som { position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%); padding: 6px 22px; border-radius: 20px; white-space: nowrap; font-family: var(--ck-font-kop); font-weight: 800; font-size: max(30px, 3.4cqw); line-height: 1.1; color: var(--ck-cacao); animation: ck-pop .45s var(--ck-veer) both; }
 .winkelgekte .wk-kaartjes { position: absolute; left: 0; right: 0; top: 4%; display: flex; justify-content: space-around; }
 .winkelgekte .wk-hangkaartje { position: relative; transform: none; }
 .winkelgekte .ck-hangkaartje__label { max-width: max(110px, 13cqw); white-space: nowrap; color: var(--ck-cacao); }
@@ -54,6 +57,10 @@
 .winkelgekte .ck-bel.is-slepen { animation: none; }
 .winkelgekte .ck-bel:focus-visible, .winkelgekte .ck-gereedschap:focus-visible, .winkelgekte .ck-knop:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
 
+/* Na de ronde: één hoofdknop, hooguit een zachte knop ernaast */
+.winkelgekte .wk-einde { display: flex; gap: 12px; align-items: center; animation: ck-pop .5s var(--ck-veer) both; }
+.winkelgekte .wk-munt { width: max(24px, 2.2cqw); height: max(24px, 2.2cqw); }
+
 /* Vonken bij een goed antwoord: alleen vaste kleuren */
 .winkelgekte .wk-vonk { position: absolute; width: max(9px, 1.1cqw); height: max(9px, 1.1cqw); border-radius: 50%; pointer-events: none; z-index: 40; }
 .winkelgekte .wk-vonk--0 { background: var(--ck-zon); }
@@ -66,6 +73,8 @@
   .winkelgekte .wk-speelveld { top: 26%; height: 30%; }
   .winkelgekte .wk-vracht { width: 56%; }
   .winkelgekte .ck-hangkaartje__label { max-width: 100px; padding: 4px 8px; }
+  .winkelgekte .wk-som { font-size: 28px; padding: 4px 16px; }
+  .winkelgekte .wk-einde { flex-direction: column-reverse; align-items: stretch; width: 100%; }
   .winkelgekte .wk-personage { right: calc(var(--ck-rand) + 64px); bottom: calc(var(--ck-rand) + 96px); }
   .winkelgekte .wk-personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
   .winkelgekte .wk-antwoord { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
