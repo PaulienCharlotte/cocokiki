@@ -15,6 +15,7 @@ import { WORLD_LOCATIONS } from './platform/worldLocations';
 import { roomReturn, shopDestination } from './services/shopNavigation';
 import { LOCATION_ORIGINS, locationOrigin, withLocationOrigin } from './services/locationNavigation';
 
+const NurseryProjectScreen = lazy(() => import('./pages/NurseryProjectScreen'));
 const TasksScreen = lazy(() => import('./pages/TasksScreen'));
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const PrivacyScreen = lazy(() => import('./pages/PrivacyScreen'));
@@ -41,6 +42,7 @@ const NutrientMemoryScreen = lazy(() => import('./pages/NutrientMemoryScreen'));
 
 /** Waar de terugknop je brengt, per pagina. */
 const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: string }>> = {
+  'nursery-project': { path: '/opdrachten?gebied=inrichten', label: 'Terug naar To Do' },
   store: { path: '/shop', label: 'Terug naar winkels' },
   'treehouse-section': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'cooking-kitchen': { path: '/islands/cooking', label: 'Terug naar Coco' },
@@ -131,6 +133,8 @@ const App: React.FC = () => {
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
+      : current.route.page === 'nursery-project'
+      ? <NurseryProjectScreen onNavigate={navigate} />
       : current.route.page === 'tasks'
       ? <TasksScreen onNavigate={navigate} />
       : current.route.page === 'privacy'

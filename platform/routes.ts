@@ -6,6 +6,7 @@ import { MATH_GAMES } from '../games/math/config';
 export type TreehouseSectionId = 'cookbook';
 
 export type AppRoute =
+  | { page: 'nursery-project'; path: '/opdrachten/luna-babykamer' }
   | { page: 'tasks'; path: '/opdrachten' }
   | { page: 'garden'; path: '/plants/garden' }
   | { page: 'home'; path: '/' }
@@ -80,6 +81,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   const canonical = LEGACY_ROUTES[normalized] ?? normalized;
   let route: AppRoute;
   if (canonical === '/') route = { page: 'home', path: '/' };
+  else if (canonical === '/opdrachten/luna-babykamer') route = { page: 'nursery-project', path: '/opdrachten/luna-babykamer' };
   else if (canonical === '/opdrachten') route = { page: 'tasks', path: '/opdrachten' };
   else if (canonical === '/plants/garden') route = { page: 'garden', path: '/plants/garden' };
   else if (canonical === '/cooking/discover') route = { page: 'food-discovery', path: '/cooking/discover' };

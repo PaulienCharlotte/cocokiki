@@ -44,13 +44,13 @@ test('dagelijkse antwoorden en dubbele beloning slaan samen op, hulp en herladen
   assert.ok(answerDaily(day, q[2].id, q[2].opties.find(a => a !== q[2].antwoord)!));
   assert.equal(loadCurrency(), DAILY_REWARD);
 }));
-test('inrichtopdracht controleert echte plaatsingen en beloont eenmaal', () => stored(() => {
+test('de oude plaatsingsopdracht betaalt geen munten meer zonder leerwerk', () => stored(() => {
   assert.equal(claimDecorTask(), false);
   const inventory = createEmptyRoomInventory();
   const products = [DECOR_PRODUCTS.find(p => p.category === 'seating')!, DECOR_PRODUCTS.find(p => p.category === 'tables')!, DECOR_PRODUCTS.find(p => p.store === 'plants')!];
   products.forEach((p, i) => { inventory.owned[p.id] = 1; inventory.placements.push({ id: `test-${i}`, productId: p.id, room: 'living-room', x: 40, y: 60, view: 0, scale: 1 }); });
   assert.equal(commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify(inventory) }).status, 'applied'); assert.ok(decorTaskState().ready);
-  assert.ok(claimDecorTask()); assert.equal(loadCurrency(), 15); assert.equal(claimDecorTask(), false);
+  assert.equal(claimDecorTask(), false); assert.equal(loadCurrency(), 0); assert.equal(claimDecorTask(), false);
 }));
 
 test('opdrachtantwoorden gebruiken losse knoppen en Winkelgekte toont geen overbodige hulpmiddelen', async () => {
