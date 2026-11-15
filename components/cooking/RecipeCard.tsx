@@ -30,7 +30,7 @@ export default function RecipeCard({ recipe, journey, progress, compact = false,
         <strong>{recipe.name}</strong>
         {locked && <small className="recipe-card__requirement">{access.requirement}</small>}
         <span className="recipe-card__meta">
-          <span><Star size={14} />Niveau {recipe.level}</span>
+          {!recipe.homeOnly && <span><Star size={14} />Niveau {recipe.level}</span>}
           {recipe.preparationMinutes !== null && <span><Clock3 size={14} />{recipe.preparationMinutes} min</span>}
         </span>
       </span>

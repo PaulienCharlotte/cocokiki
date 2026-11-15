@@ -10,8 +10,8 @@ export function getRecipeAccess(recipe: RecipeConfig, progress?: CookingProgress
   const locked = remaining > 0 && !active && !completed;
   const issues = getRecipeIssues(recipe);
   const ready = issues.length === 0;
-  const playable = !locked && ready;
-  const status = active ? journey.stage === 'cooking' ? 'Klaar om te koken' : 'Ga verder' : completed ? 'Gemaakt' : locked ? 'Vergrendeld' : ready ? 'Nieuw' : 'Binnenkort';
+  const playable = !recipe.homeOnly && !locked && ready;
+  const status = recipe.homeOnly && ready ? 'Voor thuis' : active ? journey.stage === 'cooking' ? 'Klaar om te koken' : 'Ga verder' : completed ? 'Gemaakt' : locked ? 'Vergrendeld' : ready ? 'Nieuw' : 'Binnenkort';
   const requirement = `Maak eerst ${recipe.requiredCompletedRecipes} ${recipe.requiredCompletedRecipes === 1 ? 'verschillend recept' : 'verschillende recepten'}.`;
   return { active, completed, locked, playable, status, requirement, remaining, issues };
 }

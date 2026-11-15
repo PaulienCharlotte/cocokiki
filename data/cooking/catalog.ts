@@ -1,3 +1,4 @@
+import { SEIZOENSRECEPTEN } from './seasonalRecipes';
 import { GEZONDE_SPULLEN } from './healthyPreparations';
 import { GEZONDE_INGREDIENTEN, GEZONDE_RECEPTEN } from './healthyRecipes';
 import { BANANA_PREPARATION } from './bananaPancakeCooking';
@@ -101,6 +102,7 @@ const bananaPancakeActions = [
 }));
 
 export const RECIPES: RecipeConfig[] = [
+  ...SEIZOENSRECEPTEN,
   BLUEBERRY_MUFFINS,
   ...GEZONDE_RECEPTEN,
   {

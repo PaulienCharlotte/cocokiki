@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-11T10:35:26.920Z",
-  "count": 607,
+  "generatedAt": "2026-11-15T21:36:39.812Z",
+  "count": 613,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -527,6 +527,42 @@
     {
       "id": "assets:library:cooking:klembord",
       "path": "/assets/library/cooking/klembord.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:apple-cinnamon-porridge",
+      "path": "/assets/library/cooking/seasonal/apple-cinnamon-porridge.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:carrot-white-bean-soup",
+      "path": "/assets/library/cooking/seasonal/carrot-white-bean-soup.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:kale-bean-mash",
+      "path": "/assets/library/cooking/seasonal/kale-bean-mash.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:leek-potato-soup",
+      "path": "/assets/library/cooking/seasonal/leek-potato-soup.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:pear-oat-yogurt",
+      "path": "/assets/library/cooking/seasonal/pear-oat-yogurt.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:seasonal:pumpkin-lentil-soup",
+      "path": "/assets/library/cooking/seasonal/pumpkin-lentil-soup.webp",
       "category": "cooking",
       "format": "webp"
     },

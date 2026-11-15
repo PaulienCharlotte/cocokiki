@@ -164,6 +164,8 @@ export interface CookingAction {
 }
 
 export interface RecipeConfig {
+  homeOnly?: boolean;
+  seasonMonths?: number[];
   id: RecipeId;
   name: string;
   shortDescription: string;
@@ -184,7 +186,7 @@ export interface RecipeConfig {
   preparation?: PreparationConfig;
   education?: { math: MathChallengeConfig[]; nutrientMemory?: NutrientMemoryConfig };
   cookingTips?: CookingTip[];
-  homeRecipe?: { nutrition?: Array<{ title: string; text: string }>; sources?: Array<{ title: string; url: string }>; introduction: string; steps: string[]; safety: string; servingTip: string; allergens: string[]; optionalIngredients?: string[]; extraEquipment?: string[] };
+  homeRecipe?: { ingredients?: string[]; seasonNote?: string; nutrition?: Array<{ title: string; text: string }>; sources?: Array<{ title: string; url: string }>; introduction: string; steps: string[]; safety: string; servingTip: string; allergens: string[]; optionalIngredients?: string[]; extraEquipment?: string[] };
 }
 
 export type JourneyStage = 'overview' | 'discovery' | 'nutrient-memory' | 'challenges' | 'shopping' | 'cooking' | 'complete';

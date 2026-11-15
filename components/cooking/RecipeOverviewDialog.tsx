@@ -36,8 +36,8 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
     open
     title={recipe.name}
     onClose={onClose}
-    illustration={<CookingAssetImage src={recipe.image} alt={`Bereide ${recipe.name}`} />}
-    primaryAction={<Button
+    illustration={<CookingAssetImage src={recipe.image} alt={recipe.homeOnly ? "" : `Bereide ${recipe.name}`} />}
+    primaryAction={recipe.homeOnly ? null : <Button
       size="large"
       startIcon={access.locked ? <LockKeyhole size={20} /> : <Play size={20} />}
       disabled={!playable}
@@ -49,7 +49,7 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
     <div className="recipe-overview__facts" aria-label="Receptinformatie">
       {recipe.preparationMinutes !== null && <span><Clock3 size={19} /><strong>{recipe.preparationMinutes} min</strong></span>}
       {recipe.servings !== null && <span><Users size={19} /><strong>{recipe.servings} {recipe.servings === 1 ? 'portie' : 'porties'}</strong></span>}
-      <span><Star size={19} /><small>Niveau</small><strong>{recipe.level}</strong></span>
+      {!recipe.homeOnly && <span><Star size={19} /><small>Niveau</small><strong>{recipe.level}</strong></span>}
     </div>
 
     {(recipe.ingredients.length > 0 || recipe.equipmentIds.length > 0) && <div className="recipe-overview__needs">
@@ -79,7 +79,7 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
         </ul>
       </section>}
     </div>}
-    {playable && recipe.homeRecipe && <details className="home-recipe-preview"><summary>Complete recept voor thuis</summary><HomeRecipe recipe={recipe} /></details>}
+    {recipe.homeOnly ? <HomeRecipe recipe={recipe} /> : playable && recipe.homeRecipe && <details className="home-recipe-preview"><summary>Complete recept voor thuis</summary><HomeRecipe recipe={recipe} /></details>}
     {(canReplay || onMemoryReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
       <summary aria-label="Meer opties"><MoreHorizontal /></summary>
       {canReplay && <button type="button" onClick={() => onReplay?.(recipe)}><RotateCcw size={17} />Ontdekken oefenen</button>}

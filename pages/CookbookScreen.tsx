@@ -1,3 +1,4 @@
+import { inSeizoen } from '../data/cooking/seasonalRecipes';
 import React, { useEffect, useMemo, useState } from 'react';
 import { subscribeLocalState } from '../services/localState';
 import { COOKING_PROGRESS_KEY } from '../services/cookingProgress';
@@ -18,7 +19,7 @@ import { getRecipeAccess } from '../data/cooking/availability';
 import { getRecipeIssues } from '../data/cooking/validation';
 import { lopendeBestelling, openBestellingen } from '../services/bakeryOrders';
 
-type ActiveCategory = 'all' | 'completed' | 'preparing' | RecipeCategory;
+type ActiveCategory = 'season' | 'all' | 'completed' | 'preparing' | RecipeCategory;
 type ReplayKind = 'discovery' | 'math' | 'memory';
 
 interface CookbookScreenProps {
@@ -51,7 +52,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       if (issues.length) console.warn(`Receptconfiguratie ${recipe.id}:`, issues);
     }
   }, []);
-  const recipes = useMemo(() => RECIPES.filter(recipe => recipe.contentStatus === 'ready').filter(recipe => category === 'all' || (category === 'completed' ? Boolean(progress.completions[recipe.id]) : category === 'preparing' ? progress.journeys[recipe.id]?.stage === 'cooking' : recipe.category === category)), [category, progress]);
+  const recipes = useMemo(() => RECIPES.filter(recipe => recipe.contentStatus === 'ready').filter(recipe => category === 'all' || (category === 'season' ? inSeizoen(recipe) : category === 'completed' ? Boolean(progress.completions[recipe.id]) : category === 'preparing' ? progress.journeys[recipe.id]?.stage === 'cooking' : recipe.category === category)), [category, progress]);
 
   const handleStart = (recipe: RecipeConfig) => {
     if (!getRecipeAccess(recipe, progress).playable) return;
@@ -182,6 +183,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     <section className="recipe-library" aria-labelledby="cooking-title">
       <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>
         <nav className="recipe-categories recipe-library__filters" aria-label="Receptcategorieën">
+          <Button variant="quiet" size="small" aria-pressed={category === 'season'} onClick={() => setCategory('season')}>Nu in seizoen</Button>
           {RECIPE_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
           <button type="button" aria-pressed={category === 'completed'} onClick={() => setCategory('completed')}>Gemaakt</button>
           <button type="button" aria-pressed={category === 'preparing'} onClick={() => setCategory('preparing')}>Bereiden</button>
@@ -189,7 +191,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       <div className="recipe-library__grid" role="list" aria-live="polite" aria-label={`${recipes.length} recepten`}>
         {notice && <p role="alert">{notice}</p>}
         {recipes.map(recipe => <div role="listitem" key={recipe.id}><RecipeCard recipe={recipe} progress={progress} journey={progress.journeys[recipe.id]} onOpen={setSelected} /></div>)}
-        {recipes.length === 0 && <p className="cookbook-filter-empty">Nog geen recepten gemaakt.</p>}
+        {recipes.length === 0 && <p className="cookbook-filter-empty">Geen recepten in deze selectie.</p>}
       </div>
     </section>
     <RecipeOverviewDialog recipe={selected} progress={progress} journey={selected ? progress.journeys[selected.id] : undefined} onClose={() => setSelected(null)} onStart={handleStart} onReplay={handleDiscoveryReplay} onRestart={handleRestart} onMemoryReplay={selected && createMemoryReplay(progress, selected.id) !== progress ? handleMemoryReplay : undefined} />

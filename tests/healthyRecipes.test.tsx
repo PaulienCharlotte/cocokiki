@@ -188,3 +188,21 @@ test('alle tijdstappen gebruiken dezelfde moderne kookplaat en behouden hun time
     }
   }
 });
+
+test('seizoensrecepten zijn leesbaar en downloadbaar zonder kookspel of bestelkeuze', async () => {
+  const { SEIZOENSRECEPTEN, inSeizoen } = await import('../data/cooking/seasonalRecipes');
+  const { keuzeRecepten } = await import('../services/bakeryOrders');
+  const keuzes = keuzeRecepten(createEmptyCookingProgress());
+  for (const recipe of SEIZOENSRECEPTEN) {
+    assert.deepEqual(getRecipeIssues(recipe), [], recipe.id);
+    assert.equal(getRecipeAccess(recipe).playable, false);
+    assert.equal(getRecipeAccess(recipe).status, 'Voor thuis');
+    assert.ok(!keuzes.some(item => item.id === recipe.id));
+    assert.ok(existsSync(`public/recipes/${recipe.id}.html`));
+    const html = renderToStaticMarkup(<HomeRecipeContent recipe={recipe} />);
+    for (const ingredient of recipe.homeRecipe!.ingredients!) assert.ok(html.includes(ingredient));
+    assert.ok(html.includes('Met het seizoen mee'));
+    assert.ok(inSeizoen(recipe, 11));
+    assert.ok(!inSeizoen(recipe, 7));
+  }
+});

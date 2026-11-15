@@ -34,6 +34,12 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
 }
 export function getRecipeIssues(recipe: RecipeConfig): string[] {
   const issues: string[] = [];
+  if (recipe.homeOnly) {
+    const home = recipe.homeRecipe;
+    if (recipe.contentStatus !== 'ready' || !home?.ingredients?.length || !home.steps.length || !home.safety || !home.allergens.length || !recipe.servings || !recipe.preparationMinutes) issues.push('home-recipe-incomplete');
+    if (!hasCookingAsset(recipe.image)) issues.push('asset-missing');
+    return issues;
+  }
   const preparation = recipe.preparation;
   if (recipe.education?.nutrientMemory?.enabled) issues.push(...memoryConfigIssues(recipe.education.nutrientMemory));
   const tips = recipe.cookingTips ?? [];
