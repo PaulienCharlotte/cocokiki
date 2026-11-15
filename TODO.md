@@ -175,6 +175,10 @@ open TODO's en zijn geen juridische vrijgave.
 
 ## Opdrachten verder uitbouwen
 
+- [x] Luna’s babykamer als eerste speelbare projectopdracht: meten, een apart budget van 500, meubels kiezen, totaal en wisselgeld berekenen en inrichten.
+- [x] Belonen voor zelfstandig rekenwerk en aflevering (maximaal 100 CocoCoins); geholpen stappen betalen niets. De oude plaatsingsbonus is vervallen.
+- [x] Het algemene To Do-overzicht een neutrale header geven zonder keuken-klembord.
+- [ ] Speeltest Luna: benodigde tijd, begrip van het projectbudget, hulpgebruik en verhouding tot winkelprijzen beoordelen.
 - [x] Winkelgekte bereikbaar maken vanuit het opdrachtenoverzicht.
 - [ ] Pilot ‘Een maaltijd voor de buurt’: porties plannen → moestuin aanleggen → oogsten → boodschappen → koken → afleveren. Uitwerking: `docs/langlopende-opdrachten.md`.
 - [ ] Opgeslagen missieruns en stapbewijzen koppelen aan bestaande spelservices, met eenmalige beloningen en echte voorraadtransacties.

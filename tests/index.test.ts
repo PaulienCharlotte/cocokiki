@@ -44,3 +44,5 @@ import "./redactieNavigation.test";
 import './garden.test';
 
 import './tasks.test';
+
+import './nurseryProject.test';

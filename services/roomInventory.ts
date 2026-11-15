@@ -32,7 +32,7 @@ export interface RoomPlacement {
 export const MIN_PLACEMENT_SCALE = .6;
 // Een douchecabine of een kast moet echt groot kunnen; 1,8 was te krap.
 export const MAX_PLACEMENT_SCALE = 3;
-const SCALE_STEP = .15;
+export const SCALE_STEP = .15;
 
 function clampScale(value: unknown): number {
   const scale = typeof value === 'number' && Number.isFinite(value) ? value : 1;

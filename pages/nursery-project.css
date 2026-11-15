@@ -1,0 +1,36 @@
+.nursery-project { min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-5)) var(--space-4) var(--space-8); background: var(--color-honey) url('/dreamworld/to-do-board.webp') center / cover fixed; }
+.nursery-project__paper { max-width: 62rem; margin: auto; padding: var(--space-5); display: grid; gap: var(--space-4); border-radius: var(--radius-card); background: var(--color-surface-soft); box-shadow: var(--shadow-soft); }
+.nursery-project__header { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.nursery-project__header h1 { margin: 0; font-size: var(--font-size-xl); }
+.nursery-project__header > span { margin-left: auto; font-size: var(--font-size-sm); color: var(--color-text-muted); }
+.nursery-project__preview { width: 100%; max-height: 16rem; object-fit: cover; border-radius: var(--radius-control); }
+.nursery-project p { margin: 0; }
+.nursery-measure, .nursery-budget { padding: var(--space-4); border-radius: var(--radius-control); background: var(--color-success-soft); display: flex; gap: var(--space-3); align-items: center; }
+.nursery-measure svg { flex: none; }
+.nursery-answer { display: grid; gap: var(--space-3); }
+.nursery-answer label { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.nursery-answer input { width: 7rem; min-height: var(--touch-target); font: inherit; padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); }
+.nursery-shop { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
+.nursery-shop > button { font: inherit; color: var(--color-text); display: grid; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-control); background: var(--color-surface); cursor: pointer; }
+.nursery-shop > button[aria-pressed=true] { outline: 2px solid var(--color-primary); background: var(--color-success-soft); }
+.nursery-shop img { width: 100%; height: 8rem; object-fit: contain; }
+.nursery-receipt { list-style: none; padding: 0; margin: 0; }
+.nursery-receipt li { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border-bottom: 1px solid var(--color-border); }
+.nursery-receipt img { width: var(--space-12); height: var(--space-12); object-fit: contain; }
+.nursery-receipt strong { margin-left: auto; }
+.nursery-room { width: 100%; position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius-control); }
+.nursery-room__background { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.nursery-room > button { position: absolute; padding: 0; background: transparent; border: 0; transform: translate(-50%, -100%); min-width: 0; cursor: grab; touch-action: none; }
+.nursery-room > button svg { display: block; width: 100%; height: auto; pointer-events: none; }
+.nursery-room > button:disabled { opacity: 1; cursor: default; filter: none; }
+.nursery-room > button[aria-pressed=true] { outline: 2px dashed var(--color-primary); }
+@media (max-width: 600px) { .nursery-project { padding-inline: var(--space-2); } .nursery-project__paper { padding: var(--space-3); } .nursery-shop { grid-template-columns: repeat(2, minmax(0, 1fr)); } .nursery-room { min-height: 15rem; } }
+
+
+
+.nursery-project__header > .ck-icon-button:last-child { margin-left: auto; }
+.nursery-room > button { transition: none; user-select: none; -webkit-user-select: none; }
+.nursery-room > button.is-dragging { cursor: grabbing; will-change: left, top; z-index: 100 !important; }
+.nursery-adjust { display: flex; justify-self: center; gap: var(--space-1); padding: var(--space-1); background: var(--color-surface-glass); border-radius: var(--radius-pill); }
+
+.nursery-room > button::after { content: ''; position: absolute; top: 0; width: 100%; height: 100%; min-width: var(--touch-target); min-height: var(--touch-target); left: 50%; transform: translateX(-50%); }
