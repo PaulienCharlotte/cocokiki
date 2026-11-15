@@ -14,6 +14,8 @@ import type { MathGameId, MathLevel, MathResult } from './types';
 import { maakRedactiedeck, steunVoorNiveau } from './redactie/catalogus';
 import type { Redactiesom } from './redactie/types';
 import RedactieChallenge from './RedactieChallenge';
+import type { Blad } from './redactie/bladen';
+import { bewaarBlad, laadBladen } from './redactie/bladVoortgang';
 import { maakMatendeck, type Maatvraag } from './maten/vragen';
 import MatenChallenge from './MatenChallenge';
 import MathHelp from './MathHelp';
@@ -22,12 +24,16 @@ import { techniqueHint } from './techniqueHint';
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 import { analytics } from '../../services/analytics';
 
-export default function MathSession({ game, level, onFinish, onSound = () => undefined, onVraag }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void }) {
+export default function MathSession({ game, level, blad, onFinish, onSound = () => undefined, onVraag }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; blad?: Blad; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void }) {
   useActivityAnalytics(game === 'maten' ? null : `math:${game}`);
-  const [questions] = useState(() => game === 'add-subtract' ? maakRedactiedeck(level) : game === 'maten' ? maakMatendeck(level) : createQuestionDeck(game, level));
-  const [index, setIndex] = useState(0);
-  const [bezocht, setBezocht] = useState([0]);
-  const redactieAntwoorden = useRef<RedactieAntwoorden>({});
+  // Een huiswerkblad heeft vaste sommen; anders komt er elke ronde een nieuw deck.
+  const [questions] = useState(() => blad ? blad.sommen : game === 'add-subtract' ? maakRedactiedeck(level) : game === 'maten' ? maakMatendeck(level) : createQuestionDeck(game, level));
+  // Op een blad ga je verder waar je gebleven was.
+  const [bewaard] = useState<RedactieAntwoorden>(() => blad ? laadBladen()[blad.nr] ?? {} : {});
+  const eerste = Math.max(0, questions.findIndex((_, i) => !Object.hasOwn(bewaard, i)));
+  const [index, setIndex] = useState(eerste);
+  const [bezocht, setBezocht] = useState([eerste]);
+  const redactieAntwoorden = useRef<RedactieAntwoorden>(bewaard);
   const [selected, setSelected] = useState<number>();
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [hint, setHint] = useState(false);
@@ -83,6 +89,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
     onSound(valid);
     if (game === 'add-subtract') {
       redactieAntwoorden.current = noteerRedactieAntwoord(redactieAntwoorden.current, index, valid);
+      if (blad) bewaarBlad(blad.nr, redactieAntwoorden.current);
       answered.current = true; setFeedback(valid ? 'correct' : 'wrong');
       return;
     }
@@ -114,7 +121,7 @@ export default function MathSession({ game, level, onFinish, onSound = () => und
     {!toneel && balk}
     <div className={`math-challenge math-challenge--${question.kind}`} key={foutenMogen ? 'redactie' : question.id}>
       {game === 'divide' && question.kind === 'distribution' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
-        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={steunVoorNiveau(level)} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
+        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={blad ? 'volledig' : steunVoorNiveau(level)} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
         : game === 'maten' ? <MatenChallenge vraag={question as Maatvraag} locked={feedback === 'correct'} gekozen={selected} onAnswer={answer} />
         : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
         : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />

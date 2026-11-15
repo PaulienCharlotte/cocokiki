@@ -11,7 +11,8 @@ import type { MathLevel, MathQuestion } from '../types';
  */
 
 /** Hoe een getal gelezen en vergeleken wordt. */
-export type Soort = 'getal' | 'euro';
+/** 'tijd' is een kloktijd als 7.20: uren, een punt, minuten. */
+export type Soort = 'getal' | 'euro' | 'tijd';
 
 export interface Stap {
   /** Wat je in deze stap doet, in gewone woorden. */
@@ -35,6 +36,11 @@ export interface Stap {
   verborgen?: boolean;
   /** De tip als je bij déze stap vastloopt. */
   tip: string;
+  /**
+   * Een antwoord dat geen getal is ('Wie krijgt het minst?'): je kiest uit
+   * deze woorden, en `antwoord` is de plek van het goede in de lijst.
+   */
+  keuzes?: string[];
 }
 
 export interface Redactiesom extends MathQuestion {
@@ -53,6 +59,8 @@ export interface Redactiesom extends MathQuestion {
    * alleen een overhoring.
    */
   vraagSoort?: boolean;
+  /** Een tekening die bij het verhaal hoort, zoals de doos met het touw. */
+  beeld?: string;
 }
 
 export interface Sometype {
@@ -67,6 +75,10 @@ export interface Sometype {
   maak(level: MathLevel, index: number, random: () => number): Redactiesom;
 }
 
+/** Afronden op een miljoenste, zoals evalueerSom dat ook doet. */
+export const rond = (waarde: number) => Math.round(waarde * 1e6) / 1e6;
+/** Een bedrag zoals het in de tekst staat, zonder euroteken: 2,70. */
+export const bedrag = (waarde: number) => waarde.toFixed(2).replace('.', ',');
 export const euro = (bedrag: number) => `€ ${bedrag.toFixed(2).replace('.', ',')}`;
 /** Nederlandse komma; 20.25 leest als 20,25. */
 export const getal = (waarde: number) => waarde.toLocaleString('nl-NL', { maximumFractionDigits: 6 });
@@ -135,7 +147,8 @@ export function evalueerSom(som: string, eerdere: Array<number | null>, afronden
     const waarde = eerdere[Number(nummer) - 1];
     return waarde === null || waarde === undefined ? 'leeg' : String(waarde);
   });
-  const stukken = ingevuld.trim().split(/\s+/);
+  // Sommen mogen een Nederlandse komma hebben: '2,70 ÷ 6'.
+  const stukken = ingevuld.trim().split(/\s+/).map(stuk => stuk.replace(',', '.'));
   let uitkomst = Number(stukken[0]);
   if (!Number.isFinite(uitkomst)) return null;
   for (let i = 1; i < stukken.length; i += 2) {

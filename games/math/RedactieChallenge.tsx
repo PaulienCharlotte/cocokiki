@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Check, Highlighter, Info, X } from 'lucide-react';
 import MathHelp from './MathHelp';
-import { REDACTIE_TYPEN, REDACTIE_TYPEN_BY_ID, type Steun } from './redactie/catalogus';
-import { euro, evalueerSom, getal, planOpties, somTekst, type Redactiesom } from './redactie/types';
+import ChoiceList from '../../components/ui/ChoiceList';
+import { REDACTIE_TYPEN_BY_ID, soortKeuzes, type Steun } from './redactie/catalogus';
+import { euro, evalueerSom, getal, planOpties, somTekst, type Redactiesom, type Stap } from './redactie/types';
 
 /**
  * Een redactiesom, in de volgorde waarin je hem hoort aan te pakken.
@@ -17,13 +18,20 @@ import { euro, evalueerSom, getal, planOpties, somTekst, type Redactiesom } from
  * Vastlopen hoeft niet: de tip van Lua heeft drie treden, van 'wat zoek je'
  * naar de aanpak naar de eerste som. Zie docs/redactiesommen.md.
  */
-const GETAL = /(\d+(?:[.,]\d+)?)/g;
+const GETAL = /(\d+(?:[.,]\d+)*)/g;
 /** Zo lang staat de laatste tip op slot: even denken voor je hem opent. */
 const DENKTIJD_MS = 3000;
 
 type Fase = 'markeren' | 'soort' | 'plan' | 'rekenen' | 'nakijken';
 
-const schrijf = (waarde: number, euroTeken?: boolean) => (euroTeken ? euro(waarde) : getal(waarde));
+/** Een antwoord opschrijven zoals het bij die stap hoort: € 2,50, 7.20 of een naam. */
+const schrijf = (waarde: number, stap?: Stap) => (
+  stap?.keuzes ? stap.keuzes[waarde] ?? '?'
+    : stap?.soort === 'euro' ? euro(waarde)
+    : stap?.soort === 'tijd' ? waarde.toFixed(2)
+    : getal(waarde));
+/** Wat er bij een stap hoort; een som die niet na te rekenen is (een kloktijd, een keuze) telt het vaste antwoord. */
+const hoortBij = (stap: Stap, eerdere: Array<number | null>) => evalueerSom(stap.som, eerdere, stap.afronden) ?? stap.antwoord;
 
 export default function RedactieChallenge({ question, steun, locked, onAnswer, onVerder }: {
   question: Redactiesom; steun: Steun; locked: boolean;
@@ -79,7 +87,11 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
   const verstuur = (event: React.FormEvent) => {
     event.preventDefault();
     if (waarde.trim() === '') return;
-    const getal = Number(waarde.replace(',', '.'));
+    // Een kloktijd mag ook met een dubbele punt: 7:20 is 7.20.
+    lever(Number(waarde.replace(',', '.').replace(':', '.')));
+  };
+
+  const lever = (getal: number) => {
     if (!Number.isFinite(getal)) return;
     const volgende = [...antwoorden, getal];
     setAntwoorden(volgende);
@@ -94,8 +106,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
   const oordeel = question.stappen.map((item, i) => {
     const gegeven = antwoorden[i];
     if (gegeven === undefined || gegeven === null) return null;
-    const hoort = evalueerSom(item.som, antwoorden.slice(0, i), item.afronden);
-    return hoort !== null && Math.abs(gegeven - hoort) < 0.005;
+    return Math.abs(gegeven - hoortBij(item, antwoorden.slice(0, i))) < 0.005;
   });
   const eersteFout = oordeel.findIndex(goed => goed === false);
   // Alleen helemaal goed als élke stap klopte. Het eindantwoord kan per
@@ -108,7 +119,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
     : trede === 2 ? type?.aanpak ?? question.hint
     : stap?.tip ?? '';
 
-  const verhaal = <p className="redactie-verhaal">
+  const verhaal = <>{question.beeld && <img className="redactie-beeld" src={question.beeld} alt="" />}<p className="redactie-verhaal">
     {/* Split met een vangende groep wisselt tekst en getal af, dus een deel
         dat met een cijfer begint ís het getal. */}
     {delen.map((deel, i) => (/^\d/.test(deel)
@@ -120,7 +131,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
           onClick={() => tik(deel, i)}
         >{deel}</button>
       : <span key={i}>{deel}</span>))}
-  </p>;
+  </p></>;
 
   if (fase === 'nakijken') return <div className="redactie">
     {verhaal}
@@ -130,16 +141,16 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
       <ol className="redactie-nakijk">
         {question.stappen.map((item, i) => <li key={i} className={oordeel[i] ? 'is-goed' : 'is-mis'}>
           {oordeel[i] ? <Check size={17} aria-hidden="true" /> : <X size={17} aria-hidden="true" />}
-          <span>{item.verborgen ? item.vraag : `${somTekst(question.stappen, i, question.stappen.length, true, antwoorden)} =`} <strong>{schrijf(antwoorden[i] ?? 0, item.soort === 'euro')}</strong></span>
+          <span>{item.verborgen ? item.vraag : `${somTekst(question.stappen, i, question.stappen.length, true, antwoorden)} =`} <strong>{schrijf(antwoorden[i] ?? 0, item)}</strong></span>
           <small>{item.eenheid}</small>
-          {!oordeel[i] && <em>hier hoort {schrijf(evalueerSom(item.som, antwoorden.slice(0, i), item.afronden) ?? item.antwoord, item.soort === 'euro')}</em>}
+          {!oordeel[i] && <em>hier hoort {schrijf(hoortBij(item, antwoorden.slice(0, i)), item)}</em>}
         </li>)}
       </ol>
       <p className="redactie-oordeel" role="status">
         {helemaalGoed ? 'Helemaal goed gerekend.'
           : eersteFout >= 0 && eersteFout < question.stappen.length - 1 && oordeel.slice(eersteFout + 1).every(Boolean)
             ? `Het ging mis bij stap ${eersteFout + 1}. Daarna heb je met jouw eigen getal wél goed doorgerekend.${eindGoed ? ' Je eindantwoord klopt toch.' : ''}`
-            : `Het juiste antwoord is ${schrijf(question.answer, question.stappen.at(-1)?.soort === 'euro')}.`}
+            : `Het juiste antwoord is ${schrijf(question.answer, question.stappen.at(-1))}.`}
       </p>
 
       {type && <div className="redactie-aanpak">
@@ -161,7 +172,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
     {fase === 'soort' && <div className="redactie-plan">
       <p className="redactie-opdracht">Wat voor soort som is dit?</p>
       <div className="redactie-soorten">
-        {REDACTIE_TYPEN.slice(0, 4).map(keuze => <span key={keuze.id} className="redactie-soort">
+        {soortKeuzes(question.typeId, question.id).map(keuze => <span key={keuze.id} className="redactie-soort">
           <button type="button" className={soort === keuze.id && keuze.id !== question.typeId ? 'is-mis' : undefined}
             onClick={() => kiesSoort(keuze.id)}>{keuze.naam}</button>
           <button
@@ -200,10 +211,13 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
             <span className="math-workbench__equation">
               {!item.verborgen && <span>{somTekst(question.stappen, i, index, false, antwoorden)} =</span>}
               {klaar
-                ? <output>{schrijf(antwoorden[i] ?? 0, item.soort === 'euro')}</output>
+                ? <output>{schrijf(antwoorden[i] ?? 0, item)}</output>
+                : nu && item.keuzes
+                  ? <ChoiceList label={item.vraag} choices={item.keuzes.map((keuze, k) => ({ id: String(k), label: keuze }))} onChoose={id => lever(Number(id))} />
                 : nu
                   ? <input
                       aria-label={item.vraag} autoFocus inputMode="decimal" type="text"
+                      placeholder={item.soort === 'tijd' ? '0.00' : undefined}
                       value={waarde} onChange={event => setWaarde(event.target.value)} required
                     />
                   : <output aria-label="nog niet aan de beurt">?</output>}
@@ -212,10 +226,10 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
           </li>;
         })}
       </ol>
-      <button type="submit" disabled={waarde.trim() === ''}>
+      {!stap?.keuzes && <button type="submit" disabled={waarde.trim() === ''}>
         {index === question.stappen.length - 1 ? 'Dit is het antwoord' : 'Volgende stap'}
         <ArrowRight size={18} aria-hidden="true" />
-      </button>
+      </button>}
     </form>}
 
     {!locked && fase !== 'markeren' && <MathHelp open={trede > 0} onToggle={() => setTrede(trede > 0 ? 0 : 1)}>

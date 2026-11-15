@@ -118,15 +118,16 @@ Regels voor `maak`:
 
 ## Wat er nog bij moet
 
-Uit de werkbladen van groep 7/8 komen deze typen; de eerste vier zijn af.
+Uit de werkbladen van groep 7/8 komen deze typen. Sinds 15 november 2026 zijn
+ze alle negentien ingebouwd: ritjessom · paaltjessom · tijdsom · procentsom ·
+prijs per stuk · dozijn en gros · wisselgeld · breuksom (en omgekeerd) ·
+kalendersom · snelheid · matensom · omtrek of oppervlakte · inhoud ·
+som-en-verschil · verdeelsom met rest · terugrekensom · schaal · gemiddelde ·
+strikvraag met een overbodig getal.
 
-Af: ritjessom · paaltjessom · tijdsom · procentsom.
-
-Nog te doen: prijs per stuk · dozijn en gros · winkelsom met wisselgeld ·
-breukdeel van een hoeveelheid (en omgekeerd) · kalendersom · snelheid ·
-maten omrekenen · omtrek en oppervlakte · inhoud · som en verschil ·
-verdeelsom met rest · omgekeerd redeneren · schaal · gemiddelde ·
-strikvragen met een overbodig getal.
+Een ronde schudt de soorten van het niveau en pakt er tien sommen uit, dus
+elke ronde komen andere soorten aan de beurt. Bij 'wat voor soort som is
+dit?' staan vier keuzes: de juiste en drie andere (`soortKeuzes`).
 
 ## De rekenmachine
 

@@ -8,7 +8,7 @@ import Maten from './Maten';
 import { resultStatus } from './engine';
 import { MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
 
-export function MathHeader({ game, level, progress, onBack, onHome = onBack, onLevel, coins = 0, sound = false, onSound, vraag = '' }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onHome?: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void; vraag?: string }) {
+export function MathHeader({ game, level, progress, onBack, onHome = onBack, onLevel, coins = 0, sound = false, onSound, vraag = '', zonderNiveau = false }: { game: MathGameId | null; level: MathLevel; progress: MathProgress; onBack: () => void; onHome?: () => void; onLevel: (level: MathLevel) => void; coins?: number; sound?: boolean; onSound?: () => void; vraag?: string; zonderNiveau?: boolean }) {
   const config = game ? MATH_GAMES_BY_ID[game] : null;
   // Alleen bij de redactiesommen: daar oefen je de aanpak, niet het
   // hoofdrekenen. Bij de tafels en de race zou een rekenmachine het spel
@@ -20,7 +20,7 @@ export function MathHeader({ game, level, progress, onBack, onHome = onBack, onL
     <button className="math-icon-tool math-terug" type="button" aria-label={game ? 'Terug naar het rekeneiland' : 'Terug naar School'} title={game ? 'Rekeneiland' : 'School'} onClick={onBack}><ArrowLeft size={20} aria-hidden="true" /></button>
     <button className="math-header-brand" type="button" onClick={onHome} aria-label="Naar de wereld"><img src="/images/cocokiki-logo.webp" alt="CocoKiki" /></button>
     <h1>{config?.title ?? 'Rekenavonturen'}</h1>
-    {game && config && <MathLevelSlider game={game} level={level} progress={progress} onLevel={onLevel} />}
+    {game && config && !zonderNiveau && <MathLevelSlider game={game} level={level} progress={progress} onLevel={onLevel} />}
     <span className="math-wallet" aria-label={`${coins} CocoCoins`}><CocoCoin size={24} />{coins}</span>
     {game === 'add-subtract' && <button type="button" className="math-icon-tool" aria-label="Rekenmachine openen" title="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={20} aria-hidden="true" /></button>}
     {/* Maten zijn naslag, geen hulp bij het antwoord: die staan bij elk
@@ -51,9 +51,14 @@ export function MathLevelSlider({ game, level, progress, onLevel }: { game: Math
     <small>{config.objectives[level - 1]}</small>
   </div>;
 }
-export function MathCompletion({ game, level, result, reward, saved, onRetrySave, onReplay, onNext, onBack }: {
-  game: MathGameId; level: MathLevel; result: MathResult; reward: number; saved: boolean; onRetrySave: () => void; onReplay: () => void; onNext: () => void; onBack: () => void;
+export function MathCompletion({ game, level, blad, result, reward, saved, onRetrySave, onReplay, onNext, onBack }: {
+  game: MathGameId; level: MathLevel; blad?: number; result: MathResult; reward: number; saved: boolean; onRetrySave: () => void; onReplay: () => void; onNext: () => void; onBack: () => void;
 }) {
+  // Een huiswerkblad is af: je ziet hoeveel er goed is, net als onderaan het papier.
+  if (blad !== undefined) return <Dialog className="math-completion" open title={`Blad ${blad} is af!`} onClose={onBack}
+    description={`Aantal sommen goed: ${result.correct} van de ${result.total}`}
+    primaryAction={<Button onClick={onBack}>Terug naar de bladen</Button>}
+    secondaryAction={<Button variant="secondary" onClick={onReplay}>Blad opnieuw maken</Button>} />;
   const status = resultStatus(game, level, result);
   return <Dialog className="math-completion" open title={status.passed ? 'Goed gerekend!' : 'Elke keer leer je meer!'} onClose={onBack}
     description={game === 'race' ? `Je hebt ${result.correct} klanten geholpen! ${result.score} punten verdiend!` : `${result.correct} van de 10 meteen goed`}
