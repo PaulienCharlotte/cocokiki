@@ -1,0 +1,339 @@
+/* =========================================================
+   CocoKiki huisstijl — het ENIGE bron-bestand voor kleuren,
+   letters, vormen en beweging. Verzin nooit eigen waarden:
+   gebruik altijd deze variabelen en klassen.
+   Uitleg: zie docs/HUISSTIJL.md
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap");
+
+:root {
+  /* ---- Wereldkleuren (komen van de knoppen op het eiland) ---- */
+  --ck-keuken: #FF6B3D;   --ck-keuken-rand: #D24A1F;   /* bakken, koken */
+  --ck-tuin: #3FBF5A;     --ck-tuin-rand: #2A8F40;     /* kas, moestuin, plantendokter */
+  --ck-school: #22B59A;   --ck-school-rand: #15836F;   /* rekenen, taal, los oefenen */
+  --ck-wereld: #3AA8F5;   --ck-wereld-rand: #1F7CC0;   /* topo, vlaggen, klok */
+  --ck-boomhut: #FFB52E;  --ck-boomhut-rand: #D98A0B;  /* inrichten, meubels */
+
+  /* ---- Vaste kleuren: overal dezelfde betekenis ---- */
+  --ck-zon: #FFC93A;      --ck-zon-rand: #D79A14;      /* munten, sterren, getallen markeren */
+  --ck-bes: #FF5FA2;      --ck-bes-rand: #D23C7E;      /* namen van personages, hartjes */
+  --ck-druif: #9B6BFF;    --ck-druif-rand: #6E44D1;    /* bonus, verzamelkaart, zeldzaam */
+  --ck-hout: #C9824A;     --ck-hout-licht: #E3A86E;    --ck-hout-donker: #8A4E25;
+
+  /* ---- Basis ---- */
+  --ck-room: #FFF8EC;          /* papier en kaartjes */
+  --ck-plekje: #F6EFE8;        /* vlakje achter een illustratie in een kaartje */
+  --ck-cacao: #4A2A1A;         /* alle tekst */
+  --ck-cacao-zacht: #8A6A55;   /* bijtekst */
+  --ck-wit: #FFFFFF;           /* tekstballonnen */
+  --ck-glas: rgba(255, 248, 236, 0.74);
+  --ck-glas-rand: rgba(255, 255, 255, 0.75);
+  --ck-schaduw-rand: rgba(138, 78, 37, 0.20);
+
+  /* ---- Actieve wereld (wordt per wereld overschreven, zie onder) ---- */
+  --ck-actief: var(--ck-school);
+  --ck-actief-rand: var(--ck-school-rand);
+
+  /* ---- Letters ---- */
+  --ck-font-kop: "Baloo 2", system-ui, sans-serif;   /* koppen, knoppen, getallen */
+  --ck-font-tekst: "Nunito", system-ui, sans-serif;  /* alle andere tekst, altijd vet (700+) */
+  --ck-maat-titel: clamp(32px, 4vw, 46px);
+  --ck-maat-kop: 26px;
+  --ck-maat-ballon: 23px;
+  --ck-maat-knop: 22px;
+  --ck-maat-tekst: 18px;       /* nooit kleiner dan 16px */
+  --ck-maat-klein: 14px;       /* alleen voor labels en "Lees meer" */
+  --ck-maat-speelgetal: 40px;
+
+  /* ---- Vormen ---- */
+  --ck-rond-knop: 20px;
+  --ck-rond-tegel: 22px;
+  --ck-rond-kaart: 24px;
+  --ck-rond-paneel: 28px;
+  --ck-tik-min: 56px;          /* alles wat je tikt is minstens zo hoog */
+  --ck-onderkant: 6px;         /* dikte van het 3D-randje onder knoppen */
+
+  /* ---- Beweging ---- */
+  --ck-snel: 90ms;
+  --ck-normaal: 220ms;
+  --ck-veer: cubic-bezier(.34, 1.56, .64, 1);   /* stuiterend binnenkomen */
+}
+
+/* Zet op <body> of de wereld-container: data-wereld="keuken|tuin|school|wereld|boomhut" */
+[data-wereld="keuken"]  { --ck-actief: var(--ck-keuken);  --ck-actief-rand: var(--ck-keuken-rand); }
+[data-wereld="tuin"]    { --ck-actief: var(--ck-tuin);    --ck-actief-rand: var(--ck-tuin-rand); }
+[data-wereld="school"]  { --ck-actief: var(--ck-school);  --ck-actief-rand: var(--ck-school-rand); }
+[data-wereld="wereld"]  { --ck-actief: var(--ck-wereld);  --ck-actief-rand: var(--ck-wereld-rand); }
+[data-wereld="boomhut"] { --ck-actief: var(--ck-boomhut); --ck-actief-rand: var(--ck-boomhut-rand); }
+
+/* =========================================================
+   DE VIER OPPERVLAKKEN — elk scherm gebruikt alleen deze
+   ========================================================= */
+
+/* 1. Vloeibaar glas: bovenbalk, gereedschapsbalk, panelen, bellen.
+      De glans volgt de muis/vinger via --ck-glans-x (zet met JS, standaard 30%). */
+.ck-glas {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .46), rgba(255, 255, 255, .16));
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: var(--ck-rond-paneel);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .9), inset 0 -8px 20px rgba(255, 255, 255, .12), 0 12px 32px rgba(40, 20, 5, .25);
+}
+.ck-glas::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 60% at var(--ck-glans-x, 30%) -10%, rgba(255, 255, 255, .75), transparent 55%);
+  mix-blend-mode: soft-light;
+}
+
+/* 2. Papier: kaartjes met een illustratie of korte tekst */
+.ck-papier {
+  background: var(--ck-room);
+  border-radius: var(--ck-rond-kaart);
+  box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 14px 28px rgba(74, 42, 26, .12);
+}
+
+/* 3. Hout: naamborden van werelden, titels, To Do */
+.ck-hout {
+  background: linear-gradient(180deg, var(--ck-hout-licht), var(--ck-hout));
+  border: 3px solid var(--ck-hout-donker);
+  border-radius: 18px;
+  color: var(--ck-room);
+  font-family: var(--ck-font-kop);
+  font-weight: 800;
+  text-shadow: 0 2px 0 var(--ck-hout-donker);
+  box-shadow: 0 6px 0 var(--ck-hout-donker);
+}
+
+/* 4. Speelstuk: zie .ck-knop en .ck-tegel */
+
+/* =========================================================
+   KNOPPEN
+   ========================================================= */
+.ck-knop {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: var(--ck-tik-min);
+  padding: 12px 28px;
+  border: 0;
+  border-radius: var(--ck-rond-knop);
+  font-family: var(--ck-font-kop);
+  font-weight: 800;
+  font-size: var(--ck-maat-knop);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .15);
+  cursor: pointer;
+  transition: transform var(--ck-snel), box-shadow var(--ck-snel);
+}
+.ck-knop:hover { transform: translateY(-2px); }
+.ck-knop:active { transform: translateY(var(--ck-onderkant)); box-shadow: 0 0 0 transparent; }
+
+/* Hoofdknop: één per scherm, altijd in de kleur van de actieve wereld */
+.ck-knop--hoofd { background: var(--ck-actief); box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); }
+
+/* Tweede knop: glas */
+.ck-knop--zacht {
+  background: var(--ck-glas); color: var(--ck-cacao); text-shadow: none;
+  border: 1.5px solid #fff; box-shadow: 0 5px 0 var(--ck-schaduw-rand);
+}
+
+/* Ronde icoonknop (terug, rekenmachine, geluid) */
+.ck-knop--rond { width: var(--ck-tik-min); height: var(--ck-tik-min); padding: 0; border-radius: 50%; }
+
+/* Klein linkje onder de knoppen ("Lees meer", "Recept voor thuis") */
+.ck-linkje {
+  display: block; margin-top: 12px; text-align: center;
+  font-size: var(--ck-maat-klein); font-weight: 800; color: var(--ck-cacao-zacht);
+  background: none; border: 0; cursor: pointer;
+}
+
+/* =========================================================
+   ANTWOORDTEGELS — elk een eigen kleur
+   ========================================================= */
+.ck-tegel {
+  min-height: var(--ck-tik-min);
+  padding: 10px 16px 6px;
+  border: 0;
+  border-radius: var(--ck-rond-tegel);
+  font-family: var(--ck-font-kop);
+  font-weight: 800;
+  font-size: var(--ck-maat-speelgetal);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .15);
+  cursor: pointer;
+  transition: transform var(--ck-snel), box-shadow var(--ck-snel), opacity var(--ck-normaal);
+}
+.ck-tegel:hover { transform: translateY(-4px) rotate(-1.5deg); }
+.ck-tegel:active { transform: translateY(var(--ck-onderkant)); }
+.ck-tegel--1 { background: var(--ck-wereld); box-shadow: 0 7px 0 var(--ck-wereld-rand); }
+.ck-tegel--2 { background: var(--ck-bes);    box-shadow: 0 7px 0 var(--ck-bes-rand); }
+.ck-tegel--3 { background: var(--ck-tuin);   box-shadow: 0 7px 0 var(--ck-tuin-rand); }
+.ck-tegel--4 { background: var(--ck-druif);  box-shadow: 0 7px 0 var(--ck-druif-rand); }
+.ck-tegel--goed  { background: var(--ck-tuin); box-shadow: 0 7px 0 var(--ck-tuin-rand); animation: ck-pop 420ms var(--ck-veer) both; }
+.ck-tegel--fout  { animation: ck-wiebel 320ms ease both; }      /* nooit rood */
+.ck-tegel--vaag  { opacity: .55; }                              /* de andere tegels na een goed antwoord */
+
+/* =========================================================
+   TEKSTBALLON — personages praten, niet het systeem
+   ========================================================= */
+.ck-ballon { display: flex; align-items: flex-end; gap: 12px; }
+.ck-ballon__gezicht {
+  width: 76px; height: 76px; flex-shrink: 0; border-radius: 50%;
+  object-fit: cover; background: #fff; border: 4px solid #fff;
+  box-shadow: 0 5px 0 var(--ck-schaduw-rand);
+}
+.ck-ballon__tekst {
+  background: var(--ck-wit);
+  border-radius: 22px 22px 22px 6px;
+  padding: 10px 18px;
+  box-shadow: 0 5px 0 var(--ck-schaduw-rand);
+  font-family: var(--ck-font-kop);
+  font-weight: 700;
+  font-size: var(--ck-maat-ballon);
+  line-height: 1.2;
+  color: var(--ck-cacao);
+}
+.ck-ballon__naam { display: block; font-family: var(--ck-font-tekst); font-weight: 900; font-size: var(--ck-maat-klein); color: var(--ck-bes); }
+
+/* Getal of sleutelwoord in een vraag */
+.ck-getal { background: var(--ck-zon); color: var(--ck-cacao); border-radius: 10px; padding: 0 8px; font-weight: 800; }
+
+/* =========================================================
+   PILLETJES, MUNTEN, BELONING, VOORTGANG
+   ========================================================= */
+.ck-pil {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 16px 7px 8px;
+  background: var(--ck-glas); border: 1.5px solid #fff; border-radius: 999px;
+  font-family: var(--ck-font-tekst); font-weight: 900; color: var(--ck-cacao);
+  box-shadow: 0 4px 0 var(--ck-schaduw-rand);
+}
+.ck-munt {
+  display: inline-block; width: 28px; height: 28px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFE58A, var(--ck-zon) 55%, var(--ck-zon-rand));
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15);
+}
+.ck-beloning {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 18px 4px 8px;
+  background: var(--ck-zon); color: var(--ck-cacao); border-radius: 999px;
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 28px;
+  box-shadow: 0 5px 0 var(--ck-zon-rand);
+  animation: ck-pop 480ms var(--ck-veer) both;
+}
+.ck-verzamelkaart {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 10px 14px; background: #fff; border-radius: 20px;
+  border: 3px solid var(--ck-druif); box-shadow: 0 5px 0 var(--ck-druif-rand);
+  animation: ck-pop 520ms var(--ck-veer) both;
+}
+/* Voortgang = een rij plekjes die vol raakt, geen balk met "1/9" */
+.ck-plekje {
+  width: 64px; height: 64px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: rgba(255, 255, 255, .55); border: 2.5px dashed rgba(138, 78, 37, .35);
+}
+.ck-plekje--vol { background: #fff; border: 3px solid var(--ck-actief); box-shadow: 0 4px 0 var(--ck-actief-rand); animation: ck-pop 420ms var(--ck-veer) both; }
+
+/* Speelkaartje in een menu (Kookboek, Taart versieren, Topografie …) */
+.ck-speelkaart {
+  background: var(--ck-room); border-radius: var(--ck-rond-kaart);
+  padding: 8px 8px 14px; text-align: center; cursor: pointer;
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-cacao);
+  box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 12px 22px rgba(74, 42, 26, .18);
+  transition: transform var(--ck-normaal) var(--ck-veer);
+}
+.ck-speelkaart:hover { transform: translateY(-6px) rotate(-1.5deg); }
+.ck-speelkaart__plaatje { background: var(--ck-plekje); border-radius: 16px; margin-bottom: 8px; aspect-ratio: 1.2; display: flex; align-items: center; justify-content: center; }
+
+/* =========================================================
+   VASTE PLEKKEN — elk spel en elke opdracht gebruikt deze
+   zeven zones. Zet ze in een container met .ck-scherm.
+   ========================================================= */
+.ck-scherm { position: relative; width: 100%; height: 100%; overflow: hidden; container-type: inline-size; --ck-rand: 1.6cqw; }
+
+/* 1. Terug — linksboven, precies één */
+.ck-zone-terug { position: absolute; left: var(--ck-rand); top: var(--ck-rand); width: max(48px, 4.4cqw); height: max(48px, 4.4cqw); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 20; }
+
+/* 2. Statuseiland — midden boven: munten · voortgang · niveau. Krijgt .is-open bij een beloning */
+.ck-zone-status {
+  position: absolute; top: var(--ck-rand); left: 50%; transform: translateX(-50%);
+  height: max(48px, 4.4cqw); border-radius: 999px; z-index: 20; white-space: nowrap;
+  display: flex; align-items: center; gap: .9cqw; padding: 0 1.4cqw 0 .7cqw;
+  transition: height .55s var(--ck-veer);
+}
+.ck-zone-status .ck-status-extra { display: flex; align-items: center; gap: .6cqw; max-width: 0; opacity: 0; overflow: hidden; transition: max-width .6s var(--ck-veer), opacity .3s; }
+.ck-zone-status.is-open { height: max(60px, 5.8cqw); }
+.ck-zone-status.is-open .ck-status-extra { max-width: 30cqw; opacity: 1; }
+.ck-stip { width: max(12px, 1.3cqw); height: max(12px, 1.3cqw); border-radius: 50%; background: rgba(255, 255, 255, .6); border: 2px solid rgba(74, 42, 26, .18); transition: all .4s var(--ck-veer); }
+.ck-stip--klaar { background: var(--ck-actief); border-color: #fff; }
+.ck-stip--nu { transform: scale(1.35); border-color: var(--ck-actief); }
+.ck-niveau { padding: .25cqw .8cqw; border-radius: 999px; background: var(--ck-actief); color: #fff; font-weight: 900; font-size: max(12px, 1.05cqw); }
+
+/* 3. Menu — rechtsboven: winkel, To Do, profiel (altijd die volgorde) */
+.ck-zone-menu { position: absolute; right: var(--ck-rand); top: var(--ck-rand); height: max(48px, 4.4cqw); border-radius: 999px; display: flex; align-items: center; gap: .4cqw; padding: 0 .4cqw; z-index: 20; }
+
+/* 4. Gereedschapsbalk — rechts, verticaal.
+      Vaste volgorde: hint · rekenmachine · liniaal/maten · kalender · mand — lijn — geluid.
+      Toon alleen wat het spel nodig heeft. .is-aan = in gebruik of oplichten als hint */
+.ck-zone-gereedschap { position: absolute; right: var(--ck-rand); top: calc(var(--ck-rand) * 2 + max(48px, 4.4cqw)); display: flex; flex-direction: column; gap: .5cqw; padding: .5cqw; border-radius: 2.6cqw; z-index: 20; }
+.ck-gereedschap { width: max(48px, 4cqw); height: max(48px, 4cqw); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: var(--ck-cacao); cursor: pointer; transition: transform .2s var(--ck-veer); }
+.ck-gereedschap:hover { transform: scale(1.1); background: rgba(255, 255, 255, .4); }
+.ck-gereedschap.is-aan { background: var(--ck-actief); color: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, .18); }
+
+/* 5. Personage — linksonder, met ballon */
+.ck-zone-personage { position: absolute; left: var(--ck-rand); bottom: var(--ck-rand); display: flex; align-items: flex-end; gap: 1cqw; z-index: 10; }
+.ck-zone-personage .ck-ballon__tekst { max-width: 30cqw; margin-bottom: 3cqw; background: linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .78)); }
+.ck-zone-personage.is-blij .ck-ballon__gezicht { transform: translateY(-1.2cqw) rotate(-8deg) scale(1.08); }
+
+/* 6. Antwoorden of hoofdknop — rechtsonder, naast de gereedschapsbalk */
+.ck-zone-antwoord { position: absolute; right: calc(var(--ck-rand) + 6cqw); bottom: var(--ck-rand); display: flex; gap: 1.4cqw; align-items: flex-end; z-index: 12; }
+
+/* 7. Speelveld = alles daartussen. Geen UI-blokken; wel hangkaartjes, doelen en objecten */
+
+/* ---- Bel: glazen antwoord dat je tikt of sleept ---- */
+.ck-bel {
+  position: relative; width: max(72px, 8.4cqw); height: max(72px, 8.4cqw); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: grab; touch-action: none;
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: max(28px, 3.3cqw); color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .18);
+  animation: ck-zweef 3s ease-in-out infinite;
+  transition: transform .35s var(--ck-veer), opacity .3s;
+}
+.ck-bel__kern { position: absolute; inset: 14%; border-radius: 50%; z-index: -1; }
+.ck-bel--1 .ck-bel__kern { background: radial-gradient(circle at 35% 30%, #fff6, var(--ck-wereld) 60%); }
+.ck-bel--2 .ck-bel__kern { background: radial-gradient(circle at 35% 30%, #fff6, var(--ck-bes) 60%); }
+.ck-bel--3 .ck-bel__kern { background: radial-gradient(circle at 35% 30%, #fff6, var(--ck-tuin) 60%); }
+.ck-bel--4 .ck-bel__kern { background: radial-gradient(circle at 35% 30%, #fff6, var(--ck-druif) 60%); }
+.ck-bel:hover { transform: scale(1.08); }
+.ck-bel.is-slepen { cursor: grabbing; animation: none; transition: none; z-index: 30; }
+.ck-bel.is-fout { animation: ck-wiebel .4s ease; }
+.ck-bel.is-weg { opacity: .25; pointer-events: none; }
+
+/* ---- Hangkaartje: prijs, maat of hoeveelheid die áán een ding in de wereld hangt ---- */
+.ck-hangkaartje { position: absolute; transform: translate(-50%, -100%); transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; animation: ck-schommel 3.4s ease-in-out infinite; z-index: 5; }
+.ck-hangkaartje__touw { width: 2px; height: 3.2cqw; background: linear-gradient(#fff8, #fff); }
+.ck-hangkaartje__label { padding: .45cqw 1.1cqw; border-radius: 1.2cqw; font-family: var(--ck-font-kop); font-weight: 800; font-size: max(20px, 2.3cqw); text-align: center; line-height: 1.1; }
+
+/* ---- Doel: plek in de wereld waar het antwoord heen moet ---- */
+.ck-doel { position: absolute; border-radius: 1.4cqw; border: .35cqw dashed rgba(255, 255, 255, .9); box-shadow: 0 0 0 .4cqw color-mix(in srgb, var(--ck-actief) 35%, transparent), 0 0 3cqw rgba(255, 240, 170, .6); animation: ck-puls 1.8s ease-in-out infinite; z-index: 4; }
+.ck-doel.is-over { background: radial-gradient(closest-side, rgba(255, 236, 160, .5), transparent); }
+
+/* ---- Paneel: winkel, To Do, rugzak, boeken. Schuift van rechts, max. de helft ---- */
+.ck-paneel { position: absolute; right: var(--ck-rand); top: calc(var(--ck-rand) * 2 + max(48px, 4.4cqw)); bottom: var(--ck-rand); width: min(50%, 640px); padding: 1.6cqw; z-index: 25; transform: translateX(110%); transition: transform .5s var(--ck-veer); overflow-y: auto; }
+.ck-paneel.is-open { transform: translateX(0); }
+
+/* =========================================================
+   BEWEGING
+   ========================================================= */
+@keyframes ck-pop    { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.12) } 100% { transform: scale(1); opacity: 1 } }
+@keyframes ck-wiebel { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-8px) rotate(-2deg) } 75% { transform: translateX(8px) rotate(2deg) } }
+@keyframes ck-zweef  { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+@keyframes ck-schommel { 0%,100% { rotate: -3deg } 50% { rotate: 3deg } }
+@keyframes ck-puls { 50% { opacity: .4; scale: 1.04 } }
+.ck-zweeft { animation: ck-zweef 3.2s ease-in-out infinite; }   /* voor een illustratie die "leeft" */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}
