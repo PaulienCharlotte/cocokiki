@@ -1,0 +1,161 @@
+@import '../../styles/cocokiki-tokens.css';
+
+/* De bakkerij deelt materiaal met het To Do-bord; de bediening blijft echte UI. */
+.bakkerij-stijl { font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.bakkerij-stijl.bestel-scherm, .bakkerij-stijl.nutrient-memory-screen {
+  background: var(--ck-hout) url('/dreamworld/locations/coco-bakery.webp') 28% center / cover fixed;
+  min-height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-8);
+}
+.bakkerij-stijl.bestel-scherm { place-items: start end; }
+.bakkerij-stijl .bestel-kaart, .bakkerij-stijl .math-card, .bakkerij-stijl .discovery-card {
+  color: var(--ck-cacao); border: 0; border-radius: var(--radius-card);
+  background: url('/assets/library/ui/pinned-paper.webp') center / 100% 180% no-repeat;
+  box-shadow: var(--shadow-raised); backdrop-filter: none;
+  padding: var(--space-6); font-size: var(--font-size-md); line-height: var(--line-height-default);
+}
+.bakkerij-stijl .bestel-kaart { width: min(100%, 44rem); gap: var(--space-5); }
+.bakkerij-stijl .bestel-kaart:has(> .ck-kaarten) { width: min(100%, 60rem); background: none; box-shadow: none; }
+.bakkerij-stijl .ck-kaart { border: 0; border-radius: 0; background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; box-shadow: none; padding: var(--space-6) var(--space-3) var(--space-4); filter: drop-shadow(0 var(--space-2) var(--space-2) var(--color-overlay)); }
+.bakkerij-stijl .ck-kaart__beeld { background: none; }
+.bakkerij-stijl .bestel-kaart .ck-zegt__wolk { background: var(--ck-glas); border: 0; box-shadow: none; }
+.bakkerij-stijl .bestel-kaart .ck-zegt__tekst { color: var(--ck-cacao); }
+.bakkerij-stijl .bestel-briefje { background: none; padding: 0; }
+.bakkerij-stijl .bestel-uitleg, .bakkerij-stijl .bestel-briefje span, .bakkerij-stijl .bestel-bon dt { color: var(--ck-cacao); font-size: var(--font-size-md); }
+.bakkerij-stijl .bestel-uitnodiging { background: var(--ck-glas); box-shadow: var(--shadow-soft); }
+.bakkerij-stijl .bestel-bonus { color: var(--ck-cacao); background: var(--ck-plekje); }
+
+/* Het kookboek: het gerecht staat op papier, zonder wit vlak achter de tekening. */
+.bakkerij-stijl .recipe-card { background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border: 0; border-radius: 0; box-shadow: none; filter: drop-shadow(0 var(--space-2) var(--space-2) var(--color-overlay)); }
+.bakkerij-stijl .recipe-card__button { padding: var(--space-5) var(--space-3) var(--space-4); }
+.bakkerij-stijl .recipe-card__visual { background: none; }
+.bakkerij-stijl .recipe-card__status { color: var(--ck-cacao); background: var(--ck-glas); border: 0; font-size: var(--font-size-sm); }
+.bakkerij-stijl .recipe-card__copy > strong { font-family: var(--ck-font-kop); font-size: var(--font-size-lg); }
+.bakkerij-stijl .recipe-card__meta { color: var(--ck-cacao); font-size: var(--font-size-sm); }
+.bakkerij-recept.recipe-dialog { background: url('/assets/library/ui/pinned-paper.webp') center / 100% 180% no-repeat; color: var(--ck-cacao); border: 0; border-radius: var(--radius-dialog); }
+.bakkerij-recept .recipe-overview__needs, .bakkerij-recept .recipe-overview__ingredients, .bakkerij-recept .recipe-overview__equipment { background: none; box-shadow: none; }
+.bakkerij-recept .home-recipe { color: var(--ck-cacao); }
+
+/* Leren en rekenen blijven in de keuken; één rustig werkvlak in plaats van geneste kaarten. */
+.bakkerij-stijl .ingredient-explorer, .bakkerij-stijl .ingredient-lesson__hero, .bakkerij-stijl .ingredient-explorer__page,
+.bakkerij-stijl .math-challenge, .bakkerij-stijl .math-question, .bakkerij-stijl .math-scaling, .bakkerij-stijl .math-weighing { background: none; box-shadow: none; border: 0; }
+.bakkerij-stijl .stage-chrome { background: var(--ck-glas); border: 0; border-radius: var(--radius-control); padding: var(--space-3); }
+.bakkerij-stijl .journey-stages { margin-bottom: 0; gap: var(--space-1); }
+.bakkerij-stijl .journey-stages__icon { width: var(--touch-target); height: var(--touch-target); color: var(--ck-cacao); background: url('/assets/library/ui/navigation-medallion.webp') center / contain no-repeat; }
+.bakkerij-stijl .journey-stages__icon svg { width: var(--space-5); height: var(--space-5); }
+.bakkerij-stijl .journey-stages li.is-current .journey-stages__icon { outline: var(--space-1) solid var(--ck-keuken); outline-offset: 0; }
+.bakkerij-stijl .journey-stages li { color: var(--ck-cacao); }
+.bakkerij-stijl .journey-stages__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.bakkerij-stijl .journey-stages li::after { display: none; }
+.bakkerij-stijl .discovery-card h1, .bakkerij-stijl .math-card h1, .bakkerij-stijl .nutrient-memory-shell h1 { font-family: var(--ck-font-kop); color: var(--ck-cacao); }
+.bakkerij-stijl .nutrient-memory-shell { padding: var(--space-5); background: var(--ck-glas); border-radius: var(--radius-card); color: var(--ck-cacao); }
+.bakkerij-stijl .nutrient-memory__card { border: 0; border-radius: var(--radius-control); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; box-shadow: var(--shadow-soft); color: var(--ck-cacao); }
+.bakkerij-stijl .nutrient-memory__card.is-revealed { background: var(--ck-room); }
+.bakkerij-stijl .nutrient-memory__card.is-matched { background: var(--ck-plekje); }
+.bakkerij-stijl .nutrient-memory__card span, .bakkerij-stijl .nutrient-memory__card small { color: var(--ck-cacao); font-size: var(--font-size-md); }
+
+@media (max-width: 600px) {
+  .bakkerij-stijl.bestel-scherm, .bakkerij-stijl.nutrient-memory-screen { padding: calc(var(--space-12) * 2) var(--space-3) var(--space-6); background-position: 18% center; }
+  .bakkerij-stijl .bestel-kaart, .bakkerij-stijl .math-card, .bakkerij-stijl .discovery-card { padding: var(--space-4); }
+  .bakkerij-stijl .bestel-kaart:has(> .ck-kaarten) { padding: 0; }
+  .bakkerij-stijl .journey-stages__icon { width: var(--space-8); height: var(--space-8); }
+  .bakkerij-stijl .recipe-card__visual { min-height: 0; }
+  .bakkerij-stijl .recipe-card__art { height: calc(var(--space-12) * 3); }
+}
+
+.bakkerij-stijl .math-stage__frame { background: none; border: 0; box-shadow: none; backdrop-filter: none; padding: 0; }
+.bakkerij-stijl .math-stage__frame > .stage-chrome { margin-bottom: var(--space-4); }
+.bakkerij-stijl .bestel-kaart:has(> .ck-kaarten) > .ck-kaarten { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bakkerij-stijl.cooking-stage .cooking-card:not(.cooking-card--heat) { background: none; border: 0; box-shadow: none; }
+.bakkerij-stijl.cooking-stage .cooking-card > h1 { align-self: center; width: fit-content; max-width: 100%; margin: 0 auto; padding: var(--space-3) var(--space-8); color: var(--ck-room); font-family: var(--ck-font-kop); background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; text-shadow: 0 2px 0 var(--ck-hout-donker); }
+.bakkerij-stijl .cooking-card__instruction, .bakkerij-stijl .cooking-card__hint, .bakkerij-stijl .cooking-recipe-card { padding: var(--space-3) var(--space-4); background: var(--ck-glas); border: 0; border-radius: var(--radius-control); color: var(--ck-cacao); }
+.bakkerij-stijl .cooking-stage__bar { background: var(--ck-glas); border: 0; border-radius: var(--radius-control); color: var(--ck-cacao); }
+@media (max-width: 600px) {
+  .bakkerij-stijl .bestel-kaart:has(> .ck-kaarten) > .ck-kaarten { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bakkerij-stijl.cooking-stage .cooking-card > h1 { padding: var(--space-3) var(--space-6); }
+}
+
+.bakkerij-stijl .ck-answer-button.ck-button, .bakkerij-stijl .discovery-answer-button.ck-button {
+  min-height: var(--touch-target); padding: var(--space-3) var(--space-4); color: var(--ck-cacao);
+  background: color-mix(in srgb, var(--ck-keuken) 14%, var(--ck-room));
+  border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-control);
+  box-shadow: 0 var(--space-1) 0 var(--ck-hout); font-family: var(--ck-font-kop); font-weight: var(--font-weight-bold);
+}
+.bakkerij-stijl .ck-answer-button.is-goed, .bakkerij-stijl .discovery-answer-button.is-correct { background: var(--color-success-soft); border-color: var(--color-primary); }
+.bakkerij-stijl .ck-answer-button.is-mis, .bakkerij-stijl .discovery-answer-button.is-wrong { background: var(--color-peach); color: var(--ck-cacao); border-color: var(--ck-hout); }
+
+.bakkerij-stijl .discovery-card__content { padding: var(--space-3) 0 0; background: none; box-shadow: none; border: 0; border-radius: 0; }
+.bakkerij-stijl .ck-zegt__wolk { background: color-mix(in srgb, var(--ck-keuken) 8%, var(--ck-room)); color: var(--ck-cacao); box-shadow: none; }
+.bakkerij-stijl .ck-zegt__gids { background: none; }
+.bakkerij-stijl .ck-zegt__tekst { color: var(--ck-cacao); }
+@media (max-width: 600px) {
+  .bakkerij-stijl .recipe-library__grid { align-content: start; align-items: start; }
+  .bakkerij-stijl .recipe-card { height: auto; }
+}
+
+.bakkerij-stijl .food-discovery__card { max-width: 60rem; background: none; box-shadow: none; border: 0; padding: var(--space-4); }
+.bakkerij-stijl .food-search { color: var(--ck-room); font-size: var(--font-size-md); }
+.bakkerij-stijl .food-search input { background: var(--ck-glas); border: 0; color: var(--ck-cacao); }
+.bakkerij-stijl .food-discovery__explanation { color: var(--ck-cacao); font-size: var(--font-size-md); background: var(--ck-glas); padding: var(--space-3); border-radius: var(--radius-control); }
+
+/* Eén leesbaar receptvel; geen uitgerekte kaart of apart fotokader. */
+.ck-dialog.bakkerij-recept.recipe-dialog {
+  width: min(100%, 44rem); padding: var(--space-8); box-sizing: border-box;
+  background: var(--ck-room); border: 1px solid var(--ck-hout-licht);
+  box-shadow: var(--shadow-dialog);
+}
+.ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__illustration {
+  min-height: 0; margin: 0 var(--space-8) var(--space-4); padding: 0;
+  background: none; border-radius: 0;
+}
+.ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__illustration img { width: 100%; max-height: calc(var(--space-12) * 4); }
+.ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__copy { text-align: left; min-width: 0; }
+.ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__copy h2 {
+  padding: 0; margin: 0 0 var(--space-4); font-family: var(--ck-font-kop);
+  font-size: var(--font-size-2xl); line-height: var(--line-height-tight);
+}
+.bakkerij-recept .recipe-overview__facts { justify-content: flex-start; margin-bottom: var(--space-5); }
+.bakkerij-recept .home-recipe { font-size: var(--font-size-md); overflow-wrap: anywhere; }
+.bakkerij-recept .home-recipe > p:first-child { margin-top: 0; }
+.bakkerij-recept .home-recipe h3 { margin: var(--space-6) 0 var(--space-2); font-family: var(--ck-font-kop); color: var(--ck-hout-donker); font-size: var(--font-size-lg); }
+.bakkerij-recept .home-recipe p { margin: var(--space-2) 0; }
+.bakkerij-recept .home-recipe ul, .bakkerij-recept .home-recipe ol { margin: var(--space-2) 0; padding-left: var(--space-6); }
+.bakkerij-recept .home-recipe li { padding-left: var(--space-1); margin-bottom: var(--space-2); }
+.bakkerij-recept .home-recipe-section .cooking-button { margin-top: var(--space-6); }
+@media (max-width: 600px) {
+  .ck-dialog.bakkerij-recept.recipe-dialog { padding: var(--space-5); }
+  .ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__copy h2 { font-size: var(--font-size-xl); }
+  .ck-dialog.bakkerij-recept.recipe-dialog .ck-dialog__illustration img { max-height: calc(var(--space-12) * 3); }
+}
+
+/* Vragen delen dezelfde rustige, links uitgelijnde bediening. */
+.bakkerij-stijl .discovery-card .stage-chrome { background: none; padding: 0 0 var(--space-4); border-bottom: 1px solid var(--ck-hout-licht); border-radius: 0; }
+.bakkerij-stijl .discovery-card__content { gap: var(--space-4); text-align: left; }
+.bakkerij-stijl .discovery-card__ingredient { justify-self: center; max-height: calc(var(--space-12) * 2); margin: 0; }
+.bakkerij-stijl .discovery-card__eyebrow { margin: 0; text-align: center; color: var(--ck-hout-donker); }
+.bakkerij-stijl .discovery-card__content > .ck-zegt, .bakkerij-stijl .discovery-card__content > .ck-keuzes { margin: 0; width: 100%; min-width: 0; }
+.bakkerij-stijl .ck-keuzes.is-los { gap: var(--space-3); }
+.bakkerij-stijl .ck-keuzes.is-los .ck-keuze { background: var(--ck-room); color: var(--ck-cacao); border-color: var(--ck-hout-licht); box-shadow: 0 var(--space-1) 0 var(--ck-hout); border-radius: var(--radius-control); padding: var(--space-3) var(--space-4); text-align: left; }
+.bakkerij-stijl .ck-keuze__letter { color: var(--ck-hout-donker); }
+.bakkerij-stijl .ck-keuzes .ck-keuze.is-goed { background: var(--color-success-soft); border-color: var(--color-primary); }
+.bakkerij-stijl .ck-keuzes .ck-keuze.is-mis { background: var(--color-error-soft); border-color: var(--color-error); }
+.bakkerij-recept .recipe-overview__needs { border: 0; padding: var(--space-4) 0; }
+.bakkerij-recept .recipe-overview__ingredients li { align-items: start; }
+.bakkerij-recept .recipe-overview__ingredients li > img { height: calc(var(--space-12) * 2); object-fit: contain; }
+.bakkerij-recept .recipe-overview__more { margin: var(--space-4) 0 0; text-align: left; }
+.bakkerij-recept .recipe-overview__more > summary { width: auto; height: auto; min-height: var(--touch-target); padding: var(--space-3) 0; color: var(--ck-cacao-zacht); font-size: var(--font-size-sm); }
+.bakkerij-recept .recipe-overview__more[open] > button { position: static; width: 100%; margin-bottom: var(--space-2); background: none; box-shadow: none; border: 0; color: var(--ck-cacao); font-size: var(--font-size-sm); }
+.bakkerij-stijl .ck-keuzes .ck-keuze:disabled { opacity: 1; }
+.bakkerij-stijl .journey-stages li.is-current .journey-stages__icon, .bakkerij-stijl .journey-stages li.is-complete .journey-stages__icon { color: var(--ck-cacao); background: url('/assets/library/ui/navigation-medallion.webp') center / contain no-repeat; }
+.bakkerij-stijl .discovery-card__content > [role="status"] { margin: 0; color: var(--ck-cacao); font-size: var(--font-size-md); }
+
+.discovery-question-actions { display: grid; width: 100%; gap: var(--space-2); min-height: calc(var(--touch-target) * 2 + var(--space-2)); }
+.discovery-question-actions > .ck-button { width: 100%; }
+.cooking-discovery-feedback .ck-zegt { margin: var(--space-4) 0; text-align: left; }
+.cooking-food-sprite { display: block; width: 100%; aspect-ratio: 3 / 2; background-size: 200% 200%; background-repeat: no-repeat; }
+.cooking-tap__vessel:has(.cooking-food-sprite) { width: 100%; }
+.cooking-drop__source .cooking-food-sprite, .cooking-drop__landed .cooking-food-sprite { width: 100%; min-width: calc(var(--space-12) * 2); }
+.cooking-discovery-feedback .reward-toast { position: static; width: auto; transform: none; margin: var(--space-4) 0 0; box-shadow: none; background: none; border: 0; padding: 0; animation: none; }
+.cooking-discovery-feedback .ck-dialog__actions { margin-top: var(--space-5); }
+.bakkerij-stijl .discovery-card--question .discovery-card__content, .bakkerij-stijl .discovery-card--correct .discovery-card__content { gap: var(--space-4); margin-top: 0; }
+.bakkerij-stijl .discovery-card--question .discovery-card__ingredient, .bakkerij-stijl .discovery-card--correct .discovery-card__ingredient { width: calc(var(--space-12) * 3); height: calc(var(--space-12) * 2); }
+.cooking-tap__vessel:has(.cooking-food-sprite) { max-width: calc(var(--space-12) * 6); }

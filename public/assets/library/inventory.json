@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-15T21:36:39.812Z",
-  "count": 626,
+  "generatedAt": "2026-11-16T11:21:50.029Z",
+  "count": 688,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -173,6 +173,12 @@
     {
       "id": "assets:library:cooking:fruit-yogurt:yogurt-bowl",
       "path": "/assets/library/cooking/fruit-yogurt/yogurt-bowl.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:healthy:apple-cutting-stages",
+      "path": "/assets/library/cooking/healthy/apple-cutting-stages.webp",
       "category": "cooking",
       "format": "webp"
     },
@@ -527,6 +533,42 @@
     {
       "id": "assets:library:cooking:klembord",
       "path": "/assets/library/cooking/klembord.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:blood-transparent",
+      "path": "/assets/library/cooking/knowledge/blood-transparent.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:blood",
+      "path": "/assets/library/cooking/knowledge/blood.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:digestion-transparent",
+      "path": "/assets/library/cooking/knowledge/digestion-transparent.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:digestion",
+      "path": "/assets/library/cooking/knowledge/digestion.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:growth-transparent",
+      "path": "/assets/library/cooking/knowledge/growth-transparent.webp",
+      "category": "cooking",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:cooking:knowledge:growth",
+      "path": "/assets/library/cooking/knowledge/growth.webp",
       "category": "cooking",
       "format": "webp"
     },
@@ -1053,6 +1095,72 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:math:rekenmachine",
+      "path": "/assets/library/math/rekenmachine.webp",
+      "category": "math",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:background",
+      "path": "/assets/library/plants/garden/background.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:beans",
+      "path": "/assets/library/plants/garden/beans.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:bed-earth",
+      "path": "/assets/library/plants/garden/bed-earth.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:bed-topdown",
+      "path": "/assets/library/plants/garden/bed-topdown.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:navigation",
+      "path": "/assets/library/plants/garden/navigation.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:radish",
+      "path": "/assets/library/plants/garden/radish.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:seedling-natural",
+      "path": "/assets/library/plants/garden/seedling-natural.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:seedling-topdown",
+      "path": "/assets/library/plants/garden/seedling-topdown.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:terrain-natural",
+      "path": "/assets/library/plants/garden/terrain-natural.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:plants:garden:terrain-topdown",
+      "path": "/assets/library/plants/garden/terrain-topdown.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:plants:gereedschap:bloempot",
       "path": "/assets/library/plants/gereedschap/bloempot.webp",
       "category": "plants",
@@ -1263,6 +1371,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:plants:plantendokter-embleem",
+      "path": "/assets/library/plants/plantendokter-embleem.webp",
+      "category": "plants",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:plants:small-cactus:dark-1",
       "path": "/assets/library/plants/small-cactus/dark-1.webp",
       "category": "plants",
@@ -1335,6 +1449,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:projects:luna-crib",
+      "path": "/assets/library/projects/luna-crib.webp",
+      "category": "projects",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:school:klembord",
       "path": "/assets/library/school/klembord.webp",
       "category": "school",
@@ -1355,6 +1475,12 @@
     {
       "id": "assets:library:shop:decor:products:arched-floor-lamp",
       "path": "/assets/library/shop/decor/products/arched-floor-lamp.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:armchair-clay-front",
+      "path": "/assets/library/shop/decor/products/armchair-clay-front.webp",
       "category": "shop",
       "format": "webp"
     },
@@ -1533,6 +1659,36 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:shop:decor:products:christmas-felt-garland",
+      "path": "/assets/library/shop/decor/products/christmas-felt-garland.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:christmas-fir-wreath",
+      "path": "/assets/library/shop/decor/products/christmas-fir-wreath.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:christmas-japandi-tree",
+      "path": "/assets/library/shop/decor/products/christmas-japandi-tree.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:christmas-oak-star",
+      "path": "/assets/library/shop/decor/products/christmas-oak-star.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:christmas-wrapped-gifts",
+      "path": "/assets/library/shop/decor/products/christmas-wrapped-gifts.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:shop:decor:products:cloud-shelf:view-1",
       "path": "/assets/library/shop/decor/products/cloud-shelf/view-1.webp",
       "category": "shop",
@@ -1577,6 +1733,12 @@
     {
       "id": "assets:library:shop:decor:products:cloud-shelf:view-8",
       "path": "/assets/library/shop/decor/products/cloud-shelf/view-8.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:coffee-table-oak-front",
+      "path": "/assets/library/shop/decor/products/coffee-table-oak-front.webp",
       "category": "shop",
       "format": "webp"
     },
@@ -1913,6 +2075,102 @@
     {
       "id": "assets:library:shop:decor:products:hanging-vine",
       "path": "/assets/library/shop/decor/products/hanging-vine.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-bath-mat",
+      "path": "/assets/library/shop/decor/products/japandi-bath-mat.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-book-stack",
+      "path": "/assets/library/shop/decor/products/japandi-book-stack.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-ceramic-vase",
+      "path": "/assets/library/shop/decor/products/japandi-ceramic-vase.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-dining-chair",
+      "path": "/assets/library/shop/decor/products/japandi-dining-chair.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-dining-table",
+      "path": "/assets/library/shop/decor/products/japandi-dining-table.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-linen-cushion",
+      "path": "/assets/library/shop/decor/products/japandi-linen-cushion.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-linen-sofa",
+      "path": "/assets/library/shop/decor/products/japandi-linen-sofa.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-oak-sideboard",
+      "path": "/assets/library/shop/decor/products/japandi-oak-sideboard.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-open-bookcase",
+      "path": "/assets/library/shop/decor/products/japandi-open-bookcase.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-paper-floor-lamp",
+      "path": "/assets/library/shop/decor/products/japandi-paper-floor-lamp.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-round-mirror",
+      "path": "/assets/library/shop/decor/products/japandi-round-mirror.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-toilet-roll-holder",
+      "path": "/assets/library/shop/decor/products/japandi-toilet-roll-holder.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-toilet",
+      "path": "/assets/library/shop/decor/products/japandi-toilet.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-wall-art",
+      "path": "/assets/library/shop/decor/products/japandi-wall-art.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-woven-basket",
+      "path": "/assets/library/shop/decor/products/japandi-woven-basket.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:shop:decor:products:japandi-woven-rug",
+      "path": "/assets/library/shop/decor/products/japandi-woven-rug.webp",
       "category": "shop",
       "format": "webp"
     },
@@ -2301,6 +2559,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:shop:decor:products:sofa-sage-front",
+      "path": "/assets/library/shop/decor/products/sofa-sage-front.webp",
+      "category": "shop",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:shop:decor:products:soft-sofa",
       "path": "/assets/library/shop/decor/products/soft-sofa.webp",
       "category": "shop",
@@ -2541,8 +2805,20 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:rooms:bathroom-front-v1",
+      "path": "/assets/library/treehouse/rooms/bathroom-front-v1.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:rooms:bathroom-interior",
       "path": "/assets/library/treehouse/rooms/bathroom-interior.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:bedroom-front-v1",
+      "path": "/assets/library/treehouse/rooms/bedroom-front-v1.webp",
       "category": "treehouse",
       "format": "webp"
     },
@@ -2553,14 +2829,44 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:rooms:blush-front-v1",
+      "path": "/assets/library/treehouse/rooms/blush-front-v1.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:rooms:blush-interior",
       "path": "/assets/library/treehouse/rooms/blush-interior.webp",
       "category": "treehouse",
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:rooms:garden-room-front-v1",
+      "path": "/assets/library/treehouse/rooms/garden-room-front-v1.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:rooms:green-bedroom-interior",
       "path": "/assets/library/treehouse/rooms/green-bedroom-interior.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:greenhouse-front-v1",
+      "path": "/assets/library/treehouse/rooms/greenhouse-front-v1.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:greenhouse-front-v2",
+      "path": "/assets/library/treehouse/rooms/greenhouse-front-v2.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:kitchen-front-v1",
+      "path": "/assets/library/treehouse/rooms/kitchen-front-v1.webp",
       "category": "treehouse",
       "format": "webp"
     },
@@ -2577,8 +2883,20 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:treehouse:rooms:living-room-front-v1",
+      "path": "/assets/library/treehouse/rooms/living-room-front-v1.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:rooms:living-room",
       "path": "/assets/library/treehouse/rooms/living-room.webp",
+      "category": "treehouse",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:rooms:terrace-front-v1",
+      "path": "/assets/library/treehouse/rooms/terrace-front-v1.webp",
       "category": "treehouse",
       "format": "webp"
     },
@@ -2623,6 +2941,12 @@
       "path": "/assets/library/treehouse/units/blush-room.webp",
       "category": "treehouse",
       "format": "webp"
+    },
+    {
+      "id": "assets:library:treehouse:units:brace",
+      "path": "/assets/library/treehouse/units/brace.png",
+      "category": "treehouse",
+      "format": "png"
     },
     {
       "id": "assets:library:treehouse:units:canopy-tall",
@@ -2715,6 +3039,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:ui:cococoin",
+      "path": "/assets/library/ui/cococoin.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:ui:daily-quest",
       "path": "/assets/library/ui/daily-quest.webp",
       "category": "ui",
@@ -2799,6 +3129,24 @@
       "format": "webp"
     },
     {
+      "id": "dreamworld:sky:day",
+      "path": "/dreamworld/sky/day.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:sky:night",
+      "path": "/dreamworld/sky/night.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:to-do-board",
+      "path": "/dreamworld/to-do-board.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
       "id": "dreamworld:topo-interior",
       "path": "/dreamworld/topo-interior.webp",
       "category": "dreamworld",
@@ -2821,12 +3169,6 @@
       "path": "/dreamworld/world-map-modern.webp",
       "category": "dreamworld",
       "format": "webp"
-    },
-    {
-      "id": "dreamworld:world-map-v2",
-      "path": "/dreamworld/world-map-v2.png",
-      "category": "dreamworld",
-      "format": "png"
     },
     {
       "id": "dreamworld:world-map",
@@ -3119,6 +3461,12 @@
     {
       "id": "games:school:math:icons:divide",
       "path": "/games/school/math/icons/divide.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:icons:maten",
+      "path": "/games/school/math/icons/maten.webp",
       "category": "games",
       "format": "webp"
     },
@@ -3663,8 +4011,20 @@
       "format": "webp"
     },
     {
+      "id": "images:avatars:coco-profile",
+      "path": "/images/avatars/coco-profile.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
       "id": "images:avatars:coco",
       "path": "/images/avatars/coco.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:kiki-profile",
+      "path": "/images/avatars/kiki-profile.webp",
       "category": "images",
       "format": "webp"
     },
@@ -3705,6 +4065,12 @@
       "format": "webp"
     },
     {
+      "id": "images:avatars:lua-profile",
+      "path": "/images/avatars/lua-profile.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
       "id": "images:avatars:lua",
       "path": "/images/avatars/lua.webp",
       "category": "images",
@@ -3713,6 +4079,12 @@
     {
       "id": "images:avatars:luiaard",
       "path": "/images/avatars/luiaard.webp",
+      "category": "images",
+      "format": "webp"
+    },
+    {
+      "id": "images:avatars:luna-profile",
+      "path": "/images/avatars/luna-profile.webp",
       "category": "images",
       "format": "webp"
     },

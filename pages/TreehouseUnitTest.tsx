@@ -1,5 +1,6 @@
+import CocoCoin from '../components/platform/CocoCoin';
 import React, { useEffect, useRef, useState } from 'react';
-import { Coins, RotateCcw, ArrowLeft, ArrowRight, ZoomOut, ZoomIn, Plus, SlidersHorizontal, Trash2, Armchair } from 'lucide-react';
+import { RotateCcw, ArrowLeft, ArrowRight, ZoomOut, ZoomIn, Plus, SlidersHorizontal, Trash2, Armchair } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../design-system';
 import { expandableTreehouseLayout, INITIAL_BUILD_ROOMS, moveBuildRoom, validBuildRooms, prototypeUnitLayout, treehouseViewWidth, TREEHOUSE_UNIT_ASSETS, ROOM_UNIT_FRAME, type BuildRoomAsset, type PreviewUnit } from '../data/treehouseUnits';
 import { loadBuildPreview, saveBuildPreview } from '../services/treehouseBuildPreview';
@@ -188,7 +189,7 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
         setError('Opslaan lukt even niet. Probeer opnieuw.'); return;
       }
       setRooms(next); setSlot(null);
-    }}>{addStep === 0 ? 'Volgende' : live ? <>Bouwen <Coins size={17} /> {price ?? 'Vol'}</> : 'Toevoegen'}</Button>} secondaryAction={addStep === 1 ? <Button variant="quiet" startIcon={<ArrowLeft size={18} />} onClick={() => setAddStep(0)}>Terug</Button> : undefined}>
+    }}>{addStep === 0 ? 'Volgende' : live ? <>Bouwen <CocoCoin size={17} /> {price ?? 'Vol'}</> : 'Toevoegen'}</Button>} secondaryAction={addStep === 1 ? <Button variant="quiet" startIcon={<ArrowLeft size={18} />} onClick={() => setAddStep(0)}>Terug</Button> : undefined}>
       <div className="unit-test__form">
         {addStep === 0 && <>
         {live ? <label>Ruimte<select aria-label="Ruimte" value={templateId} onChange={event => {

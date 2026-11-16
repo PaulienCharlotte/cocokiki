@@ -461,8 +461,8 @@ test('discovery UI keeps one focused educational interaction visible', () => {
   const question = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={questionState} onProgressChange={() => undefined} onExit={() => undefined} />);
   assert.match(question, /Waarom groeien bananen goed in tropische gebieden/);
   assert.match(question, /Ze hebben warmte en voldoende water nodig/);
-  assert.match(question, /discovery-answer-buttons/);
-  assert.doesNotMatch(question, /ck-keuzes/);
+  assert.match(question, /ck-keuzes is-los/);
+  assert.match(question, /Geef me een tip/);
 });
 
 test('seasonal prices follow the configured catalog and remain stable per session', () => {
@@ -586,4 +586,17 @@ test('terugbladeren verzet alleen waar je kijkt', () => {
   const bewaard = migrateCookingSession(JSON.parse(JSON.stringify(terug)), recept);
   assert.equal(bewaard.viewStepId, stappen[2].id);
   assert.equal(bewaard.stepId, stappen[3].id);
+});
+
+test('een goed ontdekantwoord voegt geen uitleg of beloningsblok aan de vraag toe', () => {
+  const recipe = RECIPES_BY_ID['banana-pancakes'];
+  const state = showDiscoveryQuestion(beginDiscoveryStage(startJourney(createEmptyCookingProgress(), recipe), recipe.id), recipe.id);
+  const discovery = state.journeys[recipe.id]!.discovery;
+  const question = INGREDIENT_DISCOVERIES_BY_ID[discovery.currentIngredientId!]!.questions[discovery.questionIndex];
+  const result = answerDiscoveryQuestion(state, recipe.id, question.correctOptionId);
+  const html = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={result.progress} onProgressChange={() => undefined} onExit={() => undefined} />);
+  assert.match(html, /Coco legt uit/);
+  assert.match(html, /discovery-question-actions/);
+  assert.doesNotMatch(html, /reward-toast/);
+  assert.ok(!html.includes(question.feedbackExplanation));
 });

@@ -9,7 +9,7 @@
 .village-world.is-night .village-world__landscape { filter: brightness(.6) saturate(.8); }
 .village-world .dream-hotspot { position: absolute; display: flex; align-items: flex-end; justify-content: center; width: 23%; height: 30%; min-width: var(--touch-target); min-height: var(--touch-target); padding: 0; border: 0; border-radius: var(--radius-card); background: transparent; cursor: pointer; transform: translate(-50%, -50%); -webkit-tap-highlight-color: transparent; }
 .village-world [data-building=cooking] { left: 23%; top: 32%; }
-.village-world [data-building=plants] { left: 75%; top: 32%; }
+.village-world [data-building=plants] { left: 77%; top: 32%; }
 .village-world [data-building=home] { left: 50%; top: 46%; }
 .village-world [data-building=math] { left: 23%; top: 67%; }
 .village-world [data-building=discovery] { left: 77%; top: 67%; }
@@ -24,8 +24,8 @@
   .village-world [data-building=cooking] { left: 24%; top: 29%; }
   .village-world [data-building=plants] { left: 77%; top: 29%; }
   .village-world [data-building=home] { left: 50%; top: 49%; }
-  .village-world [data-building=math] { left: 22%; top: 70%; }
-  .village-world [data-building=discovery] { left: 80%; top: 70%; }
+  .village-world [data-building=math] { left: 24%; top: 70%; }
+  .village-world [data-building=discovery] { left: 77%; top: 70%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .village-world__landscape, .village-world .dream-island-icon { transition: none; }

@@ -16,7 +16,6 @@ export function HomeRecipeContent({ recipe, embedded = false }: { recipe: Recipe
     <h3>Veilig koken</h3><p>{home.safety}</p>
     <h3>Serveertip</h3><p>{home.servingTip}</p>
     <h3>Allergenen</h3><p>{home.allergens.join(' · ')}</p>
-    {home.seasonNote && home.sources?.length && <p>{home.sources.map(source => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title}</a>)}</p>}
   </article>;
 }
 export default function HomeRecipe({ recipe }: { recipe: RecipeConfig }) {

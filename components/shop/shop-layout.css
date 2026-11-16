@@ -78,3 +78,14 @@
   .shop-room .shop-basket-row > b { grid-column: 3; grid-row: 1; }
   .shop-room .shop-basket-row > .shop-remove { grid-column: 3; }
 }
+
+/* Ruimte rond het hele product, ook bij hoge planten of lange productnamen. */
+.shop-room .shop-catalog { width: min(64rem, 76vw); max-height: calc(100svh - var(--space-12) * 2 - var(--space-8)); }
+.shop-room .shop-products { gap: var(--space-5); padding: var(--space-3) var(--space-2) var(--space-8); scroll-snap-type: none; align-items: start; }
+.shop-room .shop-product { min-height: calc(var(--space-12) * 6); height: auto; padding: var(--space-3); gap: var(--space-2); grid-template-rows: calc(var(--space-12) * 3) minmax(2.6em, auto) minmax(1.5em, auto) var(--touch-target); overflow: visible; }
+.shop-room .shop-product__art { max-width: 100%; max-height: 100%; padding: var(--space-2); box-sizing: border-box; object-fit: contain; }
+.decor-shop .decor-product { min-height: calc(var(--space-12) * 6); grid-template-rows: calc(var(--space-12) * 4) var(--touch-target); }
+.decor-shop .decor-product .shop-product__art { height: calc(var(--space-12) * 4); padding: var(--space-3); }
+@media(max-width:700px) { .shop-room .shop-catalog { width: 100%; }.shop-room .shop-products { gap: var(--space-3); }.shop-room .shop-product { padding: var(--space-2); grid-template-rows: calc(var(--space-12) * 3) minmax(3em, auto) minmax(1.5em, auto) var(--touch-target); }.decor-shop .decor-product { grid-template-rows: calc(var(--space-12) * 4) var(--touch-target); } }
+.shop-room { height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-4); align-items: stretch; }
+@media(max-width:700px) { .shop-room { padding: calc(var(--space-12) + var(--space-8)) var(--space-2) var(--space-2); }.shop-room .shop-catalog { max-height: none; } }

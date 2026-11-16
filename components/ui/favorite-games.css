@@ -1,0 +1,47 @@
+.game-pin-item { position: relative; }
+.game-pin { position: absolute; right: var(--space-1); top: var(--space-1); z-index: 2; }
+.game-pin .ck-icon-button { min-width: var(--touch-target); min-height: var(--touch-target); color: var(--color-text); background: var(--color-surface-glass); box-shadow: var(--shadow-soft); }
+.game-pin [aria-pressed=true] { color: var(--color-reward-strong); background: var(--color-reward); }
+.game-pin__error { position: absolute; right: 0; top: 100%; width: 14rem; padding: var(--space-3); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); }
+.my-games { min-height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-8); background: var(--color-background-calm); color: var(--color-text); }
+.my-games__content { max-width: 64rem; margin: auto; }
+.my-games h1, .my-games h2 { font-family: var(--ck-font-kop); }
+.my-games section + section { margin-top: var(--space-8); }
+.my-games .ck-kaart__tekst { padding-right: var(--space-5); }
+
+/* Spellen en munten delen het warme materiaal van de wereld. */
+.my-games, .my-coins { background: var(--ck-hout) url('/games/school/school-interior.webp') center / cover fixed; color: var(--ck-cacao); font-family: var(--ck-font-tekst); }
+.my-games__content { padding: var(--space-6); border-radius: var(--radius-dialog); background: var(--ck-glas); }
+.my-games h1 { width: fit-content; margin: 0 auto var(--space-4); padding: var(--space-4) var(--space-8); color: var(--ck-room); background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; }
+.my-games .ck-kaarten.is-plek { --bol: clamp(6rem, 12vw, 9rem); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6); padding: var(--space-4) 0; margin: 0; list-style: none; }
+.my-games .wereld-plek__bol.ck-glas { background: var(--ck-room); border: 1px solid var(--ck-hout-licht); box-shadow: var(--shadow-raised); }
+.my-games .game-pin { right: 0; }
+.my-coins { min-height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-6); display: grid; place-items: center; }
+.my-coins__paper { width: min(100%, 32rem); display: grid; justify-items: center; gap: var(--space-4); padding: var(--space-8); border-radius: var(--radius-dialog); background: var(--ck-room); box-shadow: var(--shadow-raised); text-align: center; }
+.my-coins h1 { font-family: var(--ck-font-kop); margin: 0; }
+.my-coins__coin.ck-munt { width: calc(var(--space-12) * 2); height: calc(var(--space-12) * 2); }
+.my-coins__balance { display: grid; margin: 0; font-family: var(--ck-font-kop); font-size: var(--font-size-2xl); }
+.my-coins__balance span { font-size: var(--font-size-md); }
+.coins-earn-dialog { background: var(--ck-room); color: var(--ck-cacao); }
+@media(max-width:600px) { .my-games__content { padding: var(--space-4); }.my-games .ck-kaarten.is-plek { --bol: 6rem; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }.my-coins__paper { padding: var(--space-5); } }
+
+/* De spaarplek is een spelobject: hout, papier en de eigen CocoCoin. */
+.my-coins__paper { width: min(100%, 36rem); gap: var(--space-4); padding: var(--space-8) var(--space-8) var(--space-12); border-radius: 0; background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; box-shadow: none; filter: drop-shadow(0 var(--space-3) var(--space-4) var(--color-overlay)); }
+.my-coins h1 { margin: var(--space-3) 0 0; padding: var(--space-4) var(--space-6); color: var(--ck-room); background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; text-shadow: 0 2px 0 var(--ck-hout-donker); font-size: var(--font-size-2xl); }
+.my-coins__treasure { position: relative; display: grid; place-items: center; width: min(100%, 18rem); height: calc(var(--space-12) * 4); margin-top: var(--space-2); }
+.my-coins__treasure .my-coins__coin { width: calc(var(--space-12) * 4); height: calc(var(--space-12) * 4); z-index: 2; }
+.my-coins__treasure > .my-coins__little-coin { position: absolute; width: calc(var(--space-12) * 2); height: calc(var(--space-12) * 2); bottom: 0; left: var(--space-4); transform: rotate(-16deg); }
+.my-coins__treasure > .my-coins__little-coin:last-child { left: auto; right: var(--space-4); transform: rotate(14deg); z-index: 3; }
+.my-coins__balance { padding: var(--space-2) var(--space-6); border-radius: var(--radius-pill); background: var(--ck-glas); font-size: var(--ck-maat-speelgetal); line-height: var(--line-height-tight); }
+.my-coins__balance span { color: var(--ck-hout-donker); }
+.my-coins__paper > p:not(.my-coins__balance) { margin: 0; }
+.my-coins__actions { display: grid; gap: var(--space-3); width: min(100%, 22rem); }
+.my-coins__actions .ck-button { width: 100%; }
+.coins-earn-dialog { border: 1px solid var(--ck-hout-licht); }
+@media(max-width:600px) { .my-coins { padding-left: var(--space-3); padding-right: var(--space-3); }.my-coins__paper { padding: var(--space-6) var(--space-5) var(--space-8); }.my-coins h1 { font-size: var(--font-size-xl); }.my-coins__treasure { height: calc(var(--space-12) * 3); }.my-coins__treasure .my-coins__coin { width: calc(var(--space-12) * 3); height: calc(var(--space-12) * 3); }.my-coins__treasure > .my-coins__little-coin { width: calc(var(--space-12) * 1.5); height: calc(var(--space-12) * 1.5); } }
+.my-coins__paper, .my-coins__actions, .my-coins__actions .ck-button { box-sizing: border-box; min-width: 0; max-width: 100%; }
+/* Een kleine zichtbare ster, met een ruim raakvlak, uitsluitend in Mijn spellen. */
+.my-games .game-pin .ck-icon-button { position: relative; isolation: isolate; width: var(--touch-target); height: var(--touch-target); padding: var(--space-3); border: 0; background: transparent; box-shadow: none; }
+.my-games .game-pin .ck-icon-button::before { content: ''; position: absolute; z-index: -1; inset: var(--space-2); border-radius: var(--radius-pill); background: var(--ck-room); box-shadow: var(--shadow-soft); }
+.my-games .game-pin .ck-icon-button svg { width: var(--space-4); height: var(--space-4); }
+.my-games .game-pin [aria-pressed=true]::before { background: var(--ck-zon); }

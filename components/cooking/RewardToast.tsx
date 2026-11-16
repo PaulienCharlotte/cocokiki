@@ -1,5 +1,6 @@
+import CocoCoin from '../platform/CocoCoin';
 import React from 'react';
-import { Check, Coins } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface RewardToastProps {
   message: string;
@@ -10,6 +11,6 @@ export default function RewardToast({ message, coins = 0 }: RewardToastProps) {
   return <div className="reward-toast" role="status" aria-live="polite">
     <span aria-hidden="true"><Check /></span>
     <strong>{message}</strong>
-    {coins > 0 && <small><Coins />+{coins}</small>}
+    {coins > 0 && <small><CocoCoin />+{coins}</small>}
   </div>;
 }

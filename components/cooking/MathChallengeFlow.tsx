@@ -1,3 +1,4 @@
+import './bakkerij-stijl.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -171,7 +172,7 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
 }
 
 function MathShell({ journey, progress, onExit, children }: { journey: NonNullable<CookingProgressState['journeys'][RecipeConfig['id']]>; progress?: string; onExit?: () => void; children: React.ReactNode }) {
-  return <main className="math-stage">
+  return <main className="bakkerij-stijl math-stage">
     <img className="math-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <div className="math-stage__frame">
       <div className="stage-chrome">

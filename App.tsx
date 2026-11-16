@@ -16,6 +16,8 @@ import { roomReturn, shopDestination } from './services/shopNavigation';
 import { LOCATION_ORIGINS, locationOrigin, withLocationOrigin } from './services/locationNavigation';
 
 const NurseryProjectScreen = lazy(() => import('./pages/NurseryProjectScreen'));
+const CoinsScreen = lazy(() => import('./pages/CoinsScreen'));
+const MyGamesScreen = lazy(() => import('./pages/MyGamesScreen'));
 const TasksScreen = lazy(() => import('./pages/TasksScreen'));
 const WorldHub = lazy(() => import('./pages/WorldHub'));
 const PrivacyScreen = lazy(() => import('./pages/PrivacyScreen'));
@@ -49,7 +51,7 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   'treehouse-room': { path: '/treehouse', label: 'Terug naar de boomhut' },
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
-  clock: { path: '/challenges', label: 'Terug naar School' },
+  clock: { path: '/islands/discovery', label: 'Terug naar Seb' },
   'food-discovery': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Coco' },
   taartenatelier: { path: '/islands/cooking', label: 'Terug naar Coco' },
@@ -135,6 +137,10 @@ const App: React.FC = () => {
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
       : current.route.page === 'nursery-project'
       ? <NurseryProjectScreen onNavigate={navigate} />
+      : current.route.page === 'coins'
+      ? <CoinsScreen coins={coins} onNavigate={navigate} />
+      : current.route.page === 'my-games'
+      ? <MyGamesScreen onNavigate={navigate} />
       : current.route.page === 'tasks'
       ? <TasksScreen onNavigate={navigate} />
       : current.route.page === 'privacy'

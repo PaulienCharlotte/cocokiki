@@ -10,7 +10,7 @@ import './world-times.css';
 
 interface Props { initialLevel: ClockLevel; completedLevels: ClockLevel[]; onBack: () => void; onComplete: (level: ClockLevel, roundId: string) => number }
 
-function WorldClock() {
+export function WorldClock() {
   const [base, setBase] = useState(Date.now);
   const [offset, setOffset] = useState(0);
   const [cities, setCities] = useState(['amsterdam', 'new-york', 'tokyo']);
@@ -31,12 +31,13 @@ function WorldClock() {
         <span className="world-times__flag" aria-hidden="true">{COUNTRY_FLAGS[city.country]}</span>
         <AnalogClock time={time} color={(['wood', 'green', 'blue'] as const)[index]} />
         <strong className="world-times__digital">{time.digital}</strong>
+        <span>{time.hours < 6 ? 'Nacht' : time.hours < 12 ? 'Ochtend' : time.hours < 18 ? 'Middag' : 'Avond'}</span>
         <span>{time.date}</span><small>{index ? `${time.offset === reference.offset ? 'Dezelfde tijd als' : `${timeDifferenceText(time.offset - reference.offset)} dan`} ${WORLD_CITIES.find(item => item.id === cities[0])!.name}` : city.country}</small>
       </div>;
     })}</div>
     <div className="world-times__travel">
       <IconButton label="Een uur terug" icon={<Minus size={20} />} disabled={offset <= -24} onClick={() => shift(offset - 1)} />
-      <label>Reistijd <output>{offset === 0 ? 'Nu' : timeDifferenceText(offset * 60)}</output><input aria-label="Reistijd verschuiven" aria-valuetext={offset === 0 ? 'Nu' : timeDifferenceText(offset * 60)} type="range" min={-24} max={24} step={.25} value={offset} onChange={event => shift(Number(event.target.value))} /></label>
+      <label>Tijd verschuiven <output>{offset === 0 ? 'Nu' : timeDifferenceText(offset * 60)}</output><input aria-label="Tijd vooruit of terug schuiven" aria-valuetext={offset === 0 ? 'Nu' : timeDifferenceText(offset * 60)} type="range" min={-24} max={24} step={.25} value={offset} onChange={event => shift(Number(event.target.value))} /></label>
       <IconButton label="Een uur vooruit" icon={<Plus size={20} />} disabled={offset >= 24} onClick={() => shift(offset + 1)} />
       <Button variant="quiet" size="small" startIcon={<RotateCcw size={18} />} onClick={() => { setBase(Date.now()); setOffset(0); }}>Nu</Button>
     </div>

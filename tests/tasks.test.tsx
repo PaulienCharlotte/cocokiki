@@ -1,3 +1,4 @@
+import { loadFavoriteGames, toggleFavoriteGame } from '../services/favoriteGames';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { dailyQuestions, loadDailyPractice, answerDaily, DAILY_REWARD, dailyEarned } from '../services/dailyPractice';
@@ -80,3 +81,21 @@ test('oude dagantwoorden tonen de al ontvangen beloning en worden niet opgehoogd
   const day = dagSleutel(), q = dailyQuestions(day)[0];
   assert.equal(dailyEarned({ day, answers: { [q.id]: { choice: q.antwoord, helped: false } } }), 2);
 });
+
+
+test('favorieten blijven bewaard, normaliseren Baby Lua en veranderen de munten niet', () => stored(() => {
+  assert.ok(toggleFavoriteGame('red-baby-lua'));
+  assert.deepEqual(loadFavoriteGames(), ['math:multiply']);
+  assert.equal(loadCurrency(), 0);
+  assert.ok(toggleFavoriteGame('math:divide'));
+  assert.deepEqual(loadFavoriteGames(), ['math:multiply', 'math:divide']);
+  assert.ok(toggleFavoriteGame('math:multiply'));
+  assert.deepEqual(loadFavoriteGames(), ['math:divide']);
+  assert.equal(toggleFavoriteGame('recipe:niet-een-spel'), false);
+}));
+
+test('favorieten melden opslagfouten zonder een bewaarde ster voor te wenden', () => stored(block => {
+  block(true);
+  assert.equal(toggleFavoriteGame('topo'), false);
+  assert.deepEqual(loadFavoriteGames(), []);
+}));

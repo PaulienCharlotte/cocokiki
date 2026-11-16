@@ -18,8 +18,7 @@ import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
  */
 const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
   moestuin: { label: 'Naar mijn moestuin', pad: '/plants/garden' },
-  bestellingen: { label: 'Naar de toonbank', pad: '/opdrachten?gebied=bakken' },
-  plantendokter: { label: 'Kies een plantenopdracht', pad: '/opdrachten?gebied=planten' },
+  plantendokter: { label: 'Naar de plantendokter', pad: '/plantendokter' },
 };
 
 /**
@@ -28,10 +27,8 @@ const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
  * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
  */
 const DIRECTE_AVONTUREN: Record<string, string> = {
-  plantenopdrachten: '/opdrachten?gebied=planten',
   plantendokter: '/plantendokter',
   moestuin: '/plants/garden',
-  bestellingen: '/opdrachten?gebied=bakken',
   kookboek: '/treehouse/cookbook',
   voeding: '/cooking/discover',
   keuken: '/cooking/kitchen',

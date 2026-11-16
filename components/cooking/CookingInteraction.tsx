@@ -25,6 +25,9 @@ interface Props {
 function frameFor(frames: string[] | undefined, count: number, fallback: string) {
   return frames?.length ? frames[Math.min(count, frames.length - 1)] : fallback;
 }
+function FoodSprite({ asset, frame }: { asset: string; frame: number }) {
+  return <span className="cooking-food-sprite" role="img" aria-label={['Hele appel', 'Appel in helften', 'Appelpartjes', 'Appelblokjes'][frame]} style={{ backgroundImage: `url(${asset})`, backgroundPosition: `${frame % 2 * 100}% ${Math.floor(frame / 2) * 100}%` }} />;
+}
 export default function CookingInteraction({ step, state, onChange, onComplete, onMiss, oven, onOvenChange, cooktopZone = 'large' }: Props) {
   const toolControls = useAnimationControls();
   const vesselControls = useAnimationControls();
@@ -53,28 +56,29 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
     })}
   </div>;
 
-  if (step.mechanic === 'drag') return <DragToTarget sourceAsset={step.asset} sourceLabel={step.dropTarget.sourceLabel} targetLabel={step.dropTarget.label} targetAsset={step.dropTarget.asset}
+  if (step.mechanic === 'drag') return <DragToTarget sourceAsset={step.asset} sourceContent={step.foodSprite ? <FoodSprite asset={step.foodSprite.asset} frame={step.foodSprite.frame ?? 0} /> : undefined} sourceLabel={step.dropTarget.sourceLabel} targetLabel={step.dropTarget.label} targetAsset={step.dropTarget.asset}
     targetContent={step.contents && step.dropTarget.asset ? <IngredientVessel asset={step.dropTarget.asset} contents={step.contents} /> : undefined}
     onHit={() => onComplete({ count: 1 })} onMiss={() => onMiss(`Laat los op de ${step.dropTarget.label.toLowerCase()}.`)} />;
 
   if (step.mechanic === 'repeat') {
     const repeat = () => {
+      if (countRef.current >= step.target) return;
       const count = Math.min(step.target, countRef.current + 1);
       countRef.current = count;
       if (!reduced) {
         toolControls.start({ x: step.contents ? [0, 14, -14, 0] : [0, 0], y: [0, step.contents === 'berries' ? 12 : 26, 0], rotate: [0, step.contents === 'berries' ? -6 : -14, 0], transition: { duration: .4, ease: 'easeInOut' } });
         vesselControls.start({ scale: [1, 1.05, 1], transition: { duration: .35, ease: 'easeInOut' } });
       }
-      if (count >= step.target) onComplete({ count }); else onChange({ count });
+      if (count >= step.target && !step.foodSprite) onComplete({ count }); else onChange({ count });
     };
     return <div className="cooking-tap"><div className="cooking-tap__scene">
-      <motion.div className="cooking-tap__vessel" animate={vesselControls}>{step.contents ? <IngredientVessel asset={step.asset} contents={step.contents} /> : <CookingAssetImage src={frameFor(step.vesselByCount, state.count, step.asset)} />}</motion.div>
+      <motion.div className="cooking-tap__vessel" animate={vesselControls}>{step.foodSprite ? <FoodSprite asset={step.foodSprite.asset} frame={Math.min(3, state.count)} /> : step.contents ? <IngredientVessel asset={step.asset} contents={step.contents} /> : <CookingAssetImage src={frameFor(step.vesselByCount, state.count, step.asset)} />}</motion.div>
       {step.tapTool ? <motion.button type="button" className="cooking-tap__tool" animate={toolControls} whileHover={{ scale: 1.05 }} whileTap={{ scale: .92 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`}>
         <CookingAssetImage src={frameFor(step.toolByCount, state.count, step.tapTool.asset)} />
       </motion.button> : <motion.button type="button" className="cooking-tap__overlay" whileTap={{ scale: .94, rotate: -2 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`} />}
-    </div><span className="cooking-tap__label">{step.tapLabel ?? 'Tik op het plaatje'}</span><div className="cooking-dots" aria-label={`${state.count} van ${step.target}`}>
+    </div><span className="cooking-tap__label">{step.foodSprite ? ['Snijd de appel doormidden', 'Verwijder het klokhuis en maak partjes', 'Snijd de partjes in blokjes', 'De appelblokjes zijn klaar!'][Math.min(3, state.count)] : step.tapLabel ?? 'Tik op het plaatje'}</span><div className="cooking-dots" aria-label={`${state.count} van ${step.target}`}>
       {Array.from({ length: step.target }, (_, index) => <i key={index} className={index < state.count ? 'is-done' : ''} />)}
-    </div></div>;
+    </div>{step.foodSprite && state.count >= step.target && <Button onClick={() => onComplete({ count: state.count })}>Appelblokjes klaar</Button>}</div>;
   }
   if (step.mechanic === 'weigh') {
     const suffix = step.unit === 'gram' ? 'g' : 'ml';

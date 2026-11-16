@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Check, Lightbulb, Minus, Plus } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Button, Dialog } from '../../design-system';
+import ClockTimeLine from './ClockTimeLine';
 import AnalogClock from './AnalogClock';
 import { formatDigitalTime, formatDutchTime, generateTime, minuteStepForLevel, normalizeClockTime, sameClockTime } from './timeEngine';
 import { ClockCompletion, ClockGameHeader } from './ClockControls';
 import type { ClockLevel, ClockTime } from './types';
 
 interface SetClockGameProps {
+  key?: React.Key;
   initialLevel: ClockLevel;
+  onNext?: () => void;
+  onLevelSelect?: (level: ClockLevel) => void;
   completedLevels: ClockLevel[];
   onBack: () => void;
   onComplete: (level: ClockLevel, roundId: string, solved?: number) => number;
@@ -17,12 +21,13 @@ const ROUND_COUNT = 5;
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 
-export default function SetClockGame({ initialLevel, completedLevels, onBack, onComplete }: SetClockGameProps) {
+export default function SetClockGame({ initialLevel, completedLevels, onBack, onComplete, onNext, onLevelSelect }: SetClockGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [target, setTarget] = useState(() => generateTime(initialLevel));
   const [answer, setAnswer] = useState<ClockTime>({ hours: 12, minutes: 0 });
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [timelineOpen, setTimelineOpen] = useState(false);
   const [hint, setHint] = useState(false);
   const [reward, setReward] = useState<number | null>(null);
   const roundId = useRef(crypto.randomUUID());
@@ -33,6 +38,7 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
     roundId.current = crypto.randomUUID();
     revealed.current = false; eligible.current = 0;
     setLevel(nextLevel);
+    onLevelSelect?.(nextLevel);
     setTarget(generateTime(nextLevel));
     setAnswer({ hours: 12, minutes: 0 });
     setScore(0);
@@ -84,18 +90,22 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
       <AnalogClock time={answer} color="wood" interactive level={level} onChange={value => { setAnswer(value); setFeedback(null); }} />
       <div className="clock-set__controls" aria-label="Wijzers aanpassen">
         <div><span>Uur</span><button type="button" aria-label="Een uur terug" onClick={() => adjust(-1, 0)}><Minus /></button><strong>{((answer.hours - 1 + 12) % 12) + 1}</strong><button type="button" aria-label="Een uur verder" onClick={() => adjust(1, 0)}><Plus /></button></div>
-        <div><span>Minuten</span><button type="button" aria-label={`${step} minuten terug`} onClick={() => adjust(0, -step)}><Minus /></button><strong>{String(answer.minutes).padStart(2, '0')}</strong><button type="button" aria-label={`${step} minuten verder`} onClick={() => adjust(0, step)}><Plus /></button></div>
+        {level > 1 && <div><span>Minuten</span><button type="button" aria-label={`${step} minuten terug`} onClick={() => adjust(0, -step)}><Minus /></button><strong>{String(answer.minutes).padStart(2, '0')}</strong><button type="button" aria-label={`${step} minuten verder`} onClick={() => adjust(0, step)}><Plus /></button></div>}
       </div>
     </div>
     <div className="clock-game__feedback" aria-live="polite">
-      {hint && feedback !== 'correct' && <span>De digitale tijd is <strong>{formatDigitalTime(target)}</strong>. Deze klok oefen je zonder munten.</span>}
       {feedback === 'wrong' && <span className="is-wrong">Bijna. Kijk nog eens naar de lange wijzer.</span>}
       {feedback === 'correct' && <span className="is-correct"><Check size={18} /> Goed gezet!</span>}
     </div>
     <div className="clock-game__actions">
-      <Button variant="quiet" disabled={feedback === 'correct'} startIcon={<Lightbulb size={18} />} onClick={() => { revealed.current = true; setHint(true); }}>Toon tijd</Button>
+      <Button variant="quiet" disabled={feedback === 'correct'} startIcon={<Lightbulb size={18} />} onClick={() => setTimelineOpen(true)}>Tijdlijn</Button>
       <Button startIcon={<Check size={18} />} disabled={feedback === 'correct'} onClick={check}>{feedback === 'correct' ? 'Goed!' : 'Controleer'}</Button>
     </div>
-    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onBack} />}
+    <Dialog className="clock-timeline-dialog" open={timelineOpen} title="Spring vooruit of terug" onClose={() => setTimelineOpen(false)} primaryAction={<Button onClick={() => setTimelineOpen(false)}>Verder met de klok</Button>}
+      secondaryAction={<Button variant="quiet" onClick={() => { revealed.current = true; setHint(true); }}>Toon de gevraagde tijd</Button>}>
+      <ClockTimeLine time={answer} step={step} onChange={value => { setAnswer(value); setFeedback(null); }} />
+      {hint && <p>De gevraagde tijd is {formatDigitalTime(target)}. Deze klok oefen je zonder munten.</p>}
+    </Dialog>
+    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onNext ?? onBack} />}
   </main>;
 }

@@ -1,3 +1,4 @@
+import '../components/cooking/bakkerij-stijl.css';
 import { inSeizoen } from '../data/cooking/seasonalRecipes';
 import React, { useEffect, useMemo, useState } from 'react';
 import { subscribeLocalState } from '../services/localState';
@@ -153,7 +154,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     onNavigate={onNavigate}
   />;
 
-  if (playingRecipe && playingJourney?.stage === 'cooking') return <main className="cooking-room cooking-coming-soon cooking-go-home">
+  if (playingRecipe && playingJourney?.stage === 'cooking') return <main className="bakkerij-stijl cooking-room cooking-coming-soon cooking-go-home">
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in Coco’s kookstudio" />
     <section>
       <JourneyStageProgress journey={playingJourney} />
@@ -178,7 +179,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     onExit={() => { setAtToonbank(false); onNavigate?.('/opdrachten?gebied=bakken'); }}
   />;
 
-  return <main className="cooking-room cookbook-library-room">
+  return <main className="bakkerij-stijl cooking-room cookbook-library-room">
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="De keuken in Coco’s kookstudio" />
     <section className="recipe-library" aria-labelledby="cooking-title">
       <h1 id="cooking-title" className="sr-only">Mijn Kookboek</h1>

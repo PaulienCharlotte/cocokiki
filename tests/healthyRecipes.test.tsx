@@ -206,3 +206,18 @@ test('seizoensrecepten zijn leesbaar en downloadbaar zonder kookspel of bestelke
     assert.ok(!inSeizoen(recipe, 7));
   }
 });
+
+test('appel snijden toont voortgang en bewaart de blokjes bij het toevoegen', () => {
+  const recipe = RECIPES.find(recipe => recipe.id === 'apple-oat-bake')!;
+  const step = recipe.preparation!.steps.find(step => step.id === 'chop')!;
+  assert.equal(step.mechanic, 'repeat');
+  for (const [count, label] of ['Hele appel', 'Appel in helften', 'Appelpartjes', 'Appelblokjes'].entries()) {
+    const html = renderToStaticMarkup(<CookingInteraction step={step} state={{ ...emptyStepState(), count }} onChange={() => {}} onComplete={() => {}} onMiss={() => {}} />);
+    assert.match(html, new RegExp(`aria-label="${label}"`));
+    assert.equal(html.includes('Appelblokjes klaar'), count === 3);
+  }
+  const add = recipe.preparation!.steps.find(step => step.id === 'add-apple')!;
+  const html = renderToStaticMarkup(<CookingInteraction step={add} state={emptyStepState()} onChange={() => {}} onComplete={() => {}} onMiss={() => {}} />);
+  assert.match(html, /aria-label="Appelblokjes"/);
+  assert.doesNotMatch(html, /src="\/games\/shop\/products\/apple.webp"/);
+});

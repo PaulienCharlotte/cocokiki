@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Coins, Compass, Heart, Map, Pause, Sparkles } from 'lucide-react';
+import { ArrowLeft, Compass, Heart, Map, Pause, Sparkles } from 'lucide-react';
 import CocoCoin from '../components/platform/CocoCoin';
 import { Button, DestinationPortal, Dialog, GameHUD, IconButton, ProgressIndicator, Surface } from '../design-system';
 import './design-system-preview.css';
@@ -64,7 +64,7 @@ export default function DesignSystemPreview({ onHome }: DesignSystemPreviewProps
             label="Spelstatus"
             leading={<Compass size={25} />}
             title="Topo"
-            stats={<><span><Heart size={16} aria-hidden="true" /> 3</span><span><Coins size={16} aria-hidden="true" /> 42</span></>}
+            stats={<><span><Heart size={16} aria-hidden="true" /> 3</span><span><CocoCoin size={16} aria-hidden="true" /> 42</span></>}
             actions={<IconButton size="small" label="Pauzeren" icon={<Pause size={17} />} />}
           />
         </div>

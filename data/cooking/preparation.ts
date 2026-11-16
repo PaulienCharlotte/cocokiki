@@ -1,6 +1,6 @@
 export type CookingStation = 'kitchen' | 'worktop' | 'cooktop' | 'oven';
 export type BowlContents = 'dry' | 'liquid' | 'batter' | 'berries';
-interface StepBase { cooktop?: { kind: 'add' | 'stir' | 'simmer'; ingredient?: 'pepper' | 'tomato'; contents?: 'pepper' | 'tomato' | 'vegetables'; panAsset: string };  id: string; title: string; instruction: string; station: CookingStation; asset: string; hint?: string; target: number; contents?: BowlContents }
+interface StepBase { foodSprite?: { asset: string; frame?: number }; cooktop?: { kind: 'add' | 'stir' | 'simmer'; ingredient?: 'pepper' | 'tomato'; contents?: 'pepper' | 'tomato' | 'vegetables'; panAsset: string };  id: string; title: string; instruction: string; station: CookingStation; asset: string; hint?: string; target: number; contents?: BowlContents }
 export type CookingStepConfig = StepBase & (
   | { mechanic: 'collect'; tools: Array<{ id: string; label: string; asset: string }> }
   | { mechanic: 'drag'; dropTarget: { label: string; sourceLabel: string; asset?: string } }

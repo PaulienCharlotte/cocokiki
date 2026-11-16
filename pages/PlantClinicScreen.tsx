@@ -1,3 +1,5 @@
+import '../components/dreamworld/wereld-scherm.css';
+import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, type PanInfo } from 'framer-motion';
 import { BookOpen, CloudMoon, Droplet, Droplets, Flower2, Hourglass, Lamp, Scissors, Search, Snowflake, Stamp, Stethoscope, Sun, Trophy, Umbrella, Wind } from 'lucide-react';
@@ -291,6 +293,7 @@ export default function PlantClinicScreen() {
   return <main className="clinic" aria-labelledby="clinic-title">
     <section className={`clinic__card is-${fase}`}>
       <header className="clinic__top">
+        <img className="clinic__emblem" src={PLANT_DOCTOR_EMBLEM} alt="Plantendokter" />
         <div>
           <h1 id="clinic-title">{fase === 'klaar' ? species.commonName : 'Wie is dit?'}</h1>
           <em>{fase === 'klaar' ? species.scientificName : 'Een nieuwe patiënt'}</em>

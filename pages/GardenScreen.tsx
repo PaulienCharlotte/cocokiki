@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CalendarDays, Check, Droplets, Lightbulb, Minus, Plus, Ruler, ShoppingBasket, Sprout, Leaf, X } from 'lucide-react';
+import { ArrowRight, CalendarDays, Check, Droplets, Lightbulb, Minus, Plus, Ruler, ShoppingBasket, Sprout, Leaf, X } from 'lucide-react';
 import GardenCropFacts from '../components/plants/GardenCropFacts';
 import { GARDEN_CROPS, GARDEN_CROPS_BY_ID, SEASONS, formatGardenNumber, gardenNeighbours, gardenPairAdvice, gardenSeason, gardenTask, type GardenCrop } from '../data/plants/garden';
 import { GARDEN_KEY, gardenNeedsCare, currentGardenPart, gardenPartKey, harvestGarden, loadGarden, nextGardenDay, plantGardenPlot, revealGardenAnswer, setGardenLevel, solveGardenPart, useGardenHarvest, type GardenPlot } from '../services/garden';
@@ -92,7 +92,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
 
     {/* 2. Statuseiland: tuindag, groei van het gekozen vak, niveau */}
     <div className="ck-zone-status ck-glas tuin-status">
-      <b className="tuin-dag">Tuindag {state.day}</b><span className="tuin-seizoen">{SEASONS[season]}</span>
+      <button type="button" className="tuin-volgende-dag" disabled={gardenNeedsCare(state)} title={gardenNeedsCare(state) ? 'Verzorg eerst je planten vandaag' : 'Volgende tuindag'} aria-label={`Tuindag ${state.day}, ${SEASONS[season]}. Volgende tuindag`} onClick={() => { kies(null); act(nextGardenDay(), 'Een nieuwe tuindag. Kijk welke vakken water nodig hebben.'); }}><span><b className="tuin-dag">Tuindag {state.day}</b><small className="tuin-seizoen">{SEASONS[season]}</small></span><ArrowRight size={20} aria-hidden="true" /></button>
       {plot && <><span className="tuin-scheid" aria-hidden="true" /><span className="tuin-stippen" role="img" aria-label={stages[plot.step]}>{stages.slice(1).map((_, i) => <span key={i} className={`ck-stip${i < plot.step ? ' ck-stip--klaar' : ''}${i === plot.step ? ' ck-stip--nu' : ''}`} />)}</span></>}
       <button type="button" className="ck-niveau tuin-niveau" aria-label={`Rekenniveau ${state.level}, tik voor een ander niveau`} onClick={() => { if (!setGardenLevel(state.level % 3 + 1)) setNotice('Het niveau kon niet worden opgeslagen.'); refresh(); }}>Niveau {state.level}</button>
     </div>
@@ -141,7 +141,6 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
         <Kiki blij={blij}>{zin}</Kiki>
         <div className="ck-zone-antwoord tuin-antwoord">
           {plot?.step === 4 && crop && selected !== null ? <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => { const id = plot.id; act(harvestGarden(selected, id), 'Je oogst ligt in je mand. Verkoop hem of breng hem naar Coco.'); juich(); setPaneel('oogst'); }}>Oogsten</button>
-            : selected === null && !gardenNeedsCare(state) ? <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => act(nextGardenDay(), 'Een nieuwe tuindag. Kijk welke vakken water nodig hebben.')}>Volgende tuindag</button>
             : null}
         </div>
       </>}

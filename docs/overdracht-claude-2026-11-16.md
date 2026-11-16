@@ -11,9 +11,9 @@
 
 ## Afgesproken: Mijn spellen via het hoofdmenu
 
-Nog niet geïmplementeerd. Gebruiker wil favoriete spellen kunnen bewaren en snel terugvinden. De boomhut is expliciet NIET de ingang.
+Nu geïmplementeerd: /mijn-spellen, een spelcontrollerknop in het desktophoofdmenu en een item Mijn spellen in het mobiele navigatiemenu. Sterren bij spelkeuzes bewaren/verwijderen via services/favoriteGames.ts en de bestaande localState-opslag. De boomhut is expliciet NIET de ingang.
 
-Aanbevolen uitvoering:
+Gedrag en verdere afspraken:
 
 1. Een ster bij een spel in het keuzescherm: toegankelijk label 'Bewaar in Mijn spellen' / 'Verwijder uit Mijn spellen'. Geen geneste knoppen; de ster staat naast de spelknop. Geen extra bediening midden in een lopend spel.
 2. Een vaste ingang 'Mijn spellen' in het hoofdmenu. Op mobiel via het bestaande navigatiemenu; niet verstoppen onder de boomhut of profielinstellingen.
@@ -21,11 +21,11 @@ Aanbevolen uitvoering:
 4. Opslaan met stabiele activiteit-ID's en de bestaande localState-infrastructuur. Dubbele routes/aliassen (bijvoorbeeld Baby Lua) normaliseren naar één favoriet. Filter onbekende of verdwenen activiteiten bij laden.
 5. Geen verplicht minimum, geen automatische favorieten en geen nieuwe wereld op de homepage. Ster opnieuw aantikken verwijdert alleen de favoriet; voortgang blijft.
 
-## Rekenen: voorstel ter bespreking, nog niet uitgevoerd
+## Rekenen: hoofdmenu verkleind, inhoudelijke integratie nog open
 
 Gebruiker wil minder losse spellen, en noemt Baby Lua, Winkelgekte, de honingpotten en het bessen verdelen als sterke spelvormen. Redactiesommen zijn schoolmateriaal en blijven inhoudelijk en qua stappen ongewijzigd.
 
-Voorstel: vijf herkenbare ingangen — Baby Lua, Bessen verdelen, Honingpotten, Winkelgekte, Redactiesommen. Kloklezen blijft een eigen activiteit; dat is geen redundant sommetje.
+Uitgevoerd: vijf herkenbare hoofdkeuzes in de rekenwerkplaats en MathHub — Baby Lua, Bessen verdelen, Honingpotten, Winkelgekte, Redactiesommen. Kloklezen staat alleen bij Seb. De oude missing- en maten-routes en hun voortgang bestaan nog. Het weglaten van hun menukaarten betekent NIET dat de opgaven al in andere spelvormen geïntegreerd zijn. Dat inhoudelijke vervolg staat hieronder.
 
 | Huidig onderdeel | Voorstel |
 |---|---|

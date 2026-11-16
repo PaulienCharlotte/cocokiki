@@ -94,15 +94,15 @@ test('recipe deep links open the existing overview without starting a journey', 
   }
 });
 
-test('de bakkerij heeft vier werkende bestemmingen zonder vergrendelde voorstellen', () => {
+test('de bakkerij heeft drie werkende bestemmingen en To Do staat alleen in het hoofdmenu', () => {
   const location = WORLD_LOCATIONS.find(item => item.id === 'coco')!;
-  // Vier bestemmingen, elk met een directe werkende ingang.
+  // De opdrachten staan uitsluitend in het hoofdmenu.
   assert.deepEqual(location.activities, []);
   const previews = location.adventurePreviews!;
-  assert.equal(previews.length, 4);
-  assert.equal(new Set(previews.map(item => item.id)).size, 4);
+  assert.equal(previews.length, 3);
+  assert.equal(new Set(previews.map(item => item.id)).size, 3);
   // Geen kaartjes voor nog ongebouwde spellen.
-  const speelbaar = ['bestellingen', 'kookboek', 'taartenatelier', 'voeding'];
+  const speelbaar = ['kookboek', 'taartenatelier', 'voeding'];
   assert.deepEqual(previews.filter(item => item.status !== 'locked').map(item => item.id), speelbaar);
   for (const preview of previews) {
     assert.equal(preview.status, speelbaar.includes(preview.id) ? 'available' : 'locked');
@@ -133,4 +133,38 @@ test('de kookstudio heeft de oorspronkelijke ingerichte keuken en behoudt recept
   assert.match(html, /aria-label="Mijn boodschappen openen"/);
   assert.match(html, /aria-label="Mijn Kookboek openen"/);
   assert.doesNotMatch(html, /Kamerinrichting|Mijn rugzak openen/);
+});
+
+
+test('rekenwerkplaats heeft vijf hoofdspellen en kloklezen blijft bij Seb', () => {
+  const lua = WORLD_LOCATIONS.find(location => location.id === 'lua')!;
+  const seb = WORLD_LOCATIONS.find(location => location.id === 'seb')!;
+  assert.deepEqual(lua.featuredActivities, ['math:multiply', 'math:divide', 'math:balance', 'math:race', 'math:add-subtract']);
+  assert.ok(!lua.featuredActivities.includes('clock'));
+  assert.ok(seb.featuredActivities.includes('clock'));
+});
+
+test('huisjes bevatten geen eigen To Do-ingang en delen het plantendokterbeeldmerk', () => {
+  for (const location of WORLD_LOCATIONS) {
+    assert.ok(!location.adventurePreviews?.some(item => ['bestellingen', 'plantenopdrachten'].includes(item.id)));
+    const html = renderToStaticMarkup(<WorldLocationLayout location={location} onNavigate={() => undefined} />);
+    assert.doesNotMatch(html, /To Do openen|>To Do</);
+  }
+  const clinic = WORLD_LOCATIONS.find(location => location.id === 'kiki')!.adventurePreviews!.find(item => item.id === 'plantendokter')!;
+  assert.equal(clinic.image, ACTIVITIES_BY_ID['plant-clinic'].image);
+  assert.ok(existsSync(`public${clinic.image}`));
+  assert.deepEqual(resolveRoute('/munten').route, { page: 'coins', path: '/munten' });
+});
+
+test('spelkeuzes zijn rustig en favorieten zijn alleen expliciet aan te zetten', async () => {
+  const { default: CardGrid } = await import('../components/ui/CardGrid');
+  const props = { cards: [{ id: 'flags-memory', titel: 'Vlaggenmemory', beeld: '/games/flags-memory/navigation.webp' }], onChoose: () => undefined };
+  const normal = renderToStaticMarkup(<CardGrid {...props} vorm="plek" />);
+  assert.doesNotMatch(normal, /Bewaar in Mijn spellen|game-pin/);
+  const favorites = renderToStaticMarkup(<CardGrid {...props} vorm="plek" favorieten />);
+  assert.match(favorites, /Bewaar in Mijn spellen/);
+  const { default: CocoCoin } = await import('../components/platform/CocoCoin');
+  const coin = renderToStaticMarkup(<CocoCoin size={18} />);
+  assert.match(coin, /\/assets\/library\/ui\/cococoin.webp/);
+  assert.doesNotMatch(coin, /logo-compas-geel/);
 });

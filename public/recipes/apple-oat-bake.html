@@ -1,2 +1,145 @@
 <!doctype html>
-<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Appel-havermout uit de oven | CocoKiki</title><style>body{margin:0;padding:24px;font:18px/1.6 system-ui,sans-serif;color:#37332e;background:#faf8f2}article{max-width:720px;margin:auto}h2{font-size:30px;line-height:1.2}h3{color:#50694b}li{margin-bottom:12px}ol{padding-left:26px}@media print{body{padding:0;background:white;font-size:12pt}h3{break-after:avoid}li{break-inside:avoid}}</style></head><body><article class="home-recipe"><h2>Appel-havermout uit de oven</h2><p>Een zacht havermoutontbijt voor twee. Het fruit geeft smaak; je hoeft geen suiker toe te voegen.</p><p>2 porties · ongeveer 35 minuten</p><h3>Ingrediënten</h3><ul><li>2 appels</li><li>80 g havermout</li><li>200 ml halfvolle melk</li><li>150 ml halfvolle naturel yoghurt</li><li>Optioneel: Een snufje kaneel</li></ul><h3>Benodigdheden</h3><p>Mengkom, Lepel, Ovenschaal, Snijplank en mes, Weegschaal, Maatbeker, Ovenwanten, Oven, keukenweegschaal, maatbeker</p><h3>Bereiding</h3><ol><li>Was je handen. Laat een volwassene de oven voorverwarmen op 180 °C (boven- en onderwarmte).</li><li>Was de appels. Laat de schil zitten, verwijder de klokhuizen en vraag hulp bij het in kleine blokjes snijden.</li><li>Meng 80 g havermout, 200 ml halfvolle melk en de appelblokjes in een kom. Doe alles in een kleine ovenschaal.</li><li>Laat een volwassene de schaal in de oven zetten. Bak ongeveer 25 minuten, tot de havermout zacht is en de melk is opgenomen. Is het nog droog of stevig, voeg dan een scheutje water toe en bak iets langer.</li><li>Laat een volwassene de schaal met ovenwanten uit de oven halen. Laat minstens 5 minuten afkoelen en controleer of het niet te heet is.</li><li>Verdeel over twee kommen en schep de naturel yoghurt erbij.</li></ol><section aria-label="Coco legt uit"><h3>Coco legt uit</h3><p><strong>Vezels in je ontbijt</strong> Havermout en appels leveren vezels. Ook de appelschil bevat vezels. Daarom wassen we de appel en laten we de schil zitten.</p><p><strong>Zoet door fruit</strong> Appel geeft dit ontbijt een zoete smaak. Extra suiker of honing is niet nodig.</p></section><h3>Veilig koken</h3><p>Een volwassene helpt met het mes, de oven en de hete ovenschaal. Laat afkoelen voor je proeft.</p><h3>Serveertip</h3><p>Een snufje kaneel past goed bij warme appel. Gebruik naturel yoghurt zonder toegevoegde suiker.</p><h3>Allergenen</h3><p>Melk · Haver: controleer de verpakking op gluten</p></article><footer style="max-width:720px;margin:32px auto">CocoKiki · Samen koken</footer></body></html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Appel-havermout uit de oven | CocoKiki</title><style>:root {
+  color-scheme: light;
+
+  --color-cream: #fff7ed;
+  --color-sage: #a8bfa0;
+  --color-peach: #f5b5a6;
+  --color-lilac: #c9a7db;
+  --color-honey: #f5c875;
+  --color-brown: #795a49;
+  --color-sky: #b9ddf2;
+
+  --color-background: #fffaf5;
+  --color-background-soft: #f7f1eb;
+  --color-background-calm: #edf5f1;
+  --color-surface: #fffdf9;
+  --color-surface-soft: #f5efe9;
+  --color-surface-tinted: #f1e8f4;
+  --color-surface-glass: #fffdf9e8;
+  /* Gekoppeld aan de CocoKiki-huisstijl (styles/cocokiki-tokens.css): geen
+     donkergroen meer, maar de kleur van de wereld waar je bent (standaard
+     school). De donkere rand-variant, zodat tekst en witte letters leesbaar blijven. */
+  --color-primary: var(--ck-actief-rand, #15836F);
+  --color-primary-hover: color-mix(in srgb, var(--ck-actief-rand, #15836F) 85%, #000);
+  --color-primary-pressed: color-mix(in srgb, var(--ck-actief-rand, #15836F) 75%, #000);
+  --color-on-primary: #fffaf5;
+  --color-secondary: #eee3f3;
+  --color-secondary-hover: #e4d4ec;
+  --color-on-secondary: #5a3f67;
+  --color-text: #4A2A1A; /* huisstijl: cacao */
+  --color-text-muted: #6f625d;
+  --color-text-subtle: #81736d;
+  /* Alias: was overal in gebruik, maar nooit gedefinieerd. */
+  --color-text-soft: var(--color-text-muted);
+  --color-border: #d9cfc5;
+  --color-border-strong: #b9aa9e;
+  --color-success: #2A8F40; /* huisstijl: tuin-rand */
+  --color-success-soft: #e4eee2;
+  --color-error: #9b504b;
+  --color-error-soft: #f8e4df;
+  --color-reward: #f5c875;
+  --color-reward-strong: #7a5b22;
+  --color-focus: #76538a;
+  --color-focus-ring: #76538a52;
+  --color-overlay: #332a276b;
+
+  /* Huisstijl: Nunito voor tekst (Baloo 2 voor koppen staat in cocokiki-tokens.css). */
+  --font-family-friendly: "Nunito", system-ui, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.625rem;
+  --font-size-2xl: 2.125rem;
+  --line-height-tight: 1.18;
+  --line-height-default: 1.5;
+  --font-weight-medium: 600;
+  --font-weight-bold: 750;
+  --font-weight-heavy: 850;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-control-sm: 12px;
+  --radius-control: 16px;
+  --radius-card: 22px;
+  --radius-dialog: 28px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 10px 30px #4f403217;
+  --shadow-raised: 0 18px 48px #4f403226;
+  --shadow-dialog: 0 28px 80px #30282338;
+
+  --touch-target: 44px;
+  --motion-fast: 140ms;
+  --motion-default: 200ms;
+  --motion-gentle: 320ms;
+  --ease-storybook: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+:root {
+  /* ---- Wereldkleuren (komen van de knoppen op het eiland) ---- */
+  --ck-keuken: #FF6B3D;   --ck-keuken-rand: #D24A1F;   /* bakken, koken */
+  --ck-tuin: #3FBF5A;     --ck-tuin-rand: #2A8F40;     /* kas, moestuin, plantendokter */
+  --ck-school: #22B59A;   --ck-school-rand: #15836F;   /* rekenen, taal, los oefenen */
+  --ck-wereld: #3AA8F5;   --ck-wereld-rand: #1F7CC0;   /* topo, vlaggen, klok */
+  --ck-boomhut: #FFB52E;  --ck-boomhut-rand: #D98A0B;  /* inrichten, meubels */
+
+  /* ---- Vaste kleuren: overal dezelfde betekenis ---- */
+  --ck-zon: #FFC93A;      --ck-zon-rand: #D79A14;      /* munten, sterren, getallen markeren */
+  --ck-bes: #FF5FA2;      --ck-bes-rand: #D23C7E;      /* namen van personages, hartjes */
+  --ck-druif: #9B6BFF;    --ck-druif-rand: #6E44D1;    /* bonus, verzamelkaart, zeldzaam */
+  --ck-hout: #C9824A;     --ck-hout-licht: #E3A86E;    --ck-hout-donker: #8A4E25;
+
+  /* ---- Basis ---- */
+  --ck-room: #FFF8EC;          /* papier en kaartjes */
+  --ck-plekje: #F6EFE8;        /* vlakje achter een illustratie in een kaartje */
+  --ck-cacao: #4A2A1A;         /* alle tekst */
+  --ck-cacao-zacht: #8A6A55;   /* bijtekst */
+  --ck-wit: #FFFFFF;           /* tekstballonnen */
+  --ck-glas: rgba(255, 248, 236, 0.74);
+  --ck-glas-rand: rgba(255, 255, 255, 0.75);
+  --ck-schaduw-rand: rgba(138, 78, 37, 0.20);
+
+  /* ---- Actieve wereld (wordt per wereld overschreven, zie onder) ---- */
+  --ck-actief: var(--ck-school);
+  --ck-actief-rand: var(--ck-school-rand);
+
+  /* ---- Letters ---- */
+  --ck-font-kop: "Baloo 2", system-ui, sans-serif;   /* koppen, knoppen, getallen */
+  --ck-font-tekst: "Nunito", system-ui, sans-serif;  /* alle andere tekst, altijd vet (700+) */
+  --ck-maat-titel: clamp(32px, 4vw, 46px);
+  --ck-maat-kop: 26px;
+  --ck-maat-ballon: 23px;
+  --ck-maat-knop: 22px;
+  --ck-maat-tekst: 18px;       /* nooit kleiner dan 16px */
+  --ck-maat-klein: 14px;       /* alleen voor labels en "Lees meer" */
+  --ck-maat-speelgetal: 40px;
+
+  /* ---- Vormen ---- */
+  --ck-rond-knop: 20px;
+  --ck-rond-tegel: 22px;
+  --ck-rond-kaart: 24px;
+  --ck-rond-paneel: 28px;
+  --ck-tik-min: 56px;          /* alles wat je tikt is minstens zo hoog */
+  --ck-onderkant: 6px;         /* dikte van het 3D-randje onder knoppen */
+
+  /* ---- Beweging ---- */
+  --ck-snel: 90ms;
+  --ck-normaal: 220ms;
+  --ck-veer: cubic-bezier(.34, 1.56, .64, 1);   /* stuiterend binnenkomen */
+}
+*{box-sizing:border-box}body{margin:0;padding:var(--space-6);font:var(--font-size-md)/var(--line-height-default) system-ui,sans-serif;color:var(--ck-cacao);background:var(--ck-room)}
+.print-sheet{max-width:48rem;margin:auto;padding:var(--space-8);background:white;border-radius:var(--radius-card);box-shadow:var(--shadow-soft)}
+.brand{display:flex;justify-content:space-between;gap:var(--space-4);padding-bottom:var(--space-4);border-bottom:2px solid var(--ck-hout-licht);color:var(--ck-hout-donker)}.brand strong{font-size:var(--font-size-xl);font-weight:900}.brand span{align-self:center}
+h2{font-size:var(--font-size-2xl);line-height:var(--line-height-tight);margin:var(--space-6) 0 var(--space-3)}h3{font-size:var(--font-size-lg);color:var(--ck-hout-donker);margin:var(--space-6) 0 var(--space-2);break-after:avoid}p{margin:var(--space-2) 0}ul,ol{padding-left:var(--space-6)}li{padding-left:var(--space-1);margin-bottom:var(--space-2);break-inside:avoid}footer{margin-top:var(--space-8);padding-top:var(--space-3);border-top:1px solid var(--ck-hout-licht);font-size:var(--font-size-sm);color:var(--ck-cacao-zacht)}
+@media(max-width:600px){body{padding:var(--space-3)}.print-sheet{padding:var(--space-4)}.brand{flex-wrap:wrap}}
+@page{size:A4;margin:16mm}@media print{body{padding:0;color:#222;background:white;font-size:11pt}.print-sheet{max-width:none;padding:0;border-radius:0;box-shadow:none}h2{font-size:22pt}h3{font-size:13pt}p,li{orphans:3;widows:3}.brand,footer{color:#4A2A1A}a{color:inherit;text-decoration:none}}
+</style></head><body><main class="print-sheet"><header class="brand"><strong>CocoKiki</strong><span>Uit het kookboek van Coco</span></header><article class="home-recipe"><h2>Appel-havermout uit de oven</h2><p>Een zacht havermoutontbijt voor twee. Het fruit geeft smaak; je hoeft geen suiker toe te voegen.</p><p>2 porties · ongeveer 35 minuten</p><h3>Ingrediënten</h3><ul><li>2 appels</li><li>80 g havermout</li><li>200 ml halfvolle melk</li><li>150 ml halfvolle naturel yoghurt</li><li>Optioneel: Een snufje kaneel</li></ul><h3>Benodigdheden</h3><p>Mengkom, Lepel, Ovenschaal, Snijplank en mes, Weegschaal, Maatbeker, Ovenwanten, Oven, keukenweegschaal, maatbeker</p><h3>Bereiding</h3><ol><li>Was je handen. Laat een volwassene de oven voorverwarmen op 180 °C (boven- en onderwarmte).</li><li>Was de appels. Laat de schil zitten, verwijder de klokhuizen en vraag hulp bij het in kleine blokjes snijden.</li><li>Meng 80 g havermout, 200 ml halfvolle melk en de appelblokjes in een kom. Doe alles in een kleine ovenschaal.</li><li>Laat een volwassene de schaal in de oven zetten. Bak ongeveer 25 minuten, tot de havermout zacht is en de melk is opgenomen. Is het nog droog of stevig, voeg dan een scheutje water toe en bak iets langer.</li><li>Laat een volwassene de schaal met ovenwanten uit de oven halen. Laat minstens 5 minuten afkoelen en controleer of het niet te heet is.</li><li>Verdeel over twee kommen en schep de naturel yoghurt erbij.</li></ol><section aria-label="Coco legt uit"><h3>Coco legt uit</h3><p><strong>Vezels in je ontbijt</strong> Havermout en appels leveren vezels. Ook de appelschil bevat vezels. Daarom wassen we de appel en laten we de schil zitten.</p><p><strong>Zoet door fruit</strong> Appel geeft dit ontbijt een zoete smaak. Extra suiker of honing is niet nodig.</p></section><h3>Veilig koken</h3><p>Een volwassene helpt met het mes, de oven en de hete ovenschaal. Laat afkoelen voor je proeft.</p><h3>Serveertip</h3><p>Een snufje kaneel past goed bij warme appel. Gebruik naturel yoghurt zonder toegevoegde suiker.</p><h3>Allergenen</h3><p>Melk · Haver: controleer de verpakking op gluten</p></article><footer>CocoKiki · Samen koken</footer></main></body></html>

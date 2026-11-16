@@ -119,3 +119,18 @@
 /* De bovenkant van de app zweeft nu in losse zones; het statuseiland staat
    ertussen in dezelfde rij. Op een smalle telefoon past dat niet: dan een rij lager. */
 @media (max-width: 540px) { .tuin.ck-scherm { --tuin-boven: 68px; } }
+
+/* De appnavigatie heeft de eerste rij; tuinstatus en volgende dag delen de tweede. */
+.tuin.ck-scherm { --tuin-boven: calc(var(--space-12) * 2); }
+body .tuin.ck-scherm .tuin-status { top: var(--tuin-boven); left: var(--space-4); right: auto; transform: none; translate: none; max-width: calc(100% - var(--space-8)); height: auto; min-height: var(--touch-target); gap: var(--space-3); padding: var(--space-1) var(--space-3); box-sizing: border-box; }
+.tuin-volgende-dag { display: flex; align-items: center; gap: var(--space-3); min-height: var(--touch-target); padding: var(--space-1); background: none; border: 0; color: var(--ck-cacao); font: inherit; cursor: pointer; }
+.tuin-volgende-dag > span { display: grid; gap: var(--space-1); text-align: left; }
+.tuin-volgende-dag .tuin-seizoen { font-size: var(--font-size-sm); }
+.tuin-volgende-dag:disabled { cursor: default; }
+.tuin-volgende-dag:disabled > svg { opacity: .3; }
+@media(max-width:700px) { .tuin.ck-scherm { --tuin-boven: calc(var(--space-12) + var(--space-6)); }.tuin .tuin-stippen,.tuin .tuin-scheid { display: none; }.tuin .tuin-gereedschap { top: calc(var(--tuin-boven) + var(--space-12) + var(--space-5)); }.tuin .tuin__veld { top: calc(var(--tuin-boven) + var(--space-12) + var(--space-5)); } }
+/* Bak én naam passen samen binnen hun rij, ook op een laag desktopscherm. */
+.tuin .garden__beds { container-type: size; --tuin-rijen: 2; }
+.tuin .tuin-bak { width: min(100%, calc((100cqh / var(--tuin-rijen) - var(--space-12) - var(--space-3)) * 1.6)); }
+@container (max-width:640px) { .tuin .garden__beds { --tuin-rijen: 3; } }
+@media(min-width:641px) { .tuin .tuin__veld { bottom: calc(var(--space-12) * 3 + var(--space-4)); } }

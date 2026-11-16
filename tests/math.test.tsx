@@ -114,11 +114,13 @@ test('math routes and the supplied icons are integrated without replacing clock 
   assert.equal(MATH_GAMES.length, 7);
   for (const game of GETEKENDE_MATH_GAMES) assert.ok(existsSync(`public${mathIcon(game.id)}`), `${game.id} mist zijn tekening`);
   const hub = renderToStaticMarkup(<MathHub progress={emptyMathProgress()} onPlay={() => undefined} />);
-  for (const game of MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide')) {
+  for (const game of MATH_GAMES.filter(game => game.id !== 'missing' && game.id !== 'maten')) {
     assert.ok(hub.includes(game.title.replace('&', '&amp;')));
     if (game.tekening !== false) assert.ok(hub.includes(mathIcon(game.id)));
   }
-  assert.ok(!hub.includes('Red Baby Lua'));
+  assert.ok(hub.includes('Red Baby Lua'));
+  assert.ok(!hub.includes('Het ontbrekende getal'));
+  assert.ok(!hub.includes('Omrekenen, vergelijken en schatten'));
   assert.equal((hub.match(/0\/5 niveaus/g) ?? []).length, 5);
   assert.match(renderToStaticMarkup(<ChallengesScreen onNavigate={() => undefined} />), /Rekenen openen/);
 });

@@ -5,7 +5,10 @@ import { ClockCompletion, ClockGameHeader } from './ClockControls';
 import type { ClockLevel, MemoryCardData } from './types';
 
 interface MemoryGameProps {
+  key?: React.Key;
   initialLevel: ClockLevel;
+  onNext?: () => void;
+  onLevelSelect?: (level: ClockLevel) => void;
   completedLevels: ClockLevel[];
   onBack: () => void;
   onComplete: (level: ClockLevel, roundId: string) => number;
@@ -13,7 +16,7 @@ interface MemoryGameProps {
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 
-export default function MemoryGame({ initialLevel, completedLevels, onBack, onComplete }: MemoryGameProps) {
+export default function MemoryGame({ initialLevel, completedLevels, onBack, onComplete, onNext, onLevelSelect }: MemoryGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [deck, setDeck] = useState<MemoryCardData[]>(() => createMemoryDeck(initialLevel));
   const [open, setOpen] = useState<string[]>([]);
@@ -27,6 +30,7 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
   const reset = (nextLevel = level) => {
     roundId.current = crypto.randomUUID();
     setLevel(nextLevel);
+    onLevelSelect?.(nextLevel);
     setDeck(createMemoryDeck(nextLevel));
     setOpen([]);
     setMatched([]);
@@ -83,6 +87,6 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
         </button>;
       })}
     </section>
-    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onBack} />}
+    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onNext ?? onBack} />}
   </main>;
 }

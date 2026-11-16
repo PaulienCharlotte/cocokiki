@@ -230,3 +230,26 @@ test('new interactions expose keyboard alternatives and labelled native controls
     if (html) assert.match(html, /type="button"/);
   }
 });
+
+test('de oven toont plaatsen, sluiten en de timer pas in hun eigen volgorde', () => {
+  const step = recipe.preparation!.steps.find(step => step.mechanic === 'oven' && step.action === 'bake')!;
+  assert.equal(step.mechanic, 'oven');
+  if (step.mechanic !== 'oven') return;
+  const render = (patch: Partial<OvenState>) => renderToStaticMarkup(<OvenInteraction step={step} oven={{ ...emptyOven(), powered: true, temperature: config.targetTemperature, actualTemperature: config.targetTemperature, preheated: true, chosenMinutes: config.minimumMinutes, ...patch }} onOvenChange={no} onComplete={no} />);
+  const closed = render({});
+  assert.match(closed, /Deur openen/);
+  assert.doesNotMatch(closed, /Bakvorm plaatsen|Deur sluiten|aria-label="Baktijd in minuten"|Start bakken/);
+  const open = render({ doorOpen: true });
+  assert.match(open, /Bakvorm plaatsen/);
+  assert.doesNotMatch(open, /Deur sluiten|aria-label="Baktijd in minuten"|Start bakken/);
+  const placed = render({ doorOpen: true, trayPlaced: true });
+  assert.match(placed, /Deur sluiten/);
+  assert.doesNotMatch(placed, /Bakvorm plaatsen|aria-label="Baktijd in minuten"|Start bakken/);
+  const ready = render({ trayPlaced: true });
+  assert.match(ready, /aria-label="Baktijd in minuten"/);
+  assert.match(ready, /Start bakken/);
+  assert.doesNotMatch(ready, /Deur openen|Deur sluiten|Bakvorm plaatsen/);
+  const baking = render({ trayPlaced: true, status: 'baking' });
+  assert.match(baking, /aria-label="Bakvoortgang"/);
+  assert.doesNotMatch(baking, /aria-label="Baktijd in minuten"|Start bakken|Deur openen/);
+});

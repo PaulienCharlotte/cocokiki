@@ -1,5 +1,6 @@
+import CocoCoin from '../platform/CocoCoin';
 import React, { useState } from 'react';
-import { Check, Coins, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 export default function SellAction({ name, amount, disabled = false, onSell }: {
   key?: string; name: string; amount: number; disabled?: boolean; onSell: () => boolean;
@@ -15,7 +16,7 @@ export default function SellAction({ name, amount, disabled = false, onSell }: {
         if (!onSell()) { setError('Verkopen lukt even niet. Probeer opnieuw.'); return; }
         setConfirming(false); setError('');
       }}>
-      {confirming ? <Check aria-hidden="true" /> : <Coins aria-hidden="true" />}
+      {confirming ? <Check aria-hidden="true" /> : <CocoCoin aria-hidden="true" />}
       <span className="inventory-sell__amount">{amount}</span>
     </button>
     {confirming && <button type="button" className="inventory-sell__cancel" aria-label="Verkoop afbreken" title="Afbreken" onClick={() => { setConfirming(false); setError(''); }}><X aria-hidden="true" /></button>}

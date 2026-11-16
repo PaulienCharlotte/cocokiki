@@ -34,7 +34,7 @@ export function ClockGameHeader({ title, level, onBack, onLevelChange, completed
   // In de huisstijl is dit het statuseiland: de naam van het spel (tik om
   // terug te gaan naar de klokspellen) en de vijf niveaus als bolletjes.
   return <header className="clock-game-header ck-zone-status ck-glas">
-    <IconButton label="Terug naar de klokspellen" className="clock-game-header__terug" icon={<><ArrowLeft size={16} aria-hidden="true" /><span>{title}</span></>} onClick={onBack} />
+    <IconButton label="Terug naar Seb" className="clock-game-header__terug" icon={<><ArrowLeft size={16} aria-hidden="true" /><span>{title}</span></>} onClick={onBack} />
     <h1 className="sr-only">{title}</h1>
     <LevelPicker level={level} onChange={onLevelChange} completed={completed} />
   </header>;
@@ -45,6 +45,6 @@ export function ClockCompletion({ reward, onReplay, onHub }: { reward: number; o
     <span className="clock-completion__check"><Check aria-hidden="true" /></span>
     <div><strong>Niveau voltooid</strong><p>{reward > 0 ? <>Je verdient <CocoCoin size={18} /> {reward} CocoCoins.</> : 'Geoefend! Voor getoonde antwoorden krijg je geen munten. Elke ronde wordt maar eenmaal beloond.'}</p></div>
     <Button size="small" startIcon={<RotateCcw size={16} />} onClick={onReplay}>Nog een keer</Button>
-    <Button size="small" variant="secondary" onClick={onHub}>Spellen kiezen</Button>
+    <Button size="small" variant="secondary" onClick={onHub}>Volgende spelvorm</Button>
   </section>;
 }

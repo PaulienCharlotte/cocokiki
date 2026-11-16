@@ -1,3 +1,4 @@
+import './bakkerij-stijl.css';
 import React from 'react';
 import { Button } from '../../design-system';
 import SpeechBubble from '../ui/SpeechBubble';
@@ -35,7 +36,7 @@ interface OrderDeliveryProps {
 export default function OrderDelivery({ bestelling, recipe, keer, bonus, inEenKeer, onClose, dishCoins = 0, message }: OrderDeliveryProps) {
   const klant = CHARACTERS[bestelling.klant];
   const stuks = (recipe.servings ?? 1) * keer;
-  return <section className="bestel-aflevering" aria-live="polite">
+  return <section className="bakkerij-stijl bestel-aflevering" aria-live="polite">
     <img className="bestel-aflevering__achtergrond" src={ASSET_LIBRARY.treehouse.stations.worktop} alt="" />
     <article className="bestel-kaart bestel-kaart--aflevering">
       <div className="bestel-aflevering__gerecht">

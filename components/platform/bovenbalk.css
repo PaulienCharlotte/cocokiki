@@ -26,7 +26,7 @@ body .ck-bovenbalk .world-hud__brand { width: 150px; filter: drop-shadow(0 4px 1
 /* 2. Munten in het statuseiland */
 body .ck-bovenbalk .ck-bovenbalk__munten { position: absolute; left: 50%; top: var(--bb-rand); transform: translateX(-50%); height: var(--bb-hoogte); display: flex; align-items: center; gap: 10px; padding: 0 20px 0 10px; border-radius: 999px; }
 body .ck-bovenbalk .ck-bovenbalk__munten strong, body .ck-bovenbalk .ck-bovenbalk__munten-klein strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; line-height: 1; min-width: 2ch; }
-body .ck-bovenbalk .ck-munt { width: 30px; height: 30px; flex: 0 0 30px; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .15), 0 2px 6px rgba(215, 154, 20, .5); }
+body .ck-bovenbalk .ck-munt { width: 30px; height: 30px; flex: 0 0 30px; box-shadow: none; }
 body .ck-bovenbalk .ck-bovenbalk__munten-klein { display: none; min-height: 0; padding: 0 6px 0 2px; gap: 6px; background: none; }
 
 /* 3. Menu: één glazen pil */
@@ -60,3 +60,11 @@ body:has(.ck-scherm .ck-zone-status) .ck-bovenbalk .ck-bovenbalk__munten-klein {
   body .ck-scherm .ck-zone-status { left: calc(var(--ck-rand) + 60px); transform: none; translate: none; gap: 6px; padding: 0 12px 0 10px; }
   body .ck-scherm .ck-zone-status .ck-stip { width: 10px; height: 10px; }
 }
+
+body .ck-bovenbalk button.ck-bovenbalk__munten { border: 1px solid var(--ck-wit); color: var(--ck-cacao); font: inherit; cursor: pointer; }
+body .ck-bovenbalk .world-hud__tools .ck-icon-button, body .ck-bovenbalk .world-profile__trigger { align-items: center; justify-content: center; vertical-align: middle; }
+body .ck-bovenbalk .world-hud__tools svg { display: block; flex-shrink: 0; transform: none; }
+body .ck-bovenbalk button.ck-bovenbalk__munten:focus-visible { outline: 3px solid var(--ck-cacao); outline-offset: var(--space-1); }
+
+/* Het compacte saldo heeft ruimte voor munt én bedrag, naast de avatar. */
+body .ck-bovenbalk .world-hud__tools > button.world-hud__balance { width: auto; min-width: calc(var(--space-12) + var(--space-4)); height: auto; flex: 0 0 auto; padding-inline: var(--space-2); }

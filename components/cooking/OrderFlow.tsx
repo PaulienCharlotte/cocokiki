@@ -1,3 +1,4 @@
+import './bakkerij-stijl.css';
 import React, { useState } from 'react';
 import { ArrowLeft, Users } from 'lucide-react';
 import { Button, IconButton } from '../../design-system';
@@ -53,14 +54,14 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
     const wachtend = openBestellingen(progress);
     const cakeDelivered = loadCakeOrder().delivered;
     const opdrachtAantal = wachtend.length + (onCakeOrder && !cakeDelivered ? 1 : 0);
-    if (!wachtend.length && !onCakeOrder) return <main className="bestel-scherm">
+    if (!wachtend.length && !onCakeOrder) return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart">
         <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
         <SpeechBubble character="coco" label="de toonbank">Er wacht nu niemand. Blader gerust in het kookboek en bak iets voor jezelf.</SpeechBubble>
         <Button size="large" onClick={onExit}>Naar het overzicht</Button>
       </section>
     </main>;
-    return <main className="bestel-scherm">
+    return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart">
         <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
         <SpeechBubble character="coco" label="de toonbank">{opdrachtAantal ? 'Er liggen opdrachten klaar. Wie help je het eerst?' : 'Alle opdrachten zijn afgeleverd. Bekijk je taart of kies zelf een recept.'}</SpeechBubble>
@@ -89,7 +90,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
   if (!gekozenRecept) {
     const recepten = keuzeRecepten(progress);
     const afgewezen = voortgang.misgrepen > 0;
-    return <main className="bestel-scherm">
+    return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart">
         {terugNaarToonbank}
         <SpeechBubble character={bestelling.klant} label="de bestelling" aside={<span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>}>
@@ -122,7 +123,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
   const goed = keerBakken(bestelling, gekozenRecept);
   const klaar = voortgang.keerGekozen === goed;
   const misgegokt = !voortgang.aantalInEenKeer && !klaar;
-  return <main className="bestel-scherm">
+  return <main className="bakkerij-stijl bestel-scherm">
     <section className="bestel-kaart">
       {terugNaarToonbank}
       <SpeechBubble character="coco" label="hoeveel maak je er" tone={klaar ? 'goed' : 'default'}>

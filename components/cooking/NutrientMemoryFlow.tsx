@@ -1,3 +1,4 @@
+import './bakkerij-stijl.css';
 import React, { useState } from 'react';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
 import { completeNutrientMemory, loadCookingProgress, saveCookingProgress } from '../../services/cookingProgress';
@@ -16,7 +17,7 @@ export default function NutrientMemoryFlow({ recipe, progress, onProgressChange,
     if (!saveCookingProgress(next, undefined, { rewards: false })) { setError(true); return; }
     setError(false); onProgressChange(next);
   };
-  return <main className="cooking-room nutrient-memory-screen"><section className="nutrient-memory-shell">
+  return <main className="bakkerij-stijl cooking-room nutrient-memory-screen"><section className="nutrient-memory-shell">
     <button className="cooking-chip" onClick={onExit}>Terug naar het kookboek</button>
     <JourneyStageProgress journey={progress.journeys[recipe.id]!} />
     <h1>Voedingsstoffenmemory</h1>

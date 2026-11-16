@@ -1,6 +1,5 @@
 import type { RecipeConfig } from './types';
 
-const bron = { title: 'Voedingscentrum: seizoensgroente en -fruit uit Nederland', url: 'https://www.voedingscentrum.nl/seizoensgroente' };
 type Thuisrecept = { id: string; name: string; category: RecipeConfig['category']; minutes: number; image: string; months: number[]; season: string; ingredients: string[]; equipment: string[]; steps: string[]; herbs: string; tip: string; allergens: string[]; safety?: string };
 const recepten: Thuisrecept[] = [
   {
@@ -71,7 +70,7 @@ export const SEIZOENSRECEPTEN: RecipeConfig[] = recepten.map(recept => ({
     seasonNote: `${recept.season} De kalender is een richtlijn voor Nederland, geen garantie op lokale herkomst. Kijk op het etiket of vraag het aan de teler. Kruiden, granen en peulvruchten kunnen van elders komen.`,
     safety: recept.safety ?? 'Een volwassene helpt met scherpe messen, het fornuis, afgieten en eventueel pureren. Laat heet eten afkoelen voor je proeft.',
     servingTip: recept.tip, allergens: recept.allergens,
-    nutrition: [{ title: 'Ontdek de kruiden', text: recept.herbs }], sources: [bron],
+    nutrition: [{ title: 'Ontdek de kruiden', text: recept.herbs }],
   },
 }));
 

@@ -1,3 +1,4 @@
+import './shop-layout.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Backpack as BackpackIcon, Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
 import { DECOR_CATEGORIES, DECOR_SHOP_PRODUCTS, DECOR_PRODUCTS_BY_ID, DECOR_STORES, type DecorCategory, type DecorStoreId } from '../../data/decorCatalog';

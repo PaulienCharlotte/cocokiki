@@ -32,10 +32,7 @@ export function AdventureClipboard({ adventure, action, children }: { adventure:
  */
 export default function LocationGameView({ location, onOpen, onDirect, onKaart, renderClipboard, initialTab = 'activities', vorm = 'kaart' }: { vorm?: 'kaart' | 'plek'; location: WorldLocation; onOpen: (activity: LocationActivity) => void; onDirect?: (adventureId: string, alleenVragen?: boolean) => boolean; onKaart?: (adventureId: string) => boolean; renderClipboard?: (preview: AdventurePreview) => React.ReactNode; initialTab?: 'activities' | 'adventures' }) {
   const allPreviews = location.adventurePreviews ?? [];
-  const clipboard = allPreviews.find(item => item.id === 'bestellingen' || item.id === 'plantenopdrachten');
-  // Op het klembord van een wereldscherm staat To Do gewoon tussen de rest,
-  // als laatste; elders is het een los klembord in de tekening.
-  const previews = vorm === 'plek' ? [...allPreviews.filter(item => item !== clipboard), ...(clipboard ? [clipboard] : [])] : allPreviews.filter(item => item !== clipboard);
+  const previews = allPreviews.filter(item => !['bestellingen', 'plantenopdrachten'].includes(item.id));
 
   const [selectedId, setSelectedId] = useState(previews[0]?.id);
   // Zonder activiteiten valt er niets te kiezen; dan is er ook geen tabblad.
@@ -81,7 +78,6 @@ export default function LocationGameView({ location, onOpen, onDirect, onKaart, 
         }}
       />
     </div>}
-    {clipboard && vorm !== 'plek' && <button type="button" className="location-game__clipboard" aria-label="To Do openen" onClick={() => onDirect?.(clipboard.id)}><img src={location.clipboard ?? clipboard.image} alt="" /><span>To Do</span></button>}
     <div id={`${id}-adventures`} className="location-game__stories">
       {selected && (renderClipboard ? renderClipboard(selected) : <AdventureClipboard adventure={selected} />)}
       <section className="adventure-shelf" aria-labelledby={`${id}-shelf-title`}>

@@ -7,7 +7,10 @@ import { ClockCompletion, ClockGameHeader } from './ClockControls';
 import type { ClockLevel, ClockRaceMode } from './types';
 
 interface ClockRaceGameProps {
+  key?: React.Key;
   initialLevel: ClockLevel;
+  onNext?: () => void;
+  onLevelSelect?: (level: ClockLevel) => void;
   completedLevels: ClockLevel[];
   onBack: () => void;
   onComplete: (level: ClockLevel, roundId: string) => number;
@@ -22,7 +25,7 @@ const MODES: Array<{ id: ClockRaceMode; label: string }> = [
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 
-export default function ClockRaceGame({ initialLevel, completedLevels, onBack, onComplete }: ClockRaceGameProps) {
+export default function ClockRaceGame({ initialLevel, completedLevels, onBack, onComplete, onNext, onLevelSelect }: ClockRaceGameProps) {
   const [level, setLevel] = useState(initialLevel);
   const [mode, setMode] = useState<ClockRaceMode>(loadClockRaceMode);
   const [round, setRound] = useState(() => createRaceRound(initialLevel));
@@ -36,6 +39,7 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
   const reset = (nextLevel = level) => {
     roundId.current = crypto.randomUUID();
     setLevel(nextLevel);
+    onLevelSelect?.(nextLevel);
     setRound(createRaceRound(nextLevel));
     setRoundIndex(0);
     setCorrectSelection(null);
@@ -108,6 +112,6 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
       {correctSelection && <span className="is-correct"><Check size={18} /> Goed gezien!</span>}
       {!correctSelection && wrongSelections.length > 0 && <span className="is-wrong">Bijna. Probeer een andere klok.</span>}
     </div>
-    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onBack} />}
+    {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onNext ?? onBack} />}
   </main>;
 }

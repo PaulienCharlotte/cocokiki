@@ -10,6 +10,7 @@ import ChoiceList from '../components/ui/ChoiceList';
 import { FOOD_LESSONS } from '../data/cooking/foodLessons';
 import { completeFoodLesson, loadFoodKnowledge } from '../services/foodKnowledge';
 import './food-discovery.css';
+import '../components/cooking/bakkerij-stijl.css';
 
 export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [view, setView] = useState<'products' | 'body' | 'lessons'>('products');
@@ -32,7 +33,7 @@ export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path:
     }
     setNotice(''); setSelected(null); setStep(value => value + 1);
   };
-  return <main className="food-discovery cooking-room">
+  return <main className="bakkerij-stijl food-discovery cooking-room">
     <img className="cooking-room__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <section className="food-discovery__card">
       <IconButton label={lesson ? 'Terug naar de ontdekkingen' : 'Terug naar Coco'} icon={<ArrowLeft size={20} />} onClick={lesson ? back : () => onNavigate('/islands/cooking')} />
@@ -64,7 +65,6 @@ export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path:
           <SpeechBubble character="coco" label="ontdekt">Je hebt {lesson.title.toLowerCase()} ontdekt. Zullen we het in de keuken gebruiken?</SpeechBubble>
           <Button onClick={() => onNavigate(`/treehouse/cookbook?recipe=${lesson.recipeId}`)}>Kies het bijpassende recept</Button>
           <Button variant="quiet" onClick={back}>Nog iets ontdekken</Button>
-          <a href={lesson.source} target="_blank" rel="noreferrer">Meer lezen bij het Voedingscentrum</a>
         </>}
       </>}
       {notice && <p role="alert">{notice}</p>}

@@ -1,3 +1,4 @@
+import './bakkerij-stijl.css';
 import { isCooktopZone } from '../../data/cooking/cooktopScene';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, Lightbulb, X } from 'lucide-react';
@@ -110,7 +111,7 @@ export default function CookingExperience(props: Props) {
     if (next !== current || (next.preparationSessions[recipe.id] && eligibleCookingTip(recipe.cookingTips ?? [], next.preparationSessions[recipe.id]))) persist(next, true); else accept(current);
   }, [recipe.id, storage]);
 
-  if (issues.length || !session) return <section className="cooking-stage"><div className="cooking-stage__shell"><article className="cooking-card">
+  if (issues.length || !session) return <section className="bakkerij-stijl cooking-stage"><div className="bakkerij-stijl cooking-stage__shell"><article className="cooking-card">
     <h1>Dit recept is nog niet helemaal klaar</h1><p>Je voorraad en voortgang blijven bewaard.</p><button className="cooking-button" onClick={onClose}>Terug naar de keuken</button>
   </article></div></section>;
   const preparation = recipe.preparation!;
@@ -201,9 +202,9 @@ export default function CookingExperience(props: Props) {
     dishCoins={session.redeemedCoins ? 0 : cookedDishValue(recipe)}
   />;
 
-  if (session.completed) return <section className="cooking-stage cooking-stage--done" aria-live="polite">
-    <img className="cooking-stage__background" src={ASSET_LIBRARY.treehouse.stations.worktop} alt="" />
-    <div className="cooking-stage__shell"><article className="cooking-card cooking-card--celebrate celebration-card">
+  if (session.completed) return <section className="bakkerij-stijl cooking-stage cooking-stage--done" aria-live="polite">
+    <img className="bakkerij-stijl cooking-stage__background" src={ASSET_LIBRARY.treehouse.stations.worktop} alt="" />
+    <div className="bakkerij-stijl cooking-stage__shell"><article className="cooking-card cooking-card--celebrate celebration-card">
       <div className="celebration-card__stage"><Confetti /><motion.div className="celebration-card__dish" initial={{ scale: .72, rotate: -6, y: 14 }} animate={{ scale: 1, rotate: 0, y: 0 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}>
         <CookingAssetImage src={preparation.finishedAsset} alt={preparation.finishedAlt} />
       </motion.div></div><h1>Klaar, chef!</h1>
@@ -219,16 +220,16 @@ export default function CookingExperience(props: Props) {
 
   const isCooktopScene = step.mechanic === 'heat' || step.mechanic === 'timed' || Boolean(step.cooktop);
   const cooktopZone = preparation.steps.slice(0, index + 1).map(item => session.steps[item.id]?.cooktopZone).reverse().find(isCooktopZone);
-  return <section className={`cooking-stage${isCooktopScene ? ' cooking-stage--heat' : ''}`} aria-labelledby="cooking-step-title">
-    <img className="cooking-stage__background" src={background} alt="" />
-    <div className="cooking-stage__shell"><header className="cooking-stage__bar">
-      <IconButton className="cooking-stage__icon" onClick={onClose} label="Terug naar de keuken" icon={<ArrowLeft />} />
+  return <section className={`bakkerij-stijl cooking-stage${isCooktopScene ? ' cooking-stage--heat' : ''}`} aria-labelledby="cooking-step-title">
+    <img className="bakkerij-stijl cooking-stage__background" src={background} alt="" />
+    <div className="bakkerij-stijl cooking-stage__shell"><header className="bakkerij-stijl cooking-stage__bar">
+      <IconButton className="bakkerij-stijl cooking-stage__icon" onClick={onClose} label="Terug naar de keuken" icon={<ArrowLeft />} />
       {isCooktopScene ? <Button variant="quiet" size="small" className="heat-previous" startIcon={<ChevronLeft />} onClick={() => blader('terug')} disabled={index === 0 || !session.completedStepIds.includes(preparation.steps[index - 1]?.id ?? '')} aria-label="Een stap terugkijken">Vorige stap</Button>
-        : <IconButton className="cooking-stage__icon" onClick={() => blader('terug')} disabled={index === 0 || !session.completedStepIds.includes(preparation.steps[index - 1]?.id ?? '')} label="Een stap terugkijken" icon={<ChevronLeft />} />}
-      <div className="cooking-stage__progress"><span>{isCooktopScene ? `${index + 1} / ${preparation.steps.length}` : `Stap ${index + 1} van ${preparation.steps.length}`}</span><i role="progressbar" aria-label="Voortgang recept" aria-valuenow={index + 1} aria-valuemin={0} aria-valuemax={preparation.steps.length}><b style={{ width: `${(index + 1) / preparation.steps.length * 100}%` }} /></i></div>
-      {kijktTerug && <button type="button" className="cooking-stage__icon" onClick={() => blader('verder')} aria-label="Terug naar waar je was"><ChevronRight /></button>}
-      {isCooktopScene && <IconButton className="cooking-stage__icon" label="Tip van Coco" icon={<Lightbulb />} onClick={() => setHeatHelp(true)} />}
-      <IconButton className="cooking-stage__icon" onClick={() => setBookOpen(value => !value)} label="Recept bekijken" icon={<BookOpen />} />
+        : <IconButton className="bakkerij-stijl cooking-stage__icon" onClick={() => blader('terug')} disabled={index === 0 || !session.completedStepIds.includes(preparation.steps[index - 1]?.id ?? '')} label="Een stap terugkijken" icon={<ChevronLeft />} />}
+      <div className="bakkerij-stijl cooking-stage__progress"><span>{isCooktopScene ? `${index + 1} / ${preparation.steps.length}` : `Stap ${index + 1} van ${preparation.steps.length}`}</span><i role="progressbar" aria-label="Voortgang recept" aria-valuenow={index + 1} aria-valuemin={0} aria-valuemax={preparation.steps.length}><b style={{ width: `${(index + 1) / preparation.steps.length * 100}%` }} /></i></div>
+      {kijktTerug && <button type="button" className="bakkerij-stijl cooking-stage__icon" onClick={() => blader('verder')} aria-label="Terug naar waar je was"><ChevronRight /></button>}
+      {isCooktopScene && <IconButton className="bakkerij-stijl cooking-stage__icon" label="Tip van Coco" icon={<Lightbulb />} onClick={() => setHeatHelp(true)} />}
+      <IconButton className="bakkerij-stijl cooking-stage__icon" onClick={() => setBookOpen(value => !value)} label="Recept bekijken" icon={<BookOpen />} />
     </header>
       {bookOpen && !isCooktopScene && <aside className="cooking-recipe-card" aria-label="Het recept"><header><div><small>Recept</small><h2>{recipe.name}</h2></div><button onClick={() => setBookOpen(false)} aria-label="Recept sluiten"><X /></button></header>
         <p><strong>Nodig:</strong> {recipe.ingredients.map(item => item.displayAmount).join(' · ')}</p><p><strong>Spullen:</strong> {recipe.equipmentIds.map(id => EQUIPMENT_BY_ID[id]?.name ?? id).join(' · ')}</p>
@@ -243,12 +244,12 @@ export default function CookingExperience(props: Props) {
       </Dialog>}
       <article className={`cooking-card${isCooktopScene ? ' cooking-card--heat' : ''}`}>
         {!isCooktopScene && <h1 id="cooking-step-title">{step.title}</h1>}
-        {!isCooktopScene && uitleg(step.title, step.instruction) && <p className="cooking-card__instruction">{uitleg(step.title, step.instruction)}</p>}
+        {!isCooktopScene && step.mechanic !== 'oven' && uitleg(step.title, step.instruction) && <p className="cooking-card__instruction">{uitleg(step.title, step.instruction)}</p>}
         {session.oven?.powered && step.mechanic !== 'oven' && <output className="baking-oven-status">{Math.round(session.oven.actualTemperature)} °C · {session.oven.preheated ? 'oven klaar' : 'oven warmt op'}</output>}
         {(message || stockMessage) && <div className="cooking-card__hint is-nudge" role="alert"><p>{message ?? stockMessage}</p>{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</div>}
         <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${isCooktopScene ? ' cooking-card__scene--cooktop' : ''}${step.station === 'kitchen' || isCooktopScene ? '' : ' has-surface'}${kijktTerug ? ' is-terugblik' : ''}`} inert={kijktTerug || undefined} style={step.station === 'kitchen' || isCooktopScene ? undefined : { backgroundImage: `url(${background})` }}>
           <React.Fragment key={`${session.attemptId}:${step.id}:${retry}`}><CookingInteraction cooktopZone={cooktopZone} step={step} state={state} oven={session.oven} onOvenChange={changeOven} onChange={patch => change(patch)} onComplete={patch => change(patch ?? {}, true)} onMiss={setMessage} /></React.Fragment>
-        </div>{!isCooktopScene && step.hint && <p className="cooking-card__hint">{step.hint}</p>}
+        </div>{!isCooktopScene && step.mechanic !== 'oven' && step.hint && <p className="cooking-card__hint">{step.hint}</p>}
       </article>
     </div>
   </section>;

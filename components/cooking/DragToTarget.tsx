@@ -5,6 +5,7 @@ import CookingAssetImage from './CookingAssetImage';
 
 interface DragToTargetProps {
   sourceAsset: string;
+  sourceContent?: React.ReactNode;
   sourceLabel: string;
   targetLabel: string;
   targetAsset?: string;
@@ -18,7 +19,7 @@ interface DragToTargetProps {
  * ingrediënt op het doel wordt losgelaten; ernaast loslaten veert terug.
  * Tikken doet hetzelfde als slepen, zodat het ook met toetsenbord lukt.
  */
-export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, targetAsset, targetContent, onHit, onMiss }: DragToTargetProps) {
+export default function DragToTarget({ sourceAsset, sourceContent, sourceLabel, targetLabel, targetAsset, targetContent, onHit, onMiss }: DragToTargetProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const [landed, setLanded] = useState(false);
   const [over, setOver] = useState(false);
@@ -67,7 +68,7 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
         }}
         aria-label={`${sourceLabel} naar ${targetLabel.toLowerCase()}`}
       >
-        <CookingAssetImage src={sourceAsset} alt="" />
+        {sourceContent ?? <CookingAssetImage src={sourceAsset} alt="" />}
       </motion.button>}
       <span className="cooking-drop__caption">{sourceLabel}</span>
     </div>
@@ -85,7 +86,7 @@ export default function DragToTarget({ sourceAsset, sourceLabel, targetLabel, ta
           animate={{ scale: 1, y: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 18 }}
         >
-          <CookingAssetImage src={sourceAsset} alt="" />
+          {sourceContent ?? <CookingAssetImage src={sourceAsset} alt="" />}
         </motion.span>}
         {landed && <span className="cooking-drop__check" aria-hidden="true"><Check /></span>}
       </div>

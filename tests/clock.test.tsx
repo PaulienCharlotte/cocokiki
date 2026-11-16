@@ -100,7 +100,7 @@ test('clock components expose one shared SVG clock and accessible controls', () 
 
   const setClock = renderToStaticMarkup(<SetClockGame initialLevel={3} completedLevels={[]} onBack={() => undefined} onComplete={() => 0} />);
   assert.match(setClock, /Controleer/);
-  assert.match(setClock, /Toon tijd/);
+  assert.match(setClock, /Tijdlijn/);
   assert.match(setClock, /Een uur verder/);
   assert.match(setClock, /15 minuten verder/);
   assert.match(setClock, /Niveaus/);
@@ -160,8 +160,26 @@ test('all world time levels create solvable, stable questions with their intende
   }
   const html = renderToStaticMarkup(<WorldTimes initialLevel={1} completedLevels={[]} onBack={() => undefined} onComplete={() => 0} />);
   assert.match(html, /Wereldklok/); assert.match(html, /Oefenen/);
-  assert.match(html, /Reistijd verschuiven/);
+  assert.match(html, /Tijd vooruit of terug schuiven/);
   const migrated = migrateClockProgress({ completed: { memory: [2], 'world-times': [1,1,5,8] } });
   assert.deepEqual(migrated.completed['world-times'], [1,5]);
   assert.deepEqual(completeClockLevel(migrated, 'world-times', 3).progress.completed['world-times'], [1,3,5]);
+});
+
+test('het klokavontuur opent direct en de tijdlijn springt via hele en halve uren', async () => {
+  const { default: ClockModule } = await import('../games/clock/ClockModule');
+  const { default: ClockTimeLine, timeLineAnchor } = await import('../games/clock/ClockTimeLine');
+  const html = renderToStaticMarkup(<ClockModule onBack={() => undefined} />);
+  assert.match(html, /Zet de klok/);
+  assert.match(html, /Andere spelvorm/);
+  assert.match(html, /Op reis met Seb/);
+  assert.doesNotMatch(html, /Kies een klokspel|clock-hub/);
+  assert.deepEqual(timeLineAnchor(25), { anchor: 30, jump: -5 });
+  assert.deepEqual(timeLineAnchor(35), { anchor: 30, jump: 5 });
+  assert.deepEqual(timeLineAnchor(55), { anchor: 60, jump: -5 });
+  const timeline = renderToStaticMarkup(<ClockTimeLine time={{ hours: 23, minutes: 55 }} step={5} onChange={() => undefined} />);
+  assert.match(timeline, /Vanaf 00:00/);
+  assert.match(timeline, /5 minuten terug/);
+  assert.match(timeline, /23:55/);
+  assert.match(timeline, /Tijdlijn met sprongen/);
 });

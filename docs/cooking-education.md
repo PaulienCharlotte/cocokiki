@@ -20,7 +20,7 @@ volkoren/vezels, suiker/drinken en afwisseling: introductie, keuzes met uitleg,
 afronding en bijpassend recept. Ontdekte onderwerpen blijven beschikbaar via
 de voedingsafdeling van de encyclopedie. Herhalen levert geen munten op.
 
-Bronnen: Voedingscentrum, encyclopedie Suiker en Vezels en Schijf van Vijf.
+CocoKiki is niet verbonden aan een voedingsorganisatie. De website en receptdownloads verwijzen niet naar één vaste voedingsautoriteit. Nieuwe voedingsinhoud wordt inhoudelijk gecontroleerd met meerdere onafhankelijke bronnen; bronvermelding mag geen samenwerking of aanbeveling suggereren.
 Geen gewicht, calorieëndoelen, druk gedrag of gegarandeerde suikercrash als
 lesmechaniek. Suiker levert energie; het hele voedingsmiddel en het eetpatroon
 doen ertoe. Feestelijk eten krijgt een plek naast dagelijkse keuzes.

@@ -11,7 +11,7 @@ import type { MathGameId, MathProgress } from './types';
  */
 
 export default function MathHub({ progress, onPlay }: { progress: MathProgress; onPlay: (game: MathGameId) => void }) {
-  const spellen = MATH_GAMES.filter(game => game.id !== 'multiply' && game.id !== 'divide');
+  const spellen = MATH_GAMES.filter(game => game.id !== 'missing' && game.id !== 'maten');
   return <main className="math-hub" aria-labelledby="math-title">
     <header className="math-hub__intro"><small>School</small><h1 id="math-title">Rekenen</h1></header>
     <CardGrid

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Clock3, LockKeyhole, MoreHorizontal, Play, RotateCcw, Star, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { BookOpen, Clock3, LockKeyhole, Play, RotateCcw, Star, Users } from 'lucide-react';
 import { Button, Dialog } from '../../design-system';
 import { EQUIPMENT_BY_ID, INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import type { CookingProgressState, JourneyProgress, RecipeConfig } from '../../data/cooking/types';
@@ -19,6 +19,8 @@ interface RecipeOverviewDialogProps {
 }
 
 export default function RecipeOverviewDialog({ recipe, journey, progress, onClose, onStart, onReplay, onRestart, onMemoryReplay }: RecipeOverviewDialogProps) {
+  const [homeOpen, setHomeOpen] = useState(false);
+  useEffect(() => setHomeOpen(false), [recipe?.id]);
   if (!recipe) return null;
   const access = getRecipeAccess(recipe, progress);
   const playable = access.playable;
@@ -32,18 +34,18 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
       : active ? 'Ga verder' : completed ? 'Opnieuw maken' : 'Start kookavontuur';
 
   return <Dialog
-    className="recipe-dialog"
+    className="recipe-dialog bakkerij-recept"
     open
     title={recipe.name}
     onClose={onClose}
     illustration={<CookingAssetImage src={recipe.image} alt={recipe.homeOnly ? "" : `Bereide ${recipe.name}`} />}
-    primaryAction={recipe.homeOnly ? null : <Button
+    primaryAction={recipe.homeOnly || homeOpen ? null : <Button
       size="large"
       startIcon={access.locked ? <LockKeyhole size={20} /> : <Play size={20} />}
       disabled={!playable}
       onClick={() => onStart(recipe)}
     >{primaryLabel}</Button>}
-    secondaryAction={<Button variant="quiet" onClick={onClose}>Sluiten</Button>}
+    secondaryAction={homeOpen ? <Button variant="quiet" onClick={() => setHomeOpen(false)}>Terug naar het spelrecept</Button> : undefined}
   >
     {access.locked && <p className="recipe-overview__requirement"><LockKeyhole size={17} /> {access.requirement}</p>}
     <div className="recipe-overview__facts" aria-label="Receptinformatie">
@@ -52,7 +54,8 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
       {!recipe.homeOnly && <span><Star size={19} /><small>Niveau</small><strong>{recipe.level}</strong></span>}
     </div>
 
-    {(recipe.ingredients.length > 0 || recipe.equipmentIds.length > 0) && <div className="recipe-overview__needs">
+    {!recipe.homeOnly && recipe.homeRecipe && !homeOpen && <Button variant="quiet" startIcon={<BookOpen size={18} />} onClick={() => setHomeOpen(true)}>Recept voor thuis</Button>}
+    {!homeOpen && (recipe.ingredients.length > 0 || recipe.equipmentIds.length > 0) && <div className="recipe-overview__needs">
       {recipe.ingredients.length > 0 && <section className="recipe-overview__ingredients" aria-labelledby="recipe-ingredients-title">
         <h3 id="recipe-ingredients-title">Ingrediënten</h3>
         <ul>
@@ -79,9 +82,9 @@ export default function RecipeOverviewDialog({ recipe, journey, progress, onClos
         </ul>
       </section>}
     </div>}
-    {recipe.homeOnly ? <HomeRecipe recipe={recipe} /> : playable && recipe.homeRecipe && <details className="home-recipe-preview"><summary>Complete recept voor thuis</summary><HomeRecipe recipe={recipe} /></details>}
-    {(canReplay || onMemoryReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
-      <summary aria-label="Meer opties"><MoreHorizontal /></summary>
+    {(recipe.homeOnly || homeOpen) && <HomeRecipe recipe={recipe} />}
+    {!homeOpen && (canReplay || onMemoryReplay || (playable && active && onRestart)) && <details className="journey-more recipe-overview__more">
+      <summary>Oefenen en opnieuw beginnen</summary>
       {canReplay && <button type="button" onClick={() => onReplay?.(recipe)}><RotateCcw size={17} />Ontdekken oefenen</button>}
       {onMemoryReplay && <button type="button" onClick={() => onMemoryReplay(recipe)}><RotateCcw size={17} />Voedingsstoffenmemory oefenen</button>}
       {playable && active && onRestart && <button type="button" onClick={() => onRestart(recipe)}><RotateCcw size={17} />Opnieuw beginnen</button>}

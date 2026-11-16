@@ -1,3 +1,4 @@
+import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
 import React, { useState } from 'react';
 import { Armchair, CalendarDays, ChefHat, Sprout } from 'lucide-react';
 import DailyPractice from '../components/quiz/DailyPractice';
@@ -37,7 +38,7 @@ export default function TasksScreen({ onNavigate }: { onNavigate: (path: string)
     ...openBestellingen(progress).map(order => ({ id: order.id, area: 'bakken', titel: CHARACTERS[order.klant].naam, onder: order.aanleiding, beeld: CHARACTERS[order.klant].beeld, meta: active?.bestelling.id === order.id ? 'Verder met je bestelling' : 'Bakken' })),
     { id: 'cake', area: 'bakken', titel: 'Sebs verjaardagstaart', beeld: '/assets/library/cooking/taarten/roze-rand.webp', meta: loadCakeOrder().delivered ? 'Afgeleverd' : 'Taart versieren' },
     { id: 'shop-race', area: 'bakken', titel: 'Help in de winkel', onder: 'Reken af voor klanten in Winkelgekte.', beeld: '/games/school/math/race.webp' },
-    { id: 'clinic', area: 'planten', titel: 'Help een plant', onder: 'Ontdek wat de plant nodig heeft.', beeld: '/assets/library/plants/gereedschap/plantenspuit.webp' },
+    { id: 'clinic', area: 'planten', titel: 'Help een plant', onder: 'Ontdek wat de plant nodig heeft.', beeld: PLANT_DOCTOR_EMBLEM },
     { id: 'garden', area: 'planten', titel: 'Zaaien en verzorgen', onder: 'Ga verder in je moestuin.', beeld: '/assets/library/plants/garden/navigation.webp' },
     { id: 'nursery', area: 'inrichten', titel: 'Luna’s babykamer', onder: 'Meten, kiezen en inrichten met een projectbudget van 500.', beeld: '/assets/library/projects/luna-crib.webp', meta: projectComplete ? 'Afgerond' : 'Tot 100 CocoCoins' },
   ].filter(card => area === 'alles' || card.area === area);

@@ -58,7 +58,7 @@ test('app shell reuses the world menu without a separate challenges action', () 
   assert.match(html, /aria-label="Naar de wereld"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
   assert.doesNotMatch(html, /Uitdagingen/);
-  assert.match(html, /aria-label="69 CocoCoins"/);
+  assert.match(html, /aria-label="69 CocoCoins · Mijn munten openen"/);
   assert.match(html, />Wereld</);
 });
 
@@ -66,7 +66,7 @@ test('game header reuses the homepage menu with coins and profile controls', () 
   const html = renderToStaticMarkup(<PlatformHeader coins={42} onHome={() => undefined} />);
   assert.match(html, /class="platform-world-header"/);
   assert.match(html, /aria-label="Naar de wereld"/);
-  assert.match(html, /aria-label="42 CocoCoins"/);
+  assert.match(html, /aria-label="42 CocoCoins · Mijn munten openen"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
   assert.doesNotMatch(html, /app-header platform-header/);
 });
@@ -85,7 +85,7 @@ test('Dreamworld renders five floating destinations and compact tools', () => {
   // Het taaleiland staat niet op de kaart zolang er niets te doen is.
   assert.doesNotMatch(html, /aria-label="Taal/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
-  assert.match(html, /aria-label="69 CocoCoins"/);
+  assert.match(html, /aria-label="69 CocoCoins · Mijn munten openen"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
   for (const id of ['cooking', 'plants', 'home', 'math', 'discovery']) {
     assert.ok(html.includes(`data-building="${id}"`));

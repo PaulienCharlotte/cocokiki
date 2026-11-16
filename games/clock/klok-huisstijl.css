@@ -88,3 +88,21 @@
   .klok-scherm .clock-game__actions { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
   .klok-scherm .clock-game__actions .ck-button { flex: 1; padding: 10px 12px; font-size: 18px; }
 }
+
+/* Eén direct klokavontuur, met vrije afwisseling en optioneel reizen. */
+.klok-avontuur .clock-game { padding-top: calc(var(--space-12) * 5); }
+.klok-avontuur .clock-game-header.ck-zone-status { top: calc(var(--space-12) * 2); left: var(--space-4); right: auto; transform: none; max-width: calc(100% - var(--space-8)); box-sizing: border-box; flex-wrap: wrap; height: auto; min-height: var(--touch-target); }
+.clock-variation { position: fixed; top: calc(var(--space-12) * 3 + var(--space-5)); left: var(--space-4); z-index: 25; display: flex; gap: var(--space-2); padding: var(--space-1); border-radius: var(--radius-pill); }
+.clock-variation .ck-button { min-height: var(--touch-target); }
+.analog-clock.is-interactive { touch-action: none; }
+.analog-clock__handle { cursor: grab; }
+.analog-clock.is-dragging .analog-clock__handle { cursor: grabbing; }
+.clock-timeline-dialog, .clock-travel-dialog { width: min(100%, 48rem); background: var(--ck-room); }
+.clock-timeline { color: var(--ck-cacao); }
+.clock-timeline svg { width: 100%; height: auto; overflow: visible; font-size: var(--font-size-sm); font-family: var(--ck-font-tekst); }
+.clock-timeline__jumps { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
+.clock-travel-dialog .world-times__clocks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+.clock-travel-dialog .world-times__city { min-width: 0; }
+.clock-travel-dialog .world-times__city select { max-width: 100%; }
+.clock-travel-dialog .world-times__travel { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+@media(max-width:700px) { .klok-avontuur .clock-game-header.ck-zone-status { top: calc(var(--space-12) + var(--space-6)); }.clock-variation { top: calc(var(--space-12) * 3 + var(--space-5)); left: var(--space-2); right: var(--space-2); justify-content: center; }.clock-variation .ck-button { font-size: var(--font-size-sm); padding: var(--space-2); }.clock-travel-dialog .world-times__clocks { grid-template-columns: 1fr; }.clock-travel-dialog .world-times__city .analog-clock { max-width: 9rem; } }

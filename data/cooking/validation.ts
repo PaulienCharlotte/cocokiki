@@ -23,6 +23,7 @@ export function getRecipeAssetPaths(recipe: RecipeConfig): string[] {
     if (step.cooktop) paths.push(step.cooktop.panAsset);
     if (step.mechanic === 'collect') paths.push(...step.tools.map(item => item.asset));
     if (step.mechanic === 'drag' && step.dropTarget.asset) paths.push(step.dropTarget.asset);
+    if (step.foodSprite) paths.push(step.foodSprite.asset);
     if (step.mechanic === 'repeat') paths.push(...(step.vesselByCount ?? []), ...(step.toolByCount ?? []), ...(step.tapTool ? [step.tapTool.asset] : []));
     if (step.mechanic === 'heat') paths.push(step.addition.asset);
     if (step.mechanic === 'timed') paths.push(step.pouredAsset, step.cookedAsset);

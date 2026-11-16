@@ -14,7 +14,8 @@ test('begrippen kunnen zonder ontbrekende links verder worden uitgelegd', () => 
   assert.equal(new Set(FOOD_TERMS.map(term => term.id)).size, FOOD_TERMS.length);
   for (const term of FOOD_TERMS) {
     for (const related of term.related) assert.ok(FOOD_TERMS_BY_ID[related], `${term.id}: ${related}`);
-    assert.ok(term.summary && term.explanation && term.example && term.source.startsWith('https://'));
+    assert.ok(!term.source || (term.source.startsWith('https://') && !term.source.includes('voedingscentrum')));
+    assert.ok(term.summary && term.explanation && term.example);
   }
   for (const id of Object.keys(PRODUCT_KNOWLEDGE)) assert.ok(INGREDIENTS_BY_ID[id], id);
 });

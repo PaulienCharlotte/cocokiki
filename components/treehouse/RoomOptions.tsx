@@ -1,3 +1,4 @@
+import CocoCoin from '../platform/CocoCoin';
 import React, { useState } from 'react';
 import { Coins } from 'lucide-react';
 import { Dialog, IconButton } from '../../design-system';
@@ -15,7 +16,7 @@ export default function RoomOptions({ roomId, onNavigate }: { key?: string; room
   const removable = isExtraRoom(roomId) && validBuildRooms(rooms.filter(item => item.id !== roomId));
   if (!room || !isExtraRoom(roomId)) return null;
   return <>
-    <IconButton className="room-options-trigger" label="Kamer verkopen" icon={<Coins size={21} />} onClick={() => { setRooms(loadTreehouseLayout()); setError(''); setOpen(true); }} />
+    <IconButton className="room-options-trigger" label="Kamer verkopen" icon={<CocoCoin size={21} />} onClick={() => { setRooms(loadTreehouseLayout()); setError(''); setOpen(true); }} />
     <Dialog open={open} title={room.name} primaryAction={null} onClose={() => setOpen(false)}>
       <div className="room-options">
         {isExtraRoom(roomId) && <SellAction key={roomId} name={room.name} amount={roomSaleAmount(roomId)} disabled={!removable} onSell={() => {

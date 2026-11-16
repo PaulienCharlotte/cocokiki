@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -72,19 +72,20 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <img src="/images/cocokiki-logo.webp" alt="CocoKiki" />
           </button>}
       </div>
-      <span className="ck-bovenbalk__munten ck-glas" aria-label={`${coins} CocoCoins`}>
+      <button type="button" className="ck-bovenbalk__munten ck-glas" aria-label={`${coins} CocoCoins · Mijn munten openen`} onClick={() => onNavigate?.('/munten')}>
         <span className="ck-munt" aria-hidden="true" />
         <strong>{coins}</strong>
-      </span>
+      </button>
       <div className="world-hud__tools ck-glas">
-        {!onBack && (worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
+        {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Mijn spellen openen" size="small" icon={<Gamepad2 size={20} />} onClick={() => onNavigate('/mijn-spellen')} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="To Do openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         {/* In een spel met een eigen statuseiland staan de munten hier, in het menu. */}
-        <span className="world-hud__balance ck-bovenbalk__munten-klein" aria-hidden="true">
+        <button type="button" className="world-hud__balance ck-bovenbalk__munten-klein" aria-label={`${coins} CocoCoins · Mijn munten openen`} onClick={() => onNavigate?.('/munten')}>
           <span className="ck-munt" />
           <strong>{coins}</strong>
-        </span>
+        </button>
         <div className="world-profile" ref={profileRef}>
           <button
             className="world-profile__trigger"
@@ -98,6 +99,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <ChevronDown size={19} aria-hidden="true" />
           </button>
           {profileOpen && <div className="world-profile__menu" id={menuId} role="menu" aria-label="Profielmenu">
+            <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onHome(); }}><Map size={21} />Wereldkaart</button>
             <div className="world-profile__identity">
               <img src={avatar.image} alt="" />
               <div><strong>Hoi!</strong><span>CocoFan123</span></div>
@@ -121,6 +123,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
             {onNavigate && <>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 />Mijn spellen</button>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />To Do</button>
             </>}
           </nav>}

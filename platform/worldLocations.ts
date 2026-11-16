@@ -1,3 +1,4 @@
+import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
 import { RECIPES } from '../data/cooking/catalog';
 import { PLANT_SPECIES } from '../data/plants/species';
 import { MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
@@ -63,10 +64,9 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     clipboard: '/assets/library/school/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
-    // Geen knoppenrij: die wees naar dezelfde spellen als de kaarten eronder.
-    // Kloklezen stond er alleen in, en staat nu gewoon tussen de kaarten.
+    // Vijf hoofdspellen; kloklezen hoort alleen bij Seb. Oude routes blijven bestaan.
     activities: [],
-    featuredActivities: [...MATH_GAMES.map(game => `math:${game.id}`), 'clock'],
+    featuredActivities: ['math:multiply', 'math:divide', 'math:balance', 'math:race', 'math:add-subtract'],
     practiceActivities: [], adventures: [],
   },
   {
@@ -82,7 +82,6 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
     adventures: [],
     adventurePreviews: [
-      { id: 'bestellingen', title: 'To Do', description: 'Help een klant met een kookopdracht of een verjaardagstaart.', image: '/assets/library/cooking/klembord.webp', tone: 'honey', status: 'available' },
       { id: 'kookboek', title: 'Het kookboek', description: 'Kies een recept of versier vrij een taart.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'sage', status: 'available' },
       { id: 'taartenatelier', title: 'Taart versieren', description: 'Maak en versier je eigen feestelijke taart.', image: '/assets/library/cooking/taarten/roze-rand.webp', tone: 'berry', status: 'available' },
       { id: 'voeding', title: 'Ontdek je eten', description: 'Ontdek samen met Coco wat je lichaam met eten doet.', image: '/assets/library/cooking/healthy/wholewheat-pasta.webp', tone: 'sage', status: 'available' },
@@ -100,8 +99,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     // /plants/collection en /encyclopedie blijven gewoon werken.
     activities: [], featuredActivities: [], practiceActivities: [], adventures: [],
     adventurePreviews: [
-      { id: 'plantendokter', title: 'De plantendokter', description: 'Help een plant in het spreekuur.', image: '/assets/library/plants/gereedschap/plantenspuit.webp', tone: 'sage', status: 'available' },
-      { id: 'plantenopdrachten', title: 'To Do', description: 'Er staat een plant klaar die het niet goed doet. Kijk wat er mis is en bedenk wat hij nodig heeft.', image: '/assets/library/plants/klembord.webp', tone: 'sage', status: 'available' },
+      { id: 'plantendokter', title: 'De plantendokter', description: 'Help een plant in het spreekuur.', image: PLANT_DOCTOR_EMBLEM, tone: 'sage', status: 'available' },
       { id: 'moestuin', title: 'Mijn moestuin', description: 'Plant een rij, meet water af en oogst je eigen groenten.', image: '/assets/library/plants/garden/navigation.webp', tone: 'sage', status: 'available' },
     ],
   },

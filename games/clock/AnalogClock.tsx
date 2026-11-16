@@ -64,7 +64,7 @@ export default function AnalogClock({ time, color = 'wood', className = '', alar
     }
   };
 
-  const beginDrag = (hand: 'hour' | 'minute') => (event: React.PointerEvent<SVGLineElement>) => {
+  const beginDrag = (hand: 'hour' | 'minute') => (event: React.PointerEvent<SVGElement>) => {
     if (!interactive) return;
     event.preventDefault();
     event.stopPropagation();
@@ -122,6 +122,10 @@ export default function AnalogClock({ time, color = 'wood', className = '', alar
       <line x1="120" y1="132" x2="120" y2="52" stroke={palette.minute} strokeWidth="7" strokeLinecap="round" />
       {interactive && <line data-clock-hand="minute" className="analog-clock__drag-target" x1="120" y1="138" x2="120" y2="43" stroke="transparent" strokeWidth="30" onPointerDown={beginDrag('minute')} />}
     </g>
+    {interactive && <>
+      <circle className="analog-clock__handle" cx={120 + Math.sin(angles.hour * Math.PI / 180) * 43} cy={120 - Math.cos(angles.hour * Math.PI / 180) * 43} r="9" fill={palette.hour} stroke="var(--ck-room)" strokeWidth="3" onPointerDown={beginDrag('hour')} />
+      <circle className="analog-clock__handle" cx={120 + Math.sin(angles.minute * Math.PI / 180) * 76} cy={120 - Math.cos(angles.minute * Math.PI / 180) * 76} r="9" fill={palette.minute} stroke="var(--ck-room)" strokeWidth="3" onPointerDown={beginDrag('minute')} />
+    </>}
     <circle cx="120" cy="120" r="10" fill="#ef9e3f" stroke="#b96d2d" strokeWidth="3" />
   </svg>;
 }

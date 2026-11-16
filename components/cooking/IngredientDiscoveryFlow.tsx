@@ -1,6 +1,7 @@
+import './bakkerij-stijl.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles, X } from 'lucide-react';
-import { Button, ProgressIndicator, IconButton } from '../../design-system';
+import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles } from 'lucide-react';
+import { Button, Dialog, ProgressIndicator, IconButton } from '../../design-system';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
@@ -21,6 +22,7 @@ import RewardToast from './RewardToast';
 import { discoveryOptions } from '../../data/cooking/discoveryOptions';
 import { nextRequiredStage } from '../../services/cookingProgress';
 import SpeechBubble from '../ui/SpeechBubble';
+import ChoiceList from '../ui/ChoiceList';
 
 interface IngredientDiscoveryFlowProps {
   recipe: RecipeConfig;
@@ -32,6 +34,7 @@ interface IngredientDiscoveryFlowProps {
 }
 
 export default function IngredientDiscoveryFlow({ recipe, progress, onProgressChange, onExit, onReplay = onExit, replay = false }: IngredientDiscoveryFlowProps) {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [toastCoins, setToastCoins] = useState(0);
@@ -48,6 +51,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   const alreadyCollected = Boolean(ingredientId && progress.discoveredIngredientIds.includes(ingredientId));
 
   useEffect(() => {
+    if (discovery?.step === 'correct') return;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     cardRef.current?.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
   }, [discovery?.step, ingredientId, reviewing]);
@@ -60,15 +64,20 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   };
 
   useEffect(() => {
+    setFeedbackOpen(false);
     setWrongAnswer(null);
     setReviewing(false);
     setToastCoins(0);
   }, [ingredientId, discovery?.questionIndex]);
 
-  if (!journey) return null;
-  if (pendingSave) return <main className="discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
+  useEffect(() => {
+    if (discovery?.step === 'learn' && !pendingSave) commit(showDiscoveryQuestion(progress, recipe.id));
+  }, [discovery?.step, ingredientId, pendingSave]);
 
-  if (journey.stage === 'challenges') return <main className="discovery-stage">
+  if (!journey) return null;
+  if (pendingSave) return <main className="bakkerij-stijl discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
+
+  if (journey.stage === 'challenges') return <main className="bakkerij-stijl discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <section className="discovery-card discovery-card--centered discovery-card--unavailable" aria-labelledby="next-stage-title">
       <JourneyStageProgress journey={journey} />
@@ -84,7 +93,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   if (discovery.step === 'complete') {
     const nextStage = nextRequiredStage(progress, recipe.id);
     const goToNext = () => replay ? onExit() : nextStage && commit(advanceJourney(progress, recipe.id, nextStage));
-    return <main className="discovery-stage">
+    return <main className="bakkerij-stijl discovery-stage">
       <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
       <section className="discovery-card discovery-card--completion" aria-labelledby="discovery-complete-title">
         <div className="discovery-stage__topbar"><IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} /></div>
@@ -104,13 +113,14 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     </main>;
   }
 
-  if (!config || !ingredient || !config.questions[discovery.questionIndex]) return <main className="discovery-stage"><section className="discovery-card"><h1>Dit recept is nog niet helemaal klaar</h1><p>Je voortgang blijft bewaard.</p><Button onClick={onExit}>Terug naar het kookboek</Button></section></main>;
+  if (!config || !ingredient || !config.questions[discovery.questionIndex]) return <main className="bakkerij-stijl discovery-stage"><section className="discovery-card"><h1>Dit recept is nog niet helemaal klaar</h1><p>Je voortgang blijft bewaard.</p><Button onClick={onExit}>Terug naar het kookboek</Button></section></main>;
   const question = config.questions[discovery.questionIndex];
   const progressValue = Math.min(recipeIngredientIds.length, completedCount + (discovery.step === 'collection' ? 1 : 0));
 
   const answer = (optionId: string) => {
     const result = answerDiscoveryQuestion(progress, recipe.id, optionId);
     if (!commit(result.progress)) return;
+    setFeedbackOpen(true);
     if (!result.correct) {
       setWrongAnswer(optionId);
       return;
@@ -119,13 +129,20 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     setToastCoins(result.coinDelta);
   };
 
+  const continueDiscovery = () => {
+    setFeedbackOpen(false);
+    if (wrongAnswer) { setWrongAnswer(null); return; }
+    commit(collectCurrentIngredient(showIngredientCollection(progress, recipe.id), recipe.id));
+  };
+  const nextLabel = discovery.questionIndex + 1 < config.questions.length ? 'Volgende vraag' : completedCount + 1 === recipeIngredientIds.length ? 'Ontdekken afronden' : 'Volgend ingrediënt';
+
   const skip = () => {
     if (!commit(skipKnownIngredient(progress, recipe.id))) return;
     setWrongAnswer(null);
     setToastCoins(0);
   };
 
-  return <main className="discovery-stage">
+  return <main className="bakkerij-stijl discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
       <div className="stage-chrome">
@@ -140,6 +157,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
       <div className="discovery-card__content" key={`${ingredientId}-${discovery.step}`}>
         {(discovery.step === 'learn' || reviewing) && <>
           {alreadyCollected && <span className="discovery-collected-badge"><Check size={16} />Al verzameld</span>}
+          {reviewing && <Button variant="quiet" onClick={() => setReviewing(false)}>Terug naar de vraag</Button>}
           <IngredientDiscoveryCard key={ingredientId} config={config} ingredient={ingredient} initialPage={reviewing && question.learningGoal === 'nutrition' ? 1 : 0} onReady={() => {
             setReviewing(false); setWrongAnswer(null);
             if (discovery.step === 'learn') commit(showDiscoveryQuestion(progress, recipe.id));
@@ -148,30 +166,26 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
 
         {!reviewing && (discovery.step === 'question' || discovery.step === 'correct') && <>
           <CookingAssetImage className="discovery-card__ingredient" src={ingredient.image} alt={ingredient.name} />
-          <p className="discovery-card__eyebrow">{ingredient.name} · vraag {discovery.questionIndex + 1} van {config.questions.length}</p>
+          <p className="discovery-card__eyebrow">{ingredient.name}</p>
           <SpeechBubble character="coco" label="Denk mee" textId="discovery-title">{question.prompt}</SpeechBubble>
-          <div className="discovery-answer-buttons" role="group" aria-label="Kies je antwoord">
-            {discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map((option, index) => {
-              const wrong = wrongAnswer === option.id;
-              const correct = discovery.step === 'correct' && question.correctOptionId === option.id;
-              return <Button key={option.id} variant="quiet" fullWidth
-                className={`discovery-answer-button${wrong ? ' is-wrong' : ''}${correct ? ' is-correct' : ''}`}
-                disabled={Boolean(wrongAnswer) || discovery.step === 'correct'} onClick={() => answer(option.id)}
-                startIcon={<span className="discovery-answer-button__letter" aria-hidden="true">{String.fromCharCode(65 + index)}</span>}
-                endIcon={wrong ? <X size={18} aria-label="Niet juist" /> : correct ? <Check size={18} aria-label="Goed" /> : undefined}
-              >{option.label}</Button>;
-            })}
+          <ChoiceList vorm="los" label="Kies je antwoord" disabled={Boolean(wrongAnswer) || discovery.step === 'correct'} onChoose={answer}
+            choices={discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map(option => ({
+              id: option.id, label: option.label,
+              staat: wrongAnswer === option.id ? 'mis' : discovery.step === 'correct' && question.correctOptionId === option.id ? 'goed' : undefined,
+            }))} />
+          <div className="discovery-question-actions">
+            <Button size="large" disabled={!wrongAnswer && discovery.step !== 'correct'} onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>
+            <Button variant="quiet" startIcon={<BookOpen size={17} />} onClick={() => discovery.step === 'correct' || wrongAnswer ? setFeedbackOpen(true) : setReviewing(true)}>{discovery.step === 'correct' || wrongAnswer ? 'Coco legt uit' : 'Geef me een tip'}</Button>
           </div>
-          {(wrongAnswer || discovery.step === 'correct') && <p role="status">{question.feedbackExplanation}</p>}
-          {wrongAnswer && <Button onClick={() => setReviewing(true)}>Bekijk de ontdekking opnieuw</Button>}
-          {discovery.step === 'correct' && <>
-            {toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
-            <Button size="large" onClick={() => commit(collectCurrentIngredient(showIngredientCollection(progress, recipe.id), recipe.id))}>{discovery.questionIndex + 1 < config.questions.length ? 'Volgende vraag' : completedCount + 1 === recipeIngredientIds.length ? 'Ontdekken afronden' : 'Volgend ingrediënt'}</Button>
-          </>}
         </>}
         {alreadyCollected && (discovery.step === 'learn' || discovery.step === 'question') && <Button variant="quiet" startIcon={<SkipForward size={18} />} onClick={skip}>Ingrediënt overslaan</Button>}
       </div>
     </section>
+    <Dialog className="recipe-dialog bakkerij-recept cooking-discovery-feedback" open={feedbackOpen} title={wrongAnswer ? 'Coco helpt je' : 'Goed ontdekt!'} onClose={() => setFeedbackOpen(false)}
+      primaryAction={<Button onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>}>
+      <SpeechBubble character="coco" label="Coco legt uit">{question.feedbackExplanation}</SpeechBubble>
+      {!wrongAnswer && toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
+    </Dialog>
     <RecipeOverviewDialog recipe={showRecipe ? recipe : null} progress={progress} journey={journey} onClose={() => setShowRecipe(false)} onStart={() => setShowRecipe(false)} onReplay={replay ? undefined : () => onReplay()} />
   </main>;
 }

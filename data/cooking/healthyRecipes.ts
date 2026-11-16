@@ -1,8 +1,6 @@
 import { GEZONDE_ASSETS, maakGezondAvontuur } from './healthyPreparations';
 import type { IngredientEntry, RecipeConfig } from './types';
 
-const bronVezels = { title: 'Voedingscentrum: vezels', url: 'https://www.voedingscentrum.nl/encyclopedie/vezels.aspx' };
-const bronPeulvruchten = { title: 'Voedingscentrum: peulvruchten', url: 'https://www.voedingscentrum.nl/encyclopedie/peulvruchten.aspx' };
 
 export const GEZONDE_INGREDIENTEN: IngredientEntry[] = [
   { id: 'wholewheat-pasta', name: 'Volkoren pasta', image: GEZONDE_ASSETS.pasta, origin: 'Pasta wordt van gemalen graan en water gemaakt. Voor volkoren pasta wordt de hele graankorrel gebruikt.', nutrients: ['Koolhydraten', 'Vezels'], nutrientIds: ['carbohydrates', 'fiber'], facts: ['Volkoren pasta bevat meer vezels dan witte pasta. Vezels helpen je darmen goed te werken.'] },
@@ -30,7 +28,7 @@ export const GEZONDE_RECEPTEN: RecipeConfig[] = [
       introduction: 'Een warme maaltijd met volkoren granen, groente en peulvruchten. Kook samen met een volwassene.', extraEquipment: ['Kookpan', 'Vergiet', 'Mes', 'Snijplank'],
       steps: ['Was je handen en was de tomaten en paprika. Vraag hulp bij het snijden: snijd de tomaten klein en de paprika zonder steel en zaadjes in blokjes.', 'Laat een volwassene water in de kookpan aan de kook brengen. Kook 150 g volkoren pasta volgens de verpakking.', 'Spoel de gare kikkererwten in een vergiet en laat uitlekken. Weeg daarna 200 g af.', 'Verwarm 10 ml olijfolie in de koekenpan op middelhoog vuur. Bak de paprika ongeveer 5 minuten en roer regelmatig.', 'Voeg de tomaten toe. Laat ongeveer 10 minuten zacht pruttelen tot een saus. Voeg zo nodig een scheutje water toe.', 'Roer de kikkererwten door de saus en verwarm nog 3 minuten. Laat een volwassene de pasta afgieten en meng met de saus.'],
       safety: 'Een volwassene helpt met snijden, het fornuis en afgieten. Kokend water en stoom zijn heet.', servingTip: 'Proef de saus eerst zonder extra zout. Een beetje gedroogde oregano kan erbij.', optionalIngredients: ['Gedroogde oregano'], allergens: ['Tarwe (gluten)'],
-      nutrition: [{ title: 'Waarom volkoren?', text: 'Volkoren pasta wordt van de hele graankorrel gemaakt. Daardoor bevat hij meer vezels dan witte pasta. Vezels helpen je darmen goed te werken.' }, { title: 'Bouwstoffen uit planten', text: 'Kikkererwten leveren eiwitten. Je lichaam gebruikt eiwitten voor groei en herstel.' }], sources: [bronVezels, bronPeulvruchten],
+      nutrition: [{ title: 'Waarom volkoren?', text: 'Volkoren pasta wordt van de hele graankorrel gemaakt. Daardoor bevat hij meer vezels dan witte pasta. Vezels helpen je darmen goed te werken.' }, { title: 'Bouwstoffen uit planten', text: 'Kikkererwten leveren eiwitten. Je lichaam gebruikt eiwitten voor groei en herstel.' }],
     },
   }),
   avontuur({
@@ -41,7 +39,7 @@ export const GEZONDE_RECEPTEN: RecipeConfig[] = [
       introduction: 'Een kleurrijke rijstkom voor twee. Gebruik gare kikkererwten uit blik of pot.', extraEquipment: ['Kookpan', 'Vergiet', 'Mes', 'Snijplank'],
       steps: ['Was je handen. Laat een volwassene 150 g zilvervliesrijst koken volgens de verpakking.', 'Was de paprika en spinazie. Verwijder steel en zaadjes uit de paprika en vraag hulp bij het in blokjes snijden.', 'Spoel de kikkererwten en laat uitlekken. Weeg 200 g af.', 'Verwarm 10 ml olijfolie in de koekenpan. Bak de paprika ongeveer 5 minuten op middelhoog vuur.', 'Voeg de spinazie in kleine handjes toe. Roer tot de blaadjes geslonken zijn. Voeg de kikkererwten toe en verwarm nog ongeveer 3 minuten.', 'Laat een volwassene de rijst zo nodig afgieten. Meng met de groenten en verdeel over twee kommen.'],
       safety: 'Vraag hulp bij messen, hete pannen en afgieten. Eet de rijst na het koken meteen.', servingTip: 'Een beetje komijn geeft extra smaak, zonder extra zout.', optionalIngredients: ['Gemalen komijn'], allergens: ['Controleer de verpakking van de kikkererwten op allergenen en sporen.'],
-      nutrition: [{ title: 'Het vliesje blijft zitten', text: 'Zilvervliesrijst bevat meer vezels dan witte rijst. Die vezels ondersteunen de werking van je darmen.' }, { title: 'Een peul vol bouwstoffen', text: 'Kikkererwten zijn peulvruchten. Ze leveren eiwitten en vezels. Zo leer je ook koken met plantaardige bouwstoffen.' }], sources: [bronVezels, bronPeulvruchten],
+      nutrition: [{ title: 'Het vliesje blijft zitten', text: 'Zilvervliesrijst bevat meer vezels dan witte rijst. Die vezels ondersteunen de werking van je darmen.' }, { title: 'Een peul vol bouwstoffen', text: 'Kikkererwten zijn peulvruchten. Ze leveren eiwitten en vezels. Zo leer je ook koken met plantaardige bouwstoffen.' }],
     },
   }),
   avontuur({
@@ -51,7 +49,7 @@ export const GEZONDE_RECEPTEN: RecipeConfig[] = [
       introduction: 'Een lunch met twee soorten groente. Lekker om samen te maken.', extraEquipment: ['Mes', 'Snijplank', 'Deksel voor de koekenpan'],
       steps: ['Was je handen en was de tomaten en spinazie. Vraag hulp bij het in kleine stukjes snijden van de tomaten.', 'Breek 4 eieren boven de kom, verwijder eventuele schaal en klop met een vork. Was je handen na het aanraken van rauw ei.', 'Verwarm 10 ml olijfolie in de pan. Bak de tomaten ongeveer 3 minuten en voeg de spinazie toe. Roer tot de blaadjes zijn geslonken.', 'Verdeel de groenten over de pan en schenk het ei erbij. Zet het vuur laag en leg een passend deksel op de pan.', 'Laat ongeveer 8 tot 10 minuten rustig garen. Laat een volwassene controleren of het ei helemaal gestold is, ook bovenop. Is het nog vloeibaar, bak dan langer.', 'Verdeel met een spatel in twee stukken en serveer meteen.'],
       safety: 'Vraag hulp bij het snijden en de hete pan. Proef geen rauw ei. Bak de omelet helemaal gaar.', servingTip: 'Serveer als lunch, eventueel met een snee volkorenbrood per persoon.', optionalIngredients: ['2 sneetjes volkorenbrood (bevat tarwe/gluten)'], allergens: ['Ei'],
-      nutrition: [{ title: 'Waarvoor zijn eiwitten?', text: 'Eieren leveren eiwitten. Dat zijn bouwstoffen die je lichaam gebruikt om te groeien en te herstellen.' }, { title: 'Groente erbij', text: 'Met tomaat en spinazie eet je ook groente bij de lunch. Groenten leveren vezels. Varieer met verschillende soorten.' }], sources: [bronVezels],
+      nutrition: [{ title: 'Waarvoor zijn eiwitten?', text: 'Eieren leveren eiwitten. Dat zijn bouwstoffen die je lichaam gebruikt om te groeien en te herstellen.' }, { title: 'Groente erbij', text: 'Met tomaat en spinazie eet je ook groente bij de lunch. Groenten leveren vezels. Varieer met verschillende soorten.' }],
     },
   }),
   avontuur({
@@ -61,7 +59,7 @@ export const GEZONDE_RECEPTEN: RecipeConfig[] = [
       introduction: 'Een zacht havermoutontbijt voor twee. Het fruit geeft smaak; je hoeft geen suiker toe te voegen.', extraEquipment: ['Kleine ovenschaal', 'Mes', 'Snijplank', 'Ovenwanten', 'Oven'],
       steps: ['Was je handen. Laat een volwassene de oven voorverwarmen op 180 °C (boven- en onderwarmte).', 'Was de appels. Laat de schil zitten, verwijder de klokhuizen en vraag hulp bij het in kleine blokjes snijden.', 'Meng 80 g havermout, 200 ml halfvolle melk en de appelblokjes in een kom. Doe alles in een kleine ovenschaal.', 'Laat een volwassene de schaal in de oven zetten. Bak ongeveer 25 minuten, tot de havermout zacht is en de melk is opgenomen. Is het nog droog of stevig, voeg dan een scheutje water toe en bak iets langer.', 'Laat een volwassene de schaal met ovenwanten uit de oven halen. Laat minstens 5 minuten afkoelen en controleer of het niet te heet is.', 'Verdeel over twee kommen en schep de naturel yoghurt erbij.'],
       safety: 'Een volwassene helpt met het mes, de oven en de hete ovenschaal. Laat afkoelen voor je proeft.', servingTip: 'Een snufje kaneel past goed bij warme appel. Gebruik naturel yoghurt zonder toegevoegde suiker.', optionalIngredients: ['Een snufje kaneel'], allergens: ['Melk', 'Haver: controleer de verpakking op gluten'],
-      nutrition: [{ title: 'Vezels in je ontbijt', text: 'Havermout en appels leveren vezels. Ook de appelschil bevat vezels. Daarom wassen we de appel en laten we de schil zitten.' }, { title: 'Zoet door fruit', text: 'Appel geeft dit ontbijt een zoete smaak. Extra suiker of honing is niet nodig.' }], sources: [bronVezels],
+      nutrition: [{ title: 'Vezels in je ontbijt', text: 'Havermout en appels leveren vezels. Ook de appelschil bevat vezels. Daarom wassen we de appel en laten we de schil zitten.' }, { title: 'Zoet door fruit', text: 'Appel geeft dit ontbijt een zoete smaak. Extra suiker of honing is niet nodig.' }],
     },
   }),
 ];
