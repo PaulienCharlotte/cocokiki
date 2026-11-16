@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Button, Dialog } from '../../design-system';
+import HulpPaneel from '../../components/ui/HulpPaneel';
 
 /**
  * De rekenmachine van Baby Lua.
@@ -84,8 +84,7 @@ export default function Rekenmachine({ onClose, som = '' }: { onClose: () => voi
     druk(teken);
   };
 
-  return <Dialog className="rekenmachine-dialoog" open title="Rekenmachine" onClose={onClose} closeLabel="Rekenmachine sluiten"
-    primaryAction={<Button onClick={onClose}>Klaar</Button>}>
+  return <HulpPaneel className="rekenmachine-dialoog" titel="Rekenmachine" sluitLabel="Rekenmachine sluiten" onClose={onClose}>
     {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
     {/* De som blijft erbij staan: anders ben je hem kwijt zodra je rekent. */}
     {som && <p className="rekenmachine__som">{som}</p>}
@@ -105,5 +104,5 @@ export default function Rekenmachine({ onClose, som = '' }: { onClose: () => voi
         onClick={() => druk(toets.teken)}
       ><span className="sr-only">{toets.teken}</span></button>)}
     </div>
-  </Dialog>;
+  </HulpPaneel>;
 }

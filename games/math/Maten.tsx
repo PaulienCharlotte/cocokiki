@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './maten.css';
-import { Button, Dialog } from '../../design-system';
+import HulpPaneel from '../../components/ui/HulpPaneel';
 
 /**
  * Maten omrekenen.
@@ -55,8 +55,7 @@ export default function Maten({ onClose }: { onClose: () => void }) {
   const uitkomst = klaar && Number.isFinite(getal) ? reken(getal, stappen, trap.factor) : null;
   const sprong = trap.factor ** Math.abs(stappen);
 
-  return <Dialog className="maten-dialoog" open title="Maten omrekenen" onClose={onClose}
-    closeLabel="Maten sluiten" primaryAction={<Button onClick={onClose}>Klaar</Button>}>
+  return <HulpPaneel className="maten-dialoog" titel="Maten" sluitLabel="Maten sluiten" onClose={onClose}>
     <div className="maten">
       <nav className="maten-soorten" aria-label="Wat wil je omrekenen?">
         {TRAPPEN.map((item, index) => <button key={item.naam} type="button" aria-pressed={index === soort}
@@ -97,5 +96,5 @@ export default function Maten({ onClose }: { onClose: () => void }) {
 
       <p className="maten-weetjes">{[...trap.weetjes, ...WEETJES].join(' · ')}</p>
     </div>
-  </Dialog>;
+  </HulpPaneel>;
 }

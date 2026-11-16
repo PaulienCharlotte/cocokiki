@@ -24,7 +24,7 @@ function Kiki({ blij = false, children }: { blij?: boolean; children: React.Reac
 function Paneel({ open, titel, onClose, children }: { open: boolean; titel: string; onClose: () => void; children: React.ReactNode }) {
   // Dicht staat het paneel buiten beeld en zonder inhoud, zodat je er niet naartoe kunt tabben.
   return <aside className={`ck-paneel ck-glas tuin-paneel${open ? ' is-open' : ''}`} aria-hidden={!open} aria-label={titel}>
-    {open && <><header className="tuin-paneel__kop"><h2 className="ck-hout tuin-paneel__titel">{titel}</h2><button type="button" className="ck-gereedschap" aria-label="Sluiten" onClick={onClose}><X size={22} aria-hidden="true" /></button></header>
+    {open && <><header className="tuin-paneel__kop"><h2 className="ck-houtbord tuin-paneel__titel">{titel}</h2><button type="button" className="ck-gereedschap" aria-label="Sluiten" onClick={onClose}><X size={22} aria-hidden="true" /></button></header>
       {children}</>}
   </aside>;
 }

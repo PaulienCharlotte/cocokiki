@@ -104,3 +104,21 @@
   font-size: var(--font-size-sm);
 }
 
+
+/* ---- In de huisstijl, in het glazen hulppaneel (components/ui/HulpPaneel) ---- */
+.hulp-paneel .maten { gap: 12px; overflow: visible; border: 0; border-radius: 0; background: none; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.hulp-paneel .maten > * + * { border-top: 0; }
+.hulp-paneel .maten-vak { padding: 14px 16px; border-radius: 20px; background: rgba(255, 248, 236, .72); }
+.hulp-paneel .maten-soorten { gap: 4px; padding: 5px; border-radius: 999px; background: rgba(255, 255, 255, .45); border: 1px solid rgba(255, 255, 255, .7); }
+.hulp-paneel .maten-soorten button { min-height: 44px; border-radius: 999px; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; }
+.hulp-paneel .maten-soorten button.is-actief { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.hulp-paneel .maten-trap button { min-height: 52px; border: 2px solid var(--ck-wit); border-radius: 16px; background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; box-shadow: 0 4px 0 var(--ck-schaduw-rand); transition: transform .2s var(--ck-veer); }
+.hulp-paneel .maten-trap button:hover { background: var(--ck-wit); transform: translateY(-2px); }
+.hulp-paneel .maten-trap button.is-basis { box-shadow: 0 4px 0 var(--ck-schaduw-rand), inset 0 0 0 2px color-mix(in srgb, var(--ck-actief) 40%, transparent); }
+.hulp-paneel .maten-trap button.is-gekozen { border-color: var(--ck-wit); background: var(--ck-zon); color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-zon-rand); }
+.hulp-paneel .maten-brug { border-radius: 999px; background: var(--ck-actief); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; }
+.hulp-paneel .maten-uitkomst p { font-family: var(--ck-font-kop); font-weight: 800; font-size: 24px; color: var(--ck-cacao); }
+.hulp-paneel .maten-uitkomst input { min-height: 52px; border: 3px solid var(--ck-actief); border-radius: 14px; background: var(--ck-room); font: inherit; color: var(--ck-cacao); text-align: center; }
+.hulp-paneel .maten-uitkomst output { padding: 2px 12px; border-radius: 12px; background: var(--ck-zon); box-shadow: 0 3px 0 var(--ck-zon-rand); }
+.hulp-paneel .maten-uitkomst small, .hulp-paneel .maten-hint, .hulp-paneel .maten-weetjes { font-size: 16px; font-weight: 700; color: var(--ck-cacao); }
+.hulp-paneel .maten-weetjes { margin: 0; padding: 0 4px; }

@@ -190,7 +190,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
     <div className="lua-overlay">
       {phase === 'menu' && <>
         <section className="lua-menu ck-glas" aria-labelledby="lua-title">
-          <h1 id="lua-title" className="ck-hout lua-titel">Red Baby Lua!</h1>
+          <h1 id="lua-title" className="ck-houtbord lua-titel">Red Baby Lua!</h1>
           <p>Oefen keer- en deelsommen, ontwijk de rotsen en help Lua veilig door de jungle.</p>
           {setupControls && <div className="lua-setup-controls">{setupControls}</div>}
           {!mathAdventure && <fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong><small>{mode.detail}</small></button>)}</div></fieldset>}
@@ -240,7 +240,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
           </div>}
       </>}
       {paused && phase !== 'menu' && <section className="lua-dialog ck-glas"><Pause size={30} /><h2>Even pauze</h2><button className="ck-knop ck-knop--hoofd lua-play" onClick={() => setPaused(false)}><Play size={20} />Doorgaan</button></section>}
-      {phase === 'results' && !mathAdventure && <section className="lua-results ck-glas"><h1 className="ck-hout lua-titel">Lua is veilig!</h1><div className="lua-stars" aria-label={`${stars} sterren`}>{[0,1,2].map(index => <Star key={index} size={40} fill={index < stars ? 'currentColor' : 'none'} />)}</div><div className="lua-result-metrics"><span><strong>{accuracy}%</strong> meteen goed</span><span><strong>{stats.bestStreak}×</strong> beste combo</span></div><p className="lua-earned"><CocoCoin size={20} />+{sessionCoins} CocoCoins · totaal {coins}</p><div className="lua-results-knoppen"><button className="ck-knop ck-knop--hoofd lua-play" onClick={startSession}><RotateCcw size={20} />Nog een avontuur</button><button className="ck-knop ck-knop--zacht" onClick={onHome}><Home size={20} />Naar de wereld</button><button className="ck-linkje" onClick={() => setGamePhase('menu')}><Settings2 size={17} />Instellingen</button></div></section>}
+      {phase === 'results' && !mathAdventure && <section className="lua-results ck-glas"><h1 className="ck-houtbord lua-titel">Lua is veilig!</h1><div className="lua-stars" aria-label={`${stars} sterren`}>{[0,1,2].map(index => <Star key={index} size={40} fill={index < stars ? 'currentColor' : 'none'} />)}</div><div className="lua-result-metrics"><span><strong>{accuracy}%</strong> meteen goed</span><span><strong>{stats.bestStreak}×</strong> beste combo</span></div><p className="lua-earned"><CocoCoin size={20} />+{sessionCoins} CocoCoins · totaal {coins}</p><div className="lua-results-knoppen"><button className="ck-knop ck-knop--hoofd lua-play" onClick={startSession}><RotateCcw size={20} />Nog een avontuur</button><button className="ck-knop ck-knop--zacht" onClick={onHome}><Home size={20} />Naar de wereld</button><button className="ck-linkje" onClick={() => setGamePhase('menu')}><Settings2 size={17} />Instellingen</button></div></section>}
     </div>
   </div>;
 }

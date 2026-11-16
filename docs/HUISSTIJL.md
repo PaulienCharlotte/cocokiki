@@ -83,12 +83,16 @@ Er komen **geen** andere kleuren bij. Geen grijs, geen saliegroen en geen zwarte
 |---|---|---|
 | Vloeibaar glas | `.ck-glas` | alle vaste zones, panelen, hangkaartjes, bellen |
 | Papier | `.ck-papier`, `.ck-speelkaart` | kaartjes met een illustratie (menu's, winkelitems) |
-| Hout | `.ck-hout` | naam van een wereld, titel van een paneel, To Do-bord |
+| Hout | `.ck-houtbord` (echt hout, voorkeur) of `.ck-hout` | naam van een wereld, titel van een paneel, To Do-bord |
+| Houten medaillon | `.ck-medaillon` | ronde spelknoppen en keuzes, met de tekening erin |
 | Speelstuk | `.ck-knop`, `.ck-tegel`, `.ck-bel` | alles wat je tikt of sleept |
 
 Zet de glans van het glas mee met de muis of vinger door `--ck-glans-x` te vullen (zie voorbeelden). Laat de wereld ook licht meebewegen (parallax, een paar pixels).
 
 ## Onderdelen
+
+- **Houten naambord** (`.ck-houtbord`): het getekende houten bordje met koperen spijkertjes (`/assets/library/ui/wooden-nameplate.webp`). Gebruik dit voor elke titel op hout; teken geen eigen houten balk na.
+- **Houten medaillon** (`.ck-medaillon`): het ronde houten medaillon met gouden rand (`/assets/library/ui/navigation-medallion.webp`) voor ronde spelknoppen. De tekening van het spel staat erin.
 
 - **Hangkaartje** (`.ck-hangkaartje`): prijs, maat of hoeveelheid aan een touwtje bij het ding in de wereld. Het schommelt zacht.
 - **Doel** (`.ck-doel`): de plek waar het antwoord heen moet, met een stippelrand die zacht pulseert. Krijgt `.is-over` als je er iets boven sleept.

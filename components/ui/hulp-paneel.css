@@ -1,0 +1,23 @@
+/* Glazen hulppaneel van rechts (huisstijl: .ck-paneel). Losstaand, zodat het
+   ook buiten een .ck-scherm werkt. Alleen variabelen uit cocokiki-tokens.css. */
+@import '../../styles/cocokiki-tokens.css';
+
+.hulp-paneel-laag { position: fixed; inset: 0; z-index: 300; }
+.hulp-paneel-laag .hulp-paneel {
+  position: absolute; right: 16px; top: 84px; bottom: 16px; width: min(460px, calc(100% - 32px));
+  display: flex; flex-direction: column; gap: 14px; padding: 20px; overflow-y: auto;
+  font-family: var(--ck-font-tekst); color: var(--ck-cacao);
+  animation: hulp-paneel-in .45s var(--ck-veer) both;
+}
+@keyframes hulp-paneel-in { from { transform: translateX(110%); } to { transform: translateX(0); } }
+.hulp-paneel__kop { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hulp-paneel__titel { margin: 0; padding: 6px 20px; font-size: var(--ck-maat-kop); line-height: 1.15; transform: rotate(-1deg); }
+.hulp-paneel__sluit { display: grid; place-items: center; width: 48px; height: 48px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .5); color: var(--ck-cacao); cursor: pointer; transition: transform .2s var(--ck-veer); }
+.hulp-paneel__sluit:hover { transform: scale(1.08); }
+.hulp-paneel__sluit:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
+.hulp-paneel__inhoud { display: grid; gap: 14px; }
+@media (max-width: 540px) { .hulp-paneel-laag .hulp-paneel { top: 72px; right: 10px; bottom: 10px; width: calc(100% - 20px); } }
+
+/* De som blijft bij de rekenmachine staan, op een papiertje */
+.hulp-paneel .rekenmachine__som { margin: 0; padding: 12px 16px; border-radius: 18px; background: var(--ck-room); font-family: var(--ck-font-kop); font-weight: 700; font-size: 18px; line-height: 1.4; color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-schaduw-rand); }
+.hulp-paneel .rekenmachine { width: min(340px, 100%); margin: 0 auto; }

@@ -38,7 +38,7 @@
   position: absolute; z-index: 3; left: var(--ck-rand); right: calc(var(--ck-rand) * 2 + max(48px, 4cqw));
   top: calc(var(--rs-boven) + max(48px, 4.4cqw) + 20px); bottom: max(170px, 17cqw);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-  margin: 0; padding: 0; background: none; border: 0; box-shadow: none;
+  width: auto; min-width: 0; max-width: none; margin: 0; padding: 0; background: none; border: 0; box-shadow: none;
 }
 /* Tussenvakken mogen geen eigen vlak of positie hebben: dan zakken de zones niet weg. */
 .rekenspel .math-puzzle, .rekenspel .honey-game, .rekenspel .berry-game, .rekenspel .maatvraag { position: static; background: none; box-shadow: none; border: 0; padding: 0; margin: 0; }
@@ -95,12 +95,17 @@
 .rekenspel .maatvraag__som i { font-style: normal; }
 .rekenspel .maatvraag__uitleg { font-family: var(--ck-font-tekst); font-size: 18px; max-width: 34em; text-align: center; }
 /* Redactiesommen: het werkblad is papier en mag scrollen; geen witte omlijsting erom */
-.rekenspel--add-subtract .rekenspel__veld { justify-content: flex-start; overflow-y: auto; bottom: var(--ck-rand); padding-bottom: 120px; }
-.rekenspel--add-subtract .rekenspel__veld { top: calc(var(--rs-boven) + max(48px, 4.4cqw) + 24px); }
+.rekenspel.rekenspel--add-subtract .rekenspel__veld {
+  /* Het vel staat recht, midden tussen de linkerrand en de gereedschapsbalk;
+     Lua staat eronder linksonder. Past het niet, dan scrolt het vel. */
+  left: var(--ck-rand); right: calc(var(--ck-rand) * 2 + max(48px, 4cqw) + 8px);
+  top: calc(var(--rs-boven) + max(48px, 4.4cqw) + 20px); bottom: max(150px, 13cqw);
+  justify-content: flex-start; align-items: center; overflow-x: hidden; overflow-y: auto; padding: 6px 0 24px;
+}
 /* Een werkblad is papier (huisstijl: "Papier"), met de verhaalsom erop. */
 .rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { width: min(760px, 100%); padding: 24px 28px; border-radius: var(--ck-rond-kaart); background: var(--ck-room); box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 14px 28px rgba(74, 42, 26, .22); font-family: var(--ck-font-tekst); animation: ck-pop .45s var(--ck-veer) both; }
 /* Lua staat naast het werkblad en zegt wat je zoekt; het blad schuift opzij. */
-.rekenspel--add-subtract .rekenspel__veld { left: max(320px, 28cqw); align-items: flex-start; }
+
 
 /* ---- Bladen kiezen (Redactiesommen) ---- */
 .rekenbladen__stapel { position: absolute; z-index: 3; left: var(--ck-rand); right: var(--ck-rand); top: calc(var(--rs-boven) + 70px); bottom: max(170px, 17cqw); display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); align-content: center; gap: 22px 18px; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; overflow-y: auto; }
@@ -135,14 +140,11 @@
 /* ---- Redactiesommen met geur en kleur ---- */
 /* Het vel: schriftpapier met lijntjes, een plakbandje in de wereldkleur, een tikje scheef */
 .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) {
-  position: relative; transform: rotate(-.5deg);
+  position: relative; box-sizing: border-box; min-width: 0; flex: none; transform: none;
   background: repeating-linear-gradient(180deg, transparent 0 33px, color-mix(in srgb, var(--ck-wereld) 18%, transparent) 33px 34px), var(--ck-room);
   padding: 34px 32px 28px;
 }
-.rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden])::before {
-  content: ""; position: absolute; top: -14px; left: 50%; width: 120px; height: 28px; margin-left: -60px; transform: rotate(2deg);
-  border-radius: 6px; background: color-mix(in srgb, var(--ck-actief) 70%, transparent); box-shadow: 0 3px 6px rgba(40, 20, 5, .2);
-}
+/* Geen plakband of klem: een klembord hoort bij de laag erboven, dit is gewoon een vel papier. */
 .rekenspel.rekenspel--add-subtract .redactie-verhaal { font-family: var(--ck-font-kop); font-weight: 700; font-size: clamp(20px, 1.8cqw, 26px); line-height: 1.5; color: var(--ck-cacao); }
 .rekenspel.rekenspel--add-subtract .redactie-beeld { float: right; width: clamp(90px, 10cqw, 150px); margin: 0 0 8px 16px; animation: ck-zweef 3.4s ease-in-out infinite; }
 /* Getallen aanstrepen: de markeerstift is zonnebloemgeel (huisstijl: getallen markeren) */
@@ -193,5 +195,6 @@
 @container (max-width: 640px) {
   .rekenspel.rekenspel--add-subtract .rekenspel__veld { left: var(--ck-rand); }
   .rekenspel.rekenspel--add-subtract .rekenspel__personage { display: none; }
-  .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { padding: 30px 18px 22px; transform: none; }
+  .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { padding: 22px 18px 20px; }
+  .rekenspel.rekenspel--add-subtract .rekenspel__veld { right: var(--ck-rand); top: calc(var(--rs-boven) + 124px); bottom: var(--ck-rand); }
 }

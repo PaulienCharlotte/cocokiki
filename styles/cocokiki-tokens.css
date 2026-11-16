@@ -107,6 +107,23 @@
   box-shadow: 0 6px 0 var(--ck-hout-donker);
 }
 
+/* 3b. Echt hout (getekende assets): gebruik deze voor naamborden, titels en
+       ronde spelknoppen. Tekst en iconen blijven live HTML erop.
+       - .ck-houtbord: houten naambord met koperen spijkertjes
+       - .ck-medaillon: rond houten medaillon met een gouden rand */
+.ck-houtbord {
+  display: inline-block; padding: .55em 1.7em; border: 0; border-radius: 0;
+  background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 175% no-repeat;
+  color: var(--ck-room); font-family: var(--ck-font-kop); font-weight: 800; line-height: 1.15;
+  text-shadow: 0 2px 0 var(--ck-hout-donker); box-shadow: none;
+  filter: drop-shadow(0 4px 6px rgba(74, 42, 26, .35));
+}
+.ck-medaillon {
+  position: relative; display: grid; place-items: center; aspect-ratio: 1; border: 0; border-radius: 50%;
+  background: url('/assets/library/ui/navigation-medallion.webp') center / contain no-repeat;
+  box-shadow: none; filter: drop-shadow(0 4px 5px rgba(74, 42, 26, .3));
+}
+
 /* 4. Speelstuk: zie .ck-knop en .ck-tegel */
 
 /* =========================================================
