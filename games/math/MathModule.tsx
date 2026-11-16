@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import MathHub from './MathHub';
-import { MathCompletion, MathHeader } from './MathControls';
+import { MathHeader } from './MathControls';
+import { resultStatus } from './engine';
 import MathSession from './MathSession';
 import RaceGame from './RaceGame';
 import RedactieBladen from './RedactieBladen';
@@ -63,11 +64,13 @@ export default function MathModule({ onBack = () => undefined, onHome = onBack, 
   };
   const controls = <MathHeader game={game} level={level} zonderNiveau={game === 'add-subtract' && blad !== 'vrij'} vraag={vraag} progress={progress} coins={coins} sound={sound} onSound={toggleSound} onHome={onHome} onBack={game ? hub : onBack} onLevel={nextLevel => { if (game) start(game, nextLevel); }} />;
   return <div className={`math-module${game ? ` math-adventure math-adventure--${game}` : ''}`} style={game ? { backgroundImage: `linear-gradient(#26382a18, #26382a24), url('${mathEnvironments[game]}')` } : undefined}>
-    {game !== 'multiply' && game !== 'race' && controls}
+    {/* De oude menubalk staat alleen nog op het spellenmenu; de spellen zelf hebben de zones uit de huisstijl. */}
+    {!game && controls}
     {!game ? <MathHub progress={progress} onPlay={id => start(id, nextMathLevel(progress, id))} /> : <main className="math-game">
     {kiezen ? <RedactieBladen onBlad={kiesBlad} onVrij={() => setBlad('vrij')} /> : <React.Fragment key={`${game}:${level}:${blad}:${attempt}`}>{game === 'race' ? <RaceGame level={level} onFinish={finish} onSound={play} sound={sound} onToggleSound={toggleSound} onLevel={nextLevel => start('race', nextLevel)}
-      einde={outcome ? { reward: outcome.reward, saved: outcome.saved, onRetrySave: () => finish(outcome.result), onReplay: () => start('race', level), onNext: () => start('race', (level + 1) as MathLevel) } : undefined} /> : game === 'multiply' ? <div className="math-lua"><Suspense fallback={<p role="status">Lua komt eraan…</p>}><BabyLua onHome={hub} setupControls={controls} mathAdventure={{ level, onComplete: finish, sound }} /></Suspense></div> : <MathSession game={game} level={level} blad={huiswerk} onFinish={finish} onSound={play} onVraag={setVraag} />}</React.Fragment>}
+      einde={outcome ? { reward: outcome.reward, saved: outcome.saved, onRetrySave: () => finish(outcome.result), onReplay: () => start('race', level), onNext: () => start('race', (level + 1) as MathLevel) } : undefined} /> : game === 'multiply' ? <div className="math-lua"><Suspense fallback={<p role="status">Lua komt eraan…</p>}><BabyLua onHome={hub} mathAdventure={{ level, onComplete: finish, sound }} onLevel={nextLevel => start('multiply', nextLevel)}
+      einde={outcome ? { reward: outcome.reward, saved: outcome.saved, passed: resultStatus('multiply', level, outcome.result).passed, onRetrySave: () => finish(outcome.result), onReplay: () => start('multiply', level), onNext: () => start('multiply', (level + 1) as MathLevel) } : undefined} /></Suspense></div> : <MathSession game={game} level={level} blad={huiswerk} onFinish={finish} onSound={play} onVraag={setVraag} sound={sound} onToggleSound={toggleSound} onLevel={nextLevel => start(game, nextLevel)}
+      einde={outcome ? { result: outcome.result, reward: outcome.reward, saved: outcome.saved, onRetrySave: () => finish(outcome.result), onReplay: () => { if (huiswerk) kiesBlad(huiswerk.nr); else start(game, level); }, onNext: () => start(game, (level + 1) as MathLevel), onBack: hub } : undefined} />}</React.Fragment>}
     {/* Winkelgekte sluit af in de winkel zelf, zonder wit venster ertussen. */}
-    {outcome && game !== 'race' && <MathCompletion game={game} level={level} blad={huiswerk?.nr} result={outcome.result} reward={outcome.reward} saved={outcome.saved} onRetrySave={() => finish(outcome.result)} onReplay={() => { if (huiswerk) kiesBlad(huiswerk.nr); else start(game, level); }} onNext={() => start(game, (level + 1) as MathLevel)} onBack={hub} />}
   </main>}</div>;
 }

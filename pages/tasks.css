@@ -1,25 +1,70 @@
-.tasks-screen { min-height: 100dvh; padding: calc(var(--space-12) * 2 + var(--space-6)) var(--space-4) var(--space-8); background: var(--color-honey) url('/dreamworld/to-do-board.webp') center / cover fixed; }
+/* Het To Do-bord in de CocoKiki-huisstijl (docs/HUISSTIJL.md: "Hout: To Do-bord").
+   Kurk als achtergrond, een houten naambord, en elke opdracht als papieren
+   briefje met een punaise in de kleur van zijn wereld.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css. */
+@import '../styles/cocokiki-tokens.css';
+
+.tasks-screen { min-height: 100dvh; padding: 96px 16px 48px; background: var(--ck-hout) url('/dreamworld/to-do-board.webp') center / cover fixed; font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); }
 .tasks-screen__content { max-width: 64rem; margin: auto; }
-.tasks-header { padding: var(--space-5); margin-bottom: var(--space-6); background: var(--color-surface-soft); border-radius: var(--radius-card); box-shadow: var(--shadow-soft); }
-.tasks-header__title { margin-bottom: var(--space-3); }
-.tasks-header__title h1 { margin: 0; color: var(--color-text); font-size: var(--font-size-2xl); }
-.tasks-header__title small { color: var(--color-text-muted); }
-.tasks-screen__filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
-.tasks-screen__filters [aria-pressed=true] { background: var(--color-success-soft); color: var(--color-primary); }
-.tasks-today { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
-.tasks-today h2, .tasks-today p { margin: 0; }
-.tasks-today h2 { font-size: var(--font-size-lg); }
-.tasks-reward { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-primary); font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); }
-.tasks-reward .coco-coin { flex-shrink: 0; }
-.tasks-today .tasks-reward { margin-top: var(--space-2); }
-.tasks-screen .ck-kaarten > li { position: relative; padding-top: var(--space-2); }
-.tasks-screen .ck-kaarten > li::before { content: ''; position: absolute; top: var(--space-1); left: 50%; width: var(--space-3); height: var(--space-3); border-radius: var(--radius-pill); background: var(--color-reward); box-shadow: var(--shadow-soft); z-index: 1; pointer-events: none; }
-.tasks-screen .ck-kaarten > li:nth-child(2n)::before { background: var(--color-sage); }
-.daily-practice { display: grid; gap: var(--space-4); max-width: 44rem; margin: auto; padding: var(--space-5); background: var(--color-surface-soft); border-radius: var(--radius-card); box-shadow: var(--shadow-soft); }
+
+/* Kop: houten naambord en de filters als glazen pil */
+.tasks-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+.tasks-bord { margin: 0; padding: 8px 30px; font-size: var(--ck-maat-titel); line-height: 1.1; transform: rotate(-1.5deg); animation: ck-pop .5s var(--ck-veer) both; }
+.tasks-filters { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; }
+.tasks-filter { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; cursor: pointer; transition: transform .2s var(--ck-veer), background var(--ck-normaal); }
+.tasks-filter svg { width: 20px; height: 20px; }
+.tasks-filter:hover { transform: scale(1.05); background: rgba(255, 255, 255, .45); }
+.tasks-filter[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.tasks-filter:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
+
+/* Briefjes: papier, een punaise in de wereldkleur, een tikje scheef */
+.tasks-briefjes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 24px; margin: 0; padding: 0; list-style: none; }
+.tasks-briefjes > li { animation: ck-pop .5s var(--ck-veer) both; animation-delay: calc(var(--briefje, 0) * 60ms); }
+.tasks-briefje {
+  position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%;
+  padding: 26px 16px 18px; border: 0; border-radius: 6px 6px 18px 6px; text-align: left; cursor: pointer;
+  background: var(--ck-room); color: var(--ck-cacao); font-family: var(--ck-font-tekst);
+  box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28);
+  transform: rotate(-1.2deg); transition: transform var(--ck-normaal) var(--ck-veer), box-shadow var(--ck-normaal);
+}
+.tasks-briefjes > li:nth-child(2n) .tasks-briefje { transform: rotate(1.1deg); }
+.tasks-briefjes > li:nth-child(3n) .tasks-briefje { transform: rotate(-.4deg); }
+.tasks-briefje::before { content: ""; position: absolute; top: 8px; left: 50%; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .8), var(--ck-actief) 45%, var(--ck-actief-rand)); box-shadow: 0 3px 4px rgba(40, 20, 5, .35); }
+.tasks-briefje:hover { transform: rotate(0) translateY(-6px); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 22px 30px rgba(74, 42, 26, .32); }
+.tasks-briefje:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 4px; }
+.tasks-briefje__plaatje { display: grid; place-items: center; aspect-ratio: 1.5; margin-bottom: 4px; border-radius: 14px; background: var(--ck-plekje); overflow: hidden; }
+.tasks-briefje__plaatje img { width: 78%; height: 88%; object-fit: contain; }
+.tasks-briefje strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; line-height: 1.15; }
+.tasks-briefje__tekst { font-size: 16px; font-weight: 700; line-height: 1.3; }
+
+/* De beloning: een munt met een gele pil, onderaan het briefje */
+.tasks-beloning { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; margin-top: auto; padding: 4px 12px 4px 4px; border-radius: 999px; background: color-mix(in srgb, var(--ck-zon) 30%, var(--ck-room)); font-size: 15px; font-weight: 900; line-height: 1.2; }
+.tasks-beloning .ck-munt { width: 24px; height: 24px; flex: 0 0 24px; }
+.tasks-briefje .tasks-beloning { margin-top: auto; padding-top: 4px; }
+
+/* "Vijf voor vandaag": een bonusbriefje in druif, breed bovenaan */
+.tasks-briefje--vandaag { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 32px; padding: 26px 24px 20px; cursor: default; border-left: 8px solid var(--ck-druif); transform: rotate(-.6deg); }
+.tasks-briefje--vandaag::before { background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .8), var(--ck-druif) 45%, var(--ck-druif-rand)); }
+.tasks-briefje--vandaag:hover { transform: rotate(-.6deg); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28); }
+.tasks-briefje--vandaag h2 { margin: 0; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); }
+.tasks-briefje--vandaag p { margin: 2px 0 8px; font-size: 17px; font-weight: 700; }
+.tasks-briefje--vandaag .ck-knop svg { width: 22px; height: 22px; }
+.tasks-melding { margin: 0 0 20px; padding: 12px 18px; }
+
+/* De oefening van vandaag ligt ook op papier */
+.daily-practice { display: grid; gap: 16px; max-width: 44rem; margin: auto; padding: 24px; background: var(--ck-room); border-radius: var(--ck-rond-kaart); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28); }
+
 @media (max-width: 600px) {
- .tasks-screen { padding-inline: var(--space-3); }
- .tasks-header { padding: var(--space-4); }
- .tasks-header .tasks-screen__filters { gap: var(--space-1); }
- .tasks-header .tasks-screen__filters .ck-button { padding-inline: var(--space-2); font-size: var(--font-size-sm); }
- .daily-practice { padding: var(--space-3); }
+  .tasks-screen { padding: 84px 12px 32px; }
+  .tasks-header { justify-content: center; }
+  .tasks-bord { font-size: 32px; }
+  .tasks-filters { justify-content: center; border-radius: 24px; }
+  .tasks-filter { min-height: 44px; padding: 0 12px; font-size: 16px; }
+  .tasks-briefjes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
+  .tasks-briefje { padding: 24px 10px 12px; }
+  .tasks-briefje strong { font-size: 18px; }
+  .tasks-briefje__tekst { display: none; }
+  .tasks-beloning { font-size: 14px; }
+  .tasks-briefje--vandaag .ck-knop { width: 100%; }
+  .daily-practice { padding: 14px; }
 }

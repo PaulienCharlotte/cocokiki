@@ -4,7 +4,7 @@ main.nutrient-memory-screen::after { display: none; }
 .nutrient-memory-shell { width: min(100%, 980px); margin: 0 auto; color: #383331; }
 .nutrient-memory-shell h1 { font-size: 26px; margin: 16px 0 8px; }
 .nutrient-memory-shell .journey-stages { margin-top: 20px; }
-.nutrient-memory__score { min-height: 48px; margin: 0; color: #50694b; font-weight: 700; }
+.nutrient-memory__score { min-height: 48px; margin: 0; color: var(--color-primary); font-weight: 700; }
 .nutrient-memory__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .nutrient-memory__card { position: relative; min-width: 0; height: 224px; min-height: 224px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 2px solid #c9c0ac; border-radius: 8px; background: #e4d1ac; box-shadow: 0 4px 0 #c3b08c; color: #383331; font: inherit; font-weight: 700; cursor: pointer; overflow-wrap: anywhere; }
 .nutrient-memory__card > svg { width: 30px; height: 30px; color: #587256; }
@@ -45,7 +45,7 @@ main.nutrient-memory-screen::after { display: none; }
 @media (max-width: 600px) { .cooking-tip.cooking-tip { padding: 36px 20px 22px; } .cooking-tip.cooking-tip > img { width: 136px; height: 150px; } }
 .cooking-tip h2 { margin: 8px 0 14px; font-size: 24px; line-height: 1.25; font-weight: 800; overflow-wrap: anywhere; }
 .cooking-tip p { margin: 0; font-size: 17px; line-height: 1.6; font-weight: 500; }
-.cooking-tip small { color: #50694b; font-size: 15px; font-weight: 700; }
+.cooking-tip small { color: var(--color-primary); font-size: 15px; font-weight: 700; }
 .cooking-tip button { border: 0; background: transparent; width: 44px; height: 44px; color: inherit; cursor: pointer; }
 @keyframes coco-tip-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .cooking-stage__shell:has(.cooking-tip) { height: auto; min-height: 100%; }
@@ -64,7 +64,7 @@ main.nutrient-memory-screen::after { display: none; }
 .home-recipe-preview summary { cursor: pointer; font-weight: 700; padding: 10px 0; }
 .home-recipe { text-align: left; line-height: 1.6; font-size: 16px; color: #383331; }
 .home-recipe h2 { font-size: 22px; line-height: 1.3; }
-.home-recipe h3 { font-size: 17px; margin: 18px 0 8px; color: #50694b; }
+.home-recipe h3 { font-size: 17px; margin: 18px 0 8px; color: var(--color-primary); }
 .home-recipe ul, .home-recipe ol { padding-left: 24px; }
 .home-recipe li { margin-bottom: 10px; }
 .home-recipe-section .cooking-button { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }

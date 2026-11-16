@@ -50,8 +50,8 @@
 .adventure-plant--right { right: -7%; }
 .berry-game { position: relative; width: min(790px,100%); margin: auto; padding-top: 12px; }
 .berry-harvest { position: relative; width: min(560px,100%); min-height: 120px; padding: 10px; margin: 0 auto 20px; background: #f3f4e5c9; border-radius: 8px; box-shadow: 0 8px 25px #26382a20; }
-.berry-harvest__label { display: flex; justify-content: space-between; gap: 8px; align-items: center; min-height: 28px; font-size: 16px; color: #48623f; }
-.berry-harvest__label button { min-height: 44px; padding: 4px 8px; background: #e5ebdb; border: 1px solid #b7c4ab; border-radius: 8px; color: #48623f; }
+.berry-harvest__label { display: flex; justify-content: space-between; gap: 8px; align-items: center; min-height: 28px; font-size: 16px; color: var(--color-primary); }
+.berry-harvest__label button { min-height: 44px; padding: 4px 8px; background: #e5ebdb; border: 1px solid #b7c4ab; border-radius: 8px; color: var(--color-primary); }
 .berry-supply { display: grid; grid-template-columns: repeat(auto-fit,44px); gap: 4px; justify-content: center; min-height: 52px; }
 .berry-game .math-drag-tile { display: grid; place-items: center; width: 44px; height: 44px; min-height: 44px; padding: 2px; border: 0; background: transparent; border-radius: 50%; box-shadow: none; }
 .berry-game .math-drag-tile img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; filter: drop-shadow(0 3px 3px #26382a40); }
@@ -59,11 +59,11 @@
 .berry-basket { position: relative; min-width: 0; height: var(--basket-height); }
 .berry-basket__target { position: absolute; z-index: 5; bottom: 0; left: 0; width: 100%; height: 44px; background: transparent; border: 2px solid transparent; border-radius: 8px; padding: 0; }
 .berry-basket__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 6px 6px #26382a44); pointer-events: none; }
-.berry-basket__target > span { display: inline-block; min-width: 32px; padding: 3px 8px; border-radius: 8px; color: #48623f; background: #faf8f2f0; font-size: 19px; font-weight: 850; }
-.berry-basket.is-ready .berry-basket__target { background: #f8f8ea55; border: 2px dashed #64835a; }
+.berry-basket__target > span { display: inline-block; min-width: 32px; padding: 3px 8px; border-radius: 8px; color: var(--color-primary); background: #faf8f2f0; font-size: 19px; font-weight: 850; }
+.berry-basket.is-ready .berry-basket__target { background: #f8f8ea55; border: 2px dashed var(--color-primary); }
 .berry-basket__fruit { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 44px); display: flex; flex-wrap: wrap; align-content: center; justify-content: center; pointer-events: none; }
 .berry-basket__fruit button { pointer-events: auto; }
-.berry-basket__count { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); min-width: 32px; text-align: center; font-size: 19px; font-weight: 850; color: #48623f; background: #faf8f2f0; border-radius: 8px; padding: 3px 8px; pointer-events: none; }
+.berry-basket__count { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); min-width: 32px; text-align: center; font-size: 19px; font-weight: 850; color: var(--color-primary); background: #faf8f2f0; border-radius: 8px; padding: 3px 8px; pointer-events: none; }
 .berry-undo { display: grid; margin: 16px auto 0; }
 .berry-demo { position: absolute; z-index: 12; left: 44%; top: 45px; color: #faf8ed; filter: drop-shadow(0 2px 2px #26382a); pointer-events: none; animation: berry-hand 2s ease-in-out; }
 .winter-scene { position: relative; width: min(650px,100%); height: 310px; margin: auto; }
@@ -114,7 +114,7 @@
 .honey-herbs { position: absolute; bottom: 0; left: -5%; width: 24%; max-height: 150px; object-fit: contain; }
 .checkout-game { justify-content: space-between; }
 .checkout-answers { width: min(560px,100%); }
-.checkout-hud { width: 100%; display: flex; align-items: center; justify-content: center; gap: 20px; background: #f4f3e9e8; border-radius: 8px; padding: 10px 12px; color: #48623f; font-weight: 750; }
+.checkout-hud { width: 100%; display: flex; align-items: center; justify-content: center; gap: 20px; background: #f4f3e9e8; border-radius: 8px; padding: 10px 12px; color: var(--color-primary); font-weight: 750; }
 .checkout-hud span { display: inline-flex; gap: 5px; align-items: center; }
 .checkout-hud span:last-child { font-size: 13px; }
 .checkout-start { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; color: #3f5848; }

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import DragChoice from './DragChoice';
 import { Minus, Plus } from 'lucide-react';
 import Equation from './Equation';
 import type { MathLevel, MathQuestion } from './types';
@@ -29,5 +30,9 @@ export function MathVisualHelp({ question, level, onAnswer, locked }: { question
   </div>;
 }
 export default function ChoiceChallenge({ question, locked, selected, onAnswer }: { question: MathQuestion; locked: boolean; selected?: number; onAnswer: (value: number) => void }) {
-  return <><Equation question={question} /><AnswerChoices question={question} locked={locked} selected={selected} onAnswer={onAnswer} /></>;
+  const doel = useRef<HTMLDivElement>(null);
+  return <>
+    <div ref={doel} className="rekenspel__bord ck-glas"><Equation question={question} answer={locked ? selected : undefined} /></div>
+    <div className="ck-zone-antwoord rekenspel__bellen" role="group" aria-label="Antwoorden">{question.options.map((value, i) => <DragChoice key={value} value={value} selected={selected === value} disabled={locked} targetRef={doel} onChoose={onAnswer} onDrop={value => onAnswer(value)} className={`ck-bel ck-glas ck-bel--${i + 1}`}><span className="ck-bel__kern" aria-hidden="true" />{value}</DragChoice>)}</div>
+  </>;
 }

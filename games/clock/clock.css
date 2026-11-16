@@ -40,8 +40,8 @@
 .clock-level-picker__label strong { overflow: hidden; color: #564b45; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
 .clock-levels { display: flex; justify-content: flex-end; gap: 4px; }
 .clock-levels button { position: relative; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid #d8cfc4; border-radius: 50%; background: #f2ece5; color: #776b64; font-size: .72rem; font-weight: 850; }
-.clock-levels button[aria-pressed='true'] { border-color: #52694c; background: #52694c; color: #fff; }
-.clock-levels button svg { position: absolute; right: -2px; bottom: -2px; padding: 1px; border-radius: 50%; background: #fff9ef; color: #4f7258; }
+.clock-levels button[aria-pressed='true'] { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
+.clock-levels button svg { position: absolute; right: -2px; bottom: -2px; padding: 1px; border-radius: 50%; background: #fff9ef; color: var(--color-primary); }
 .clock-round-meta { display: flex; justify-content: space-between; margin: 12px 2px; color: var(--color-text-muted); font-size: .8rem; }
 
 /* De kaarten zelf staan in components/ui/memory-card.css, samen met die van
@@ -62,7 +62,7 @@
 .clock-set__controls strong { text-align: center; font-size: 1.15rem; }
 .clock-game__feedback { min-height: 32px; display: grid; place-items: center; margin-top: 5px; color: #665b55; font-size: .84rem; font-weight: 750; text-align: center; }
 .clock-game__feedback span { display: inline-flex; align-items: center; gap: 5px; }
-.clock-game__feedback .is-correct { color: #4f7258; }
+.clock-game__feedback .is-correct { color: var(--color-primary); }
 .clock-game__feedback .is-wrong { color: #92534e; }
 .clock-game__actions { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
 
@@ -80,7 +80,7 @@
 .clock-digital-choice { width: 100%; aspect-ratio: 1; display: grid; place-items: center; border: 2px solid #9cb8ae; border-radius: 8px; background: #e4efea; color: #304941; font-size: clamp(1.45rem, 5vw, 2.8rem); font-variant-numeric: tabular-nums; letter-spacing: 0; box-shadow: inset 0 0 0 7px #f9f5ec, 0 7px 16px #5c463023; }
 
 .clock-completion { position: absolute; z-index: 4; top: 50%; left: 50%; width: min(calc(100% - 28px), 430px); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; padding: 20px; border: 1px solid #d9ccbd; border-radius: 8px; background: #fffaf2; text-align: left; box-shadow: 0 22px 60px #452d1f55; transform: translate(-50%, -50%); }
-.clock-completion__check { width: 62px; height: 62px; display: grid; place-items: center; border-radius: 50%; background: #dfeade; color: #4f7258; }
+.clock-completion__check { width: 62px; height: 62px; display: grid; place-items: center; border-radius: 50%; background: #dfeade; color: var(--color-primary); }
 .clock-completion__check svg { width: 30px; height: 30px; }
 .clock-completion strong { font-size: 1.5rem; }
 .clock-completion p { display: flex; align-items: center; gap: 5px; margin: 4px 0; color: var(--color-text-muted); }

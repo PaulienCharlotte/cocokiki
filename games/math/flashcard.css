@@ -187,7 +187,7 @@
 .story-scene__harvest { position: relative; width: 28%; max-width: 190px; }
 .story-scene__harvest > img { width: 100%; display: block; }
 .story-scene__harvest > .story-scene__fruit { position: absolute; width: 24%; left: 38%; top: 18%; }
-.story-unit { display: block; margin-bottom: 12px; color: #52694c; font-size: 15px; font-weight: 700; }
+.story-unit { display: block; margin-bottom: 12px; color: var(--color-primary); font-size: 15px; font-weight: 700; }
 .story-explanation { margin-top: var(--space-5); font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: var(--color-primary); }
 /* Alle stappen staan meteen in beeld, elk in een eigen vak. Het vak waar je
    mee bezig bent springt eruit; de stap erna wacht met een vraagteken. */

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Cookie } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import DragChoice from './DragChoice';
 import Equation from './Equation';
 import { mathAssets } from './assets';
 import type { MathQuestion } from './types';
@@ -20,21 +20,23 @@ export function cookieUnit(question: MathQuestion): string {
   const blankFirst = 'op' in question.left && 'blank' in question.left.left;
   return question.operation === '*' && blankFirst ? 'dozen' : question.operation === '/' && !blankFirst ? 'dozen' : 'koekjes';
 }
-export default function PuzzleChallenge({ question, locked, onAnswer }: { question: MathQuestion; locked: boolean; onAnswer: (answer: number) => void }) {
-  const [placed, setPlaced] = useState<number>();
-  const [amount, setAmount] = useState('');
+/**
+ * Het ontbrekende getal: de bestelling staat in de wereld, met de som op een
+ * glazen bord. Je tikt een bel aan of sleept hem op het vraagteken.
+ */
+export default function PuzzleChallenge({ question, locked, selected, onAnswer }: { question: MathQuestion; locked: boolean; selected?: number; onAnswer: (answer: number) => void }) {
+  const [over, setOver] = useState(false);
+  const doel = useRef<HTMLDivElement>(null);
   const unit = cookieUnit(question);
   return <div className="math-puzzle">
     <div className={`cookie-order${locked ? ' is-complete' : ''}`}>
       <img src={mathAssets.cookie} alt="Koekjesbestelling" />
-      {locked && <strong>Bestelling klaar!</strong>}
-      <Equation question={question} answer={placed} />
-      {amount !== '' && <div className="cookie-order__batch" aria-label={`${amount} ${unit} gekozen`}><img src={mathAssets.cookie} alt="" /><output>{amount} {unit}</output></div>}
+      <div ref={doel} className={`rekenspel__bord ck-glas${over ? ' is-over' : ''}`}><Equation question={question} answer={locked ? selected : undefined} /></div>
     </div>
-    <form className="math-workbench" onSubmit={event => { event.preventDefault(); if (!locked && amount !== '') { const value = Number(amount); setPlaced(value); onAnswer(value); } }}>
-      <label htmlFor="cookie-answer">Aantal {unit}</label>
-      <input id="cookie-answer" aria-label={`Aantal ${unit}`} type="number" min="0" step="1" inputMode="numeric" value={amount} disabled={locked} required onChange={event => setAmount(event.target.value)} />
-      <button type="submit" disabled={locked || amount === ''}><Cookie size={18} />{locked ? 'Gebakken!' : 'Bak deze bestelling'}</button>
-    </form>
+    <div className="ck-zone-antwoord rekenspel__bellen" role="group" aria-label={`Hoeveel ${unit}?`}>
+      {question.options.map((value, i) => <DragChoice key={value} value={value} label={`${value} ${unit}`} selected={selected === value} disabled={locked} targetRef={doel} onOver={setOver} onChoose={onAnswer} onDrop={value => onAnswer(value)} className={`ck-bel ck-glas ck-bel--${i + 1}`}>
+        <span className="ck-bel__kern" aria-hidden="true" />{value}
+      </DragChoice>)}
+    </div>
   </div>;
 }

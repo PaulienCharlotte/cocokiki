@@ -1,8 +1,12 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { IconButton } from '../../design-system';
+import { Calculator, Lightbulb, Ruler, Volume2, VolumeX } from 'lucide-react';
 import { afgerondeRedactieronde, noteerRedactieAntwoord, type RedactieAntwoorden } from './redactie/navigatie';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import SpeechBubble from '../../components/ui/SpeechBubble';
+import { CHARACTERS } from '../../data/characters';
+import Rekenmachine from './Rekenmachine';
+import Maten from './Maten';
+import { MATH_LEVELS } from './types';
+import { resultStatus } from './engine';
+import './rekenspel.css';
 import { createQuestionDeck, validAnswer } from './engine';
 import ChoiceChallenge from './ChoiceChallenge';
 import DistributionChallenge from './DistributionChallenge';
@@ -18,13 +22,26 @@ import type { Blad } from './redactie/bladen';
 import { bewaarBlad, laadBladen } from './redactie/bladVoortgang';
 import { maakMatendeck, type Maatvraag } from './maten/vragen';
 import MatenChallenge from './MatenChallenge';
-import MathHelp from './MathHelp';
 import { techniqueHint } from './techniqueHint';
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 import { analytics } from '../../services/analytics';
 
-export default function MathSession({ game, level, blad, onFinish, onSound = () => undefined, onVraag }: { game: Exclude<MathGameId, 'race'>; level: MathLevel; blad?: Blad; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void }) {
+/** Wat er na de ronde gebeurt; MathModule bewaart de munten en levert dit. */
+export interface RekenEinde { result: MathResult; reward: number; saved: boolean; onRetrySave: () => void; onReplay: () => void; onNext: () => void; onBack: () => void }
+
+/**
+ * Een rekenspel in de huisstijl (docs/HUISSTIJL.md): de vaste zones uit
+ * cocokiki-tokens.css. Statuseiland met tien bolletjes en het niveau,
+ * gereedschap rechts, Lua linksonder, antwoorden als bellen rechtsonder, en
+ * het spel zelf in de wereld. Geen witte panelen en geen tussenvenster aan
+ * het eind: de ronde sluit af in het spel.
+ */
+export default function MathSession({ game, level, blad, onFinish, onSound = () => undefined, onVraag, sound, onToggleSound, onLevel, einde }: {
+  game: Exclude<MathGameId, 'race'>; level: MathLevel; blad?: Blad; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void;
+  sound?: boolean; onToggleSound?: () => void; onLevel?: (level: MathLevel) => void; einde?: RekenEinde;
+}) {
+  const [rekenmachine, setRekenmachine] = useState(false), [maten, setMaten] = useState(false);
   useActivityAnalytics(game === 'maten' ? null : `math:${game}`);
   // Een huiswerkblad heeft vaste sommen; anders komt er elke ronde een nieuw deck.
   const [questions] = useState(() => blad ? blad.sommen : game === 'add-subtract' ? maakRedactiedeck(level) : game === 'maten' ? maakMatendeck(level) : createQuestionDeck(game, level));
@@ -99,35 +116,74 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
       if (!hadMistake.current) { stats.current.correct++; stats.current.score++; }
     } else { hadMistake.current = true; stats.current.mistakes++; setFeedback('wrong'); setHint(true); }
   };
-  const balk = <div className="math-balk">
-    <div className="math-progress-dots" role="img" aria-label={`Opdracht ${index + 1} van 10, ${foutenMogen ? Object.keys(redactieAntwoorden.current).length : index + (feedback === 'correct' ? 1 : 0)} klaar`}>{Array.from({ length: 10 }, (_, i) => <i key={i} className={(foutenMogen ? Object.hasOwn(redactieAntwoorden.current, i) : i < index + (feedback === 'correct' ? 1 : 0)) ? 'is-klaar' : undefined} />)}</div>
-    {!toneel && <SpeechBubble character="lua" className="math-vraag" tone={feedback === 'correct' ? 'goed' : feedback === 'wrong' && !foutenMogen ? 'alert' : 'default'} textId="math-vraag">{game === 'missing' ? cookieOrder(question)
-      // Bij een redactiesom staat het verhaal op het werkblad, want daar
-      // streep je de getallen in aan. Lua zegt dan wat je zoekt.
-      : game === 'add-subtract' ? `Je zoekt: ${(question as Redactiesom).zoek}.`
-      : question.prompt}</SpeechBubble>}
-    {feedback !== 'correct' && !foutenMogen && <MathHelp open={hint} onToggle={() => setHint(value => !value)}>{techniqueHint(question)}</MathHelp>}
-  </div>;
-  return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }} className={`math-session adventure-session${toneel ? ' is-toneel' : ''}${feedback ? ` is-${feedback}` : ''}`} aria-label="Rekenavontuur">
-    {/* Op een toneel komt de balk onder de opdracht, zodat hij tegen het
-        vak met de antwoorden aan ligt en het één wit vlak wordt. */}
-    {foutenMogen && <nav className="redactie-bladeren" aria-label="Bladeren door de sommen">
-      <IconButton label="Vorige som" icon={<ChevronLeft size={20} />} disabled={index === 0} onClick={() => blader(index - 1)} />
-      <select aria-label="Kies een som" value={index} onChange={event => blader(Number(event.target.value))}>
-        {questions.map((_, i) => <option key={i} value={i}>Som {i + 1} van {questions.length}{Object.hasOwn(redactieAntwoorden.current, i) ? ' · gemaakt' : ''}</option>)}
-      </select>
-      <IconButton label="Volgende som" icon={<ChevronRight size={20} />} disabled={index === questions.length - 1} onClick={() => blader(index + 1)} />
-    </nav>}
-    {!toneel && balk}
-    <div className={`math-challenge math-challenge--${question.kind}`} key={foutenMogen ? 'redactie' : question.id}>
-      {game === 'divide' && question.kind === 'distribution' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} tutorial={index === 0} /></>
-        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={blad ? 'volledig' : steunVoorNiveau(level)} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
-        : game === 'maten' ? <MatenChallenge vraag={question as Maatvraag} locked={feedback === 'correct'} gekozen={selected} onAnswer={answer} />
-        : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
-        : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct'} onAnswer={answer} />
-        : <ChoiceChallenge question={question} locked={feedback === 'correct'} selected={selected} onAnswer={answer} />}
+  const klaar = foutenMogen ? Object.keys(redactieAntwoorden.current).length : index + (feedback === 'correct' ? 1 : 0);
+  const lua = CHARACTERS.lua;
+  const uitslag = einde ? resultStatus(game, level, einde.result) : null;
+  // Lua zegt de opdracht; bij de honingpotten zegt het plaatje het al, en
+  // daar praat ze alleen bij een tip, een fout of aan het eind.
+  const zin = einde
+    ? blad !== undefined ? `Blad ${blad.nr} is af. ${einde.result.correct} van de ${einde.result.total} goed.`
+      : uitslag?.passed ? (level < 5 ? 'Goed gerekend. Klaar voor het volgende niveau?' : 'Goed gerekend. Alles gehaald.') : `${einde.result.correct} van de 10 meteen goed. Nog een keer?`
+    : !foutenMogen && feedback === 'wrong' ? (game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : techniqueHint(question))
+    : !foutenMogen && feedback === 'correct' ? (game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld.` : 'Goed zo.')
+    : hint && !foutenMogen ? techniqueHint(question)
+    : toneel ? ''
+    : game === 'missing' ? cookieOrder(question)
+    // Bij een redactiesom staat het verhaal op het werkblad, want daar
+    // streep je de getallen in aan. Lua zegt dan wat je zoekt.
+    : game === 'add-subtract' ? `Je zoekt: ${(question as Redactiesom).zoek}.`
+    : question.prompt;
+  return <section ref={workspace} onKeyDownCapture={() => { keyboard.current = true; }} onPointerDownCapture={() => { keyboard.current = false; }}
+    className={`ck-scherm rekenspel rekenspel--${game}${feedback ? ` is-${feedback}` : ''}${einde ? ' is-einde' : ''}`} data-wereld="school" aria-label="Rekenavontuur">
+
+    {/* 2. Statuseiland: tien bolletjes voor tien opdrachten, en het niveau.
+        Bij een redactieblad kun je op een bolletje tikken om terug te kijken. */}
+    <div className={`ck-zone-status ck-glas rekenspel__status${einde ? ' is-open' : ''}`}>
+      <span className="rekenspel__stippen" role={foutenMogen ? 'group' : 'img'} aria-label={`Opdracht ${index + 1} van ${questions.length}, ${klaar} klaar`}>
+        {questions.map((_, i) => {
+          const vol = foutenMogen ? Object.hasOwn(redactieAntwoorden.current, i) : i < klaar;
+          const cls = `ck-stip${vol ? ' ck-stip--klaar' : ''}${i === index && !einde ? ' ck-stip--nu' : ''}`;
+          return foutenMogen ? <button type="button" key={i} className={`${cls} rekenspel__stip-knop`} aria-label={`Som ${i + 1}${vol ? ', gemaakt' : ''}`} aria-current={i === index} onClick={() => blader(i)} /> : <span key={i} className={cls} />;
+        })}
+      </span>
+      {blad ? <span className="ck-niveau">Blad {blad.nr}</span>
+        : onLevel && !einde && index === 0 && feedback === null ? <button type="button" className="ck-niveau rekenspel__niveau" aria-label={`Niveau ${level}, tik voor een ander niveau`} onClick={() => onLevel(MATH_LEVELS[level % MATH_LEVELS.length])}>Niveau {level}</button>
+        : <span className="ck-niveau">Niveau {level}</span>}
+      <span className="ck-status-extra" aria-live="polite">{einde && einde.saved && <><span className="rekenspel__scheid" /><span className="ck-munt rekenspel__munt" aria-hidden="true" /><b>+{einde.reward}</b></>}</span>
     </div>
-    {toneel && balk}
-    <div className="adventure-feedback" role="status">{foutenMogen ? '' : feedback === 'correct' ? game === 'divide' ? `${question.a} ÷ ${question.groups} = ${question.answer}. Eerlijk verdeeld!` : 'Goed zo!' : feedback === 'wrong' ? game === 'divide' ? 'Nog niet evenveel. Verplaats een bes.' : 'Bijna! Probeer nog eens.' : ''}</div>
+
+    {/* 4. Gereedschap in de vaste volgorde: hint · rekenmachine · maten — geluid */}
+    <div className="ck-zone-gereedschap ck-glas rekenspel__gereedschap" role="toolbar" aria-label="Gereedschap">
+      {!foutenMogen && <button type="button" className={`ck-gereedschap${hint || feedback === 'wrong' ? ' is-aan' : ''}`} aria-label="Tip van Baby Lua" aria-pressed={hint} disabled={feedback === 'correct' || !!einde} onClick={() => setHint(value => !value)}><Lightbulb size={22} aria-hidden="true" /></button>}
+      {game === 'add-subtract' && <button type="button" className={`ck-gereedschap${rekenmachine ? ' is-aan' : ''}`} aria-label="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={22} aria-hidden="true" /></button>}
+      <button type="button" className={`ck-gereedschap${maten ? ' is-aan' : ''}`} aria-label="Maten omrekenen" aria-haspopup="dialog" onClick={() => setMaten(true)}><Ruler size={22} aria-hidden="true" /></button>
+      {onToggleSound && <><span className="rekenspel__lijn" aria-hidden="true" /><button type="button" className={`ck-gereedschap${sound ? ' is-aan' : ''}`} aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} aria-pressed={!!sound} onClick={onToggleSound}>{sound ? <Volume2 size={22} aria-hidden="true" /> : <VolumeX size={22} aria-hidden="true" />}</button></>}
+    </div>
+    {rekenmachine && <Rekenmachine som={question.prompt} onClose={() => setRekenmachine(false)} />}
+    {maten && <Maten onClose={() => setMaten(false)} />}
+
+    {/* 7. Speelveld: het spel zelf. Antwoordbellen zetten de spellen in zone 6. */}
+    <div className={`rekenspel__veld math-challenge math-challenge--${question.kind}`} key={foutenMogen ? 'redactie' : question.id}>
+      {game === 'divide' && question.kind === 'distribution' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct' || !!einde} onAnswer={answer} tutorial={index === 0} /></>
+        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={blad ? 'volledig' : steunVoorNiveau(level)} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
+        : game === 'maten' ? <MatenChallenge vraag={question as Maatvraag} locked={feedback === 'correct' || !!einde} gekozen={selected} onAnswer={answer} />
+        : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct' || !!einde} selected={selected} onAnswer={answer} />
+        : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct' || !!einde} onAnswer={answer} />
+        : <ChoiceChallenge question={question} locked={feedback === 'correct' || !!einde} selected={selected} onAnswer={answer} />}
+    </div>
+
+    {/* 5. Lua linksonder */}
+    {zin && <div className={`ck-zone-personage rekenspel__personage${feedback === 'correct' || (einde && uitslag?.passed) ? ' is-blij' : ''}`}>
+      <img className="ck-ballon__gezicht" src={lua.beeld} alt={lua.naam} />
+      <p className="ck-ballon__tekst" role="status" key={zin}><span className="ck-ballon__naam">BABY LUA</span>{zin}</p>
+    </div>}
+
+    {/* 6. Aan het eind: één hoofdknop, hooguit een zachte knop ernaast */}
+    {einde && <div className="ck-zone-antwoord rekenspel__einde">
+      {!einde.saved ? <button type="button" className="ck-knop ck-knop--hoofd" onClick={einde.onRetrySave}>Opnieuw opslaan</button>
+        : blad ? <><button type="button" className="ck-knop ck-knop--zacht" onClick={einde.onReplay}>Blad opnieuw</button><button type="button" className="ck-knop ck-knop--hoofd" onClick={einde.onBack}>Naar de bladen</button></>
+        : uitslag?.passed && level < 5 ? <><button type="button" className="ck-knop ck-knop--zacht" onClick={einde.onReplay}>Nog een keer</button><button type="button" className="ck-knop ck-knop--hoofd" onClick={einde.onNext}>Naar niveau {level + 1}</button></>
+        : <button type="button" className="ck-knop ck-knop--hoofd" onClick={einde.onReplay}>Nog een keer</button>}
+    </div>}
   </section>;
 }

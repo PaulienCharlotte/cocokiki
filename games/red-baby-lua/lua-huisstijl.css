@@ -1,0 +1,81 @@
+/* Red Baby Lua in de CocoKiki-huisstijl (docs/HUISSTIJL.md): de jungle is het
+   speelveld, met dezelfde zones als Winkelgekte eroverheen.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css.
+   clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
+@import '../../styles/cocokiki-tokens.css';
+
+.math-lua:has(.lua-huisstijl) { padding: 0; background: none; border: 0; box-shadow: none; }
+.lua-game-shell.lua-huisstijl { --lua-boven: 16px; position: fixed; inset: 0; z-index: 1; height: auto; min-height: 0; border-radius: 0; overflow: clip; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.lua-huisstijl .lua-overlay { position: absolute; inset: 0; pointer-events: none; padding: 0; display: block; background: none; }
+.lua-huisstijl .lua-overlay > * { pointer-events: auto; }
+
+/* 2. Statuseiland */
+.lua-huisstijl .lua-status { top: var(--lua-boven); overflow: hidden; }
+.lua-huisstijl .lua-hearts { display: inline-flex; gap: 2px; color: var(--ck-bes); }
+.lua-huisstijl .lua-stippen { display: flex; align-items: center; gap: max(5px, .5cqw); }
+.lua-huisstijl .ck-niveau { font-size: 16px; line-height: 1.3; }
+.lua-huisstijl .ck-status-extra b { font-family: var(--ck-font-kop); font-size: max(18px, 1.6cqw); }
+.lua-huisstijl .lua-munt { width: 24px; height: 24px; }
+.lua-huisstijl .lua-tijd { position: absolute; left: 16px; right: 16px; bottom: 4px; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, .5); overflow: hidden; }
+.lua-huisstijl .lua-tijd > span { display: block; height: 100%; border-radius: inherit; background: var(--ck-zon); transition: width .2s linear; }
+
+/* 4. Gereedschap */
+.lua-huisstijl .lua-gereedschap { top: calc(var(--lua-boven) + max(48px, 4.4cqw) + var(--ck-rand)); }
+.lua-huisstijl .ck-gereedschap:focus-visible, .lua-huisstijl .ck-knop:focus-visible, .lua-huisstijl .ck-bel:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+
+/* De som op een glazen bord, midden boven de jungle */
+.lua-huisstijl .lua-bord { position: absolute; z-index: 8; left: 50%; top: calc(var(--lua-boven) + max(48px, 4.4cqw) + 18px); translate: -50% 0; display: grid; justify-items: center; gap: 2px; min-width: min(360px, 80%); padding: 10px 30px 12px; border-radius: 26px; text-align: center; animation: ck-pop .4s var(--ck-veer) both; }
+.lua-huisstijl .lua-bord small { font-weight: 900; font-size: 16px; color: var(--ck-cacao); opacity: .8; }
+.lua-huisstijl .lua-bord h2 { margin: 0; font-family: var(--ck-font-kop); font-weight: 800; font-size: max(32px, 3.4cqw); line-height: 1.1; color: var(--ck-cacao); }
+.lua-huisstijl .lua-bord > span { font-weight: 800; font-size: 17px; }
+
+/* 6. Antwoorden als bellen */
+.lua-huisstijl .lua-bellen { display: flex; gap: max(10px, 1.4cqw); align-items: flex-end; }
+.lua-huisstijl .ck-bel { padding: 0; border: 1px solid rgba(255, 255, 255, .6); isolation: isolate; }
+.lua-huisstijl .ck-bel:nth-child(2) { animation-delay: -.7s; } .lua-huisstijl .ck-bel:nth-child(3) { animation-delay: -1.4s; }
+.lua-huisstijl .ck-bel.is-tekst { width: auto; min-width: max(110px, 9cqw); border-radius: 999px; padding: 0 20px; font-size: max(22px, 2.2cqw); }
+.lua-huisstijl .ck-bel.is-tekst .ck-bel__kern { inset: 10%; border-radius: 999px; }
+.lua-huisstijl .ck-bel:disabled { cursor: default; }
+.lua-huisstijl .lua-einde { display: flex; gap: 12px; align-items: center; animation: ck-pop .5s var(--ck-veer) both; }
+
+/* Startscherm: een glazen paneel met een houten titel; de tafels als ronde knopjes */
+.lua-huisstijl .lua-menu { position: absolute; z-index: 8; left: 50%; top: 50%; transform: translate(-50%, -52%); width: min(560px, calc(100% - 32px)); max-width: none; display: grid; justify-items: center; gap: 14px; padding: 46px 28px 24px; border-radius: var(--ck-rond-paneel); text-align: center; background: linear-gradient(135deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .34)); }
+.lua-huisstijl .lua-titel { position: absolute; top: -26px; left: 50%; transform: translateX(-50%) rotate(-1.5deg); margin: 0; padding: 6px 26px; white-space: nowrap; font-size: clamp(26px, 3cqw, 38px); line-height: 1.15; }
+.lua-huisstijl .lua-menu > p { margin: 0; font-size: 18px; font-weight: 700; color: var(--ck-cacao); }
+.lua-huisstijl .lua-tables, .lua-huisstijl .lua-modes { margin: 0; padding: 0; border: 0; width: 100%; }
+.lua-huisstijl .lua-tables legend, .lua-huisstijl .lua-modes legend { margin: 0 auto 10px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-cacao); }
+.lua-huisstijl .lua-tables > div { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; justify-items: center; }
+.lua-huisstijl .lua-tables button { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--ck-wit); background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; cursor: pointer; box-shadow: 0 4px 0 var(--ck-schaduw-rand); transition: transform .2s var(--ck-veer); }
+.lua-huisstijl .lua-tables button:hover { transform: scale(1.08); }
+.lua-huisstijl .lua-tables button[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-actief-rand); }
+.lua-huisstijl .lua-tables .lua-mix { grid-column: 1 / -1; width: auto; min-width: 140px; height: 48px; border-radius: 999px; }
+.lua-huisstijl .lua-modes > div { display: flex; gap: 8px; justify-content: center; }
+.lua-huisstijl .lua-modes button { display: grid; padding: 8px 14px; border: 2px solid var(--ck-wit); border-radius: 18px; background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-tekst); cursor: pointer; }
+.lua-huisstijl .lua-modes button[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); }
+.lua-huisstijl .lua-niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.lua-huisstijl .lua-setup-controls { display: none; }
+
+/* Uitleg, pauze en (los gespeeld) de uitslag: glas met één hoofdknop */
+.lua-huisstijl .lua-dialog, .lua-huisstijl .lua-results { position: absolute; z-index: 9; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100% - 32px)); display: grid; justify-items: center; gap: 12px; padding: 30px 26px 24px; border-radius: var(--ck-rond-paneel); text-align: center; background: linear-gradient(135deg, rgba(255, 255, 255, .7), rgba(255, 255, 255, .4)); }
+.lua-huisstijl .lua-dialog h2 { margin: 0; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); color: var(--ck-cacao); }
+.lua-huisstijl .lua-dialog p { margin: 0; font-size: 18px; font-weight: 700; }
+.lua-huisstijl .lua-results { padding-top: 48px; }
+.lua-huisstijl .lua-stars { color: var(--ck-zon); }
+.lua-huisstijl .lua-results-knoppen { display: grid; gap: 10px; justify-items: center; }
+
+/* Telefoon */
+@media (max-width: 540px) { .lua-game-shell.lua-huisstijl { --lua-boven: 68px; } }
+@container (max-width: 640px) {
+  .lua-huisstijl .lua-gereedschap { flex-direction: row; top: calc(var(--lua-boven) + 56px); border-radius: 999px; }
+  .lua-huisstijl .lua-bord { top: calc(var(--lua-boven) + 120px); }
+  .lua-huisstijl .lua-bellen, .lua-huisstijl .lua-einde, .lua-huisstijl .lua-overlay > .ck-zone-antwoord { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
+  .lua-huisstijl .ck-bel { width: 76px; height: 76px; font-size: 28px; }
+  .lua-huisstijl .lua-einde { flex-direction: column-reverse; align-items: stretch; }
+  .lua-huisstijl .lua-tables > div { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .lua-huisstijl .lua-menu { top: 46%; padding: 40px 16px 18px; }
+}
+
+/* Oude regels (paarse knop, scrollend menu) mogen hier niet meer winnen. */
+.lua-game-shell.lua-huisstijl .lua-menu, .lua-game-shell.lua-huisstijl .lua-results { overflow: visible; max-height: none; }
+.lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd { background: var(--ck-actief); border: 0; box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); color: var(--ck-wit); }
+.lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd:disabled { opacity: .6; }

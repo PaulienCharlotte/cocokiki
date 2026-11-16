@@ -1,0 +1,197 @@
+/* De rekenspellen in de CocoKiki-huisstijl (docs/HUISSTIJL.md, "Vaste plekken").
+   Dezelfde zones als Winkelgekte: statuseiland boven, gereedschap rechts,
+   Lua linksonder, antwoordbellen rechtsonder, en het spel in de wereld.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css. */
+@import '../../styles/cocokiki-tokens.css';
+
+/* Het spel vult het scherm; de achtergrond komt van de wereld (MathModule).
+   clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
+.dream-app .math-adventure .math-game:has(> .rekenspel), .math-game:has(> .rekenspel) { padding: 0; background: none; }
+.math-adventure:has(.rekenspel)::before { display: none; }
+.rekenspel.ck-scherm {
+  --rs-boven: 16px;
+  position: fixed; inset: 0; z-index: 1; overflow: clip;
+  width: auto; max-width: none; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+  font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao);
+}
+
+/* 2. Statuseiland, in de rij van de zwevende bovenkant */
+.rekenspel .rekenspel__status { top: var(--rs-boven); }
+.rekenspel .rekenspel__stippen { display: flex; align-items: center; gap: max(5px, .5cqw); }
+.rekenspel .rekenspel__stip-knop { padding: 0; cursor: pointer; }
+.rekenspel .rekenspel__stip-knop:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
+.rekenspel .ck-niveau { font-size: 16px; line-height: 1.3; }
+.rekenspel .rekenspel__niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.rekenspel .rekenspel__scheid { width: 1px; height: 50%; background: var(--ck-schaduw-rand); }
+.rekenspel .ck-status-extra b { font-family: var(--ck-font-kop); font-size: max(18px, 1.6cqw); }
+.rekenspel .rekenspel__munt { width: 24px; height: 24px; }
+
+/* 4. Gereedschap */
+.rekenspel .rekenspel__gereedschap { top: calc(var(--rs-boven) + max(48px, 4.4cqw) + var(--ck-rand)); }
+.rekenspel .rekenspel__lijn { height: 1px; margin: 2px 10px; background: var(--ck-schaduw-rand); }
+.rekenspel .ck-gereedschap:disabled { opacity: .45; cursor: default; }
+.rekenspel .ck-gereedschap:disabled:hover { transform: none; background: transparent; }
+.rekenspel .ck-gereedschap:focus-visible, .rekenspel .ck-knop:focus-visible, .rekenspel .ck-bel:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+
+/* 7. Speelveld: tussen het statuseiland en Lua/de bellen, het spel in het midden */
+.rekenspel .rekenspel__veld {
+  position: absolute; z-index: 3; left: var(--ck-rand); right: calc(var(--ck-rand) * 2 + max(48px, 4cqw));
+  top: calc(var(--rs-boven) + max(48px, 4.4cqw) + 20px); bottom: max(170px, 17cqw);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  margin: 0; padding: 0; background: none; border: 0; box-shadow: none;
+}
+/* Tussenvakken mogen geen eigen vlak of positie hebben: dan zakken de zones niet weg. */
+.rekenspel .math-puzzle, .rekenspel .honey-game, .rekenspel .berry-game, .rekenspel .maatvraag { position: static; background: none; box-shadow: none; border: 0; padding: 0; margin: 0; }
+
+/* Het glazen bord waarop de som staat */
+.rekenspel .rekenspel__bord { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 28px; border-radius: 24px; font-family: var(--ck-font-kop); font-weight: 800; font-size: max(30px, 3.2cqw); line-height: 1.15; color: var(--ck-cacao); animation: ck-pop .45s var(--ck-veer) both; }
+.rekenspel .rekenspel__bord.is-over { background: radial-gradient(closest-side, rgba(255, 236, 160, .6), rgba(255, 255, 255, .25)); }
+.rekenspel .rekenspel__bord .math-equation { margin: 0; padding: 0; background: none; font: inherit; color: inherit; gap: 10px; }
+.rekenspel .rekenspel__bord .math-blank { min-width: 1.6em; padding: 0 .3em; border-radius: 14px; background: var(--ck-zon); color: var(--ck-cacao); border: 0; box-shadow: 0 4px 0 var(--ck-zon-rand); }
+.rekenspel .rekenspel__bord .math-operator { color: var(--ck-cacao); }
+
+/* 6. Antwoorden: altijd op de vaste plek rechtsonder, ook al staan ze bij hun spel in de code */
+.rekenspel .rekenspel__veld .ck-zone-antwoord { position: fixed; }
+.rekenspel .rekenspel__bellen { display: flex; gap: max(10px, 1.4cqw); align-items: flex-end; }
+.rekenspel .ck-bel { padding: 0; border: 1px solid rgba(255, 255, 255, .6); isolation: isolate; }
+.rekenspel .ck-bel:nth-child(2) { animation-delay: -.7s; } .rekenspel .ck-bel:nth-child(3) { animation-delay: -1.4s; } .rekenspel .ck-bel:nth-child(4) { animation-delay: -2.1s; }
+.rekenspel .ck-bel.is-slepen { animation: none; }
+.rekenspel .ck-bel:disabled { cursor: default; }
+/* Fout: de gekozen bel wiebelt, nooit rood. Goed: de andere bellen vervagen. */
+.rekenspel.is-wrong .ck-bel[aria-pressed=true] { animation: ck-wiebel .4s ease; }
+.rekenspel.is-correct .ck-bel:not([aria-pressed=true]) { opacity: .25; }
+.rekenspel .rekenspel__bellen--tekst .ck-bel { width: auto; min-width: max(96px, 9cqw); height: auto; min-height: max(72px, 6.4cqw); padding: 10px 18px; border-radius: 999px; font-size: max(18px, 1.6cqw); line-height: 1.15; text-align: center; }
+.rekenspel .rekenspel__bellen--tekst .ck-bel__kern { inset: 8%; border-radius: 999px; }
+
+/* 5. Lua */
+.rekenspel .rekenspel__personage .ck-ballon__gezicht { width: max(64px, 8.5cqw); height: max(64px, 8.5cqw); object-position: top; transition: transform .4s var(--ck-veer); }
+.rekenspel .rekenspel__personage .ck-ballon__tekst { margin: 0 0 2.4cqw; max-width: min(38cqw, 520px); font-size: max(18px, 1.6cqw); animation: ck-pop .45s var(--ck-veer); }
+.rekenspel .ck-ballon__naam { font-size: 16px; }
+
+/* Aan het eind */
+.rekenspel .rekenspel__einde { display: flex; gap: 12px; align-items: center; animation: ck-pop .5s var(--ck-veer) both; }
+
+/* ---- Per spel ---- */
+/* Het ontbrekende getal: het koekje en de som op het bord */
+.rekenspel .cookie-order { display: grid; justify-items: center; gap: 10px; background: none; border: 0; box-shadow: none; padding: 0; }
+.rekenspel .cookie-order > img { width: max(90px, 9cqw); height: auto; animation: ck-zweef 3.2s ease-in-out infinite; }
+/* Vergelijken: de potten in de wereld, de sommen op het bord eronder */
+.rekenspel .honey-game { display: grid; justify-items: center; gap: 14px; width: 100%; }
+.rekenspel .honey-sommen { margin: 0; }
+.rekenspel .honey-drop { width: min(590px, 100%); }
+.rekenspel .honey-jars { height: min(310px, 42vh); }
+/* Zonder etiket op de pot vult de tekening de hele pot. */
+.rekenspel .honey-jar__glass { grid-template-rows: 1fr; }
+.rekenspel .honey-sommen b { color: var(--ck-cacao); }
+/* Delen: de oogst en de mandjes in de wereld, zonder lichte vlakken */
+.rekenspel .berry-harvest { background: rgba(255, 248, 236, .35); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, .6); }
+.rekenspel .berry-harvest { padding: 12px 18px; }
+.rekenspel .berry-harvest__label strong, .rekenspel .berry-basket__target > span { font-family: var(--ck-font-kop); font-size: 20px; color: var(--ck-cacao); }
+.rekenspel .berry-undo { position: fixed; right: calc(var(--ck-rand) + 6cqw); bottom: var(--ck-rand); }
+/* Maten: het typvak op het bord, de uitleg erbij */
+.rekenspel .maatvraag { display: grid; justify-items: center; gap: 14px; }
+.rekenspel .maatvraag__som input { width: 3.4em; min-height: 56px; padding: 0 10px; border: 3px solid var(--ck-wit); border-radius: 16px; background: var(--ck-room); font: inherit; text-align: center; color: var(--ck-cacao); }
+.rekenspel .maatvraag__som input:focus-visible { outline: 3px solid var(--ck-actief); }
+.rekenspel .maatvraag__som i { font-style: normal; }
+.rekenspel .maatvraag__uitleg { font-family: var(--ck-font-tekst); font-size: 18px; max-width: 34em; text-align: center; }
+/* Redactiesommen: het werkblad is papier en mag scrollen; geen witte omlijsting erom */
+.rekenspel--add-subtract .rekenspel__veld { justify-content: flex-start; overflow-y: auto; bottom: var(--ck-rand); padding-bottom: 120px; }
+.rekenspel--add-subtract .rekenspel__veld { top: calc(var(--rs-boven) + max(48px, 4.4cqw) + 24px); }
+/* Een werkblad is papier (huisstijl: "Papier"), met de verhaalsom erop. */
+.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { width: min(760px, 100%); padding: 24px 28px; border-radius: var(--ck-rond-kaart); background: var(--ck-room); box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 14px 28px rgba(74, 42, 26, .22); font-family: var(--ck-font-tekst); animation: ck-pop .45s var(--ck-veer) both; }
+/* Lua staat naast het werkblad en zegt wat je zoekt; het blad schuift opzij. */
+.rekenspel--add-subtract .rekenspel__veld { left: max(320px, 28cqw); align-items: flex-start; }
+
+/* ---- Bladen kiezen (Redactiesommen) ---- */
+.rekenbladen__stapel { position: absolute; z-index: 3; left: var(--ck-rand); right: var(--ck-rand); top: calc(var(--rs-boven) + 70px); bottom: max(170px, 17cqw); display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); align-content: center; gap: 22px 18px; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; overflow-y: auto; }
+.rekenbladen__stapel > li { animation: ck-pop .45s var(--ck-veer) both; animation-delay: calc(var(--blad, 0) * 40ms); }
+.rekenblad { position: relative; display: grid; gap: 4px; width: 100%; padding: 18px 14px 16px; border: 0; text-align: left; cursor: pointer; transform: rotate(-1deg); transition: transform var(--ck-normaal) var(--ck-veer); font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.rekenbladen__stapel > li:nth-child(2n) .rekenblad { transform: rotate(1deg); }
+.rekenblad:hover { transform: rotate(0) translateY(-5px); }
+.rekenblad:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
+.rekenblad strong { font-family: var(--ck-font-kop); font-size: 24px; line-height: 1.1; }
+.rekenblad > span { font-size: 16px; font-weight: 700; }
+.rekenblad.is-af { box-shadow: 0 0 0 3px var(--ck-actief), 0 6px 0 var(--ck-schaduw-rand); }
+.rekenblad__af { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--ck-actief); color: var(--ck-wit); }
+
+/* Telefoon */
+@media (max-width: 540px) { .rekenspel.ck-scherm { --rs-boven: 68px; } }
+@container (max-width: 640px) {
+  .rekenspel .rekenspel__veld { right: var(--ck-rand); top: calc(var(--rs-boven) + 124px); bottom: 220px; }
+  .rekenspel .rekenspel__gereedschap { flex-direction: row; top: calc(var(--rs-boven) + 56px); right: var(--ck-rand); border-radius: 999px; }
+  .rekenspel .rekenspel__personage { right: var(--ck-rand); bottom: calc(var(--ck-rand) + 92px); }
+  .rekenspel .rekenspel__personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
+  .rekenspel .rekenspel__veld .ck-zone-antwoord, .rekenspel .rekenspel__einde { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
+  .rekenspel .ck-bel { width: 68px; height: 68px; font-size: 26px; }
+  .rekenspel .rekenspel__bellen--tekst .ck-bel { min-width: 0; flex: 1; font-size: 16px; padding: 8px; }
+  .rekenspel .rekenspel__bord { font-size: 28px; padding: 8px 16px; }
+  .rekenspel .rekenspel__einde { flex-direction: column-reverse; align-items: stretch; }
+  .rekenbladen__stapel { top: calc(var(--rs-boven) + 20px); bottom: 210px; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+}
+
+/* Aan het eind verdwijnen de bellen: dan staat alleen de hoofdknop rechtsonder. */
+.rekenspel.is-einde .rekenspel__veld .ck-zone-antwoord, .rekenspel.is-einde .berry-undo { display: none; }
+
+/* ---- Redactiesommen met geur en kleur ---- */
+/* Het vel: schriftpapier met lijntjes, een plakbandje in de wereldkleur, een tikje scheef */
+.rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) {
+  position: relative; transform: rotate(-.5deg);
+  background: repeating-linear-gradient(180deg, transparent 0 33px, color-mix(in srgb, var(--ck-wereld) 18%, transparent) 33px 34px), var(--ck-room);
+  padding: 34px 32px 28px;
+}
+.rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden])::before {
+  content: ""; position: absolute; top: -14px; left: 50%; width: 120px; height: 28px; margin-left: -60px; transform: rotate(2deg);
+  border-radius: 6px; background: color-mix(in srgb, var(--ck-actief) 70%, transparent); box-shadow: 0 3px 6px rgba(40, 20, 5, .2);
+}
+.rekenspel.rekenspel--add-subtract .redactie-verhaal { font-family: var(--ck-font-kop); font-weight: 700; font-size: clamp(20px, 1.8cqw, 26px); line-height: 1.5; color: var(--ck-cacao); }
+.rekenspel.rekenspel--add-subtract .redactie-beeld { float: right; width: clamp(90px, 10cqw, 150px); margin: 0 0 8px 16px; animation: ck-zweef 3.4s ease-in-out infinite; }
+/* Getallen aanstrepen: de markeerstift is zonnebloemgeel (huisstijl: getallen markeren) */
+.rekenspel.rekenspel--add-subtract .redactie-getal { padding: 0 8px; border: 0; border-radius: 10px; background: color-mix(in srgb, var(--ck-zon) 28%, transparent); font: inherit; color: var(--ck-cacao); cursor: pointer; transition: transform .2s var(--ck-veer), background var(--ck-normaal); }
+.rekenspel.rekenspel--add-subtract .redactie-getal:hover { transform: translateY(-2px) rotate(-2deg); }
+.rekenspel.rekenspel--add-subtract .redactie-getal.is-nodig { background: var(--ck-zon); box-shadow: 0 3px 0 var(--ck-zon-rand); animation: ck-pop .35s var(--ck-veer); }
+.rekenspel.rekenspel--add-subtract .redactie-getal.is-mis { animation: ck-wiebel .4s ease; background: color-mix(in srgb, var(--ck-druif) 22%, transparent); }
+/* De opdracht per fase: een pil met een stift-icoon */
+.rekenspel.rekenspel--add-subtract .redactie-opdracht { display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 10px; padding: 6px 16px; border-radius: 999px; background: color-mix(in srgb, var(--ck-actief) 16%, var(--ck-room)); font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; color: var(--ck-cacao); }
+.rekenspel.rekenspel--add-subtract .redactie-opdracht svg { color: var(--ck-zon-rand); }
+/* Keuzes (soort som, eerste stap): dikke tegels in de vaste antwoordkleuren */
+.rekenspel.rekenspel--add-subtract .redactie-soorten, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes { display: flex; flex-wrap: wrap; gap: 12px; }
+.rekenspel.rekenspel--add-subtract .redactie-soort > button:first-child, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button {
+  min-height: var(--ck-tik-min); padding: 10px 20px; border: 0; border-radius: var(--ck-rond-tegel); font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-wit); text-shadow: 0 2px 0 rgba(0, 0, 0, .15); cursor: pointer;
+  background: var(--ck-wereld); box-shadow: 0 6px 0 var(--ck-wereld-rand); transition: transform var(--ck-snel);
+}
+.rekenspel.rekenspel--add-subtract .redactie-soort:nth-child(4n+2) > button:first-child, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button:nth-child(4n+2) { background: var(--ck-bes); box-shadow: 0 6px 0 var(--ck-bes-rand); }
+.rekenspel.rekenspel--add-subtract .redactie-soort:nth-child(4n+3) > button:first-child, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button:nth-child(4n+3) { background: var(--ck-tuin); box-shadow: 0 6px 0 var(--ck-tuin-rand); }
+.rekenspel.rekenspel--add-subtract .redactie-soort:nth-child(4n) > button:first-child, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button:nth-child(4n) { background: var(--ck-druif); box-shadow: 0 6px 0 var(--ck-druif-rand); }
+.rekenspel.rekenspel--add-subtract .redactie-soort > button:first-child:hover, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button:hover { transform: translateY(-3px) rotate(-1deg); }
+.rekenspel.rekenspel--add-subtract .redactie-soort > button:first-child:active, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button:active { transform: translateY(6px); box-shadow: none; }
+.rekenspel.rekenspel--add-subtract .redactie-soort > button.is-mis, .rekenspel.rekenspel--add-subtract .redactie-plan__keuzes > button.is-mis { animation: ck-wiebel .4s ease; opacity: .55; }
+.rekenspel.rekenspel--add-subtract .redactie-soort { display: inline-flex; align-items: center; gap: 4px; }
+.rekenspel.rekenspel--add-subtract .redactie-soort__info { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--ck-glas); color: var(--ck-cacao); cursor: pointer; }
+.rekenspel.rekenspel--add-subtract .redactie-soort__uitleg, .rekenspel.rekenspel--add-subtract .redactie-tip { margin: 12px 0 0; padding: 10px 14px; border-radius: 16px; background: color-mix(in srgb, var(--ck-wereld) 12%, var(--ck-room)); font-size: 17px; }
+/* Rekenen: genummerde stappen; de stap waar je bent licht op in de wereldkleur */
+.rekenspel.rekenspel--add-subtract .story-stappen { display: grid; gap: 12px; margin: 14px 0; padding: 0; list-style: none; }
+.rekenspel.rekenspel--add-subtract .story-stappen li { padding: 12px 16px; border-radius: 18px; background: rgba(255, 255, 255, .6); border: 2px solid transparent; }
+.rekenspel.rekenspel--add-subtract .story-stappen li.is-nu { border-color: var(--ck-actief); background: var(--ck-wit); box-shadow: 0 5px 0 color-mix(in srgb, var(--ck-actief) 35%, transparent); animation: ck-pop .4s var(--ck-veer); }
+.rekenspel.rekenspel--add-subtract .story-stappen li.is-klaar { opacity: .85; }
+.rekenspel.rekenspel--add-subtract .story-stappen__kop { display: flex; align-items: center; gap: 10px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; color: var(--ck-cacao); }
+.rekenspel.rekenspel--add-subtract .story-stappen__kop b { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.rekenspel.rekenspel--add-subtract .math-workbench__equation { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 24px; color: var(--ck-cacao); }
+.rekenspel.rekenspel--add-subtract .math-workbench__equation input { width: 5em; min-height: var(--ck-tik-min); padding: 0 12px; border: 3px solid var(--ck-actief); border-radius: 16px; background: var(--ck-room); font: inherit; color: var(--ck-cacao); text-align: center; }
+.rekenspel.rekenspel--add-subtract .math-workbench__equation output { min-width: 2em; padding: 0 10px; border-radius: 12px; background: var(--ck-zon); box-shadow: 0 3px 0 var(--ck-zon-rand); text-align: center; }
+.rekenspel.rekenspel--add-subtract .redactie-eenheid { font-size: 16px; color: var(--ck-cacao-zacht); }
+/* De knoppen onder het werkblad: hoofdknop in de wereldkleur */
+.rekenspel.rekenspel--add-subtract .math-workbench > button[type=submit], .rekenspel.rekenspel--add-subtract .redactie-verder {
+  display: inline-flex; align-items: center; gap: 10px; min-height: var(--ck-tik-min); padding: 12px 28px; border: 0; border-radius: var(--ck-rond-knop);
+  background: var(--ck-actief); box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: var(--ck-maat-knop); text-shadow: 0 2px 0 rgba(0, 0, 0, .15); cursor: pointer;
+}
+.rekenspel.rekenspel--add-subtract .math-workbench > button[type=submit]:disabled { opacity: .5; cursor: default; }
+/* Nakijken: goede stappen groen, foute stappen druif — nooit rood */
+.rekenspel.rekenspel--add-subtract .redactie-nakijk li.is-goed { border-left: 6px solid var(--ck-tuin); }
+.rekenspel.rekenspel--add-subtract .redactie-nakijk li.is-mis { border-left: 6px solid var(--ck-druif); }
+.rekenspel.rekenspel--add-subtract .redactie-aanpak { margin: 14px 0; padding: 12px 16px; border-radius: 18px; background: color-mix(in srgb, var(--ck-druif) 12%, var(--ck-room)); }
+.rekenspel.rekenspel--add-subtract .redactie-aanpak__naam { margin: 0 0 4px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-druif-rand); }
+@container (max-width: 640px) {
+  .rekenspel.rekenspel--add-subtract .rekenspel__veld { left: var(--ck-rand); }
+  .rekenspel.rekenspel--add-subtract .rekenspel__personage { display: none; }
+  .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { padding: 30px 18px 22px; transform: none; }
+}

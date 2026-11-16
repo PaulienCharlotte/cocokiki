@@ -84,4 +84,4 @@
 
 /* De bovenkant van de app zweeft nu in losse zones; het statuseiland staat
    ertussen in dezelfde rij. Op een smalle telefoon past dat niet: dan een rij lager. */
-@media (max-width: 600px) { .winkelgekte.ck-scherm { --wk-boven: 68px; } }
+@media (max-width: 540px) { .winkelgekte.ck-scherm { --wk-boven: 68px; } }

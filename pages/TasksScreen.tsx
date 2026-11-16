@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { Armchair, CalendarDays, ChefHat, Sprout } from 'lucide-react';
-import { Button } from '../design-system';
-import CardGrid from '../components/ui/CardGrid';
 import DailyPractice from '../components/quiz/DailyPractice';
 import { CHARACTERS } from '../data/characters';
 import { loadCookingProgress, saveCookingProgress } from '../services/cookingProgress';
 import { lopendeBestelling, neemBestellingAan, openBestellingen } from '../services/bakeryOrders';
 import { loadCakeOrder } from '../services/cakeOrder';
 import { loadNursery } from '../services/nurseryProject';
-import CocoCoin from '../components/platform/CocoCoin';
 import { BESTELLINGEN } from '../data/cooking/orders';
 import { LEARNING_COINS } from '../services/learningReward';
 import { DAILY_REWARD } from '../services/dailyPractice';
 import './tasks.css';
 
 type Area = 'alles' | 'bakken' | 'planten' | 'inrichten' | 'vandaag';
+/** Elk gebied heeft de kleur van zijn wereld uit de huisstijl. */
+const WERELD: Record<string, string> = { bakken: 'keuken', planten: 'tuin', inrichten: 'boomhut', vandaag: 'school', alles: 'boomhut' };
 const areas: Array<{ id: Area; name: string; icon: React.ReactNode }> = [
   { id: 'alles', name: 'Alles', icon: null }, { id: 'bakken', name: 'Bakken', icon: <ChefHat /> }, { id: 'planten', name: 'Planten', icon: <Sprout /> }, { id: 'inrichten', name: 'Inrichten', icon: <Armchair /> }, { id: 'vandaag', name: 'Vandaag', icon: <CalendarDays /> },
 ];
@@ -39,7 +38,7 @@ export default function TasksScreen({ onNavigate }: { onNavigate: (path: string)
     { id: 'clinic', area: 'planten', titel: 'Help een plant', onder: 'Ontdek wat de plant nodig heeft.', beeld: '/assets/library/plants/gereedschap/plantenspuit.webp' },
     { id: 'garden', area: 'planten', titel: 'Zaaien en verzorgen', onder: 'Ga verder in je moestuin.', beeld: '/assets/library/plants/garden/navigation.webp' },
     { id: 'nursery', area: 'inrichten', titel: 'Luna’s babykamer', onder: 'Meten, kiezen en inrichten met een projectbudget van 500.', beeld: '/assets/library/projects/luna-crib.webp', meta: projectComplete ? 'Afgerond' : 'Tot 100 CocoCoins' },
-  ].filter(card => area === 'alles' || card.area === area).map(card => ({ ...card, meta: <span className="tasks-reward"><CocoCoin size={22} /><span>{rewardFor(card.id)}</span></span> }));
+  ].filter(card => area === 'alles' || card.area === area);
   const choose = (id: string) => {
     if (id === 'daily') { onNavigate('/opdrachten?gebied=vandaag'); return; }
     if (id === 'nursery') { onNavigate('/opdrachten/luna-babykamer'); return; }
@@ -51,13 +50,31 @@ export default function TasksScreen({ onNavigate }: { onNavigate: (path: string)
     if (!saveCookingProgress(next)) { setNotice('Opslaan lukte niet. Probeer het opnieuw.'); return; }
     onNavigate('/treehouse/cookbook?toonbank=1');
   };
-  return <main className="tasks-screen"><section className="tasks-screen__content">
-    <header className="tasks-header"><div className="tasks-header__title"><small>Kies jouw volgende avontuur</small><h1>To Do</h1></div>
-    <nav className="tasks-screen__filters" aria-label="Soort opdracht">{areas.map(item => <Button key={item.id} variant="quiet" size="small" aria-pressed={area === item.id} startIcon={item.icon} onClick={() => { setArea(item.id); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.name}</Button>)}</nav>
-    {area === 'alles' && <section className="tasks-today"><div><h2>Vijf voor vandaag</h2><p>Vijf korte oefeningen · dubbele beloning</p><span className="tasks-reward"><CocoCoin size={24} />Tot {DAILY_REWARD * 5} CocoCoins</span></div><Button onClick={() => choose('daily')} startIcon={<CalendarDays />}>Begin met vandaag</Button></section>}
-    </header>
-    {notice && <p role="alert">{notice}</p>}
-    {area === 'vandaag' ? <DailyPractice /> : <CardGrid label="Kies een opdracht" cards={cards} onChoose={choose} />}
-  </section>
+  // Het To Do-bord uit de huisstijl: een houten bord op kurk, met elke
+  // opdracht als papieren briefje dat er met een punaise in de wereldkleur
+  // op geprikt is. Geen witte kaarten of kopvlak.
+  return <main className="tasks-screen" data-wereld="boomhut">
+    <section className="tasks-screen__content">
+      <header className="tasks-header">
+        <h1 className="ck-hout tasks-bord">To Do</h1>
+        <nav className="tasks-filters ck-glas" aria-label="Soort opdracht">{areas.map(item => <button type="button" key={item.id} className="tasks-filter" data-wereld={WERELD[item.id]} aria-pressed={area === item.id} onClick={() => { setArea(item.id); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.icon}<span>{item.name}</span></button>)}</nav>
+      </header>
+      {notice && <p className="tasks-melding ck-papier" role="alert">{notice}</p>}
+      {area === 'alles' && <section className="tasks-briefje tasks-briefje--vandaag" aria-labelledby="tasks-vandaag">
+        <div><h2 id="tasks-vandaag">Vijf voor vandaag</h2><p>Vijf korte oefeningen · dubbele beloning</p>
+          <span className="tasks-beloning"><span className="ck-munt" aria-hidden="true" />Tot {DAILY_REWARD * 5} CocoCoins</span></div>
+        <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}><CalendarDays aria-hidden="true" />Begin</button>
+      </section>}
+      {area === 'vandaag' ? <DailyPractice /> : <ul className="tasks-briefjes" aria-label="Kies een opdracht">
+        {cards.map((card, index) => <li key={card.id} style={{ '--briefje': index } as React.CSSProperties}>
+          <button type="button" className="tasks-briefje" data-wereld={WERELD[card.area]} onClick={() => choose(card.id)}>
+            <span className="tasks-briefje__plaatje"><img src={card.beeld} alt="" /></span>
+            <strong>{card.titel}</strong>
+            {card.onder && <span className="tasks-briefje__tekst">{card.onder}</span>}
+            <span className="tasks-beloning"><span className="ck-munt" aria-hidden="true" />{rewardFor(card.id)}</span>
+          </button>
+        </li>)}
+      </ul>}
+    </section>
   </main>;
 }

@@ -299,8 +299,10 @@ test('interactive math views expose real controls for mouse, touch and keyboard'
   assert.doesNotMatch(distribution, /Controleer/);
   const puzzle = renderToStaticMarkup(<PuzzleChallenge question={generateQuestion('missing', 3)} locked={false} onAnswer={() => undefined} />);
   assert.match(puzzle, /Koekjesbestelling/);
-  assert.match(puzzle, /Aantal (koekjes|dozen)/);
-  assert.match(puzzle, /Bak deze bestelling/);
+  // Je kiest het ontbrekende getal met een bel (tikken of slepen), niet met een typvak.
+  assert.match(puzzle, /ck-zone-antwoord/);
+  assert.match(puzzle, /ck-bel/);
+  assert.match(puzzle, /aria-label="\d+ (koekjes|dozen)"/);
   assert.doesNotMatch(puzzle, /Bakplaat|cookie-oven|cookie-chef/);
   assert.doesNotMatch(puzzle, /Plaats getal/);
   const header = renderToStaticMarkup(<MathHeader game="multiply" level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
@@ -506,17 +508,11 @@ test('checkout levels alternate at least five task forms with consistent equatio
 });
 
 test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en een schuifbalk', () => {
-  // De kaart wordt op één plek gemaakt, niet per spel opnieuw.
-  const schil = readFileSync('components/dreamworld/dreamworld.css', 'utf8');
-  assert.match(schil, /\.dream-app \.math-adventure \.math-session \{[^}]*--radius-card/);
-  assert.match(schil, /\.dream-app \.math-adventure \.math-session \{[^}]*--color-surface/);
-  // Geen uitzondering meer die de kaart voor één spel weghaalt.
-  assert.doesNotMatch(schil, /math-adventure--balance .math-session \{ background: transparent/);
-  assert.doesNotMatch(readFileSync('games/math/checkout.css', 'utf8'), /math-session \{ background: transparent/);
-
-  // Baby Lua stelt de vraag, en doet dat niet twee keer op hetzelfde scherm.
+  // Elk rekenspel deelt dezelfde schil uit de huisstijl: de vaste zones.
   const session = readFileSync('games/math/MathSession.tsx', 'utf8');
-  assert.match(session, /SpeechBubble character="lua"/);
+  for (const zone of ['ck-scherm', 'ck-zone-status', 'ck-zone-gereedschap', 'ck-zone-personage', 'ck-zone-antwoord', 'data-wereld="school"']) assert.match(session, new RegExp(zone));
+  // Lua stelt de vraag, en doet dat niet twee keer op hetzelfde scherm.
+  assert.equal((session.match(/ck-zone-personage/g) ?? []).length, 1);
   assert.doesNotMatch(readFileSync('games/math/MathHelp.tsx', 'utf8'), /luiaard\.webp|TipCoach/);
 
   // De moeilijkheid is een schuifbalk, voor elk spel even ver open.
@@ -527,13 +523,11 @@ test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en ee
 });
 
 test('een spel met een eigen toneel houdt zijn achtergrond, en de uitleg komt pas bij de tip', () => {
-  const schil = readFileSync('components/dreamworld/dreamworld.css', 'utf8');
-  assert.match(schil, /math-session\.is-toneel,\n\.dream-app \.math-adventure--race \.math-session \{ background: transparent/);
   // De vraag staat niet vast in beeld bij de honingpotten; Lua zegt hem pas
-  // als je om een tip vraagt, en dan in haar eigen spraakwolk.
+  // als je om een tip vraagt of iets fout doet.
   const session = readFileSync('games/math/MathSession.tsx', 'utf8');
   assert.match(session, /const toneel = game === 'balance'/);
-  assert.match(session, /\{!toneel && <SpeechBubble/);
+  assert.match(session, /: toneel \? ''/);
   assert.match(readFileSync('games/math/MathHelp.tsx', 'utf8'), /SpeechBubble character="lua" label="tip"/);
 });
 
@@ -554,8 +548,10 @@ test('je kiest zelf welke tafels je oefent, ook meerdere tegelijk', () => {
 });
 
 test('op een toneel staat niets los: twee vlakken, en een uitgang met een woord erbij', () => {
-  // De streepjes en de tip staan samen in één balk, niet elk op een eigen chip.
-  assert.match(readFileSync('games/math/MathSession.tsx', 'utf8'), /<div className="math-balk">/);
+  // De bolletjes en het niveau staan samen in het statuseiland, de tip in de gereedschapsbalk.
+  const sessie = readFileSync('games/math/MathSession.tsx', 'utf8');
+  assert.match(sessie, /rekenspel__stippen/);
+  assert.match(sessie, /Tip van Baby Lua/);
   // Winkelgekte volgt de huisstijl: vaste zones, geen vlakken over de wereld.
   const race = readFileSync('games/math/RaceGame.tsx', 'utf8');
   for (const zone of ['ck-zone-status', 'ck-zone-gereedschap', 'ck-zone-personage', 'ck-zone-antwoord', 'ck-hangkaartje', 'ck-doel', 'ck-bel']) assert.match(race, new RegExp(zone));

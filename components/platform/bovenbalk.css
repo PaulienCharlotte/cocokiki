@@ -52,3 +52,11 @@ body:has(.ck-scherm .ck-zone-status) .ck-bovenbalk .ck-bovenbalk__munten-klein {
   body .ck-bovenbalk .world-profile__trigger img { width: 38px; height: 38px; }
   body .ck-bovenbalk .world-profile__trigger svg { display: none; }
 }
+
+/* Statuseiland van een spel op een middelbreed scherm: het past niet precies in
+   het midden tussen terug en het menu, maar wel direct naast de terugknop. Zo
+   staan de drie zones op gelijke hoogte. Onder 541px gaat het een rij lager. */
+@media (min-width: 541px) and (max-width: 760px) {
+  body .ck-scherm .ck-zone-status { left: calc(var(--ck-rand) + 60px); transform: none; translate: none; gap: 6px; padding: 0 12px 0 10px; }
+  body .ck-scherm .ck-zone-status .ck-stip { width: 10px; height: 10px; }
+}

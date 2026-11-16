@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
-import CardGrid from '../../components/ui/CardGrid';
-import SpeechBubble from '../../components/ui/SpeechBubble';
+import { CHARACTERS } from '../../data/characters';
+import './rekenspel.css';
 import { BLADEN } from './redactie/bladen';
 import { laadBladen } from './redactie/bladVoortgang';
 
@@ -24,9 +24,21 @@ export default function RedactieBladen({ onBlad, onVrij }: { onBlad: (nr: number
       meta: af ? <Check size={18} aria-label="af" /> : undefined,
     };
   });
-  return <section className="redactie-bladen" aria-label="Huiswerkbladen">
-    <SpeechBubble character="lua" label="Huiswerk">Welk blad maak je vandaag?</SpeechBubble>
-    <CardGrid label="Kies een huiswerkblad" cards={[...kaarten, { id: 'vrij', titel: 'Vrij oefenen', onder: 'Elke keer nieuwe sommen' }]}
-      onChoose={id => (id === 'vrij' ? onVrij() : onBlad(Number(id)))} />
+  // In de huisstijl: de bladen liggen als papiertjes in de wereld, Lua vraagt
+  // welk blad je maakt, en vrij oefenen is de hoofdknop rechtsonder.
+  const lua = CHARACTERS.lua;
+  return <section className="ck-scherm rekenspel rekenbladen" data-wereld="school" aria-label="Huiswerkbladen">
+    <ul className="rekenbladen__stapel" aria-label="Kies een huiswerkblad">
+      {kaarten.map((kaart, i) => <li key={kaart.id} style={{ '--blad': i } as React.CSSProperties}>
+        <button type="button" className={`rekenblad ck-papier${kaart.meta ? ' is-af' : ''}`} onClick={() => onBlad(Number(kaart.id))}>
+          <strong>{kaart.titel}</strong><span>{kaart.onder}</span>{kaart.meta && <span className="rekenblad__af">{kaart.meta}</span>}
+        </button>
+      </li>)}
+    </ul>
+    <div className="ck-zone-personage rekenspel__personage">
+      <img className="ck-ballon__gezicht" src={lua.beeld} alt={lua.naam} />
+      <p className="ck-ballon__tekst"><span className="ck-ballon__naam">BABY LUA</span>Welk blad maak je vandaag?</p>
+    </div>
+    <div className="ck-zone-antwoord"><button type="button" className="ck-knop ck-knop--hoofd" onClick={onVrij}>Vrij oefenen</button></div>
   </section>;
 }
