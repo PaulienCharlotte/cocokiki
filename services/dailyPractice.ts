@@ -1,9 +1,9 @@
 import { alleVragen, type QuizVraag } from '../data/quiz/vragen';
-import { dagSleutel, QUIZ_BELONING } from './quiz';
+import { dagSleutel } from './quiz';
 import { commitLocalState, readDocument } from './localState';
 export const DAILY_KEY = 'cocokiki:daily-practice:v1';
-export const DAILY_REWARD = QUIZ_BELONING * 2;
-export interface DailyPractice { day: string; answers: Record<string, { choice: string; helped: boolean }> }
+export const DAILY_REWARD = 10;
+export interface DailyPractice { day: string; answers: Record<string, { choice: string; helped: boolean; reward?: number }> }
 export function dailyQuestions(day = dagSleutel()): QuizVraag[] {
   const all = alleVragen();
   let seed = [...day].reduce((sum, char) => (sum * 31 + char.charCodeAt(0)) >>> 0, 7);
@@ -27,6 +27,16 @@ export function answerDaily(day: string, id: string, choice: string, helped = fa
   if (day !== dagSleutel()) return false;
   const state = loadDailyPractice(day), q = dailyQuestions(day).find(q => q.id === id);
   if (!q || state.answers[id] || !q.opties.includes(choice)) return false;
-  const next = { ...state, answers: { ...state.answers, [id]: { choice, helped } } };
-  return commitLocalState({ [DAILY_KEY]: JSON.stringify(next) }, [{ id: `daily:${day}:${id}`, amount: !helped && choice === q.antwoord ? DAILY_REWARD : 0 }]).status === 'applied';
+  const reward = !helped && choice === q.antwoord ? DAILY_REWARD : 0;
+  const next = { ...state, answers: { ...state.answers, [id]: { choice, helped, reward } } };
+  return commitLocalState({ [DAILY_KEY]: JSON.stringify(next) }, [{ id: `daily:${day}:${id}`, amount: reward }]).status === 'applied';
+}
+
+/** Oudere antwoorden kregen 2 munten; toon geen nieuwe beloning voor al betaald werk. */
+export function dailyEarned(state: DailyPractice): number {
+  return dailyQuestions(state.day).reduce((sum, q) => {
+    const answer = state.answers[q.id];
+    if (!answer || answer.helped || answer.choice !== q.antwoord) return sum;
+    return sum + (answer.reward === DAILY_REWARD ? DAILY_REWARD : 2);
+  }, 0);
 }

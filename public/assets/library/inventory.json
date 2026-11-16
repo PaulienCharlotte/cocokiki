@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-11-15T21:36:39.812Z",
-  "count": 613,
+  "count": 626,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -1335,6 +1335,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:school:klembord",
+      "path": "/assets/library/school/klembord.webp",
+      "category": "school",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:shop:decor:furniture-plants-sheet",
       "path": "/assets/library/shop/decor/furniture-plants-sheet.webp",
       "category": "shop",
@@ -2391,6 +2397,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:travel:klembord",
+      "path": "/assets/library/travel/klembord.webp",
+      "category": "travel",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:treehouse:expansions:extra-bedroom",
       "path": "/assets/library/treehouse/expansions/extra-bedroom.webp",
       "category": "treehouse",
@@ -2703,6 +2715,30 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:ui:daily-quest",
+      "path": "/assets/library/ui/daily-quest.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:ui:navigation-medallion",
+      "path": "/assets/library/ui/navigation-medallion.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:ui:pinned-paper",
+      "path": "/assets/library/ui/pinned-paper.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
+      "id": "assets:library:ui:wooden-nameplate",
+      "path": "/assets/library/ui/wooden-nameplate.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
       "id": "dreamworld:island-icons",
       "path": "/dreamworld/island-icons.webp",
       "category": "dreamworld",
@@ -2727,6 +2763,36 @@
       "format": "png"
     },
     {
+      "id": "dreamworld:planets:cooking",
+      "path": "/dreamworld/planets/cooking.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:planets:discovery",
+      "path": "/dreamworld/planets/discovery.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:planets:home",
+      "path": "/dreamworld/planets/home.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:planets:math",
+      "path": "/dreamworld/planets/math.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:planets:plants",
+      "path": "/dreamworld/planets/plants.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
       "id": "dreamworld:plant-clinic",
       "path": "/dreamworld/plant-clinic.webp",
       "category": "dreamworld",
@@ -2735,6 +2801,18 @@
     {
       "id": "dreamworld:topo-interior",
       "path": "/dreamworld/topo-interior.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:village:landscape",
+      "path": "/dreamworld/village/landscape.webp",
+      "category": "dreamworld",
+      "format": "webp"
+    },
+    {
+      "id": "dreamworld:village:portrait",
+      "path": "/dreamworld/village/portrait.webp",
       "category": "dreamworld",
       "format": "webp"
     },

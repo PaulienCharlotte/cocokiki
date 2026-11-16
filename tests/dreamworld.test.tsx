@@ -158,8 +158,15 @@ test('world map has no visible name pills and shops stay available in the shared
   assert.deepEqual(Object.keys(ISLAND_ICON_POSITIONS).sort(), DREAM_ISLANDS.map(island => island.id).sort());
   assert.equal(new Set(Object.values(ISLAND_ICON_POSITIONS).map(position => position.join(':'))).size, 6);
   assert.match(world, /aria-label="Winkels openen"/);
-  assert.match(world, /aria-label="Kaart naar links"/);
-  assert.match(world, /aria-label="Kaart naar rechts"/);
+  assert.doesNotMatch(world, /aria-label="Kaart naar (links|rechts)"/);
+  for (const asset of ['/dreamworld/village/landscape.webp', '/dreamworld/village/portrait.webp']) {
+    assert.ok(existsSync(`public${asset}`));
+    assert.ok(world.includes(asset));
+  }
+  for (const destination of WORLD_DESTINATIONS.filter(item => item.enabled)) {
+    assert.ok(world.includes(`data-building="${destination.id}"`));
+    assert.ok(world.includes(`aria-label="${destination.label} openen"`));
+  }
   const shell = renderToStaticMarkup(<AppShell coins={20} onHome={() => undefined} onNavigate={() => undefined}>Spel</AppShell>);
   assert.match(shell, /aria-label="Winkels openen"/);
   const menu = renderToStaticMarkup(<ShopMenu onClose={() => undefined} onNavigate={() => undefined} />);

@@ -8,7 +8,7 @@ import { loadCakeOrder } from '../services/cakeOrder';
 import { loadNursery } from '../services/nurseryProject';
 import { BESTELLINGEN } from '../data/cooking/orders';
 import { LEARNING_COINS } from '../services/learningReward';
-import { DAILY_REWARD } from '../services/dailyPractice';
+import { DAILY_REWARD, loadDailyPractice, dailyEarned } from '../services/dailyPractice';
 import './tasks.css';
 
 type Area = 'alles' | 'bakken' | 'planten' | 'inrichten' | 'vandaag';
@@ -21,6 +21,8 @@ export default function TasksScreen({ onNavigate }: { onNavigate: (path: string)
   const requested = new URLSearchParams(window.location.search).get('gebied');
   const [area, setArea] = useState<Area>(areas.some(a => a.id === requested) ? requested as Area : 'alles');
   const [notice, setNotice] = useState('');
+  const daily = loadDailyPractice();
+  const dailyDone = Object.keys(daily.answers).length;
   const progress = loadCookingProgress(), active = lopendeBestelling(progress), projectComplete = loadNursery().stage === 'complete';
   const rewardFor = (id: string) => {
     const order = BESTELLINGEN.find(order => order.id === id);
@@ -56,14 +58,19 @@ export default function TasksScreen({ onNavigate }: { onNavigate: (path: string)
   return <main className="tasks-screen" data-wereld="boomhut">
     <section className="tasks-screen__content">
       <header className="tasks-header">
-        <h1 className="ck-hout tasks-bord">To Do</h1>
+        <h1 className="ck-houtbord tasks-bord">To Do</h1>
         <nav className="tasks-filters ck-glas" aria-label="Soort opdracht">{areas.map(item => <button type="button" key={item.id} className="tasks-filter" data-wereld={WERELD[item.id]} aria-pressed={area === item.id} onClick={() => { setArea(item.id); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.icon}<span>{item.name}</span></button>)}</nav>
       </header>
       {notice && <p className="tasks-melding ck-papier" role="alert">{notice}</p>}
-      {area === 'alles' && <section className="tasks-briefje tasks-briefje--vandaag" aria-labelledby="tasks-vandaag">
-        <div><h2 id="tasks-vandaag">Vijf voor vandaag</h2><p>Vijf korte oefeningen · dubbele beloning</p>
-          <span className="tasks-beloning"><span className="ck-munt" aria-hidden="true" />Tot {DAILY_REWARD * 5} CocoCoins</span></div>
-        <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}><CalendarDays aria-hidden="true" />Begin</button>
+      {area !== 'vandaag' && <section className="tasks-daily" aria-labelledby="tasks-vandaag">
+        <img className="tasks-daily__art" src="/assets/library/ui/daily-quest.webp" alt="" />
+        <div className="tasks-daily__content"><span className="tasks-daily__label">Jouw dagavontuur</span>
+          <h2 id="tasks-vandaag">Vijf voor vandaag</h2>
+          <p>Vijf vragen over eten en planten. Elke dag een nieuwe reeks.</p>
+          <span className="tasks-daily__reward"><span className="ck-munt" aria-hidden="true" />{dailyDone === 5 ? `${dailyEarned(daily)} CocoCoins verdiend` : `Verdien tot ${DAILY_REWARD * 5} CocoCoins`}</span>
+          <small>{dailyDone}/5 gedaan · {DAILY_REWARD} CocoCoins per zelfstandig goed antwoord</small>
+        </div>
+        <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}><CalendarDays aria-hidden="true" />{dailyDone === 5 ? 'Bekijk resultaat' : dailyDone ? 'Ga verder' : 'Begin vandaag'}</button>
       </section>}
       {area === 'vandaag' ? <DailyPractice /> : <ul className="tasks-briefjes" aria-label="Kies een opdracht">
         {cards.map((card, index) => <li key={card.id} style={{ '--briefje': index } as React.CSSProperties}>

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { dailyQuestions, loadDailyPractice, answerDaily, DAILY_REWARD } from '../services/dailyPractice';
+import { dailyQuestions, loadDailyPractice, answerDaily, DAILY_REWARD, dailyEarned } from '../services/dailyPractice';
 import { dagSleutel } from '../services/quiz';
 import { loadCurrency } from '../services/currency';
 import { roomReturn, shopDestination } from '../services/shopNavigation';
@@ -29,7 +29,7 @@ test('dagelijkse reeks is vast, gevarieerd en bestaat uit vijf unieke oefeningen
   assert.notDeepEqual(q, dailyQuestions('2026-11-15'));
   assert.ok(q.some(q => q.bron === 'planten') && q.some(q => q.bron !== 'planten'));
 });
-test('dagelijkse antwoorden en dubbele beloning slaan samen op, hulp en herladen betalen niet dubbel', () => stored(block => {
+test('dagelijkse antwoorden en beloning slaan samen op, hulp en herladen betalen niet dubbel', () => stored(block => {
   const day = dagSleutel(), q = dailyQuestions(day);
   block(true); assert.equal(answerDaily(day, q[0].id, q[0].antwoord), false); block(false);
   assert.deepEqual(loadDailyPractice().answers, {}); assert.equal(loadCurrency(), 0);
@@ -63,4 +63,20 @@ test('opdrachtantwoorden gebruiken losse knoppen en Winkelgekte toont geen overb
   assert.match(choices, /ck-answer-buttons/); assert.equal((choices.match(/<button/g) ?? []).length, 2);
   const header = renderToStaticMarkup(React.createElement(MathHeader, { game: 'race', level: 1, progress: emptyMathProgress(), onBack: () => {}, onLevel: () => {}, onSound: () => {} }));
   assert.doesNotMatch(header, /Maten omrekenen|Geluid aanzetten|Geluid uitzetten/);
+});
+
+
+test('vijf zelfstandig goede dagantwoorden betalen samen precies 50 CocoCoins, ook na herladen', () => stored(() => {
+  const day = dagSleutel();
+  assert.equal(DAILY_REWARD, 10);
+  for (const q of dailyQuestions(day)) assert.ok(answerDaily(day, q.id, q.antwoord));
+  assert.equal(loadCurrency(), 50);
+  assert.equal(dailyEarned(loadDailyPractice(day)), 50);
+  for (const q of dailyQuestions(day)) assert.equal(answerDaily(day, q.id, q.antwoord), false);
+  assert.equal(loadCurrency(), 50);
+}));
+
+test('oude dagantwoorden tonen de al ontvangen beloning en worden niet opgehoogd', () => {
+  const day = dagSleutel(), q = dailyQuestions(day)[0];
+  assert.equal(dailyEarned({ day, answers: { [q.id]: { choice: q.antwoord, helped: false } } }), 2);
 });

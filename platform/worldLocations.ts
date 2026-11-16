@@ -48,6 +48,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   {
     id: 'seb', islandId: 'discovery', path: '/islands/discovery', name: 'Seb’s Ontdekkingskamer',
     background: '/dreamworld/topo-interior.webp',
+    clipboard: '/assets/library/travel/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--color-sky)', character: { id: 'seb', name: CHARACTERS.seb.naam },
     // Geen losse iconen meer op de tekening: één raster kaarten, net als school.
@@ -59,6 +60,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     id: 'lua', islandId: 'math', path: '/islands/math', name: 'Baby Lua’s Rekenwerkplaats',
     // Rekenen hoort op school; de rekenspellen staan er al jaren in.
     background: '/games/school/school-interior.webp',
+    clipboard: '/assets/library/school/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
     // Geen knoppenrij: die wees naar dezelfde spellen als de kaarten eronder.

@@ -118,9 +118,10 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
         />}
       />}
   </main>;
-  return <main className={`ck-scherm wereld-scherm world-location world-location--${location.id}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-labelledby={`${id}-title`} style={{
+  return <main className={`ck-scherm wereld-scherm world-location world-location--${location.id}${location.clipboard ? ' heeft-klembord' : ''}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-labelledby={`${id}-title`} style={{
     '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
     '--location-mobile-position': location.backgroundPosition.mobile,
+    ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),
   } as React.CSSProperties}>
     <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
     <WereldLaag location={location} />
@@ -153,7 +154,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
               }}><Icon size={24} /><span>{activity.label}</span>{'comingSoon' in target && <small>Binnenkort beschikbaar</small>}</button>;
             })}
           </nav>}
-          {raster(location.featuredActivities, location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : 'Rekenspellen')}
+          {raster(location.featuredActivities, location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : location.id === 'seb' ? 'Reisspellen' : 'Rekenspellen')}
         </> : raster(location.practiceActivities, 'Rekenspellen')}
       </section>
       {heeftAvonturen && <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>

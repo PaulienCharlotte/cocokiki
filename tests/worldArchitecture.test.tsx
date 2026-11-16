@@ -71,7 +71,7 @@ test('game header reuses the homepage menu with coins and profile controls', () 
   assert.doesNotMatch(html, /app-header platform-header/);
 });
 
-test('Dreamworld renders one intact world image, five hotspots and compact tools', () => {
+test('Dreamworld renders five floating destinations and compact tools', () => {
   assert.deepEqual(WORLD_ISLANDS.map(island => island.path), ['/treehouse', '/challenges', '/shop']);
   const html = renderToStaticMarkup(<WorldHub coins={69} onNavigate={() => undefined} />);
   assert.equal((html.match(/class="dream-hotspot"/g) ?? []).length, 5);
@@ -87,7 +87,9 @@ test('Dreamworld renders one intact world image, five hotspots and compact tools
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);
   assert.match(html, /aria-label="69 CocoCoins"/);
   assert.match(html, /aria-label="Profielmenu openen"/);
-  assert.match(html, /world-map-v2[^" ]*\.webp/);
+  for (const id of ['cooking', 'plants', 'home', 'math', 'discovery']) {
+    assert.ok(html.includes(`data-building="${id}"`));
+  }
   assert.doesNotMatch(html, /games\/world-hub\/v2\/cooking-island\.webp/);
   assert.match(html, /images\/cocokiki-logo\.webp/);
   assert.match(html, /images\/avatars\/coco-profile\.webp/);

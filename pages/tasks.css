@@ -68,3 +68,35 @@
   .tasks-briefje--vandaag .ck-knop { width: 100%; }
   .daily-practice { padding: 14px; }
 }
+
+/* Gedeelde getekende materialen: levende tekst boven op rustig papier en hout. */
+.tasks-bord.ck-hout { padding: var(--space-3) var(--space-10); border: 0; border-radius: 0; background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; box-shadow: none; filter: drop-shadow(0 var(--space-1) var(--space-2) var(--color-overlay)); }
+.tasks-briefjes .tasks-briefje { padding: var(--space-10) var(--space-5) var(--space-6); min-height: 21rem; background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border-radius: 0; box-shadow: none; filter: drop-shadow(0 var(--space-2) var(--space-3) var(--color-overlay)); }
+.tasks-briefjes .tasks-briefje::before { display: none; }
+.tasks-briefje__plaatje { background: transparent; }
+.tasks-daily { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr); align-items: center; gap: var(--space-5); margin-bottom: var(--space-8); padding: var(--space-5) var(--space-6); border-radius: var(--radius-card); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 300% no-repeat; filter: drop-shadow(0 var(--space-2) var(--space-3) var(--color-overlay)); }
+.tasks-daily__art { grid-column: 1; grid-row: 1 / span 2; width: 100%; max-height: 13rem; object-fit: contain; filter: drop-shadow(0 var(--space-2) var(--space-2) var(--color-overlay)); }
+.tasks-daily__content { grid-column: 2; display: grid; gap: var(--space-2); }
+.tasks-daily > .ck-knop { grid-column: 2; justify-self: start; }
+.tasks-daily__label { color: var(--ck-hout-donker); font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: .08em; }
+.tasks-daily h2 { margin: 0; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); line-height: var(--line-height-tight); }
+.tasks-daily p { margin: 0; font-size: var(--font-size-md); }
+.tasks-daily__reward { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-lg); font-weight: var(--font-weight-heavy); }
+.tasks-daily__reward .ck-munt { flex-shrink: 0; }
+.tasks-daily small { font-size: var(--font-size-md); line-height: var(--line-height-default); }
+@media (max-width: 600px) {
+  .tasks-daily { grid-template-columns: var(--space-12) minmax(0, 1fr); gap: var(--space-3); padding: var(--space-5) var(--space-4); }
+  .tasks-daily__art { width: calc(var(--space-12) + var(--space-4)); max-width: none; align-self: start; }
+  .tasks-daily__content { padding-left: var(--space-2); }
+  .tasks-daily h2 { font-size: var(--font-size-xl); }
+  .tasks-daily > .ck-knop { grid-column: 1 / -1; width: 100%; }
+  .tasks-briefjes .tasks-briefje { padding: var(--space-8) var(--space-3) var(--space-5); min-height: 18rem; }
+}
+@media (max-width: 600px) {
+  .tasks-daily { grid-template-columns: calc(var(--space-12) * 2) minmax(0, 1fr); }
+  .tasks-daily__content { display: contents; }
+  .tasks-daily__art { grid-column: 1; grid-row: 1 / span 2; width: 100%; align-self: center; }
+  .tasks-daily__label { grid-column: 2; grid-row: 1; align-self: end; }
+  .tasks-daily h2 { grid-column: 2; grid-row: 2; align-self: start; }
+  .tasks-daily p, .tasks-daily__reward, .tasks-daily small { grid-column: 1 / -1; }
+}
