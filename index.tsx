@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { AccountPoort } from './components/account/AccountPoort';
 import './design-system/tokens.css';
 import './app.css';
 import './design-system/components.css';
@@ -16,6 +17,6 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <AccountPoort><App /></AccountPoort>
   </React.StrictMode>
 );

@@ -1,8 +1,9 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList, LogOut, LogIn } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
+import { accountsBeschikbaar, leesSessie, logUit, naarInloggen } from '../../services/account';
 import './bovenbalk.css';
 
 /** De encyclopedie staat in het topmenu omdat hij over alle spellen heen gaat. */
@@ -34,6 +35,14 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
     return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape); };
   }, [navigationOpen]);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
+  const [uitlogOpen, setUitlogOpen] = useState(false);
+  const [uitlogBezig, setUitlogBezig] = useState(false);
+  const [uitlogFout, setUitlogFout] = useState('');
+  const sessie = leesSessie();
+  const bevestigUitloggen = async () => {
+    setUitlogBezig(true); setUitlogFout('');
+    try { await logUit(); } catch (fout) { setUitlogFout((fout as Error).message); setUitlogBezig(false); }
+  };
   const [avatarId, setAvatarId] = useState<ProfileAvatarId>(loadProfileAvatar);
   const profileRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -102,7 +111,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onHome(); }}><Map size={21} />Wereldkaart</button>
             <div className="world-profile__identity">
               <img src={avatar.image} alt="" />
-              <div><strong>Hoi!</strong><span>CocoFan123</span></div>
+              <div><strong>Hoi!</strong><span>{sessie?.naam ?? 'Gast'}</span></div>
             </div>
             <button type="button" role="menuitem" onClick={() => {
               setProfileOpen(false);
@@ -115,6 +124,9 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               aria-current={activePath === ENCYCLOPEDIA_PATH ? 'page' : undefined}
               onClick={() => { setProfileOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}
             ><BookOpen size={21} />Mijn Encyclopedie</button>}
+            {accountsBeschikbaar() && (sessie
+              ? <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); setUitlogFout(''); setUitlogOpen(true); }}><LogOut size={21} />Uitloggen</button>
+              : <button type="button" role="menuitem" onClick={naarInloggen}><LogIn size={21} />Inloggen</button>)}
           </div>}
         </div>
         <div className="world-hud__mobile-menu" ref={navigationRef}>
@@ -130,6 +142,17 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         </div>
       </div>
     </header>
+
+    <Dialog
+      open={uitlogOpen}
+      title="Wil je uitloggen?"
+      description={`Je spel wordt eerst bewaard. Log daarna weer in als ${sessie?.naam ?? 'jezelf'} om verder te spelen.`}
+      onClose={() => { if (!uitlogBezig) setUitlogOpen(false); }}
+      primaryAction={<Button pill onClick={bevestigUitloggen} disabled={uitlogBezig}>{uitlogBezig ? 'Bewaren…' : 'Ja, uitloggen'}</Button>}
+      secondaryAction={<Button pill variant="secondary" onClick={() => setUitlogOpen(false)} disabled={uitlogBezig}>Blijven spelen</Button>}
+    >
+      {uitlogFout && <p className="ck-account__melding" role="alert">{uitlogFout}</p>}
+    </Dialog>
 
     <Dialog
       open={avatarDialogOpen}

@@ -1,0 +1,9 @@
+.ck-account { min-height: 100dvh; display: grid; place-items: center; padding: 16px; background: var(--ck-room); font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.ck-account__kaart { width: min(420px, 100%); display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: var(--ck-rond-paneel); }
+.ck-account__logo { width: 160px; align-self: center; }
+.ck-account__titel { margin: 0; text-align: center; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); }
+.ck-account__veld { display: flex; flex-direction: column; gap: 6px; font-weight: 800; font-size: var(--ck-maat-tekst); }
+.ck-account__veld input { min-height: var(--ck-tik-min); padding: 0 16px; border-radius: var(--ck-rond-knop); border: 3px solid var(--ck-schaduw-rand); background: var(--ck-wit); font: inherit; color: var(--ck-cacao); }
+.ck-account__veld input:focus { outline: none; border-color: var(--ck-actief); }
+.ck-account__melding { margin: 0; padding: 10px 14px; border-radius: var(--ck-rond-knop); background: var(--ck-plekje); font-weight: 800; font-size: 16px; animation: ck-wiebel 320ms ease both; }
+.ck-account .ck-linkje { font-size: 16px; align-self: center; }
