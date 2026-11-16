@@ -20,7 +20,7 @@ export const omtrekOppervlakte: Sometype = {
         aanpak: omtrekOppervlakte.aanpak,
         stappen: [
           { vraag: 'Hoe lang zijn één lange en één korte kant samen?', som: `${l} + ${b}`, antwoord: l + b, eenheid: 'm', tip: 'Een hek gaat om de rand: dat is de omtrek.' },
-          { vraag: 'Elke kant komt twee keer voor. Hoe lang is het hek?', som: '{1} × 2', antwoord: (l + b) * 2, eenheid: 'm', tip: 'Een rechthoek heeft twee lange en twee korte kanten.' },
+          { vraag: 'Hoe lang is het hek helemaal rond?', som: '{1} × 2', antwoord: (l + b) * 2, eenheid: 'm', tip: 'Een rechthoek heeft twee lange en twee korte kanten.' },
         ],
         controle: `${l} + ${b} + ${l} + ${b} = ${(l + b) * 2} m, alle vier de kanten.`,
       });

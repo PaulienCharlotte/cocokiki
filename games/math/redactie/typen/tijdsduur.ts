@@ -38,7 +38,7 @@ export const tijdsduur: Sometype = {
       som: `${urenErtussen} × 60`, antwoord: urenErtussen * 60, eenheid: 'minuten', tip: `Dat zijn ${urenErtussen} hele uren van 60 minuten.`,
     });
     stappen.push({
-      vraag: `Tel de sprongen op, plus de laatste ${eindMinuut} minuten tot ${eind}. Hoeveel is dat samen?`,
+      vraag: `Hoeveel minuten zijn het samen, met de laatste ${eindMinuut} minuten tot ${eind}?`,
       som: [...stappen.map((_stap, i) => `{${i + 1}}`), String(eindMinuut)].join(' + '),
       antwoord: totaal, eenheid: 'minuten', tip: 'Alle sprongen samen zijn de hele tijd.',
     });

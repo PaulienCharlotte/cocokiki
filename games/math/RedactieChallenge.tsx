@@ -3,7 +3,9 @@ import { ArrowRight, Check, Highlighter, Info, X } from 'lucide-react';
 import MathHelp from './MathHelp';
 import ChoiceList from '../../components/ui/ChoiceList';
 import { REDACTIE_TYPEN_BY_ID, soortKeuzes, type Steun } from './redactie/catalogus';
-import { euro, evalueerSom, getal, planOpties, somTekst, type Redactiesom, type Stap } from './redactie/types';
+import { euro, evalueerSom, getal, somTekst, type Redactiesom, type Stap } from './redactie/types';
+import { bouwGetallen, leesSom, somKiesbaar, somOpties, steunvormVoorNiveau, TEKENS, tussenvraagZichtbaar, waarom, wedervraag, zelfdeSom, type Som, type Teken } from './redactie/somKeuze';
+import type { MathLevel } from './types';
 
 /**
  * Een redactiesom, in de volgorde waarin je hem hoort aan te pakken.
@@ -33,13 +35,16 @@ const schrijf = (waarde: number, stap?: Stap) => (
 /** Wat er bij een stap hoort; een som die niet na te rekenen is (een kloktijd, een keuze) telt het vaste antwoord. */
 const hoortBij = (stap: Stap, eerdere: Array<number | null>) => evalueerSom(stap.som, eerdere, stap.afronden) ?? stap.antwoord;
 
-export default function RedactieChallenge({ question, steun, locked, onAnswer, onVerder }: {
-  question: Redactiesom; steun: Steun; locked: boolean;
+export default function RedactieChallenge({ question, steun, niveau = 1, locked, onAnswer, onVerder }: {
+  question: Redactiesom; steun: Steun; niveau?: MathLevel; locked: boolean;
   onAnswer: (value: number, geldig: boolean) => void; onVerder: () => void;
 }) {
   const [gemarkeerd, setGemarkeerd] = useState<number[]>([]);
   const [mis, setMis] = useState<number[]>([]);
-  const [plan, setPlan] = useState<string | null>(null);
+  // Per stap bedenkt het kind eerst zelf de som (zie redactie/somKeuze.ts).
+  const [somKlaar, setSomKlaar] = useState(false);
+  const [somFout, setSomFout] = useState<string | null>(null);
+  const [gebouwd, setGebouwd] = useState<{ links: string | null; teken: Teken | null; rechts: string | null }>({ links: null, teken: null, rechts: null });
   const [index, setIndex] = useState(0);
   const [antwoorden, setAntwoorden] = useState<Array<number | null>>([]);
   const [waarde, setWaarde] = useState('');
@@ -56,9 +61,26 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
   const type = REDACTIE_TYPEN_BY_ID[question.typeId];
   // Op het laagste niveau krijg je het plan nog; daarna bedenk je het zelf.
   const planZelf = steun !== 'volledig';
-  const opties = useMemo(() => planOpties(question.stappen[0].som, question.id), [question]);
+  const steunvorm = steunvormVoorNiveau(niveau);
+  // De som van deze stap, met de uitkomsten van eerdere stappen ingevuld.
+  const somNu = stap ? somTekst(question.stappen, index, index, false, antwoorden) : '';
+  const juist = useMemo(() => leesSom(somNu), [somNu]);
+  const kiesbaar = !!stap && somKiesbaar(stap, somNu);
+  const sleutel = `${question.id}:${index}`;
+  const opties = useMemo(() => juist && steunvorm !== 'bouw' ? somOpties(juist, steunvorm === 'kies-twee' ? 2 : 4, sleutel) : [], [juist, steunvorm, sleutel]);
+  const getallen = useMemo(() => juist && steunvorm === 'bouw' ? bouwGetallen(juist, [...question.nodig, ...antwoorden.map((a, i) => a === null ? '' : schrijf(a, question.stappen[i]))], sleutel) : [], [juist, steunvorm, sleutel, question, antwoorden]);
+  const probeerSom = (som: Som | null, tekst: string) => {
+    if (som && juist && zelfdeSom(som, juist)) { setSomKlaar(true); setSomFout(null); return; }
+    setSomFout(tekst); setGebouwd({ links: null, teken: null, rechts: null });
+  };
+  const legNeer = (stuk: string, isTeken: boolean) => {
+    const volgende = isTeken ? { ...gebouwd, teken: stuk as Teken } : gebouwd.links === null ? { ...gebouwd, links: stuk } : gebouwd.rechts === null ? { ...gebouwd, rechts: stuk } : gebouwd;
+    setGebouwd(volgende); setSomFout(null);
+    if (volgende.links && volgende.teken && volgende.rechts) probeerSom({ links: volgende.links, teken: volgende.teken, rechts: volgende.rechts }, `${volgende.links} ${volgende.teken} ${volgende.rechts}`);
+  };
 
-  const naMarkeren: Fase = question.vraagSoort && planZelf ? 'soort' : planZelf ? 'plan' : 'rekenen';
+  // Na het aanstrepen meteen naar rekenen: welke som je maakt, bedenk je per stap zelf.
+  const naMarkeren: Fase = question.vraagSoort && planZelf ? 'soort' : 'rekenen';
   useEffect(() => { if (teGaan === 0 && fase === 'markeren') setFase(naMarkeren); }, [teGaan, fase, naMarkeren]);
   useEffect(() => {
     if (trede < 2) return;
@@ -78,12 +100,6 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
     setUitleg(keuze);
   };
 
-  const kiesPlan = (optie: string) => {
-    setPlan(optie);
-    if (optie === question.stappen[0].som) setFase('rekenen');
-    else setTrede(trede => Math.max(trede, 1));
-  };
-
   const verstuur = (event: React.FormEvent) => {
     event.preventDefault();
     if (waarde.trim() === '') return;
@@ -97,6 +113,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
     setAntwoorden(volgende);
     setWaarde('');
     setTrede(0); setMag3(false);
+    setSomKlaar(false); setSomFout(null); setGebouwd({ links: null, teken: null, rechts: null });
     if (index < question.stappen.length - 1) { setIndex(index + 1); return; }
     setFase('nakijken');
     onAnswer(getal, Math.abs(getal - question.answer) < 0.005);
@@ -166,7 +183,7 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
 
     {fase === 'markeren' && <p className="redactie-opdracht" role="status">
       <Highlighter size={18} aria-hidden="true" />
-      Streep de getallen aan die je nodig hebt{steun === 'volledig' ? ` — er zijn er nog ${teGaan}` : ''}.
+      Streep de getallen aan die je nodig hebt{niveau === 1 ? ` — er zijn er nog ${teGaan}` : ''}.
     </p>}
 
     {fase === 'soort' && <div className="redactie-plan">
@@ -189,17 +206,6 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
       </p>}
     </div>}
 
-    {fase === 'plan' && <div className="redactie-plan">
-      <p className="redactie-opdracht">Wat doe je als eerste?</p>
-      <div className="redactie-plan__keuzes">
-        {opties.map(optie => <button
-          key={optie} type="button"
-          className={plan === optie && optie !== question.stappen[0].som ? 'is-mis' : undefined}
-          onClick={() => kiesPlan(optie)}
-        >{optie}</button>)}
-      </div>
-      {plan !== null && plan !== question.stappen[0].som && <p className="redactie-tip" role="status">Nog niet. Vraag een tip als je er niet uitkomt.</p>}
-    </div>}
 
     {fase === 'rekenen' && <form className="math-workbench" onSubmit={verstuur}>
       <ol className="story-stappen">
@@ -207,8 +213,23 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
           const klaar = i < index, nu = i === index;
           if (!klaar && !nu && steun !== 'volledig') return null;
           return <li key={i} className={klaar ? 'is-klaar' : nu ? 'is-nu' : 'is-later'}>
-            <span className="story-stappen__kop"><b aria-hidden="true">{i + 1}</b>{klaar || nu ? item.vraag : `Stap ${i + 1}`}</span>
-            <span className="math-workbench__equation">
+            <span className="story-stappen__kop"><b aria-hidden="true">{i + 1}</b>{klaar || (nu && tussenvraagZichtbaar(niveau)) ? item.vraag : nu ? `Stap ${i + 1}: wat reken je nu uit?` : `Stap ${i + 1}`}</span>
+            {nu && kiesbaar && !somKlaar && juist ? <div className="redactie-somkeuze">
+              <p className="redactie-somkeuze__vraag">{steunvorm === 'bouw' ? 'Maak de som die je nu nodig hebt.' : 'Welke som maak je nu?'}</p>
+              {steunvorm === 'bouw' ? <>
+                <div className="redactie-bouw" aria-label="Jouw som">
+                  {(['links', 'teken', 'rechts'] as const).map(plek => <button key={plek} type="button" className={`redactie-bouw__vak${gebouwd[plek] ? ' is-vol' : ''}${plek === 'teken' ? ' is-teken' : ''}`}
+                    aria-label={gebouwd[plek] ? `${gebouwd[plek]}, tik om weg te halen` : plek === 'teken' ? 'Leeg vak voor het rekenteken' : 'Leeg vak voor een getal'}
+                    onClick={() => setGebouwd({ ...gebouwd, [plek]: null })}>{gebouwd[plek] ?? '?'}</button>)}
+                </div>
+                <div className="redactie-bouw__stukken" role="group" aria-label="Getallen">{getallen.map(g => <button key={g} type="button" className="redactie-bouw__getal" onClick={() => legNeer(g, false)}>{g}</button>)}</div>
+                <div className="redactie-bouw__stukken" role="group" aria-label="Rekentekens">{TEKENS.map(t => <button key={t} type="button" className="redactie-bouw__teken" aria-label={{ '+': 'plus', '−': 'min', '×': 'keer', '÷': 'gedeeld door' }[t]} onClick={() => legNeer(t, true)}>{t}</button>)}</div>
+              </> : <div className="redactie-plan__keuzes">{opties.map(optie => <button key={optie} type="button" className={somFout === optie ? 'is-mis' : undefined} onClick={() => probeerSom(leesSom(optie), optie)}>{optie}</button>)}</div>}
+              {somFout && <p className="redactie-tip" role="status">{wedervraag(leesSom(somFout), juist)}</p>}
+            </div>
+            : <>{nu && kiesbaar && somKlaar && juist && <p className="redactie-waarom" role="status">{waarom(item, juist)}</p>}
+            {/* Een latere stap toont zijn som nog niet: anders verklapt het blad welke som je straks maakt. */}
+            {(klaar || nu) && <span className="math-workbench__equation">
               {!item.verborgen && <span>{somTekst(question.stappen, i, index, false, antwoorden)} =</span>}
               {klaar
                 ? <output>{schrijf(antwoorden[i] ?? 0, item)}</output>
@@ -221,12 +242,12 @@ export default function RedactieChallenge({ question, steun, locked, onAnswer, o
                       value={waarde} onChange={event => setWaarde(event.target.value)} required
                     />
                   : <output aria-label="nog niet aan de beurt">?</output>}
-            </span>
-            <small className="redactie-eenheid">{item.eenheid}</small>
+            </span>}
+            {(klaar || nu) && <small className="redactie-eenheid">{item.eenheid}</small>}</>}
           </li>;
         })}
       </ol>
-      {!stap?.keuzes && <button type="submit" disabled={waarde.trim() === ''}>
+      {!stap?.keuzes && (somKlaar || !kiesbaar) && <button type="submit" disabled={waarde.trim() === ''}>
         {index === question.stappen.length - 1 ? 'Dit is het antwoord' : 'Volgende stap'}
         <ArrowRight size={18} aria-hidden="true" />
       </button>}

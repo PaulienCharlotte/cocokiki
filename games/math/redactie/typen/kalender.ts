@@ -32,7 +32,7 @@ export const kalender: Sometype = {
         aanpak: kalender.aanpak,
         stappen: [
           { vraag: `Hoeveel dagen zijn ${weken} weken?`, som: `${weken} × 7`, antwoord: weken * 7, eenheid: 'dagen', tip: 'Een week heeft 7 dagen.' },
-          { vraag: `Tel dat bij ${d} op. Welk getal krijg je?`, som: `${d} + {1}`, antwoord: tot, eenheid: '', tip: 'Tel gewoon door, ook voorbij het eind van de maand.' },
+          { vraag: `Welke dag is het dan, als je vanaf ${d} doorgaat?`, som: `${d} + {1}`, antwoord: tot, eenheid: '', tip: 'Tel gewoon door, ook voorbij het eind van de maand.' },
           { vraag: `${m.naam[0].toUpperCase()}${m.naam.slice(1)} heeft maar ${m.dagen} dagen. Welke dag in ${m.volgende} is het?`, som: `{2} − ${m.dagen}`, antwoord: tot - m.dagen, eenheid: m.volgende, tip: `Haal de ${m.dagen} dagen van ${m.naam} eraf.` },
         ],
         controle: `Van ${d} ${m.naam} tot ${tot - m.dagen} ${m.volgende} is ${weken * 7} dagen: ${weken} weken.`,

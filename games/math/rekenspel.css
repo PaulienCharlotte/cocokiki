@@ -21,7 +21,9 @@
 .rekenspel .rekenspel__stip-knop { padding: 0; cursor: pointer; }
 .rekenspel .rekenspel__stip-knop:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
 .rekenspel .ck-niveau { font-size: 16px; line-height: 1.3; }
-.rekenspel .rekenspel__niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.rekenspel .rekenspel__niveau { display: inline-flex; align-items: center; gap: 2px; border: 0; font-family: var(--ck-font-tekst); cursor: pointer; transition: transform .2s var(--ck-veer); }
+.rekenspel .rekenspel__niveau:hover { transform: scale(1.06); }
+.rekenspel .rekenspel__blad { font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; }
 .rekenspel .rekenspel__scheid { width: 1px; height: 50%; background: var(--ck-schaduw-rand); }
 .rekenspel .ck-status-extra b { font-family: var(--ck-font-kop); font-size: max(18px, 1.6cqw); }
 .rekenspel .rekenspel__munt { width: 24px; height: 24px; }
@@ -198,3 +200,24 @@
   .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { padding: 22px 18px 20px; }
   .rekenspel.rekenspel--add-subtract .rekenspel__veld { right: var(--ck-rand); top: calc(var(--rs-boven) + 124px); bottom: var(--ck-rand); }
 }
+
+/* ---- Zelf de som bedenken (redactie/somKeuze.ts) ---- */
+.rekenspel.rekenspel--add-subtract .redactie-somkeuze { display: grid; gap: 12px; margin-top: 10px; }
+.rekenspel.rekenspel--add-subtract .redactie-somkeuze__vraag { margin: 0; font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; color: var(--ck-cacao); }
+/* Bouwen: drie lege vakjes, en daaronder getallen en rekentekens om in te leggen */
+.rekenspel.rekenspel--add-subtract .redactie-bouw { display: flex; align-items: center; gap: 10px; }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__vak { min-width: 76px; min-height: 60px; padding: 0 12px; border: 3px dashed color-mix(in srgb, var(--ck-actief) 60%, transparent); border-radius: 16px; background: rgba(255, 255, 255, .7); color: var(--ck-cacao-zacht); font-family: var(--ck-font-kop); font-weight: 800; font-size: 26px; cursor: pointer; animation: ck-puls 1.8s ease-in-out infinite; }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__vak.is-teken { min-width: 60px; }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__vak.is-vol { border-style: solid; border-color: var(--ck-wit); background: var(--ck-zon); color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-zon-rand); animation: ck-pop .3s var(--ck-veer); }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__stukken { display: flex; flex-wrap: wrap; gap: 10px; }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__getal, .rekenspel.rekenspel--add-subtract .redactie-bouw__teken {
+  min-width: 56px; min-height: 56px; padding: 0 16px; border: 0; border-radius: 999px; color: var(--ck-wit);
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; text-shadow: 0 2px 0 rgba(0, 0, 0, .15); cursor: pointer; transition: transform .15s var(--ck-veer);
+}
+.rekenspel.rekenspel--add-subtract .redactie-bouw__getal { background: var(--ck-wereld); box-shadow: 0 5px 0 var(--ck-wereld-rand); }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__teken { background: var(--ck-druif); box-shadow: 0 5px 0 var(--ck-druif-rand); font-size: 26px; }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__getal:hover, .rekenspel.rekenspel--add-subtract .redactie-bouw__teken:hover { transform: translateY(-3px); }
+.rekenspel.rekenspel--add-subtract .redactie-bouw__getal:active, .rekenspel.rekenspel--add-subtract .redactie-bouw__teken:active { transform: translateY(5px); box-shadow: none; }
+/* Waarom deze som: Lua's zin, met een lampje in de wereldkleur */
+.rekenspel.rekenspel--add-subtract .redactie-waarom { margin: 8px 0 0; padding: 8px 14px; border-radius: 14px; background: color-mix(in srgb, var(--ck-zon) 22%, var(--ck-room)); font-weight: 800; font-size: 17px; color: var(--ck-cacao); animation: ck-pop .35s var(--ck-veer); }
+.rekenspel.rekenspel--add-subtract .redactie-waarom::before { content: "Waarom? "; font-family: var(--ck-font-kop); color: var(--ck-actief-rand); }

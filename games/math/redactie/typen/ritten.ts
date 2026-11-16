@@ -43,7 +43,7 @@ export const ritten: Sometype = {
           : `${totaal} ÷ ${perKeer} = ${heel}, precies. Er blijft niets over, dus er komt geen keer bij.`,
         stappen: [
           {
-            vraag: `Deel eerst. Hoeveel is ${totaal} ÷ ${perKeer}?`, som: `${totaal} ÷ ${perKeer}`,
+            vraag: `Hoeveel keer past ${perKeer} in ${totaal}?`, som: `${totaal} ÷ ${perKeer}`,
             antwoord: heel + breuk, eenheid: '',
             tip: `Reken de deling gewoon uit, ook als er een komma in komt.`,
           },

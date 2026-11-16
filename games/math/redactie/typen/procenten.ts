@@ -36,7 +36,7 @@ export const procenten: Sometype = {
         aanpak: procenten.aanpak,
         stappen: [
           { vraag: `Hoeveel is ${percentage}% van ${euro(prijs)}?`, som: `${prijs} ÷ ${deler}`, antwoord: korting, eenheid: 'euro', soort: 'euro', tip: `${percentage}% is ${woord}, dus deel door ${deler}.` },
-          { vraag: 'Dat gaat eraf. Wat betaal je dan nog?', som: `${prijs} − {1}`, antwoord: prijs - korting, eenheid: 'euro', soort: 'euro', tip: 'Korting is wat je minder betaalt, dus trek het van de prijs af.' },
+          { vraag: 'Wat betaal je dan nog?', som: `${prijs} − {1}`, antwoord: prijs - korting, eenheid: 'euro', soort: 'euro', tip: 'Korting is wat je minder betaalt, dus trek het van de prijs af.' },
         ],
         controle: `${euro(prijs - korting)} + ${euro(korting)} korting = ${euro(prijs)}, de oude prijs.`,
       });

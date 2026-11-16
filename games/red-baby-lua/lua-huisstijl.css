@@ -52,7 +52,7 @@
 .lua-huisstijl .lua-modes > div { display: flex; gap: 8px; justify-content: center; }
 .lua-huisstijl .lua-modes button { display: grid; padding: 8px 14px; border: 2px solid var(--ck-wit); border-radius: 18px; background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-tekst); cursor: pointer; }
 .lua-huisstijl .lua-modes button[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); }
-.lua-huisstijl .lua-niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.lua-huisstijl .lua-niveau { display: inline-flex; align-items: center; gap: 2px; border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
 .lua-huisstijl .lua-setup-controls { display: none; }
 
 /* Uitleg, pauze en (los gespeeld) de uitslag: glas met één hoofdknop */

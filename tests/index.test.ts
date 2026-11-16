@@ -10,6 +10,7 @@ import './cookingFoundation.test';
 import './clock.test';
 import './inventorySales.test';
 import './math.test';
+import './redactieKeuze.test';
 import './schoolLayout.test';
 import './plantFamily.test';
 import './storyAndMemory.test';

@@ -1,4 +1,5 @@
-import { Calculator, Lightbulb, Ruler, Volume2, VolumeX } from 'lucide-react';
+import { Calculator, ChevronDown, Lightbulb, Ruler, Volume2, VolumeX } from 'lucide-react';
+import NiveauPaneel from './NiveauPaneel';
 import { afgerondeRedactieronde, noteerRedactieAntwoord, type RedactieAntwoorden } from './redactie/navigatie';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CHARACTERS } from '../../data/characters';
@@ -41,7 +42,7 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
   game: Exclude<MathGameId, 'race'>; level: MathLevel; blad?: Blad; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void;
   sound?: boolean; onToggleSound?: () => void; onLevel?: (level: MathLevel) => void; einde?: RekenEinde;
 }) {
-  const [rekenmachine, setRekenmachine] = useState(false), [maten, setMaten] = useState(false);
+  const [rekenmachine, setRekenmachine] = useState(false), [maten, setMaten] = useState(false), [niveauKiezen, setNiveauKiezen] = useState(false);
   useActivityAnalytics(game === 'maten' ? null : `math:${game}`);
   // Een huiswerkblad heeft vaste sommen; anders komt er elke ronde een nieuw deck.
   const [questions] = useState(() => blad ? blad.sommen : game === 'add-subtract' ? maakRedactiedeck(level) : game === 'maten' ? maakMatendeck(level) : createQuestionDeck(game, level));
@@ -146,8 +147,9 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
           return foutenMogen ? <button type="button" key={i} className={`${cls} rekenspel__stip-knop`} aria-label={`Som ${i + 1}${vol ? ', gemaakt' : ''}`} aria-current={i === index} onClick={() => blader(i)} /> : <span key={i} className={cls} />;
         })}
       </span>
-      {blad ? <span className="ck-niveau">Blad {blad.nr}</span>
-        : onLevel && !einde && index === 0 && feedback === null ? <button type="button" className="ck-niveau rekenspel__niveau" aria-label={`Niveau ${level}, tik voor een ander niveau`} onClick={() => onLevel(MATH_LEVELS[level % MATH_LEVELS.length])}>Niveau {level}</button>
+      {blad && <span className="rekenspel__blad">Blad {blad.nr}</span>}
+      {/* Het niveau is altijd te kiezen: tik op het label voor het paneel met de vijf niveaus. */}
+      {onLevel ? <button type="button" className="ck-niveau rekenspel__niveau" aria-haspopup="dialog" aria-label={`Niveau ${level}, kies een ander niveau`} onClick={() => setNiveauKiezen(true)}>Niveau {level}<ChevronDown size={16} aria-hidden="true" /></button>
         : <span className="ck-niveau">Niveau {level}</span>}
       <span className="ck-status-extra" aria-live="polite">{einde && einde.saved && <><span className="rekenspel__scheid" /><span className="ck-munt rekenspel__munt" aria-hidden="true" /><b>+{einde.reward}</b></>}</span>
     </div>
@@ -161,11 +163,12 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
     </div>
     {rekenmachine && <Rekenmachine som={question.prompt} onClose={() => setRekenmachine(false)} />}
     {maten && <Maten onClose={() => setMaten(false)} />}
+    {niveauKiezen && onLevel && <NiveauPaneel game={game} level={level} onKies={onLevel} onClose={() => setNiveauKiezen(false)} />}
 
     {/* 7. Speelveld: het spel zelf. Antwoordbellen zetten de spellen in zone 6. */}
     <div className={`rekenspel__veld math-challenge math-challenge--${question.kind}`} key={foutenMogen ? 'redactie' : question.id}>
       {game === 'divide' && question.kind === 'distribution' ? <><img className="adventure-plant adventure-plant--left" src={mathAssets.strawberryPlant} alt="" /><img className="adventure-plant adventure-plant--right" src={mathAssets.blueberryPlant} alt="" /><DistributionChallenge question={question} locked={feedback === 'correct' || !!einde} onAnswer={answer} tutorial={index === 0} /></>
-        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={blad ? 'volledig' : steunVoorNiveau(level)} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
+        : game === 'add-subtract' ? bezocht.map(i => <div key={questions[i].id} hidden={i !== index}><RedactieChallenge question={questions[i] as Redactiesom} steun={steunVoorNiveau(level)} niveau={level} locked={Object.hasOwn(redactieAntwoorden.current, i)} onAnswer={(value, valid) => { if (i === index) answer(value, valid); }} onVerder={volgende} /></div>)
         : game === 'maten' ? <MatenChallenge vraag={question as Maatvraag} locked={feedback === 'correct' || !!einde} gekozen={selected} onAnswer={answer} />
         : question.kind === 'puzzle' ? <PuzzleChallenge question={question} locked={feedback === 'correct' || !!einde} selected={selected} onAnswer={answer} />
         : question.kind === 'balance' ? <BalanceChallenge question={question} locked={feedback === 'correct' || !!einde} onAnswer={answer} />

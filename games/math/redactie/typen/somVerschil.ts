@@ -19,7 +19,7 @@ export const somVerschil: Sometype = {
         zoek: 'de leeftijd van de broer',
         aanpak: somVerschil.aanpak,
         stappen: [
-          { vraag: 'Haal het verschil eraf. Hoeveel jaar blijft er over?', som: `${samen} − ${verschil}`, antwoord: samen - verschil, eenheid: 'jaar', tip: 'Zonder het verschil zouden ze even oud zijn.' },
+          { vraag: 'Hoeveel jaar blijft er over zonder het verschil?', som: `${samen} − ${verschil}`, antwoord: samen - verschil, eenheid: 'jaar', tip: 'Zonder het verschil zouden ze even oud zijn.' },
           { vraag: 'Hoe oud is Tim?', som: '{1} ÷ 2', antwoord: klein, eenheid: 'jaar', tip: 'Wat overblijft is voor allebei evenveel.' },
           { vraag: 'Hoe oud is zijn broer?', som: `{2} + ${verschil}`, antwoord: klein + verschil, eenheid: 'jaar', tip: `De broer is ${verschil} jaar ouder.` },
         ],
@@ -33,7 +33,7 @@ export const somVerschil: Sometype = {
       zoek: 'het spaargeld van Bo',
       aanpak: somVerschil.aanpak,
       stappen: [
-        { vraag: 'Haal het verschil eraf. Hoeveel blijft er over?', som: `${samen} − ${verschil}`, antwoord: samen - verschil, eenheid: 'euro', soort: 'euro', tip: 'Zonder het verschil hebben ze evenveel.' },
+        { vraag: 'Hoeveel blijft er over zonder het verschil?', som: `${samen} − ${verschil}`, antwoord: samen - verschil, eenheid: 'euro', soort: 'euro', tip: 'Zonder het verschil hebben ze evenveel.' },
         { vraag: 'Hoeveel heeft Bo?', som: '{1} ÷ 2', antwoord: klein, eenheid: 'euro', soort: 'euro', tip: 'Wat overblijft verdelen ze eerlijk.' },
       ],
       controle: `Bo € ${klein}, Saar € ${klein + verschil}: samen € ${samen}.`,

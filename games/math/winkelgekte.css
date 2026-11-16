@@ -19,7 +19,7 @@
 .winkelgekte .wk-tijd, .winkelgekte .wk-plus { font-family: var(--ck-font-kop); font-weight: 800; font-size: max(18px, 1.6cqw); line-height: 1; }
 .winkelgekte .wk-scheid { width: 1px; height: 50%; background: var(--ck-schaduw-rand); }
 .winkelgekte .wk-stippen { display: flex; align-items: center; gap: max(5px, .5cqw); }
-.winkelgekte .wk-niveau { border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
+.winkelgekte .wk-niveau { display: inline-flex; align-items: center; gap: 2px; border: 0; font-family: var(--ck-font-tekst); cursor: pointer; }
 .winkelgekte .ck-status-extra { font-weight: 900; font-size: max(16px, 1.25cqw); }
 .winkelgekte .wk-kaartje { display: inline-flex; align-items: center; justify-content: center; width: max(26px, 2.6cqw); height: max(32px, 3.2cqw); border-radius: 8px; background: var(--ck-druif); box-shadow: 0 3px 0 var(--ck-druif-rand); color: var(--ck-wit); font-family: var(--ck-font-kop); }
 

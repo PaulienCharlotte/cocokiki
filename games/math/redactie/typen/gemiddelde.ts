@@ -21,14 +21,14 @@ export const gemiddelde: Sometype = {
     ];
     const v = verhalen[index % verhalen.length];
     const stappen = [
-      { vraag: 'Tel de eerste twee bij elkaar.', som: `${waarden[0]} + ${waarden[1]}`, antwoord: waarden[0] + waarden[1], eenheid: v.eenheid, tip: 'Eerst alles bij elkaar optellen.' },
+      { vraag: 'Hoeveel zijn de eerste twee samen?', som: `${waarden[0]} + ${waarden[1]}`, antwoord: waarden[0] + waarden[1], eenheid: v.eenheid, tip: 'Eerst alles bij elkaar optellen.' },
     ];
     let som = waarden[0] + waarden[1];
     for (let i = 2; i < aantal; i++) {
       som += waarden[i];
-      stappen.push({ vraag: `Tel er ${waarden[i]} bij.`, som: `{${i - 1}} + ${waarden[i]}`, antwoord: som, eenheid: v.eenheid, tip: 'Blijf optellen tot je alles hebt.' });
+      stappen.push({ vraag: `En samen met ${waarden[i]}?`, som: `{${i - 1}} + ${waarden[i]}`, antwoord: som, eenheid: v.eenheid, tip: 'Blijf optellen tot je alles hebt.' });
     }
-    stappen.push({ vraag: `Verdeel dat over ${aantal} keer. Hoeveel is het gemiddeld?`, som: `{${aantal - 1}} ÷ ${aantal}`, antwoord: gem, eenheid: v.eenheid, tip: `Het waren ${dagen} keer, dus deel door ${aantal}.` });
+    stappen.push({ vraag: `Hoeveel is het gemiddeld per keer?`, som: `{${aantal - 1}} ÷ ${aantal}`, antwoord: gem, eenheid: v.eenheid, tip: `Het waren ${dagen} keer, dus deel door ${aantal}.` });
     return maakSom({
       typeId: 'gemiddelde', id: `gemiddelde:${level}:${index}:${waarden.join('-')}`,
       verhaal: v.zin,

@@ -37,6 +37,12 @@ export interface Stap {
   /** De tip als je bij déze stap vastloopt. */
   tip: string;
   /**
+   * Waarom je bij deze stap déze som neemt, in één zin. Lua zegt dit nadat het
+   * kind de som zelf koos. Zonder deze zin valt het terug op een algemene
+   * uitleg per rekenteken (zie somKeuze.ts).
+   */
+  waarom?: string;
+  /**
    * Een antwoord dat geen getal is ('Wie krijgt het minst?'): je kiest uit
    * deze woorden, en `antwoord` is de plek van het goede in de lijst.
    */

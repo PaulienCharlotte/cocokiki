@@ -21,3 +21,15 @@
 /* De som blijft bij de rekenmachine staan, op een papiertje */
 .hulp-paneel .rekenmachine__som { margin: 0; padding: 12px 16px; border-radius: 18px; background: var(--ck-room); font-family: var(--ck-font-kop); font-weight: 700; font-size: 18px; line-height: 1.4; color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-schaduw-rand); }
 .hulp-paneel .rekenmachine { width: min(340px, 100%); margin: 0 auto; }
+
+/* Niveau kiezen */
+.niveau-paneel__uitleg { margin: 0; font-size: 17px; font-weight: 700; }
+.niveau-paneel__lijst { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.niveau-paneel__keuze { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 10px 14px; border: 2px solid var(--ck-wit); border-radius: 20px; background: rgba(255, 248, 236, .72); color: var(--ck-cacao); text-align: left; cursor: pointer; transition: transform .2s var(--ck-veer); }
+.niveau-paneel__keuze:hover { transform: translateY(-2px); background: var(--ck-room); }
+.niveau-paneel__keuze:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
+.niveau-paneel__keuze.is-nu { border-color: var(--ck-actief); box-shadow: 0 4px 0 color-mix(in srgb, var(--ck-actief) 35%, transparent); }
+.niveau-paneel__nr { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--ck-actief); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.niveau-paneel__tekst { display: grid; flex: 1; }
+.niveau-paneel__tekst strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; }
+.niveau-paneel__tekst small { font-size: 16px; font-weight: 700; }

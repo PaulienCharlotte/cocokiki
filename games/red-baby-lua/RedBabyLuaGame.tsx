@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
+import { ChevronDown, Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
+import NiveauPaneel from '../math/NiveauPaneel';
 import Phaser from 'phaser';
 import { analytics } from '../../services/analytics';
 import CocoCoin from '../../components/platform/CocoCoin';
@@ -62,6 +63,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
   const coinSessionId = useRef(crypto.randomUUID());
   const [sessionCoins, setSessionCoins] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
+  const [niveauKiezen, setNiveauKiezen] = useState(false);
   const reducedMotion = useMemo(() => matchMedia('(prefers-reduced-motion: reduce)').matches, []);
 
   const setGamePhase = (value: GamePhase) => { phaseRef.current = value; setPhase(value); };
@@ -200,7 +202,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
             {TAFELS.map(value => <button key={value} type="button" aria-pressed={gekozenTafels.includes(value)} onClick={() => wisselTafel(value)}>{value}</button>)}
             <button type="button" className="lua-mix" aria-pressed={preferences.table === 'mix'} onClick={() => updatePreference('table', 'mix')}>Mix</button>
           </div></fieldset>
-          {niveau && onLevel && <button type="button" className="ck-niveau lua-niveau" aria-label={`Niveau ${niveau}, tik voor een ander niveau`} onClick={() => onLevel((niveau % 5 + 1) as MathLevel)}>Niveau {niveau}</button>}
+          {niveau && onLevel && <button type="button" className="ck-niveau lua-niveau" aria-haspopup="dialog" aria-label={`Niveau ${niveau}, kies een ander niveau`} onClick={() => setNiveauKiezen(true)}>Niveau {niveau}<ChevronDown size={16} aria-hidden="true" /></button>}
         </section>
         <div className="ck-zone-gereedschap ck-glas lua-gereedschap" role="toolbar" aria-label="Gereedschap">
           <button type="button" className={`ck-gereedschap${preferences.sound ? ' is-aan' : ''}`} aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 size={22} /> : <VolumeX size={22} />}</button>
@@ -213,7 +215,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
         <div className={`ck-zone-status ck-glas lua-status${einde ? ' is-open' : ''}`}>
           {!calm && <span className="lua-hearts" aria-label={`${hearts} hartjes`}>{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={22} fill={index < hearts ? 'currentColor' : 'none'} />)}</span>}
           <span className="lua-stippen" role="img" aria-label={`Som ${round} van ${ROUND_COUNT}`}>{Array.from({ length: ROUND_COUNT }, (_, i) => <span key={i} className={`ck-stip${i < round - (phase === 'active' ? 1 : 0) ? ' ck-stip--klaar' : ''}${i === round - 1 && phase === 'active' ? ' ck-stip--nu' : ''}`} />)}</span>
-          <span className="ck-niveau">{niveau ? `Niveau ${niveau}` : stage}</span>
+          {niveau && onLevel && phase !== 'results' ? <button type="button" className="ck-niveau lua-niveau" aria-haspopup="dialog" aria-label={`Niveau ${niveau}, kies een ander niveau`} onClick={() => { setPaused(true); setNiveauKiezen(true); }}>Niveau {niveau}<ChevronDown size={16} aria-hidden="true" /></button> : <span className="ck-niveau">{niveau ? `Niveau ${niveau}` : stage}</span>}
           <span className="ck-status-extra" aria-live="polite">{einde?.saved && <><span className="ck-munt lua-munt" aria-hidden="true" /><b>+{einde.reward}</b></>}</span>
           {!calm && phase !== 'results' && <span className="lua-tijd" aria-label={`${Math.ceil(remaining * 100)} procent tijd over`}><span style={{ width: `${remaining * 100}%` }} /></span>}
         </div>
@@ -239,7 +241,8 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
               onClick={() => answer(choice)}><span className="ck-bel__kern" aria-hidden="true" />{question.choiceLabels[index] ?? choice}</button>)}
           </div>}
       </>}
-      {paused && phase !== 'menu' && <section className="lua-dialog ck-glas"><Pause size={30} /><h2>Even pauze</h2><button className="ck-knop ck-knop--hoofd lua-play" onClick={() => setPaused(false)}><Play size={20} />Doorgaan</button></section>}
+      {niveauKiezen && niveau && onLevel && <NiveauPaneel game="multiply" level={niveau} onKies={onLevel} onClose={() => { setNiveauKiezen(false); setPaused(false); }} />}
+      {paused && !niveauKiezen && phase !== 'menu' && <section className="lua-dialog ck-glas"><Pause size={30} /><h2>Even pauze</h2><button className="ck-knop ck-knop--hoofd lua-play" onClick={() => setPaused(false)}><Play size={20} />Doorgaan</button></section>}
       {phase === 'results' && !mathAdventure && <section className="lua-results ck-glas"><h1 className="ck-houtbord lua-titel">Lua is veilig!</h1><div className="lua-stars" aria-label={`${stars} sterren`}>{[0,1,2].map(index => <Star key={index} size={40} fill={index < stars ? 'currentColor' : 'none'} />)}</div><div className="lua-result-metrics"><span><strong>{accuracy}%</strong> meteen goed</span><span><strong>{stats.bestStreak}×</strong> beste combo</span></div><p className="lua-earned"><CocoCoin size={20} />+{sessionCoins} CocoCoins · totaal {coins}</p><div className="lua-results-knoppen"><button className="ck-knop ck-knop--hoofd lua-play" onClick={startSession}><RotateCcw size={20} />Nog een avontuur</button><button className="ck-knop ck-knop--zacht" onClick={onHome}><Home size={20} />Naar de wereld</button><button className="ck-linkje" onClick={() => setGamePhase('menu')}><Settings2 size={17} />Instellingen</button></div></section>}
     </div>
   </div>;
