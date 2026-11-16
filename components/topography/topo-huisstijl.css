@@ -1,0 +1,48 @@
+/* Topografie in de CocoKiki-huisstijl (docs/HUISSTIJL.md): het reiseiland als
+   achtergrond, de kaart als speelveld in een afgeronde lijst, de bediening en
+   panelen van glas, tekst in cacao. Alleen variabelen uit cocokiki-tokens.css. */
+@import '../../styles/cocokiki-tokens.css';
+
+.topo-app.topo-huisstijl { position: relative; isolation: isolate; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-tekst); }
+.topo-huisstijl__achtergrond { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; filter: blur(3px) saturate(1.05); transform: scale(1.03); pointer-events: none; }
+.topo-app.topo-huisstijl.view-discover .discover-page, .topo-app.topo-huisstijl .session-page { padding-inline: 16px; padding-bottom: 16px; background: transparent; }
+.topo-app.topo-huisstijl .map-control-shell { background: transparent; box-shadow: none; border: 0; }
+
+/* Bediening: één glazen pil */
+.topo-huisstijl .map-control-bar { display: flex; align-items: center; gap: 6px; padding: 6px; border: 0; border-radius: 999px; }
+.topo-huisstijl .region-trigger { min-height: 48px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; }
+.topo-huisstijl .region-trigger small { color: var(--ck-cacao); font-size: 16px; font-weight: 700; }
+.topo-huisstijl .map-action.icon-only { width: 48px; height: 48px; min-width: 48px; border: 0; border-radius: 50%; background: transparent; color: var(--ck-cacao); box-shadow: none; transition: transform .2s var(--ck-veer); }
+.topo-huisstijl .map-action.icon-only:hover { transform: scale(1.08); background: rgba(255, 255, 255, .45); }
+.topo-huisstijl .map-action.icon-only[aria-expanded=true] { background: var(--ck-actief); color: var(--ck-wit); }
+
+/* Panelen van glas */
+.topo-huisstijl .map-control-panel { border: 0; border-radius: var(--ck-rond-kaart); color: var(--ck-cacao); box-shadow: 0 14px 30px rgba(74, 42, 26, .25); }
+.topo-huisstijl .map-control-panel h2 { font-family: var(--ck-font-kop); color: var(--ck-cacao); }
+.topo-huisstijl .map-control-panel small, .topo-huisstijl .panel-heading small { color: var(--ck-cacao); font-size: 16px; }
+.topo-huisstijl .journey-mode { min-height: 48px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .6); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; transition: transform .2s var(--ck-veer); }
+.topo-huisstijl .journey-mode:hover { transform: translateY(-2px); background: var(--ck-actief); color: var(--ck-wit); }
+.topo-huisstijl .map-panel-close { border: 0; border-radius: 50%; background: rgba(255, 255, 255, .55); color: var(--ck-cacao); }
+
+/* Speelveld: de kaart in een afgeronde lijst */
+.topo-huisstijl .explore-map, .topo-huisstijl .flag-atlas { border-radius: var(--ck-rond-kaart); overflow: hidden; box-shadow: 0 0 0 4px rgba(255, 255, 255, .7), 0 14px 30px rgba(74, 42, 26, .25); }
+.topo-huisstijl .map-zone { background: transparent; }
+.topo-huisstijl .discovery-footer { align-self: center; display: inline-flex; gap: 16px; margin: 12px auto 0; padding: 8px 18px; border: 0; border-radius: 999px; color: var(--ck-cacao); font-weight: 800; font-size: 16px; width: max-content; }
+.topo-huisstijl .discovery-footer span { color: var(--ck-cacao); }
+
+/* Weetje van Seb: glas in plaats van een wit vak */
+.topo-app.topo-huisstijl .map-fact-card.discovery-detail { margin-top: 12px; border-radius: var(--ck-rond-kaart); background: linear-gradient(135deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .6)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--ck-cacao); }
+.topo-app.topo-huisstijl .discovery-detail h3, .topo-app.topo-huisstijl .discovery-detail .fact-card-text { color: var(--ck-cacao); font-size: 16px; }
+
+/* Kop in een spel: glazen statusstrook */
+.topo-huisstijl .session-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 6px 16px 6px 6px; border: 0; border-radius: 999px; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; }
+.topo-huisstijl .session-heading .back-button { min-height: 48px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .6); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; }
+.topo-huisstijl .session-heading span { color: var(--ck-cacao); font-size: 16px; }
+.topo-app.topo-huisstijl.in-test { background: transparent; }
+.topo-huisstijl .toets-game.test-focused, .topo-huisstijl .test-focused__answer { border: 0; background: linear-gradient(135deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .65)); }
+
+@media (max-width: 600px) {
+  .topo-huisstijl .discover-page, .topo-huisstijl .session-page { padding-inline: 10px; }
+  .topo-huisstijl .region-trigger { font-size: 16px; }
+  .topo-huisstijl .session-heading { gap: 8px; padding-right: 10px; }
+}

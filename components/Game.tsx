@@ -11,6 +11,7 @@ import PlatformHeader from './platform/PlatformHeader';
 import { GameModuleProps } from '../platform/gameRegistry';
 import './topo-test.css';
 import './topography/topo-layout.css';
+import './topography/topo-huisstijl.css';
 import { useTopoHeaderBottom } from './topography/useTopoLayout';
 import TopoExitDialog from './topography/TopoExitDialog';
 import { registerNavigationGuard } from '../services/navigationGuard';
@@ -193,7 +194,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   const panelClose = <button type="button" className="map-panel-close" onClick={() => setOpenPanel(null)} aria-label="Sluiten"><X size={18} /></button>;
 
   const mapControls = () => <div className="map-control-shell" ref={toolbarRef}>
-    <nav className="map-control-bar" aria-label="Kaartbediening">
+    <nav className="map-control-bar ck-glas" aria-label="Kaartbediening">
       <button type="button" className="region-trigger" aria-expanded={openPanel === 'region'} onClick={() => togglePanel('region')}>
         <span><small>Gebied</small><strong>{areaName(selection.areaId)}</strong></span><ChevronDown size={17} />
       </button>
@@ -201,12 +202,12 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       <button type="button" className="map-action icon-only" title="Kaartinstellingen" aria-label="Kaartinstellingen" aria-expanded={openPanel === 'settings'} onClick={() => togglePanel('settings')}><Settings2 size={19} /></button>
     </nav>
 
-    {openPanel === 'region' && <section className="map-control-panel region-panel" aria-label="Gebied kiezen">
+    {openPanel === 'region' && <section className="map-control-panel ck-glas region-panel" aria-label="Gebied kiezen">
       <div className="panel-heading"><div><small>Kaartgebied</small><h2>Kies wat je wilt oefenen</h2></div>{panelClose}</div>
       <LearningSelection selection={selection} onChange={changeSelection} />
     </section>}
 
-    {openPanel === 'play' && <section className="map-control-panel play-panel" aria-label="Spel kiezen">
+    {openPanel === 'play' && <section className="map-control-panel ck-glas play-panel" aria-label="Spel kiezen">
       <div className="panel-heading"><div><small>Spelvorm</small><h2>Kies een uitdaging</h2></div>{panelClose}</div>
       <div className="extra-mode-buttons">
         <button type="button" className="journey-mode compact mode-explore" onClick={exploreFreely}><Map size={18} /><span>Verkennen</span></button>
@@ -214,7 +215,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
       </div>
     </section>}
 
-    {openPanel === 'settings' && <section className="map-control-panel settings-panel" aria-label="Kaartinstellingen">
+    {openPanel === 'settings' && <section className="map-control-panel ck-glas settings-panel" aria-label="Kaartinstellingen">
       <div className="panel-heading"><div><small>Weergave</small><h2>Kaart instellen</h2></div>{panelClose}</div>
       <div className="settings-toggles">
         <label className="switch-label"><input type="checkbox" role="switch" checked={showLabels} onChange={event => setShowLabels(event.target.checked)} /><span className="switch-track" /><span>Namen tonen</span></label>
@@ -223,12 +224,13 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     </section>}
   </div>;
 
-  return <div ref={rootRef} className={'topo-app view-discover' + (session ? ' in-session' : '') + (session?.mode === 'test' ? ' in-test' : '')} style={{ ...(viewportHeight ? { '--topo-viewport': `${viewportHeight}px` } : {}), ...(headerBottom !== undefined ? { '--topo-header-bottom': `${headerBottom}px` } : {}) } as React.CSSProperties}>
+  return <div ref={rootRef} data-wereld="wereld" className={'topo-app topo-huisstijl view-discover' + (session ? ' in-session' : '') + (session?.mode === 'test' ? ' in-test' : '')} style={{ ...(viewportHeight ? { '--topo-viewport': `${viewportHeight}px` } : {}), ...(headerBottom !== undefined ? { '--topo-header-bottom': `${headerBottom}px` } : {}) } as React.CSSProperties}>
+    <img className="topo-huisstijl__achtergrond" src="/dreamworld/topo-interior.webp" alt="" aria-hidden="true" />
     <PlatformHeader onHome={onHome} onBack={onBack} coins={score} />
 
     <Suspense fallback={<div className="loading-screen" role="status">Even laden...</div>}>
       {session ? <main className="session-page">
-        <div className="session-heading">
+        <div className="session-heading ck-glas">
           <button className="back-button" onClick={() => exitTest.current ? exitTest.current() : setSession(null)}><ArrowLeft size={18} />Terug naar de kaart</button>
           <span>{session.mode === 'memory' ? `${areaName(selection.areaId)} · Weetjes` : context}</span>
           <strong>{MODE_LABELS[session.mode]}</strong>
@@ -248,7 +250,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
                 <div className="explore-map"><InteractiveMap selectedProvince={selection.areaId} locations={locations} onLocationClick={setActiveLocation} highlightedLocation={activeLocation?.id} showLabels={showLabels} /></div>
                 {discoveryDetail}
               </div>}
-              <div className="discovery-footer"><span>{locations.length} {selection.topicId === 'flags' ? 'vlaggen' : 'plekken'}</span><span>{practiced} geoefend</span></div>
+              <div className="discovery-footer ck-glas"><span>{locations.length} {selection.topicId === 'flags' ? 'vlaggen' : 'plekken'}</span><span>{practiced} geoefend</span></div>
             </section>
           </main>}
     </Suspense>
