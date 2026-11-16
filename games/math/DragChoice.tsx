@@ -15,20 +15,22 @@ export default function DragChoice({ value, label, selected, disabled, targetRef
   };
   const origin = useRef<{ x: number; y: number; id: number } | null>(null);
   const suppressClick = useRef(false);
+  // Is het voorwerp echt met de vinger meebewogen? Anders telt de vinger zelf.
+  const bewogen = useRef(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const moving = offset.x !== 0 || offset.y !== 0;
   return <button type="button" className={`${className}${selected ? ' is-selected' : ''}${moving ? ' is-dragging is-slepen' : ''}`} disabled={disabled}
-    aria-label={label ?? `Getal ${value}`} aria-pressed={selected} style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+    aria-label={label ?? `Getal ${value}`} aria-pressed={selected} style={{ translate: moving ? `${offset.x}px ${offset.y}px` : undefined }}
     onPointerDown={event => {
       if (event.button !== 0 || disabled || origin.current) return;
       suppressClick.current = false;
-      origin.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      origin.current = { x: event.clientX, y: event.clientY, id: event.pointerId }; bewogen.current = false;
       event.currentTarget.setPointerCapture(event.pointerId);
     }} onPointerMove={event => {
       const start = origin.current;
       if (!start || start.id !== event.pointerId) return;
       const x = event.clientX - start.x, y = event.clientY - start.y;
-      if (Math.hypot(x, y) > 7) { setOffset({ x, y }); onOver?.(boven(event.currentTarget)); }
+      if (Math.hypot(x, y) > 7) { bewogen.current = true; setOffset({ x, y }); onOver?.(boven(event.currentTarget)); }
     }} onPointerUp={event => {
       const start = origin.current;
       if (!start || start.id !== event.pointerId) return;
@@ -40,9 +42,14 @@ export default function DragChoice({ value, label, selected, disabled, targetRef
         // Mik met het midden van het voorwerp zelf, niet met de vinger. Je
         // pakt een bes vaak aan de rand beet, en dan mist hij het mandje.
         const tegel = event.currentTarget.getBoundingClientRect();
-        const midX = tegel.left + tegel.width / 2, midY = tegel.top + tegel.height / 2;
+        const midden = { x: tegel.left + tegel.width / 2, y: tegel.top + tegel.height / 2 };
+        // Ging het voorwerp niet mee (een snelle beweging, of een touchscherm
+        // dat even wilde scrollen), dan telt de plek van de vinger zelf.
+        const vinger = { x: event.clientX, y: event.clientY };
         const rect = targetRef.current?.getBoundingClientRect();
-        if (rect && midX >= rect.left && midX <= rect.right && midY >= rect.top && midY <= rect.bottom) onDrop(value, midX, midY);
+        const binnen = (p: { x: number; y: number }) => !!rect && p.x >= rect.left && p.x <= rect.right && p.y >= rect.top && p.y <= rect.bottom;
+        const plek = bewogen.current && binnen(midden) ? midden : binnen(vinger) ? vinger : binnen(midden) ? midden : null;
+        if (plek) onDrop(value, plek.x, plek.y);
       }
     }} onPointerCancel={() => { origin.current = null; suppressClick.current = true; setOffset({ x: 0, y: 0 }); }}
     onLostPointerCapture={() => { if (origin.current) { origin.current = null; suppressClick.current = true; setOffset({ x: 0, y: 0 }); } }}

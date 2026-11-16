@@ -221,3 +221,6 @@
 /* Waarom deze som: Lua's zin, met een lampje in de wereldkleur */
 .rekenspel.rekenspel--add-subtract .redactie-waarom { margin: 8px 0 0; padding: 8px 14px; border-radius: 14px; background: color-mix(in srgb, var(--ck-zon) 22%, var(--ck-room)); font-weight: 800; font-size: 17px; color: var(--ck-cacao); animation: ck-pop .35s var(--ck-veer); }
 .rekenspel.rekenspel--add-subtract .redactie-waarom::before { content: "Waarom? "; font-family: var(--ck-font-kop); color: var(--ck-actief-rand); }
+
+/* Slepen moet op een touchscherm slepen blijven, geen scrollen. */
+.rekenspel .math-drag-tile, .rekenspel .ck-bel { touch-action: none; }

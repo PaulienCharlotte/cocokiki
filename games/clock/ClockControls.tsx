@@ -31,10 +31,11 @@ export function LevelPicker({ level, onChange, completed = [] }: { level: ClockL
 }
 
 export function ClockGameHeader({ title, level, onBack, onLevelChange, completed }: { title: string; level: ClockLevel; onBack: () => void; onLevelChange: (level: ClockLevel) => void; completed: ClockLevel[] }) {
-  return <header className="clock-game-header">
-    {/* Eén soort terugknop in de hele app: een rond pijltje. Zie de skill. */}
-    <IconButton label="Terug naar de klokspellen" icon={<ArrowLeft size={19} />} onClick={onBack} />
-    <h1>{title}</h1>
+  // In de huisstijl is dit het statuseiland: de naam van het spel (tik om
+  // terug te gaan naar de klokspellen) en de vijf niveaus als bolletjes.
+  return <header className="clock-game-header ck-zone-status ck-glas">
+    <IconButton label="Terug naar de klokspellen" className="clock-game-header__terug" icon={<><ArrowLeft size={16} aria-hidden="true" /><span>{title}</span></>} onClick={onBack} />
+    <h1 className="sr-only">{title}</h1>
     <LevelPicker level={level} onChange={onLevelChange} completed={completed} />
   </header>;
 }

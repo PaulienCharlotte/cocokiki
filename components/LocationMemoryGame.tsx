@@ -4,6 +4,8 @@ import { MemoryPair } from '../data/learning';
 import { shuffle } from '../services/localProgress';
 import RoundResult from './RoundResult';
 import './memory-mobile.css';
+import './memory-huisstijl.css';
+import { CHARACTERS, type CharacterId } from '../data/characters';
 import { memoryBoardIds } from '../services/memoryBoards';
 import { learningReward } from '../services/learningReward';
 import { useActivityAnalytics } from '../services/useActivityAnalytics';
@@ -19,6 +21,10 @@ interface Props {
   onRepeat: () => void;
   onRetry: (ids: string[]) => void;
   onExit: () => void;
+  /** Wie er linksonder meekijkt en helpt; bij de reisspellen is dat Seb. */
+  gids?: CharacterId;
+  /** Iets kleins voor in het statuseiland, zoals het gekozen werelddeel. */
+  statusExtra?: React.ReactNode;
 }
 interface Card { id: string; pair: MemoryPair; side: 'left' | 'right' }
 
@@ -53,7 +59,7 @@ function FlagQuiz({ pairs, choicePool, onAnswer, onContinue, onRepeat, onRetry, 
   </section>;
 }
 
-function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, analyticsId }: Props) {
+function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, analyticsId, gids = 'seb', statusExtra }: Props) {
   const [cards] = useState<Card[]>(() => shuffle(pairs.flatMap(pair => [
     { id: pair.id + ':left', pair, side: 'left' as const }, { id: pair.id + ':right', pair, side: 'right' as const },
   ])));
@@ -92,9 +98,18 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, a
   }, [flipped, cards, onAnswer]);
 
   if (matched.length === pairs.length) return <RoundResult memory total={pairs.length} correct={pairs.length - missed.length} onContinue={onContinue} onRepeat={onRepeat} onExit={onExit} onRetry={missed.length ? () => onRetry(missed) : undefined} />;
-  return <section className="memory-game content-width">
-    <div className="memory-heading"><h1>Vind de setjes</h1><span>{matched.length} / {pairs.length} gevonden<span className="muted"> · {moves} beurten · Bord {batch + 1}/{Math.ceil(pairs.length / batchSize)}</span></span></div>
-    <progress value={matched.length} max={pairs.length} aria-label="Gevonden setjes" />
+  const bordTotaal = Math.ceil(pairs.length / batchSize);
+  const persoon = CHARACTERS[gids];
+  // In de huisstijl: het statuseiland telt de setjes als bolletjes, de gids
+  // praat linksonder, en het bord ligt in de wereld. Geen kop of witte balk.
+  return <>
+  <div className="ck-zone-status ck-glas memory-status" aria-label={`${matched.length} van ${pairs.length} setjes gevonden`}>
+    {statusExtra}
+    <span className="memory-status__stippen" aria-hidden="true">{pairs.map((pair, i) => <i key={pair.id} className={`ck-stip${i < matched.length ? ' ck-stip--klaar' : ''}${i === matched.length ? ' ck-stip--nu' : ''}`} />)}</span>
+    {bordTotaal > 1 && <span className="ck-niveau">Bord {batch + 1} van {bordTotaal}</span>}
+  </div>
+  <section className="memory-game content-width" aria-label="Vind de setjes">
+    <h1 className="sr-only">Vind de setjes</h1>
     <div className="memory-board" data-kind={pairs[0]?.kind}>{activeCards.map((card, index) => {
       const isMatched = matched.includes(card.pair.id);
       const visible = isMatched || flipped.includes(card.id);
@@ -109,8 +124,12 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, a
         </span>
       </button>;
     })}</div>
-    <p className="memory-feedback" role="status">{feedback || ' '}</p>
-  </section>;
+  </section>
+  <div className="ck-zone-personage memory-gids">
+    <img className="ck-ballon__gezicht" src={persoon.beeld} alt={persoon.naam} />
+    <p className="ck-ballon__tekst memory-feedback" role="status"><span className="ck-ballon__naam">{persoon.naam.toUpperCase()}</span>{feedback || (pairs[0]?.kind === 'flag' ? 'Vind bij elk land de goede vlag.' : 'Vind de setjes die bij elkaar horen.')}</p>
+  </div>
+  </>;
 }
 
 export default function LocationMemoryGame(props: Props) {

@@ -8,6 +8,8 @@ import type { MemoryPair } from '../data/learning';
 import { PROGRESS_KEY, readProgress, recordAnswer, writeLocal } from '../services/localProgress';
 import { awardCurrencyOnce } from '../services/currency';
 import { analytics } from '../services/analytics';
+import '../components/dreamworld/wereld-scherm.css';
+import './flags-memory.css';
 
 export { FLAG_MEMORY_PAIRS } from '../data/flagCatalog';
 
@@ -25,11 +27,18 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
     setPairs(next); setRound(value => value + 1); setRoundId(crypto.randomUUID());
   };
   const choose = (id: FlagContinent) => { setContinent(id); start(nextFlagRound(id, readProgress())); };
-  if (!continent) return <main className="dream-flags-memory" aria-label="Vlaggenmemory">
+  // In de huisstijl: Sebs ontdekkingskamer is de wereld. Het keuzescherm is
+  // een wereldscherm met de werelddelen op het klembord; het spel speelt in
+  // dezelfde kamer met de vaste zones.
+  const kamer = <img className="world-location__background" src="/dreamworld/topo-interior.webp" alt="" />;
+  if (!continent) return <main className="ck-scherm wereld-scherm dream-flags-memory" data-wereld="wereld" aria-label="Vlaggenmemory">
+    {kamer}
+    <div className="ck-houtbord wereld-naambord" aria-hidden="true">Vlaggenmemory</div>
     <section className="flag-continents" aria-labelledby="flag-continents-title">
-      <h1 id="flag-continents-title">Vlaggenmemory</h1>
-      {/* Hetzelfde keuzeraster als het rekenmenu; zie components/ui/CardGrid. */}
+      <h1 id="flag-continents-title" className="sr-only">Vlaggenmemory</h1>
+      {/* Hetzelfde keuzeraster als de wereldschermen; zie components/ui/CardGrid. */}
       <CardGrid
+        vorm="plek"
         label="Kies een werelddeel"
         cards={FLAG_CONTINENTS.map(item => ({
           id: item.id,
@@ -37,15 +46,19 @@ export default function FlagsMemory({ onBack }: { onBack: () => void }) {
           // Drie vlaggen uit dat werelddeel in plaats van overal dezelfde
           // wereldbol: zo zie je meteen waar je naartoe gaat.
           icoon: <span className="flag-continents__vlaggen" aria-hidden="true">{continentFlagPairs(item.id).slice(0, 3).map(pair => <i key={pair.id}>{pair.right}</i>)}</span>,
-          meta: `${continentFlagPairs(item.id).length} vlaggen`,
+          onder: `${continentFlagPairs(item.id).length} vlaggen`,
         }))}
         onChoose={id => choose(id as FlagContinent)}
       />
     </section>
   </main>;
-  return <main className="dream-flags-memory" aria-label="Vlaggenmemory">
-    <div className="flag-continents__toolbar"><IconButton label="Terug naar de werelddelen" icon={<ArrowLeft size={19} />} onClick={() => setContinent(null)} /><strong>{FLAG_CONTINENTS.find(item => item.id === continent)?.label}</strong><span>{continentFlagPairs(continent).length} vlaggen</span></div>
+  const deel = FLAG_CONTINENTS.find(item => item.id === continent)?.label;
+  return <main className="ck-scherm flags-spel dream-flags-memory" data-wereld="wereld" aria-label="Vlaggenmemory">
+    {kamer}
     <React.Fragment key={round}><LocationMemoryGame analyticsId="flags-memory" mode="memory" pairs={pairs} choicePool={FLAG_MEMORY_PAIRS} onAnswer={answer}
+      gids="seb"
+      // Het werelddeel staat in het statuseiland; tik erop om een ander te kiezen.
+      statusExtra={<IconButton label="Terug naar de werelddelen" className="flags-spel__deel" icon={<><ArrowLeft size={16} /><span>{deel}</span></>} onClick={() => setContinent(null)} />}
       onContinue={() => start(nextFlagRound(continent, readProgress()))}
       onRepeat={() => start(pairs)} onRetry={ids => start(pairs.filter(pair => ids.includes(pair.id)))} onExit={() => setContinent(null)} /></React.Fragment>
   </main>;

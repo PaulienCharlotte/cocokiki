@@ -1,5 +1,6 @@
 import React from 'react';
 import CardGrid from '../../components/ui/CardGrid';
+import '../../components/dreamworld/wereld-scherm.css';
 import type { ClockGameId, ClockProgress } from './types';
 
 /**
@@ -17,9 +18,13 @@ const SPELLEN: Array<{ id: ClockGameId; titel: string; onder: string; beeld: str
 ];
 
 export default function ClockHub({ progress, onPlay }: { progress: ClockProgress; onPlay: (game: ClockGameId) => void }) {
-  return <main className="clock-hub" aria-labelledby="clock-hub-title">
-    <header className="clock-hub__intro"><small>School</small><h1 id="clock-hub-title">Klokkijken</h1></header>
+  // In de huisstijl: een wereldscherm in Sebs kamer, met de klokspellen op het klembord.
+  return <main className="clock-hub ck-scherm wereld-scherm" data-wereld="wereld" aria-labelledby="clock-hub-title">
+    <img className="world-location__background" src="/dreamworld/topo-interior.webp" alt="" />
+    <div className="ck-houtbord wereld-naambord" aria-hidden="true">Kloklezen</div>
+    <h1 id="clock-hub-title" className="sr-only">Klokkijken</h1>
     <CardGrid
+      vorm="plek"
       label="Kies een klokspel"
       cards={SPELLEN.map(spel => ({
         id: spel.id,

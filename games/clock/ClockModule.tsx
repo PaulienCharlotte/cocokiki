@@ -7,6 +7,7 @@ import WorldTimes from './WorldTimes';
 import { loadClockProgress, rewardClockRound } from './clockProgress';
 import type { ClockGameId, ClockLevel } from './types';
 import './clock.css';
+import './klok-huisstijl.css';
 
 interface ClockModuleProps {
   onBack: () => void;
@@ -32,7 +33,9 @@ export default function ClockModule({ onBack }: ClockModuleProps) {
     onComplete: (level: ClockLevel, roundId: string, solved?: number) => complete(game, level, roundId, solved),
   };
 
-  return <div className="clock-module">
+  // In de huisstijl: de klokspellen spelen in Sebs kamer, met de vaste zones.
+  return <div className="clock-module ck-scherm klok-scherm" data-wereld="wereld">
+    <img className="klok-scherm__achtergrond" src="/dreamworld/topo-interior.webp" alt="" />
     {game === 'memory' && <MemoryGame {...shared} />}
     {game === 'set-clock' && <SetClockGame {...shared} />}
     {game === 'race' && <ClockRaceGame {...shared} />}

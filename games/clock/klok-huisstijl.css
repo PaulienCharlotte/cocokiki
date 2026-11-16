@@ -1,0 +1,90 @@
+/* Kloklezen in de CocoKiki-huisstijl: Sebs ontdekkingskamer is de wereld, met
+   de vaste zones (statuseiland boven, knoppen rechtsonder) en geen wit vlak.
+   Alleen variabelen en klassen uit styles/cocokiki-tokens.css.
+   clip, niet hidden: dan kan focus het scherm niet opzij schuiven. */
+@import '../../styles/cocokiki-tokens.css';
+
+.clock-module.klok-scherm, .clock-hub.wereld-scherm { position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0; background: none; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.klok-scherm__achtergrond, .clock-hub .world-location__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.clock-module.klok-scherm:has(> .clock-hub) > .klok-scherm__achtergrond { display: none; }
+.clock-hub .wereld-plek__meta { font-size: 14px; font-weight: 900; color: var(--ck-cacao-zacht); }
+
+/* Het spel: geen wit paneel, maar een speelveld tussen het statuseiland en de knoppen */
+.klok-scherm .clock-game {
+  position: absolute; z-index: 3; left: var(--ck-rand); right: var(--ck-rand); top: 0; bottom: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  width: auto; max-width: none; margin: 0; padding: calc(var(--ck-rand) + max(48px, 4.4cqw) + 22px) 0 140px; overflow-y: auto;
+  background: none; border: 0; border-radius: 0; box-shadow: none;
+}
+
+/* 2. Statuseiland: de naam van het spel en de vijf niveaus */
+.klok-scherm .clock-game-header.ck-zone-status { position: fixed; top: var(--ck-rand); left: 50%; transform: translateX(-50%); width: auto; margin: 0; padding: 0 12px 0 6px; gap: 10px; border: 1px solid rgba(255, 255, 255, .6); background: linear-gradient(135deg, rgba(255, 255, 255, .46), rgba(255, 255, 255, .16)); }
+.klok-scherm .clock-game-header__terug.ck-icon-button { width: auto; height: 38px; min-width: 0; padding: 0 12px 0 8px; gap: 4px; border: 0; border-radius: 999px; background: var(--ck-actief); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.klok-scherm .clock-game-header__terug span { display: inline; }
+.klok-scherm .clock-level-picker { display: flex; align-items: center; gap: 8px; margin: 0; padding: 0; background: none; }
+.klok-scherm .clock-level-picker__label span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.klok-scherm .clock-level-picker__label strong { font-size: 16px; font-weight: 900; white-space: nowrap; }
+.klok-scherm .clock-levels { display: flex; gap: 6px; }
+.klok-scherm .clock-levels button { position: relative; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 2px solid var(--ck-wit); border-radius: 50%; background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; cursor: pointer; }
+.klok-scherm .clock-levels button[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
+.klok-scherm .clock-levels button svg { position: absolute; right: -4px; top: -4px; width: 14px; height: 14px; padding: 1px; border-radius: 50%; background: var(--ck-zon); color: var(--ck-cacao); }
+
+/* De opdracht op een glazen bord */
+.klok-scherm .clock-instruction, .klok-scherm .world-times__header {
+  display: grid; justify-items: center; gap: 2px; width: auto; max-width: min(620px, 100%); margin: 0; padding: 10px 28px 12px; border-radius: 26px; text-align: center;
+  border: 1px solid rgba(255, 255, 255, .6); background: linear-gradient(135deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .3));
+  -webkit-backdrop-filter: blur(16px) saturate(1.6); backdrop-filter: blur(16px) saturate(1.6); box-shadow: 0 12px 28px rgba(40, 20, 5, .22); color: var(--ck-cacao);
+}
+.klok-scherm .clock-instruction * { color: var(--ck-cacao); }
+.klok-scherm .clock-instruction strong, .klok-scherm .clock-instruction h2, .klok-scherm .world-times__header h1 { font-family: var(--ck-font-kop); font-weight: 800; font-size: clamp(26px, 2.6cqw, 36px); line-height: 1.15; margin: 0; }
+.klok-scherm .clock-instruction small, .klok-scherm .clock-instruction p, .klok-scherm .clock-round-meta { font-size: 16px; font-weight: 800; }
+
+/* Witte vlakken binnen de spellen worden licht glas of papier */
+.klok-scherm .clock-set__workspace, .klok-scherm .world-times__clocks, .klok-scherm .world-times__practice, .klok-scherm .world-times__travel { background: none; box-shadow: none; border: 0; }
+.klok-scherm .clock-set__controls > *, .klok-scherm .world-times__city, .klok-scherm .world-times__answer {
+  border: 1px solid rgba(255, 255, 255, .7); border-radius: 20px; background: rgba(255, 248, 236, .78); box-shadow: 0 8px 18px rgba(40, 20, 5, .18);
+}
+.klok-scherm .analog-clock { filter: drop-shadow(0 14px 24px rgba(40, 20, 5, .3)); }
+
+/* Keuzes (klokkenrace, wereldtijden) als dikke tegels in de vaste kleuren */
+.klok-scherm .clock-race__choices > button, .klok-scherm .clock-digital-choice { border: 3px solid var(--ck-wit); border-radius: 22px; background: rgba(255, 248, 236, .85); box-shadow: 0 7px 0 var(--ck-schaduw-rand); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; transition: transform var(--ck-snel); }
+.klok-scherm .clock-race__choices > button:hover, .klok-scherm .clock-digital-choice:hover { transform: translateY(-3px) rotate(-1deg); }
+.klok-scherm .clock-race__modes, .klok-scherm .world-times__modes { display: inline-flex; gap: 4px; padding: 5px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .7); background: rgba(255, 255, 255, .45); }
+.klok-scherm .clock-race__modes button, .klok-scherm .world-times__modes button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; cursor: pointer; }
+.klok-scherm .clock-race__modes button[aria-pressed=true], .klok-scherm .world-times__modes button[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
+
+/* Memory: dezelfde glazen kaart met het houten medaillon als het vlaggenmemory */
+.klok-scherm .clock-memory__grid { width: min(820px, 100%); gap: clamp(10px, 1.2cqw, 18px); }
+.klok-scherm .clock-memory-card__back { border-radius: 18px; border: 2px solid rgba(255, 255, 255, .7); background: url('/assets/library/ui/navigation-medallion.webp') center / 74% no-repeat, linear-gradient(135deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, .2)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .9), 0 10px 22px rgba(40, 20, 5, .25); color: transparent; }
+.klok-scherm .clock-memory-card__front { border-radius: 18px; border: 3px solid var(--ck-wit); background: var(--ck-room); box-shadow: 0 6px 0 var(--ck-schaduw-rand); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; }
+
+/* Terugkoppeling als glazen pil; nooit rood */
+.klok-scherm .clock-game__feedback, .klok-scherm .world-times__feedback, .klok-scherm .world-times__hint { min-height: 0; margin: 0; padding: 6px 16px; border-radius: 999px; background: var(--ck-glas); font-weight: 800; font-size: 17px; color: var(--ck-cacao); }
+.klok-scherm .clock-game__feedback:empty, .klok-scherm .world-times__feedback:empty { display: none; }
+.klok-scherm .clock-game__feedback .is-correct { color: var(--ck-tuin-rand); }
+.klok-scherm .clock-game__feedback .is-wrong { color: var(--ck-cacao); }
+
+/* 6. De knoppen rechtsonder: de laatste is de hoofdknop */
+.klok-scherm .clock-game__actions { position: fixed; z-index: 12; right: calc(var(--ck-rand) + 6cqw); bottom: var(--ck-rand); display: flex; gap: 12px; margin: 0; }
+.klok-scherm .clock-game__actions .ck-button { min-height: var(--ck-tik-min); padding: 12px 24px; border: 1.5px solid var(--ck-wit); border-radius: var(--ck-rond-knop); background: var(--ck-glas); box-shadow: 0 5px 0 var(--ck-schaduw-rand); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; }
+.klok-scherm .clock-game__actions .ck-button:last-child { border: 0; background: var(--ck-actief); box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); color: var(--ck-wit); }
+
+/* Aan het eind: een glazen paneel in de wereld */
+.klok-scherm .clock-completion {
+  position: fixed; z-index: 20; left: 50%; top: 50%; translate: -50% -50%; width: min(460px, calc(100% - 32px));
+  display: grid; justify-items: center; gap: 12px; padding: 26px 24px 22px; border-radius: var(--ck-rond-paneel); text-align: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .44)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, .7); box-shadow: 0 16px 40px rgba(40, 20, 5, .3); color: var(--ck-cacao); animation: ck-pop .5s var(--ck-veer) both;
+}
+.klok-scherm .clock-completion__check { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-actief-rand); }
+.klok-scherm .clock-completion strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: var(--ck-maat-kop); }
+.klok-scherm .clock-completion p { margin: 4px 0 0; font-size: 17px; font-weight: 700; }
+.klok-scherm .clock-completion .ck-button { min-height: var(--ck-tik-min); width: 100%; border-radius: var(--ck-rond-knop); font-family: var(--ck-font-kop); font-weight: 800; font-size: 19px; }
+
+@container (max-width: 640px) {
+  .klok-scherm .clock-game-header.ck-zone-status { top: 68px; flex-wrap: wrap; justify-content: center; height: auto; padding: 6px 10px; border-radius: 26px; width: calc(100% - var(--ck-rand) * 2); }
+  .klok-scherm .clock-level-picker__label { display: none; }
+  .klok-scherm .clock-game { padding-top: 170px; }
+  .klok-scherm .clock-game__actions { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
+  .klok-scherm .clock-game__actions .ck-button { flex: 1; padding: 10px 12px; font-size: 18px; }
+}
