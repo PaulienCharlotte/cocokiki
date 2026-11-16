@@ -46,3 +46,27 @@
   .topo-huisstijl .region-trigger { font-size: 16px; }
   .topo-huisstijl .session-heading { gap: 8px; padding-right: 10px; }
 }
+
+/* Uitlijning. .ck-glas zet position: relative; daardoor schoof het paneel de
+   kaart omlaag. Het paneel zweeft weer onder de balk, links uitgelijnd. */
+.topo-app.topo-huisstijl .map-control-shell { padding: 0 0 12px; }
+.topo-app.topo-huisstijl .map-control-bar { width: fit-content; max-width: 100%; margin: 0; grid-template-columns: minmax(200px, auto) 48px 48px; gap: 4px; }
+.topo-app.topo-huisstijl .region-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 14px 4px 18px; text-align: left; }
+.topo-app.topo-huisstijl .region-trigger > span { display: grid; gap: 0; line-height: 1.15; }
+.topo-app.topo-huisstijl .region-trigger small { text-transform: none; letter-spacing: 0; font-family: var(--ck-font-tekst); }
+.topo-app.topo-huisstijl .map-control-panel.ck-glas { position: absolute; left: 0; top: calc(100% - 4px); width: min(560px, calc(100vw - 32px)); padding: 20px 22px 22px; }
+.topo-app.topo-huisstijl .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.topo-app.topo-huisstijl .panel-heading small { display: block; text-transform: none; letter-spacing: 0; font-weight: 700; }
+.topo-app.topo-huisstijl .panel-heading h2 { margin: 2px 0 0; font-size: 24px; line-height: 1.2; }
+.topo-app.topo-huisstijl .selection-fields { gap: 14px 16px; }
+.topo-app.topo-huisstijl .selection-fields .field { display: grid; gap: 6px; }
+.topo-app.topo-huisstijl .selection-fields .field > span, .topo-app.topo-huisstijl .selection-fields .field label { color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; }
+.topo-app.topo-huisstijl .selection-fields select { min-height: 48px; padding: 0 40px 0 16px; border: 1px solid rgba(255, 255, 255, .8); border-radius: 999px; background-color: rgba(255, 255, 255, .7); color: var(--ck-cacao); font-family: var(--ck-font-tekst); font-weight: 800; font-size: 16px; }
+.topo-app.topo-huisstijl .map-zone { position: relative; z-index: 1; }
+
+@media (max-width: 600px) {
+  .topo-app.topo-huisstijl .map-control-bar { width: 100%; grid-template-columns: minmax(0, 1fr) 48px 48px; }
+  .topo-app.topo-huisstijl .map-control-panel.ck-glas { position: fixed; left: 10px; right: 10px; top: auto; bottom: calc(10px + env(safe-area-inset-bottom)); width: auto; padding: 16px; }
+}
+.topo-app.topo-huisstijl .set-keuze button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .8); border-radius: 999px; background: rgba(255, 255, 255, .7); color: var(--ck-cacao); font-family: var(--ck-font-tekst); font-weight: 800; font-size: 16px; }
+.topo-app.topo-huisstijl .set-keuze button.is-actief { background: var(--ck-actief); border-color: var(--ck-actief); color: var(--ck-wit); }
