@@ -99,8 +99,9 @@ test('flag catalogue covers 197 countries once across six continents with valid 
   assert.ok(continentFlagPairs('south-america').some(pair => pair.left === 'Suriname'));
   const html = renderToStaticMarkup(<FlagsMemory onBack={() => undefined} />);
   for (const continent of FLAG_CONTINENTS) assert.ok(html.includes(continent.label));
-  // Hetzelfde keuzeraster als het rekenmenu; zie .claude/skills/cocokiki-ui.
-  assert.ok(html.includes('ck-kaarten'));
+  // De aanklikbare kaart vervangt het klembord en opent dezelfde vlaggenrondes.
+  assert.ok(html.includes('continent-map'));
+  assert.ok(html.includes('Aanklikbare wereldkaart'));
   assert.ok(!html.includes('flag-continents__grid'));
 });
 test('successive flag rounds cover every country in the chosen continent before older flags', () => {

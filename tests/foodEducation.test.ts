@@ -30,9 +30,9 @@ test('taartaflevering beloont maar één keer en voedingskennis blijft naast bes
     assert.equal(deliverCakeOrder('roze', [strawberry]), null);
     assert.equal(saveCakeOrder({ started: true, timed: true, elapsed: 299, delivered: false, reward: 0 }), true);
     assert.equal(deliverCakeOrder('wit', [strawberry]), null);
-    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 7);
-    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 7);
-    assert.equal(JSON.parse(storage.get(LOCAL_STATE_KEY)!).balance, 19);
+    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 100);
+    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 100);
+    assert.equal(JSON.parse(storage.get(LOCAL_STATE_KEY)!).balance, 112);
     assert.equal(completeFoodLesson('sugar'), true);
     assert.equal(completeFoodLesson('sugar'), true);
     assert.equal(completeFoodLesson('unknown'), false);
@@ -41,10 +41,10 @@ test('taartaflevering beloont maar één keer en voedingskennis blijft naast bes
     // Een nieuwe opslagfixture controleert de grens zonder beloning van eerder werk.
     storage.clear();
     saveCakeOrder({ started: true, timed: true, elapsed: 300, delivered: false, reward: 0 });
-    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 5);
+    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 75);
     storage.clear();
     saveCakeOrder({ started: true, timed: false, elapsed: 10, delivered: false, reward: 0 });
-    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 5);
+    assert.equal(deliverCakeOrder('roze', [strawberry])?.reward, 75);
     storage.set(CAKE_ORDER_KEY, '{bad json');
     storage.delete(LOCAL_STATE_KEY);
     assert.equal(loadCakeOrder().started, false);

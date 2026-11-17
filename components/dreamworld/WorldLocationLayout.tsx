@@ -1,165 +1,57 @@
-import React, { useId, useState } from 'react';
-import { ArrowLeft, BookOpen, Calculator, ClipboardList, Clock3, Compass, CookingPot, Flower2, HeartPulse, Leaf, Sprout } from 'lucide-react';
-import { Button } from '../../design-system';
-import { ACTIVITIES_BY_ID, type ActivityDefinition } from '../../platform/activityRegistry';
-import type { LocationIcon, WorldLocation } from '../../platform/worldLocations';
+import React, { useRef, useState } from 'react';
+import type { WorldLocation } from '../../platform/worldLocations';
+import { DISCOVERY_ROOMS, type DiscoveryObject } from '../../platform/discoveryRooms';
 import { withLocationOrigin } from '../../services/locationNavigation';
-import './world-location.css';
-import './wereld-scherm.css';
-import PlantFlashcard from '../plants/PlantFlashcard';
-import LocationGameView, { AdventureClipboard } from './LocationAdventureWidgets';
-import CardGrid from '../ui/CardGrid';
-import AdventureRunner from '../adventures/AdventureRunner';
-import { PLAYABLE_ADVENTURES } from '../../data/adventures/catalog';
+import { INGREDIENTS } from '../../data/cooking/catalog';
+import { GARDEN_CROPS } from '../../data/plants/garden';
+import FoodKnowledgeDialog from '../food/FoodKnowledge';
+import GardenCropFacts from '../plants/GardenCropFacts';
+import { Button, Dialog } from '../../design-system';
+import InfoKnop from '../ui/InfoKnop';
+import { Volume2, VolumeX } from 'lucide-react';
+import { useMathSound } from '../../games/math/useMathSound';
+import './discovery-room.css';
 
-/**
- * Het klembord is de opdracht die aan de balie binnenkomt: er staat iemand met
- * een wens, en daar hoort een knop bij. Welke knop, staat hieronder.
- */
-const KLEMBORD_ACTIES: Record<string, { label: string; pad: string }> = {
-  moestuin: { label: 'Naar mijn moestuin', pad: '/plants/garden' },
-  plantendokter: { label: 'Naar de plantendokter', pad: '/plantendokter' },
-};
-
-/**
- * Avonturen die gewoon een spel zijn. Die openen meteen als je op de kaart
- * tikt, zonder omweg langs het klembord. Op een telefoon stond dat klembord
- * ver onder de kaarten, waardoor er geen weg naar binnen leek te zijn.
- */
-const DIRECTE_AVONTUREN: Record<string, string> = {
-  plantendokter: '/plantendokter',
-  moestuin: '/plants/garden',
-  kookboek: '/treehouse/cookbook',
-  voeding: '/cooking/discover',
-  keuken: '/cooking/kitchen',
-  taartenatelier: '/games/taartenatelier',
-};
-
-const ICONS: Record<LocationIcon, React.ComponentType<{ size?: number }>> = {
-  recipes: CookingPot, orders: ClipboardList, math: Calculator, nutrition: Leaf,
-  clinic: HeartPulse, plants: Flower2, book: BookOpen, grow: Sprout, clock: Clock3,
-};
-/** Elke plek hoort bij een wereldkleur uit de huisstijl. */
-const WERELD: Record<string, string> = { coco: 'keuken', kiki: 'tuin', lua: 'school', seb: 'wereld' };
-/**
- * Wereldscherm (laag 2) uit de huisstijl: de illustratie vult het scherm, een
- * houten naambord, en alle keuzes samen op één klembord in de wereld. Geen
- * spraakwolk: het personage staat al in de tekening en hoeft niets te zeggen.
- */
-function WereldLaag({ location }: { location: WorldLocation }) {
-  return <div className="ck-hout wereld-naambord" aria-hidden="true">{location.name}</div>;
-}
-
+/** The room is a visual entrance into existing knowledge and ongoing projects. */
 export default function WorldLocationLayout({ location, onNavigate }: { location: WorldLocation; onNavigate: (path: string) => void }) {
-  const [tab, setTab] = useState<'activities' | 'adventures'>('activities');
-  const [section, setSection] = useState<'main' | 'math'>('main');
-  const [plant, setPlant] = useState<string | null>(null);
-  const heeftAvonturen = location.adventures.length > 0;
-  const id = useId();
-  const open = (activity: ActivityDefinition) => {
-    if (!activity || activity.status !== 'available') return;
-    if (activity.kind === 'plant' && activity.contentId) setPlant(activity.contentId);
-    else onNavigate(withLocationOrigin(activity.path, location.id));
+  const { sound, toggleSound, play } = useMathSound();
+  const pan = useRef<{ x: number; scroll: number } | null>(null);
+  const room = DISCOVERY_ROOMS[location.id];
+  const [selected, setSelected] = useState<DiscoveryObject | null>(null);
+  const ingredient = selected?.action === 'ingredient' ? INGREDIENTS.find(item => item.id === selected.contentId) : null;
+  const crop = selected?.action === 'crop' ? GARDEN_CROPS.find(item => item.id === selected.contentId) : null;
+  const open = (object: DiscoveryObject) => {
+    play(true);
+    if (object.action === 'navigate' && object.path) onNavigate(withLocationOrigin(object.path, location.id));
+    else setSelected(object);
   };
-  /*
-   * Eén raster witte kaarten, hetzelfde als het rekenmenu en het
-   * vlaggenmemory. Geen regel "Spelen" onder elke kaart: wat op elke kaart
-   * hetzelfde staat, zegt niets. Zie `.claude/skills/cocokiki-ui`.
-   */
-  const raster = (ids: string[], label: string) => {
-    const gekozen = ids.map(key => ACTIVITIES_BY_ID[key]).filter(Boolean);
-    return <CardGrid
-      label={label}
-      cards={gekozen.map(activity => ({
-        id: activity.id,
-        titel: activity.title,
-        onder: activity.status === 'coming-soon' ? 'Binnenkort beschikbaar' : activity.subtitle,
-        beeld: activity.image,
-      }))}
-      onChoose={id => open(ACTIVITIES_BY_ID[id])}
-      vorm="plek"
-    />;
-  };
-  if (location.presentation === 'game') return <main className={`ck-scherm wereld-scherm world-location world-location--game world-location--${location.id}${location.clipboard ? ' heeft-klembord' : ''}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-label={location.name} style={{
-    '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
-    '--location-mobile-position': location.backgroundPosition.mobile,
-    ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),
-  } as React.CSSProperties}>
-    <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
-    <WereldLaag location={location} />
-    {PLAYABLE_ADVENTURES.some(item => item.definition.locationId === location.id)
-      ? <AdventureRunner location={location} onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }} />
-      : <LocationGameView
-        vorm="plek"
-        location={location}
-        onOpen={activity => { if ('activity' in activity.target) open(ACTIVITIES_BY_ID[activity.target.activity]); }}
-        onKaart={adventureId => {
-          const actie = KLEMBORD_ACTIES[adventureId];
-          if (!actie) return false;
-          onNavigate(withLocationOrigin(actie.pad, location.id));
-          return true;
-        }}
-        onDirect={(adventureId, alleenVragen) => {
-          const pad = DIRECTE_AVONTUREN[adventureId];
-          if (!pad) return false;
-          if (!alleenVragen) onNavigate(withLocationOrigin(pad, location.id));
-          return true;
-        }}
-        // De bestellingen van de bakkerij lopen via de toonbank in het
-        // kookboek, zodat er één ingang is voor een bestelling.
-        renderClipboard={preview => <AdventureClipboard
-          adventure={preview}
-          action={KLEMBORD_ACTIES[preview.id]
-            ? { label: KLEMBORD_ACTIES[preview.id].label, onClick: () => onNavigate(withLocationOrigin(KLEMBORD_ACTIES[preview.id].pad, location.id)) }
-            : undefined}
-        />}
-      />}
-  </main>;
-  return <main className={`ck-scherm wereld-scherm world-location world-location--${location.id}${location.clipboard ? ' heeft-klembord' : ''}`} data-wereld={WERELD[location.id] ?? 'boomhut'} aria-labelledby={`${id}-title`} style={{
-    '--location-accent': location.accentColor, '--location-desktop-position': location.backgroundPosition.desktop,
-    '--location-mobile-position': location.backgroundPosition.mobile,
-    ...(location.clipboard ? { '--location-clipboard': `url('${location.clipboard}')` } : {}),
-  } as React.CSSProperties}>
-    <img className="world-location__background" src={location.background} alt={`${location.character.name} in ${location.name}`} fetchPriority="high" />
-    <WereldLaag location={location} />
-    <div className="world-location__scene"><h1 id={`${id}-title`} className="sr-only">{location.name}</h1></div>
-    <div className="world-location__dock">
-      {/* Een tabblad dat alleen "binnenkort" zegt, is een belofte en geen keuze.
-          Zonder avonturen staan hier gewoon de activiteiten. */}
-      {heeftAvonturen && <div className="location-tabs" role="tablist" aria-label="Kies activiteiten of avonturen">
-        {(['activities', 'adventures'] as const).map((value, index) => <button key={value} type="button" role="tab" id={`${id}-${value}-tab`} aria-controls={`${id}-${value}`} aria-selected={tab === value} tabIndex={tab === value ? 0 : -1}
-          onClick={() => setTab(value)} onKeyDown={event => {
-            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-            event.preventDefault(); const next = event.key === 'Home' ? 'activities' : event.key === 'End' ? 'adventures' : index === 0 ? 'adventures' : 'activities';
-            setTab(next); document.getElementById(`${id}-${next}-tab`)?.focus();
-          }}>{value === 'activities' ? 'Activiteiten' : 'Avonturen'}</button>)}
-      </div>}
-      <section id={`${id}-activities`} className={`location-panel location-panel--activities${!heeftAvonturen || tab === 'activities' ? ' is-selected' : ''}${location.activities.length ? '' : ' is-kaal'}`} {...(location.activities.length ? { 'aria-labelledby': `${id}-activities-title` } : { 'aria-label': 'Activiteiten' })}>
-        {/* Een kop boven één raster zegt niets extra's. Alleen waar er ook
-            knoppen boven staan, scheidt hij de twee groepen. */}
-        {(location.activities.length > 0 || section === 'math') && <div className="location-panel__heading">
-          <h2 id={`${id}-activities-title`}>{section === 'math' ? 'Bakrekenen' : 'Activiteiten'}</h2>
-          {section === 'math' && <Button variant="quiet" size="small" startIcon={<ArrowLeft size={18} />} onClick={() => setSection('main')}>Alles</Button>}
-        </div>}
-        {section === 'main' ? <>
-          {location.activities.length > 0 && <nav className="location-actions" aria-label={`Activiteiten bij ${location.character.name}`}>
-            {location.activities.map(activity => {
-              const Icon = ICONS[activity.icon]; const target = activity.target;
-              return <button type="button" key={activity.id} className="location-action" disabled={'comingSoon' in target} onClick={() => {
-                if ('activity' in target) open(ACTIVITIES_BY_ID[target.activity]);
-                else if ('section' in target) { if (target.section === 'adventures') setTab('adventures'); else setSection('math'); }
-              }}><Icon size={24} /><span>{activity.label}</span>{'comingSoon' in target && <small>Binnenkort beschikbaar</small>}</button>;
-            })}
-          </nav>}
-          {raster(location.featuredActivities, location.id === 'coco' ? 'Recepten' : location.id === 'kiki' ? 'Planten' : location.id === 'seb' ? 'Reisspellen' : 'Rekenspellen')}
-        </> : raster(location.practiceActivities, 'Rekenspellen')}
-      </section>
-      {heeftAvonturen && <section id={`${id}-adventures`} className={`location-panel location-panel--adventures${tab === 'adventures' ? ' is-selected' : ''}`} aria-labelledby={`${id}-adventures-title`}>
-        <h2 id={`${id}-adventures-title`}>Avonturen</h2>
-        <Compass size={32} aria-hidden="true" /><p>Binnenkort beschikbaar</p>
-        <ul>{location.adventures.map(adventure => <li key={adventure.id}>{adventure.name} · Binnenkort</li>)}</ul>
-      </section>}
+  return <main className={`ck-scherm discovery-room discovery-room--${location.id}`} data-wereld={room.world} aria-labelledby="discovery-title" style={{ '--scene-ratio': room.aspectRatio ?? 16 / 9 } as React.CSSProperties}>
+    <header className="discovery-room__heading">
+      <h1 id="discovery-title" className="ck-houtbord">{room.title}</h1>
+    </header>
+    <nav className="ck-zone-gereedschap ck-glas" aria-label="Gereedschap">
+      <InfoKnop titel="Kijk eens rond" character={location.id}>Tik op een voorwerp om een boek te openen, iets te ontdekken of verder te werken. Spellen vind je bovenin bij de gameknop. Nieuwe verzoeken staan op je To Do-lijst.</InfoKnop>
+      <button type="button" className="ck-knop ck-knop--rond" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={toggleSound}>{sound ? <Volume2 /> : <VolumeX />}</button>
+    </nav>
+    <div className="discovery-room__viewport" tabIndex={0} aria-label="Kijk rond in de kamer" onPointerDown={event => {
+      if (event.pointerType !== 'mouse' || (event.target as HTMLElement).closest('button')) return;
+      pan.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft };
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }} onPointerMove={event => {
+      if (pan.current) event.currentTarget.scrollLeft = pan.current.scroll + pan.current.x - event.clientX;
+    }} onPointerUp={() => { pan.current = null; }} onPointerCancel={() => { pan.current = null; }} onLostPointerCapture={() => { pan.current = null; }}>
+      <div className="discovery-room__scene">
+        <img className="world-location__background discovery-room__background" src={location.background} alt="" draggable={false} fetchPriority="high" />
+        <nav aria-label={`Ontdek ${room.title}`}>
+          {room.objects.map(object => <button type="button" key={object.id} className="discovery-object" style={{ '--object-x': `${object.x}%`, '--object-y': `${object.y}%` } as React.CSSProperties} onClick={() => open(object)}>
+            <span className="discovery-object__light" aria-hidden="true" />
+            <span className="discovery-object__label ck-glas">{object.label}</span>
+          </button>)}
+        </nav>
+      </div>
     </div>
-    {plant && <PlantFlashcard speciesId={plant} onClose={() => setPlant(null)} onNavigate={path => onNavigate(withLocationOrigin(path, location.id))} />}
+    <p className="discovery-room__swipe ck-glas">Veeg om rond te kijken · tik om te ontdekken</p>
+    {ingredient && <FoodKnowledgeDialog ingredient={ingredient} onClose={() => setSelected(null)} />}
+    <Dialog open={Boolean(crop)} title={crop?.name ?? ''} primaryAction={null} onClose={() => setSelected(null)}>{crop && <><GardenCropFacts crop={crop} /><nav className="discovery-crops" aria-label="Andere gewassen ontdekken">{GARDEN_CROPS.filter(item => item.id !== crop.id).map(item => <button type="button" key={item.id} onClick={() => setSelected({ ...selected!, action: 'crop', contentId: item.id })}><img src={item.image} alt="" /><span>{item.name}</span></button>)}</nav>{INGREDIENTS.some(item => item.id === (crop.kitchenId ?? crop.id)) && <Button onClick={() => setSelected({ ...selected!, action: 'ingredient', contentId: crop.kitchenId ?? crop.id })}>Ontdek meer eten</Button>}</>}</Dialog>
   </main>;
 }

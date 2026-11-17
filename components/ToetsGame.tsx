@@ -1,3 +1,5 @@
+import { normalizeTopoAnswer as normalize, scoreTopoTest } from '../services/topoScoring';
+import { claimTravelAdventure, loadTravelAdventures } from '../services/travelAdventures';
 import { loadStaticJson } from '../services/staticJson';
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
@@ -17,6 +19,7 @@ import './topography/worksheet-map.css';
 
 interface Props {
   studyPool?: Location[];
+  adventureId?: string;
   provinceId: string;
   clusterId: string;
   registerExit?: (request: (() => void) | null) => void;
@@ -36,7 +39,6 @@ const toRoman = (n: number): string => {
   return result;
 };
 
-const normalize = (s: string) => s.trim().toLowerCase().replace(/['']/g, "'").replace(/\s+/g, ' ');
 
 const getCountryLocationForFeature = (feature: any) => {
   const props = feature?.properties ?? {};
@@ -51,10 +53,13 @@ const getCountryLocationForFeature = (feature: any) => {
 
 import { analytics } from '../services/analytics';
 
-const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, registerExit, onExit, onPractice }) => {
+const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, registerExit, onExit, onPractice, adventureId }) => {
   const containerRef    = useRef<HTMLDivElement>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef          = useRef<L.Map | null>(null);
+  const [travelMessage, setTravelMessage] = useState('');
+  const [travelSaveFailed, setTravelSaveFailed] = useState(false);
+  const proof = useRef<Pick<TestDraft, 'adventureAttemptId' | 'submittedAt'>>({});
   const [submitted, setSubmitted]     = useState(false);
   const [answers, setAnswers]         = useState<Record<string, string>>({});
   const [geoData, setGeoData]         = useState<any>(null);
@@ -125,6 +130,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     if (loadedKey.current === key) return;
     loadedKey.current = key;
     const draft = loadTestDraft(ids);
+    proof.current = { ...(draft.adventureAttemptId ? { adventureAttemptId: draft.adventureAttemptId, submittedAt: draft.submittedAt } : {}) };
     setOrderIds(draft.orderIds ?? []);
     if (draft.submitted) {
       previousResult.current = draft;
@@ -160,7 +166,8 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     return () => { registerExit?.(null); unregister(); window.removeEventListener('beforeunload', warn); };
   }, [changed, registerExit, onExit]);
   const persist = (nextAnswers: Record<string, string>, nextSubmitted: boolean, nextRetry: string[] | null, nextOrder = orderIds, nextDeferred = deferredIds) => {
-    setStorageOk(saveTestDraft(ids, { answers: nextAnswers, submitted: nextSubmitted, retryIds: nextRetry, orderIds: nextOrder, deferredIds: nextDeferred }));
+    const ok = saveTestDraft(ids, { ...proof.current, answers: nextAnswers, submitted: nextSubmitted, retryIds: nextRetry, orderIds: nextOrder, deferredIds: nextDeferred });
+    setStorageOk(ok); return ok;
   };
 
   const cities  = useMemo(() => locations.filter(l => l.type === 'city' || l.type === 'province'), [locations]);
@@ -315,19 +322,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     }
   }, [locations, worksheet.dataset]);
 
-  const result = useMemo(() => {
-    if (!submitted) return null;
-    let correct = 0;
-    const total = locations.length;
-    const details: Record<string, boolean> = {};
-    locations.forEach(loc => {
-      const ok = normalize(answers[loc.id] ?? '') === normalize(loc.name);
-      details[loc.id] = ok;
-      if (ok) correct++;
-    });
-    const grade = total === 0 ? 10 : Math.round((1 + (correct / total) * 9) * 10) / 10;
-    return { correct, total, grade, details };
-  }, [submitted, answers, locations]);
+  const result = useMemo(() => submitted ? scoreTopoTest(locations, answers) : null, [submitted, answers, locations]);
 
   const handleChange = (id: string, val: string) => {
     const next = { ...answers, [id]: val };
@@ -335,16 +330,27 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     setAnswers(next); setDeferredIds(pending); persist(next, submitted, retryIds, orderIds, pending);
   };
 
-  const submit = () => { analytics().complete('topo:test'); setSubmitted(true); persist(answers, true, retryIds); setPanel(null); };
+  const claimTravel = () => {
+    if (!adventureId) return;
+    const claim = claimTravelAdventure(adventureId, provinceId, locations.map(item => item.id));
+    setTravelSaveFailed(claim.status === 'save-failed');
+    setTravelMessage(claim.status === 'earned' ? `Een 10! +${claim.reward} CocoCoins extra. Je reis staat nu in je encyclopedie.` : claim.status === 'save-failed' ? 'Je toets is bewaard. De reisbeloning bewaren lukte nog niet; probeer je reisbeloning opnieuw te bewaren.' : claim.status === 'already-earned' ? 'Deze reis staat al in je encyclopedie.' : 'Oefen gerust verder. Haal een 10 op de hele kaart om Sebs reis af te ronden.');
+  };
+  const submit = () => {
+    const active = loadTravelAdventures().active;
+    proof.current = adventureId && active?.adventureId === adventureId ? { adventureAttemptId: active.attemptId, submittedAt: new Date().toISOString() } : {};
+    if (!persist(answers, true, retryIds)) return;
+    analytics().complete('topo:test'); setSubmitted(true); setPanel(null); claimTravel();
+  };
   const shuffle = () => {
     const nextOrder = [cities, countries, waters, regions].flatMap(group => shuffledTestIds(group.map(location => location.id)));
     setOrderIds(nextOrder); persist(answers, submitted, retryIds, nextOrder); setPanel(null);
   };
-  const restart = () => { analytics().start('topo:test', true); setSubmitted(false); setAnswers({}); setRetryIds(null); setActiveId(null); setDeferredIds([]); persist({}, false, null, orderIds, []); setPanel(null); };
+  const restart = () => { proof.current = {}; setTravelMessage(''); setTravelSaveFailed(false); analytics().start('topo:test', true); setSubmitted(false); setAnswers({}); setRetryIds(null); setActiveId(null); setDeferredIds([]); persist({}, false, null, orderIds, []); setPanel(null); };
   const restoreResult = () => {
     const draft = previousResult.current;
     if (!draft) return;
-    setAnswers(draft.answers); setSubmitted(true); setRetryIds(draft.retryIds); setOrderIds(draft.orderIds ?? []); setDeferredIds(draft.deferredIds ?? []); setPanel(null);
+    setAnswers(draft.answers); setSubmitted(true); setRetryIds(draft.retryIds); setOrderIds(draft.orderIds ?? []); setDeferredIds(draft.deferredIds ?? []); setPanel(null); claimTravel();
   };
 
   return (
@@ -353,8 +359,9 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       className={`toets-game test-focused${isFullscreen ? ' is-fullscreen' : ''}`}
     >
       <header className="test-focused__toolbar">
-        <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span></div>
+        <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span>{travelMessage && <p className="topo-travel-message" role="status">{travelMessage}</p>}</div>
         <div>
+          {submitted && travelSaveFailed && <Button variant="quiet" size="small" onClick={claimTravel}>Bewaar reisbeloning</Button>}
           {!submitted && <Button variant="quiet" size="small" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}>Toets nakijken</Button>}
           <IconButton label="Uitleg van Seb" icon={<HelpCircle size={20} />} onClick={() => setPanel('help')} />
           <IconButton label="Toetsinstellingen voor ouders" icon={<Settings2 size={20} />} onClick={() => setPanel('settings')} />

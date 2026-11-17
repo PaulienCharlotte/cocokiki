@@ -1,3 +1,5 @@
+import { answerCoins } from './answerRewards';
+import { TASK_REWARDS } from './taskRewards';
 import { PATIENT_KINDS, maakGeval, type Geval } from '../data/plants/clinic';
 import { PLANT_SPECIES_BY_ID } from '../data/plants/species';
 import { commitLocalState, readDocument } from './localState';
@@ -106,7 +108,7 @@ export function finishConsult(
   }
   const eerder = state.correct[patient.speciesId] ?? 0;
   const nu = eerder + 1;
-  const coins = learningReward();
+  const coins = TASK_REWARDS.clinic;
   return {
     state: {
       ...state,
@@ -128,4 +130,15 @@ export function hasStamp(state: ClinicState, speciesId: string): boolean {
 export function passportProgress(state: ClinicState): { earned: number; total: number } {
   const soorten = [...new Set(PATIENT_KINDS.map(kind => kind.speciesId))];
   return { earned: soorten.filter(id => hasStamp(state, id)).length, total: soorten.length };
+}
+
+/** Save treatment and payment together; an already claimed consult pays nothing. */
+export function claimConsult(patient: Patient, mistakes: number, hintUsed: boolean): ConsultResult | null {
+  const result = finishConsult(loadClinic(), patient, mistakes, hintUsed);
+  if (!result.coins) return result;
+  const amount = Math.max(0, result.coins - answerCoins('clinic', patient.consultId));
+  const saved = commitLocalState({ [PLANT_CLINIC_KEY]: JSON.stringify(result.state) }, [{ id: `kliniek:${patient.consultId}`, amount }]);
+  if (saved.status !== 'applied' && saved.status !== 'duplicate') return null;
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(PLANT_CLINIC_CHANGE_EVENT, { detail: result.state }));
+  return result;
 }

@@ -14,3 +14,11 @@
 /* In het spel: het werelddeel als klein knopje in het statuseiland */
 .flags-spel .flags-spel__deel.ck-icon-button { width: auto; min-width: 0; height: 36px; padding: 0 12px 0 8px; gap: 4px; border: 0; border-radius: 999px; background: var(--ck-actief); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; box-shadow: 0 3px 0 var(--ck-actief-rand); }
 .flags-spel .flags-spel__deel span { display: inline; }
+.flags-map-screen .flag-continents { position: absolute; inset: calc(var(--space-12) * 3) var(--space-5) var(--space-5); display: grid; place-items: center; overflow-y: auto; }
+.flags-map-screen .continent-map { padding: var(--space-5); box-sizing: border-box; background: var(--ck-glas); border-radius: var(--radius-dialog); }
+@media(max-width:600px) { .flags-map-screen .flag-continents { inset: calc(var(--space-12) * 3) var(--space-2) var(--space-3); }.flags-map-screen .continent-map { padding: var(--space-3); }.continent-map__legend { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-2); }.continent-map__legend button { font-size: var(--font-size-sm); padding: var(--space-2); } }
+.flags-map-screen .flag-continents { max-width: none; width: auto; }
+.flags-map-screen .continent-map svg { max-height: calc(100svh - var(--space-12) * 6); }
+.flags-spel .flags-spel__deel.ck-icon-button { width: var(--touch-target); min-width: var(--touch-target); height: var(--touch-target); padding: 0; border-radius: var(--radius-pill); background: var(--ck-glas); color: var(--ck-cacao); box-shadow: none; }
+.flags-spel .memory-status { top: calc(var(--space-12) * 2); left: var(--space-4); right: auto; transform: none; translate: none; }
+@media(max-width:700px) { .flags-spel .memory-status { top: calc(var(--space-12) + var(--space-6)); max-width: calc(100% - var(--space-8)); } }

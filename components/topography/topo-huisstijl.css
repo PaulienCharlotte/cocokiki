@@ -70,3 +70,4 @@
 }
 .topo-app.topo-huisstijl .set-keuze button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .8); border-radius: 999px; background: rgba(255, 255, 255, .7); color: var(--ck-cacao); font-family: var(--ck-font-tekst); font-weight: 800; font-size: 16px; }
 .topo-app.topo-huisstijl .set-keuze button.is-actief { background: var(--ck-actief); border-color: var(--ck-actief); color: var(--ck-wit); }
+.topo-travel-message { margin: 0; max-width: 48ch; font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); color: var(--ck-cacao); }

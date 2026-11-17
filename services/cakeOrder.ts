@@ -1,3 +1,4 @@
+import { TASK_REWARDS } from './taskRewards';
 import type { GeplaatsteVersiering } from '../data/cake/types';
 import { commitLocalState, readDocument } from './localState';
 
@@ -8,7 +9,7 @@ export function loadCakeOrder(): CakeOrderState {
   try {
     const value = JSON.parse(readDocument(CAKE_ORDER_KEY) ?? 'null');
     if (!value || typeof value !== 'object') return empty;
-    return { started: value.started === true, timed: value.timed === true, elapsed: Number.isFinite(value.elapsed) ? Math.max(0, value.elapsed) : 0, delivered: value.delivered === true, reward: value.reward === 7 ? 7 : value.reward === 5 ? 5 : 0 };
+    return { started: value.started === true, timed: value.timed === true, elapsed: Number.isFinite(value.elapsed) ? Math.max(0, value.elapsed) : 0, delivered: value.delivered === true, reward: [5, 7, TASK_REWARDS.cake, TASK_REWARDS.cake + TASK_REWARDS.cakeSpeed].includes(value.reward) ? value.reward : 0 };
   } catch { return empty; }
 }
 export function cakeMeetsOrder(bodemId: string, decorations: GeplaatsteVersiering[]): boolean {
@@ -22,7 +23,7 @@ export function deliverCakeOrder(bodemId: string, decorations: GeplaatsteVersier
   const current = loadCakeOrder();
   if (current.delivered) return current;
   if (!current.started || !cakeMeetsOrder(bodemId, decorations)) return null;
-  const reward = current.timed && current.elapsed < 300 ? 7 : 5;
+  const reward = current.timed && current.elapsed < 300 ? TASK_REWARDS.cake + TASK_REWARDS.cakeSpeed : TASK_REWARDS.cake;
   const next = { ...current, delivered: true, reward };
   const result = commitLocalState({ [CAKE_ORDER_KEY]: JSON.stringify(next) }, [{ id: 'cake-order:seb-birthday:v1', amount: reward }]);
   return result.status === 'applied' || result.status === 'duplicate' ? next : null;

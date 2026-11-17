@@ -45,3 +45,6 @@
 .my-games .game-pin .ck-icon-button::before { content: ''; position: absolute; z-index: -1; inset: var(--space-2); border-radius: var(--radius-pill); background: var(--ck-room); box-shadow: var(--shadow-soft); }
 .my-games .game-pin .ck-icon-button svg { width: var(--space-4); height: var(--space-4); }
 .my-games .game-pin [aria-pressed=true]::before { background: var(--ck-zon); }
+.my-games .ck-zone-gereedschap { top: calc(var(--space-12) * 2); }
+@media(min-width:701px) { .my-games { padding-left: calc(var(--space-12) * 2); } }
+@media(max-width:700px) { .my-games { padding-top: calc(var(--space-12) * 3); } }

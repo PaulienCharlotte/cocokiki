@@ -8,7 +8,7 @@ export function favoriteGameId(id: string): string {
   return ['multiply', 'divide', 'balance', 'race', 'add-subtract'].includes(id) ? `math:${id}` : id;
 }
 export const FAVORITE_GAME_CATALOG: ActivityDefinition[] = ACTIVITY_LIBRARY.filter(game =>
-  game.kind === 'game' && game.status === 'available' && !['red-baby-lua', 'math:missing', 'math:maten'].includes(game.id),
+  game.kind === 'game' && game.status === 'available' && game.id !== 'red-baby-lua',
 );
 export function canFavoriteGame(id: string): boolean {
   return FAVORITE_GAME_CATALOG.some(game => game.id === favoriteGameId(id));

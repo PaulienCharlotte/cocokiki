@@ -1,0 +1,45 @@
+/* Hetzelfde materiaal en vraagpatroon als het kookavontuur, in Kiki's kas. */
+main.clinic.ck-scherm { box-sizing: border-box; padding: calc(var(--space-12) * 2) var(--space-6) var(--space-8) calc(var(--space-12) * 2); background-attachment: fixed; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
+.clinic .clinic__card { box-sizing: border-box; width: min(100%, 44rem); min-width: 0; gap: var(--space-5); padding: var(--space-8); border: 0; border-radius: var(--radius-card); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 180% no-repeat; box-shadow: var(--shadow-raised); }
+.clinic .clinic__card > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.clinic .clinic__top { align-items: center; gap: var(--space-3); }
+.clinic .clinic__top > div:not(.clinic__tellers) { min-width: 0; }
+.clinic .clinic__top h1 { width: fit-content; padding: var(--space-3) var(--space-5); background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; font-family: var(--ck-font-kop); font-size: var(--font-size-xl); color: var(--ck-room); }
+.clinic .clinic__top em:empty { display: none; }
+.clinic .clinic__emblem { width: var(--space-12); height: var(--space-12); object-fit: contain; }
+.clinic .clinic__tellers { margin-left: auto; display: flex; align-items: center; gap: var(--space-2); }
+.clinic .clinic__tellers p { margin: 0; padding: var(--space-2); background: var(--ck-glas); color: var(--ck-cacao); font-size: var(--font-size-sm); border-radius: var(--radius-pill); }
+.clinic .clinic__tools { position: fixed; top: calc(var(--space-12) * 2); }
+.clinic .clinic__plant { width: min(100%, 13rem); }
+.clinic .clinic__bubbel { margin: 0; padding: 0; background: none; border-radius: 0; font: inherit; }
+.clinic .clinic__bubbel::before { display: none; }
+.clinic .clinic__bubbel .ck-zegt__wolk { background: var(--ck-glas); }
+.clinic .clinic__bubbel .ck-zegt__tekst { color: var(--ck-cacao); }
+.clinic .clinic__chip { background: var(--ck-glas); border-color: var(--ck-hout-licht); color: var(--ck-cacao); font-family: var(--ck-font-tekst); min-height: var(--touch-target); }
+.clinic .clinic__kaarten { gap: var(--space-3); }
+.clinic .clinic__kaart { min-width: 0; padding: var(--space-4); border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-control); background: var(--ck-room); color: var(--ck-cacao); box-shadow: 0 var(--space-1) 0 var(--ck-hout); font-family: var(--ck-font-kop); font-size: var(--font-size-md); }
+.clinic .clinic__kaart img { object-fit: contain; max-width: 100%; }
+.clinic .clinic__beloning { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2); background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-kop); }
+.clinic .clinic__beloning strong, .clinic .clinic__beloning small { width: 100%; }
+.ck-dialog.clinic-dialog { background: var(--ck-room); color: var(--ck-cacao); font-family: var(--ck-font-tekst); }
+.clinic-dialog .plantenboek__tegel { background: var(--ck-glas); border: 1px solid var(--ck-hout-licht); color: var(--ck-cacao); }
+@media(max-width:700px) {
+ main.clinic.ck-scherm { padding: calc(var(--space-12) * 3) var(--space-3) var(--space-6); }
+ .clinic .clinic__card { padding: var(--space-5); gap: var(--space-4); }
+ .clinic .clinic__top { flex-wrap: wrap; }
+ .clinic .clinic__top h1 { font-size: var(--font-size-lg); padding: var(--space-3); }
+ .clinic .clinic__emblem { width: var(--space-10); height: var(--space-10); }
+ .clinic .clinic__tellers { width: 100%; justify-content: flex-end; }
+ .clinic .clinic__plant { width: min(100%, 10rem); }
+ .clinic .clinic__bubbel .ck-zegt__gids { width: var(--space-10); height: var(--space-10); }
+}
+.clinic .clinic__top { justify-content: flex-start; }
+.clinic .clinic__card { padding: var(--space-10); }
+.clinic .clinic__top > div:not(.clinic__tellers) { flex: 1; }
+@media(max-width:700px) {
+ .clinic .clinic__card { padding: var(--space-8); }
+ .clinic .clinic__top h1 { font-size: var(--font-size-md); }
+ .clinic .clinic__plant { width: min(100%, 9rem); }
+ .clinic .clinic__tellers { justify-content: flex-start; }
+}
+.clinic .ck-keuzes.is-los .ck-keuze, .clinic .ck-keuzes.is-los .ck-keuze > span { text-align: left; }

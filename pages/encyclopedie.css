@@ -1,0 +1,54 @@
+@import '../styles/paper-surface.css';
+@import '../styles/cocokiki-tokens.css';
+main.encyclopedie { min-height: 100svh; padding: calc(var(--ck-tik-min) + var(--space-8)) var(--space-5) var(--space-8); background: var(--ck-hout) url('/dreamworld/plant-clinic.webp') center / cover fixed; color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.4 var(--ck-font-tekst); }
+.encyclopedie .encyclopedie__kaart { width: min(100%, calc(var(--ck-tik-min) * 20)); padding: var(--space-8); border: 0; border-radius: 0; background: var(--ck-room) url('/assets/library/ui/pinned-paper.webp') center / 100% 220%; box-shadow: none; gap: var(--space-5); }
+.encyclopedie .encyclopedie__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.encyclopedie .encyclopedie__top h1 { margin: 0; padding: var(--space-3) var(--space-8); background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; color: var(--ck-room); font: 800 var(--ck-maat-titel)/1.2 var(--ck-font-kop); }
+.encyclopedie__chapters { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.encyclopedie .encyclopedie__chapters .ck-knop { flex: 1 1 auto; padding: var(--space-3); background: var(--ck-glas); border-color: var(--ck-hout); color: var(--ck-cacao); text-shadow: none; font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); }
+.encyclopedie .encyclopedie__chapters [aria-pressed=true] { background: var(--ck-zon); }
+.encyclopedie .encyclopedie__tabs { flex-wrap: wrap; padding: var(--space-2); border-radius: var(--ck-rond-knop); background: var(--ck-glas); }
+.encyclopedie .encyclopedie__tab { flex: 1 1 auto; min-height: var(--ck-tik-min); padding: var(--space-2); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); color: var(--ck-cacao); }
+.encyclopedie .encyclopedie__tab.is-aan { background: var(--ck-room); box-shadow: none; }
+.encyclopedie .encyclopedie__tab small { background: transparent; color: var(--ck-cacao); font-size: var(--ck-maat-tekst); }
+.encyclopedie .encyclopedie__raster { gap: var(--space-5); grid-template-columns: repeat(auto-fill, minmax(calc(var(--ck-tik-min) * 2.7), 1fr)); }
+.encyclopedie .encyclopedie__tegel { position: relative; min-height: calc(var(--ck-tik-min) * 3.5); padding: var(--space-6) var(--space-4) var(--space-5); gap: var(--space-2); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border: 0; border-radius: 0; box-shadow: none; }
+.encyclopedie .encyclopedie__tegel img { width: calc(var(--ck-tik-min) * 1.6); height: calc(var(--ck-tik-min) * 1.6); }
+.encyclopedie .encyclopedie__tegel strong { font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); color: var(--ck-cacao); }
+.encyclopedie .encyclopedie__tegel small { color: var(--ck-cacao); font-size: var(--ck-maat-tekst); }
+.encyclopedie .encyclopedie__tegel.is-slot { background: var(--ck-glas); border: 0; border-radius: var(--ck-rond-tegel); }
+.encyclopedie .encyclopedie__tegel.is-slot span { color: var(--ck-hout); }
+.encyclopedie .encyclopedie__taart { padding: var(--space-5); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; }
+.encyclopedie .encyclopedie__taart img { background: transparent; }
+.encyclopedie .encyclopedie__taart figcaption { font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); color: var(--ck-cacao); }
+.encyclopedie .encyclopedie__leeg, .encyclopedie .encyclopedie__leeg p { color: var(--ck-cacao); }
+.encyclopedie .encyclopedie__leeg svg { color: var(--ck-hout); }
+@media (max-width: 600px) {
+  main.encyclopedie { padding-inline: var(--space-3); }
+  .encyclopedie .encyclopedie__kaart { padding: var(--space-4); gap: var(--space-4); }
+  .encyclopedie .encyclopedie__top h1 { padding: var(--space-3) var(--space-5); font-size: var(--ck-maat-kop); }
+  .encyclopedie .encyclopedie__raster { grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-3); }
+  .encyclopedie .encyclopedie__tegel { padding-inline: var(--space-2); }
+  .encyclopedie .encyclopedie__tegel img { width: var(--ck-tik-min); height: var(--ck-tik-min); }
+}
+.encyclopedie .encyclopedie__chapters .ck-knop { display: flex; align-items: center; justify-content: center; gap: var(--space-2); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 220% no-repeat; }
+.encyclopedie__chapters img { width: var(--ck-tik-min); height: var(--ck-tik-min); object-fit: contain; }
+.encyclopedie .encyclopedie__chapters [aria-pressed=true] { box-shadow: inset 0 calc(var(--ck-onderkant) * -1) var(--ck-actief); }
+.encyclopedie .encyclopedie__tegel.is-slot { background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border-radius: 0; }
+.encyclopedie .encyclopedie__tegel.is-slot svg { width: var(--ck-maat-kop); height: var(--ck-maat-kop); }
+@media (max-width:600px) { .encyclopedie .encyclopedie__chapters .ck-knop { flex: 1 1 calc(50% - var(--space-3)); flex-direction: column; }.encyclopedie__chapters img { width: var(--ck-tik-min); height: var(--ck-tik-min); } }
+
+/* Let the illustrated edge define the surface; no cream rectangle behind it. */
+.encyclopedie .encyclopedie__kaart.ck-paper-surface { background: none; padding: var(--space-10) 6% calc(var(--ck-tik-min) * 2); box-shadow: none; border: 0; }
+.encyclopedie .encyclopedie__kaart.ck-paper-surface::before { background-repeat: no-repeat; }
+@media(max-width:600px) { .encyclopedie .encyclopedie__kaart.ck-paper-surface { padding: var(--space-8) 7%; } }
+.encyclopedie .encyclopedie__kaart { container-type: inline-size; }
+.encyclopedie .encyclopedie__kaart.ck-paper-surface::before { background: none; border: var(--ck-tik-min) solid transparent; border-image-source: url('/assets/library/ui/pinned-paper.webp'); border-image-slice: 160 100 120 fill; border-image-width: calc(100cqw * 160 / 1086) calc(100cqw * 100 / 1086) calc(100cqw * 120 / 1086); border-image-repeat: stretch; }
+.encyclopedie .encyclopedie__tegel.is-vergrendeld { place-content: initial; }
+.encyclopedie .encyclopedie__tegel.is-vergrendeld img { filter: grayscale(1); opacity: .4; }
+.encyclopedie .encyclopedie__tegel.is-vergrendeld strong { opacity: .8; }
+.encyclopedie .encyclopedie__tegel .encyclopedie__slot { position: absolute; right: var(--space-3); top: var(--space-5); display: grid; place-items: center; color: var(--ck-cacao); }
+.encyclopedie .encyclopedie__slot svg { width: var(--ck-maat-tekst); height: var(--ck-maat-tekst); }
+.encyclopedie__kaartweetjes { margin-top: var(--space-5); }.encyclopedie__kaartweetjes summary { cursor: pointer; font: 800 var(--ck-maat-tekst)/1.4 var(--ck-font-kop); color: var(--ck-cacao); }
+.encyclopedie__reisplaatsen { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.encyclopedie [role=tabpanel] > .ck-button { margin-bottom: var(--space-4); }

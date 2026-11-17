@@ -15,22 +15,22 @@ function furnish() {
  assert.ok(positionNursery(loadNursery().revision, 'dresser', 68, 84));
  assert.ok(positionNursery(loadNursery().revision, 'lamp', 91, 84));
 }
-test('Luna-project doorloopt meten, eigen budget, narekenen en afleveren met maximaal 100 munten', () => stored(() => {
+test('Luna-project doorloopt meten, eigen budget, narekenen en afleveren met maximaal 200 munten', () => stored(() => {
  const inventory = readDocument(ROOM_INVENTORY_KEY);
  assert.equal(finishNursery(0), false); assert.ok(beginNursery());
  assert.equal(answerNursery(loadNursery().revision, '260'), 'wrong');
  solve(); solve();
  assert.equal(loadNursery().stage, 'shop'); assert.equal(checkoutNursery(loadNursery().revision), false);
  for (const id of ['crib', 'dresser', 'lamp'] as const) assert.ok(toggleNurseryItem(loadNursery().revision, id));
- assert.equal(nurseryTotal(loadNursery()), 365); assert.equal(loadCurrency(), 24);
+ assert.equal(nurseryTotal(loadNursery()), 365); assert.equal(loadCurrency(), 48);
  const stale = loadNursery().revision;
  assert.ok(toggleNurseryItem(stale, 'shelf')); assert.equal(toggleNurseryItem(stale, 'chair'), false);
  assert.equal(toggleNurseryItem(loadNursery().revision, 'chair'), false); // 520 boven budget
  assert.ok(toggleNurseryItem(loadNursery().revision, 'shelf'));
  assert.ok(checkoutNursery(loadNursery().revision)); solve(); solve(); solve();
- assert.equal(loadCurrency(), 60); assert.equal(finishNursery(loadNursery().revision), false);
+ assert.equal(loadCurrency(), 120); assert.equal(finishNursery(loadNursery().revision), false);
  furnish(); assert.ok(finishNursery(loadNursery().revision));
- assert.equal(loadNursery().stage, 'complete'); assert.equal(nurseryEarned(), 100); assert.equal(loadCurrency(), 100);
+ assert.equal(loadNursery().stage, 'complete'); assert.equal(nurseryEarned(), 200); assert.equal(loadCurrency(), 200);
  assert.equal(finishNursery(loadNursery().revision), false); assert.equal(beginNursery(), false);
  assert.equal(readDocument(ROOM_INVENTORY_KEY), inventory);
 }));
@@ -48,7 +48,7 @@ test('inrichten zonder rekenstappen, overlappende meubels en verouderde handelin
  for (const id of ['crib', 'dresser', 'lamp'] as const) assert.ok(toggleNurseryItem(loadNursery().revision, id));
  assert.ok(checkoutNursery(loadNursery().revision)); solve(); solve(); solve();
  for (const id of ['crib', 'dresser', 'lamp'] as const) assert.ok(positionNursery(loadNursery().revision, id, 30, 84));
- assert.equal(finishNursery(loadNursery().revision), false); assert.equal(loadCurrency(), 60);
+ assert.equal(finishNursery(loadNursery().revision), false); assert.equal(loadCurrency(), 120);
  const rev = loadNursery().revision; furnish(); assert.equal(positionNursery(rev, 'crib', 40, 84), false);
 }));
 
@@ -56,7 +56,7 @@ test('één geholpen stap levert ook in de afsluitbonus niets op', () => stored(
  assert.ok(beginNursery()); solve(true); solve();
  for (const id of ['crib', 'dresser', 'lamp'] as const) assert.ok(toggleNurseryItem(loadNursery().revision, id));
  assert.ok(checkoutNursery(loadNursery().revision)); solve(); solve(); solve();
- assert.equal(loadCurrency(), 48); furnish(); assert.ok(finishNursery(loadNursery().revision)); assert.equal(loadCurrency(), 80);
+ assert.equal(loadCurrency(), 96); furnish(); assert.ok(finishNursery(loadNursery().revision)); assert.equal(loadCurrency(), 160);
 }));
 
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 import { MemoryPair } from '../data/learning';
 import { shuffle } from '../services/localProgress';
+import InfoKnop from './ui/InfoKnop';
 import RoundResult from './RoundResult';
 import './memory-mobile.css';
 import './memory-huisstijl.css';
@@ -105,6 +106,7 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, a
   return <>
   <div className="ck-zone-status ck-glas memory-status" aria-label={`${matched.length} van ${pairs.length} setjes gevonden`}>
     {statusExtra}
+    <InfoKnop character={gids}>{pairs[0]?.kind === 'flag' ? 'Tik op twee kaarten. Vind bij elk land de goede vlag.' : 'Tik op twee kaarten en vind de setjes die bij elkaar horen.'} Gevonden setjes blijven open liggen.</InfoKnop>
     <span className="memory-status__stippen" aria-hidden="true">{pairs.map((pair, i) => <i key={pair.id} className={`ck-stip${i < matched.length ? ' ck-stip--klaar' : ''}${i === matched.length ? ' ck-stip--nu' : ''}`} />)}</span>
     {bordTotaal > 1 && <span className="ck-niveau">Bord {batch + 1} van {bordTotaal}</span>}
   </div>
@@ -125,10 +127,10 @@ function MemoryBoard({ pairs, onAnswer, onContinue, onRepeat, onRetry, onExit, a
       </button>;
     })}</div>
   </section>
-  <div className="ck-zone-personage memory-gids">
+  {feedback && <div className="ck-zone-personage memory-gids">
     <img className="ck-ballon__gezicht" src={persoon.beeld} alt={persoon.naam} />
     <p className="ck-ballon__tekst memory-feedback" role="status"><span className="ck-ballon__naam">{persoon.naam.toUpperCase()}</span>{feedback || (pairs[0]?.kind === 'flag' ? 'Vind bij elk land de goede vlag.' : 'Vind de setjes die bij elkaar horen.')}</p>
-  </div>
+  </div>}
   </>;
 }
 

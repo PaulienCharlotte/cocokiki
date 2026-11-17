@@ -1,7 +1,3 @@
-import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
-import { RECIPES } from '../data/cooking/catalog';
-import { PLANT_SPECIES } from '../data/plants/species';
-import { MATH_GAMES, GETEKENDE_MATH_GAMES } from '../games/math/config';
 import { CHARACTERS, type CharacterId } from '../data/characters';
 
 /** De bewoners zijn de personages uit `data/characters.ts`, geen eigen lijst. */
@@ -51,56 +47,42 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
     background: '/dreamworld/topo-interior.webp',
     clipboard: '/assets/library/travel/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
-    accentColor: 'var(--color-sky)', character: { id: 'seb', name: CHARACTERS.seb.naam },
-    // Geen losse iconen meer op de tekening: één raster kaarten, net als school.
+    accentColor: 'var(--ck-wereld)', character: { id: 'seb', name: CHARACTERS.seb.naam },
     activities: [],
-    featuredActivities: ['topo', 'flags-memory', 'clock'],
+    featuredActivities: [],
     practiceActivities: [], adventures: [],
   },
   {
-    id: 'lua', islandId: 'math', path: '/islands/math', name: 'Baby Lua’s Rekenwerkplaats',
-    // Rekenen hoort op school; de rekenspellen staan er al jaren in.
-    background: '/games/school/school-interior.webp',
+    id: 'lua', islandId: 'math', path: '/islands/math', name: 'Lua’s werkplaats',
+    background: '/games/school/math/adventures/story-room.webp',
     clipboard: '/assets/library/school/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
-    accentColor: 'var(--color-primary)', character: { id: 'lua', name: CHARACTERS.lua.naam },
-    // Vijf hoofdspellen; kloklezen hoort alleen bij Seb. Oude routes blijven bestaan.
+    accentColor: 'var(--ck-actief)', character: { id: 'lua', name: CHARACTERS.lua.naam },
     activities: [],
-    featuredActivities: ['math:multiply', 'math:divide', 'math:balance', 'math:race', 'math:add-subtract'],
+    featuredActivities: [],
     practiceActivities: [], adventures: [],
   },
   {
-    id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s Bakkerij',
-    background: '/dreamworld/locations/coco-bakery.webp',
+    id: 'coco', islandId: 'cooking', path: '/islands/cooking', name: 'Coco’s kookstudio',
+    background: '/dreamworld/locations/coco-bakery-discovery.webp',
     backgroundPosition: { desktop: '28% center', mobile: '18% center' },
     clipboard: '/assets/library/cooking/klembord.webp',
-    accentColor: 'var(--color-reward-strong)', character: { id: 'coco', name: CHARACTERS.coco.naam },
+    accentColor: 'var(--ck-keuken)', character: { id: 'coco', name: CHARACTERS.coco.naam },
     presentation: 'game',
-    // Vaste bestemmingen openen rechtstreeks; de toonbank bevat de opdrachten.
     activities: [],
-    featuredActivities: RECIPES.map(recipe => `recipe:${recipe.id}`),
-    practiceActivities: ['math:missing', 'math:balance', 'math:race', 'math:add-subtract'],
+    featuredActivities: [],
+    practiceActivities: [],
     adventures: [],
-    adventurePreviews: [
-      { id: 'kookboek', title: 'Het kookboek', description: 'Kies een recept of versier vrij een taart.', image: '/assets/library/cooking/baking/blueberry-muffin.webp', tone: 'sage', status: 'available' },
-      { id: 'taartenatelier', title: 'Taart versieren', description: 'Maak en versier je eigen feestelijke taart.', image: '/assets/library/cooking/taarten/roze-rand.webp', tone: 'berry', status: 'available' },
-      { id: 'voeding', title: 'Ontdek je eten', description: 'Ontdek samen met Coco wat je lichaam met eten doet.', image: '/assets/library/cooking/healthy/wholewheat-pasta.webp', tone: 'sage', status: 'available' },
-    ],
+    adventurePreviews: [],
   },
   {
-    id: 'kiki', islandId: 'plants', path: '/islands/plants', name: 'Kiki’s Plantenkas',
-    background: '/dreamworld/locations/kiki-greenhouse.webp',
+    id: 'kiki', islandId: 'plants', path: '/islands/plants', name: 'Kiki’s moestuin',
+    background: '/dreamworld/locations/kiki-greenhouse-discovery.webp',
     backgroundPosition: { desktop: 'center', mobile: '38% center' },
     clipboard: '/assets/library/plants/klembord.webp',
-    accentColor: 'var(--color-primary)', character: { id: 'kiki', name: CHARACTERS.kiki.naam },
+    accentColor: 'var(--ck-actief)', character: { id: 'kiki', name: CHARACTERS.kiki.naam },
     presentation: 'game',
-    // Alleen de plantendokter. Mijn planten en het plantenboek bestaan nog
-    // wel, maar staan hier niet: liever minimaal dan rommelig. De routes
-    // /plants/collection en /encyclopedie blijven gewoon werken.
     activities: [], featuredActivities: [], practiceActivities: [], adventures: [],
-    adventurePreviews: [
-      { id: 'plantendokter', title: 'De plantendokter', description: 'Help een plant in het spreekuur.', image: PLANT_DOCTOR_EMBLEM, tone: 'sage', status: 'available' },
-      { id: 'moestuin', title: 'Mijn moestuin', description: 'Plant een rij, meet water af en oogst je eigen groenten.', image: '/assets/library/plants/garden/navigation.webp', tone: 'sage', status: 'available' },
-    ],
+    adventurePreviews: [],
   },
 ];

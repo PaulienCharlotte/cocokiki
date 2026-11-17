@@ -47,3 +47,9 @@ import './garden.test';
 import './tasks.test';
 
 import './nurseryProject.test';
+
+import './completedTasks.test';
+
+import "./answerRewards.test";
+
+import "./travelAdventures.test";

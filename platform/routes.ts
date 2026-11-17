@@ -16,6 +16,7 @@ export type AppRoute =
   | { page: 'food-discovery'; path: '/cooking/discover' }
   | { page: 'nutrient-memory'; path: '/games/nutrient-memory' }
   | { page: 'taartenatelier'; path: '/games/taartenatelier' }
+  | { page: 'cooking-orders'; path: '/cooking/orders' }
   | { page: 'cooking-kitchen'; path: '/cooking/kitchen' }
   | { page: 'island'; path: `/islands/${IslandId}`; islandId: IslandId }
   | { page: 'store'; path: string; store: 'furniture' | 'plants' | 'groceries' }
@@ -92,6 +93,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   else if (canonical === '/privacy') route = { page: 'privacy', path: '/privacy' };
   else if (canonical === '/games/nutrient-memory') route = { page: 'nutrient-memory', path: '/games/nutrient-memory' };
   else if (canonical === '/games/taartenatelier') route = { page: 'taartenatelier', path: '/games/taartenatelier' };
+  else if (canonical === '/cooking/orders') route = { page: 'cooking-orders', path: '/cooking/orders' };
   else if (canonical === '/cooking/kitchen') route = { page: 'cooking-kitchen', path: '/cooking/kitchen' };
   else if (DREAM_ISLANDS.some(island => island.path === canonical)) route = { page: 'island', path: canonical as `/islands/${IslandId}`, islandId: canonical.slice('/islands/'.length) as IslandId };
   else if (['/shop/furniture', '/shop/plants', '/shop/groceries'].includes(canonical)) route = { page: 'store', path: canonical, store: canonical.slice('/shop/'.length) as 'furniture' | 'plants' | 'groceries' };

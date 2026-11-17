@@ -1,0 +1,43 @@
+@import '../../styles/cocokiki-tokens.css';
+
+.discovery-room.ck-scherm {
+  position: fixed; inset: 0; min-height: 0; overflow: hidden;
+  background: var(--ck-hout); color: var(--ck-cacao); font-family: var(--ck-font-tekst);
+}
+.discovery-room__heading { position: absolute; top: calc(var(--ck-tik-min) + var(--ck-rand)); left: var(--ck-rand); z-index: 2; pointer-events: none; }
+.discovery-room__heading h1 { margin: 0; font-size: var(--ck-maat-kop); }
+.discovery-room__viewport { position: absolute; inset: 0; overflow: auto; }
+.discovery-room__scene { position: absolute; width: max(100%, calc(100svh * var(--scene-ratio))); height: 100%; }
+.discovery-room .discovery-room__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.discovery-room .ck-zone-gereedschap { z-index: 3; left: auto; right: var(--ck-rand); top: calc(var(--ck-tik-min) * 2 + var(--ck-rand)); }
+.discovery-room .ck-zone-gereedschap button { color: var(--ck-cacao); }
+.discovery-room__swipe { display: none; }
+.discovery-object { position: absolute; left: var(--object-x); top: var(--object-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: var(--ck-onderkant); border: 0; padding: var(--ck-onderkant); background: none; color: var(--ck-cacao); cursor: pointer; min-height: var(--ck-tik-min); min-width: var(--ck-tik-min); }
+.discovery-object__light { width: var(--ck-tik-min); height: var(--ck-tik-min); border-radius: 50%; border: var(--ck-onderkant) solid var(--ck-room); background: color-mix(in srgb, var(--ck-actief) 45%, transparent); box-shadow: 0 0 var(--ck-maat-kop) var(--ck-zon); transition: transform var(--ck-normaal) var(--ck-veer); }
+.discovery-object__label { padding: var(--ck-onderkant) calc(var(--ck-onderkant) * 2); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); text-align: center; max-width: calc(var(--ck-tik-min) * 3); }
+.discovery-object:hover .discovery-object__light, .discovery-object:focus-visible .discovery-object__light { transform: scale(1.15); }
+.discovery-object:focus-visible { outline: var(--ck-onderkant) solid var(--ck-zon); border-radius: var(--ck-rond-knop); }
+@media (max-width: 600px) {
+  /* Keep object positions anchored to the illustration. Swipe to explore the room. */
+
+  .discovery-room__swipe { display: block; position: absolute; bottom: var(--ck-rand); left: var(--ck-rand); right: var(--ck-rand); margin: 0; padding: var(--ck-onderkant); text-align: center; pointer-events: none; font-size: var(--ck-maat-tekst); }
+  .discovery-room__heading h1 { font-size: var(--ck-maat-tekst); }
+  .discovery-room__heading { max-width: calc(100% - var(--ck-tik-min) * 1.5); }
+  .discovery-object__label { max-width: calc(var(--ck-tik-min) * 2.5); }
+}
+@media (prefers-reduced-motion: reduce) { .discovery-object__light { transition: none; } }
+/* Room tools keep the fixed right-hand zone, including on narrow screens. */
+body .ck-scherm.discovery-room .ck-zone-gereedschap {
+  left: auto; right: var(--ck-rand); top: calc(var(--ck-tik-min) * 2 + var(--ck-rand));
+  width: auto; max-width: none; flex-direction: column; border-radius: var(--ck-rond-paneel); overflow: visible;
+}
+.discovery-room__viewport { touch-action: pan-x; cursor: grab; }
+.discovery-room__viewport:active { cursor: grabbing; }
+.discovery-room__background { user-select: none; pointer-events: none; }
+.discovery-room__viewport:focus-visible { outline: var(--ck-onderkant) solid var(--ck-zon); outline-offset: calc(var(--ck-onderkant) * -1); }
+@media (min-width: 901px) { .discovery-room__scene { width: 100%; } }
+/* A label near an edge keeps its full width instead of shrinking into a column. */
+.discovery-object { width: calc(var(--ck-tik-min) * 3); }
+.discovery-crops { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-3); margin-block: var(--space-4); }
+.discovery-crops button { display: flex; align-items: center; gap: var(--space-2); min-height: var(--ck-tik-min); padding: var(--space-2); border: 0; border-radius: var(--ck-rond-knop); background: var(--ck-plekje); color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); cursor: pointer; }
+.discovery-crops img { width: var(--ck-tik-min); height: var(--ck-tik-min); object-fit: contain; }

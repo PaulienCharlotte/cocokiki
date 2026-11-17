@@ -1,9 +1,16 @@
+import { claimConsult } from '../services/plantClinic';
+import { rewardAnswer } from '../services/answerRewards';
 import '../components/dreamworld/wereld-scherm.css';
+import '../components/cooking/bakkerij-stijl.css';
+import './plant-clinic.css';
+import SpeechBubble from '../components/ui/SpeechBubble';
+import InfoKnop from '../components/ui/InfoKnop';
+import CocoCoin from '../components/platform/CocoCoin';
 import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, type PanInfo } from 'framer-motion';
-import { BookOpen, CloudMoon, Droplet, Droplets, Flower2, Hourglass, Lamp, Scissors, Search, Snowflake, Stamp, Stethoscope, Sun, Trophy, Umbrella, Wind } from 'lucide-react';
-import { Button, Dialog } from '../design-system';
+import { BookOpen, CloudMoon, Droplet, Droplets, Flower2, Hourglass, Lightbulb, Lamp, Scissors, Search, Snowflake, Stamp, Stethoscope, Sun, Trophy, Umbrella, Wind } from 'lucide-react';
+import { Button, Dialog, IconButton } from '../design-system';
 import { ASSET_LIBRARY } from '../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../data/plants/species';
 import { PLANT_PROBLEM_LABEL, type PlantProblemCause } from '../data/plants/firstAid';
@@ -144,7 +151,7 @@ export default function PlantClinicScreen() {
   useEffect(() => { document.title = 'Plantendokter — CocoKiki'; }, []);
 
   if (!patient || !species || !product) {
-    return <main className="clinic"><section className="clinic__card"><p>Er staan nog geen patiënten klaar.</p></section></main>;
+    return <main className="clinic ck-scherm bakkerij-stijl" data-wereld="tuin"><section className="clinic__card"><p>Er staan nog geen patiënten klaar.</p></section></main>;
   }
 
   const juist = treatmentFor(species, patient.cause);
@@ -208,6 +215,7 @@ export default function PlantClinicScreen() {
 
   const stelDiagnose = (keuze: PlantProblemCause) => {
     if (keuze === patient.cause) {
+      rewardAnswer('clinic', patient.consultId, 'diagnosis', 5);
       setFase('behandeling');
       setMelding(null);
       return;
@@ -218,9 +226,10 @@ export default function PlantClinicScreen() {
 
   const behandel = (keuze: TreatmentId) => {
     if (keuze === juist) {
-      const resultaat = finishConsult(clinic, patient, missers, hintGebruikt);
-      if (saveClinic(resultaat.state)) setClinic(resultaat.state);
-      if (resultaat.coins > 0) awardCurrencyOnce(`kliniek:${patient.consultId}`, resultaat.coins);
+      const resultaat = claimConsult(patient, missers, hintGebruikt);
+      if (!resultaat) { setMelding('Opslaan lukte niet. Probeer de behandeling opnieuw.'); return; }
+      if (!resultaat.coins) return;
+      setClinic(resultaat.state);
       setAfloop({ coins: resultaat.coins, stampEarned: resultaat.stampEarned });
       setOogst({ coins: oogst.coins + resultaat.coins, stamps: oogst.stamps + (resultaat.stampEarned ? 1 : 0) });
       setMelding(null);
@@ -288,15 +297,20 @@ export default function PlantClinicScreen() {
     // volgende vraag, zodat er nooit keuzes zonder vraag op het scherm staan.
     : `${getoond === 'plek' ? `${baasjeTekst(species, patient)} `
         : getoond ? `${clueText(species, patient, getoond)} `
-        : `${helperIntro()} `}${ONDERZOEK_VRAAG}`.trim();
+        : ''}${ONDERZOEK_VRAAG}`.trim();
 
-  return <main className="clinic" aria-labelledby="clinic-title">
+  return <main className="clinic ck-scherm bakkerij-stijl" data-wereld="tuin" aria-labelledby="clinic-title">
+    <nav className="ck-zone-gereedschap ck-glas clinic__tools" aria-label="Gereedschap">
+      <InfoKnop character="kiki">Bekijk het blad, voel aan de aarde en vraag waar de plant staat. Kies daarna wat er aan de hand is en help de plant met het juiste gereedschap.</InfoKnop>
+      <IconButton className="ck-gereedschap" label="Plantenboek openen" icon={<BookOpen />} onClick={() => { setBoekPagina(null); setBoekOpen(true); }} />
+      {fase !== 'klaar' && fase !== 'naam' && <IconButton className="ck-gereedschap" label="Hint van Kiki" icon={<Lightbulb />} onClick={vraagHint} />}
+    </nav>
     <section className={`clinic__card is-${fase}`}>
       <header className="clinic__top">
         <img className="clinic__emblem" src={PLANT_DOCTOR_EMBLEM} alt="Plantendokter" />
         <div>
-          <h1 id="clinic-title">{fase === 'klaar' ? species.commonName : 'Wie is dit?'}</h1>
-          <em>{fase === 'klaar' ? species.scientificName : 'Een nieuwe patiënt'}</em>
+          <h1 id="clinic-title">Plantendokter</h1>
+          <em>{fase === 'klaar' ? species.commonName : ''}</em>
         </div>
         <div className="clinic__tellers">
           <p className="clinic__consult" aria-label={`Patiënt ${consult} van ${CONSULTS_PER_SPREEKUUR}`}>{consult}/{CONSULTS_PER_SPREEKUUR}</p>
@@ -323,12 +337,7 @@ export default function PlantClinicScreen() {
         </>}
       </div>
 
-      <div className="clinic__gesprek">
-        <span className="clinic__helper" aria-hidden="true"><img src={ASSET_LIBRARY.avatars.kikiPoses.plant} alt="" /></span>
-        <p className={`clinic__bubbel${melding ? ' is-mis' : ''}`} role="status">
-          <strong>{HELPER_NAME}</strong>{bericht}
-        </p>
-      </div>
+      <SpeechBubble className="clinic__bubbel" character="kiki" label={fase === 'onderzoek' ? 'Onderzoek' : fase === 'diagnose' ? 'Wat is er mis?' : fase === 'behandeling' ? 'Help de plant' : 'Goed verzorgd'} tone={melding ? 'alert' : genezen ? 'goed' : 'default'}>{bericht}</SpeechBubble>
 
       {fase === 'onderzoek' && <div className="clinic__onderzoek">
         {/* Eerst de aarde, dan de blaadjes: de bladtekst noemt de aarde soms,
@@ -365,12 +374,7 @@ export default function PlantClinicScreen() {
       </div>}
 
       {fase === 'diagnose' && <>
-        <div className="clinic__kaarten">
-          {diagnoseKeuzes(patient).map(keuze => <button key={keuze} type="button" className={`clinic__kaart is-${keuze}`} onClick={() => stelDiagnose(keuze)}>
-            <Tekentje bron={OORZAAK_PLAATJE[keuze]} terugval={OORZAAK_ICOON[keuze]} naam={PLANT_PROBLEM_LABEL[keuze]} />
-            {PLANT_PROBLEM_LABEL[keuze]}
-          </button>)}
-        </div>
+        <ChoiceList vorm="los" label="Wat is er mis met de plant?" choices={diagnoseKeuzes(patient).map(keuze => ({ id: keuze, label: PLANT_PROBLEM_LABEL[keuze], icoon: OORZAAK_PLAATJE[keuze] }))} onChoose={id => stelDiagnose(id as PlantProblemCause)} />
         <Button variant="quiet" onClick={() => { setFase('onderzoek'); setMelding(null); }}>Nog eens kijken</Button>
       </>}
 
@@ -385,13 +389,11 @@ export default function PlantClinicScreen() {
         />)}
       </div>}
 
-      {fase === 'naam' && <div className="clinic__namen">
-        {naamKeuzes(species.id).map(naam => <button key={naam} type="button" className="clinic__naamkeuze" onClick={() => raadNaam(naam)}>{naam}</button>)}
-      </div>}
+      {fase === 'naam' && <ChoiceList vorm="los" label="Hoe heet deze plant?" choices={naamKeuzes(species.id).map(naam => ({ id: naam, label: naam }))} onChoose={raadNaam} />}
 
       {fase === 'klaar' && afloop && <>
         <p className="clinic__beloning">
-          +{afloop.coins + (naamGoed ? NAAM_BONUS : 0)} {afloop.coins + (naamGoed ? NAAM_BONUS : 0) === 1 ? 'CocoCoin' : 'CocoCoins'}
+          <CocoCoin size={28} /> +{afloop.coins + (naamGoed ? NAAM_BONUS : 0)} {afloop.coins + (naamGoed ? NAAM_BONUS : 0) === 1 ? 'CocoCoin' : 'CocoCoins'}
           {afloop.stampEarned
             ? <strong><Stamp aria-hidden="true" />Stempel voor {species.commonName}</strong>
             : <small>Nog {resterend} keer goed voor zijn stempel</small>}
@@ -404,14 +406,10 @@ export default function PlantClinicScreen() {
         </Button>
       </>}
 
-      {fase !== 'klaar' && fase !== 'naam' && <div className="clinic__onderaan">
-        <Button variant="quiet" size="small" pill startIcon={<BookOpen size={16} />} onClick={() => { setBoekPagina(null); setBoekOpen(true); }}>Plantenboek</Button>
-        <Button variant="quiet" size="small" pill onClick={vraagHint}>Kiki, help eens</Button>
-      </div>}
     </section>
 
     <Dialog
-      className="plantenboek"
+      className="plantenboek clinic-dialog"
       open={boekOpen}
       title={boek ? PLANT_PROBLEM_LABEL[boek.cause] : 'Het plantenboek'}
       description={boek ? undefined : 'Zes dingen die mis kunnen gaan. Tik aan wat jij ziet.'}
@@ -444,6 +442,7 @@ export default function PlantClinicScreen() {
 
     <Dialog
       open={hint !== null}
+      className="clinic-dialog"
       title="Kiki helpt"
       illustration={<img className="clinic__kiki-pop" src={ASSET_LIBRARY.avatars.kikiPoses.tip} alt="" />}
       onClose={() => setHint(null)}

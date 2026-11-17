@@ -1,4 +1,5 @@
 
+import RewardFeedback from './components/platform/RewardFeedback';
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import AppShell from './components/platform/AppShell';
 import { DESTINATIONS_BY_ID } from './platform/destinationRegistry';
@@ -47,14 +48,18 @@ const BACK_TARGET: Partial<Record<AppRoute['page'], { path: string; label: strin
   'nursery-project': { path: '/opdrachten?gebied=inrichten', label: 'Terug naar To Do' },
   store: { path: '/shop', label: 'Terug naar winkels' },
   'treehouse-section': { path: '/islands/cooking', label: 'Terug naar Coco' },
+  'cooking-orders': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'cooking-kitchen': { path: '/islands/cooking', label: 'Terug naar Coco' },
   'treehouse-room': { path: '/treehouse', label: 'Terug naar de boomhut' },
   'plant-clinic': { path: '/treehouse', label: 'Terug naar de boomhut' },
   encyclopedia: { path: '/', label: 'Terug naar de wereld' },
-  clock: { path: '/islands/discovery', label: 'Terug naar Seb' },
+  clock: { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
+  math: { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
+  game: { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
+  'flags-memory': { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
   'food-discovery': { path: '/islands/cooking', label: 'Terug naar Coco' },
-  'nutrient-memory': { path: '/islands/cooking', label: 'Terug naar Coco' },
-  taartenatelier: { path: '/islands/cooking', label: 'Terug naar Coco' },
+  'nutrient-memory': { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
+  taartenatelier: { path: '/mijn-spellen', label: 'Terug naar alle spellen' },
 };
 
 /**
@@ -76,7 +81,7 @@ function pasTestmuntenToe(): boolean {
   return gelukt;
 }
 
-const App: React.FC = () => {
+const GameApp: React.FC = () => {
   const [current, setCurrent] = useState(() => resolveRoute(window.location.pathname));
   useEffect(() => { if (current.route.page !== 'privacy') analytics().session(); }, [current.route.page]);
   const [coins, setCoins] = useState(() => { pasTestmuntenToe(); return loadCurrency(); });
@@ -131,7 +136,8 @@ const App: React.FC = () => {
   const sourceLocation = origin ? LOCATION_ORIGINS[origin] : undefined;
   const residentLocation = current.route.page === 'island' ? WORLD_LOCATIONS.find(location => location.islandId === current.route.islandId) : undefined;
   const shopRoom = (current.route.page === 'store' || current.route.path === '/shop') ? roomReturn(window.location.search) : null;
-  const backTarget = (shopRoom ? { path: shopRoom, label: 'Verder inrichten' } : undefined) ?? sourceLocation ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
+  const orderReturn = current.route.page === 'taartenatelier' && new URLSearchParams(window.location.search).has('order') ? { path: '/opdrachten?gebied=bakken', label: 'Terug naar To Do' } : undefined;
+  const backTarget = (shopRoom ? { path: shopRoom, label: 'Verder inrichten' } : undefined) ?? sourceLocation ?? orderReturn ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
   const back = () => navigate(backTarget?.path ?? '/');
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
@@ -142,7 +148,7 @@ const App: React.FC = () => {
       : current.route.page === 'my-games'
       ? <MyGamesScreen onNavigate={navigate} />
       : current.route.page === 'tasks'
-      ? <TasksScreen onNavigate={navigate} />
+      ? <TasksScreen coins={coins} onNavigate={navigate} />
       : current.route.page === 'privacy'
       ? <PrivacyScreen />
       : current.route.page === 'food-discovery'
@@ -150,11 +156,13 @@ const App: React.FC = () => {
       : current.route.page === 'nutrient-memory'
       ? <NutrientMemoryScreen onBack={back} />
       : current.route.page === 'taartenatelier'
-      ? <CakeStudio key={current.route.path + window.location.search} onClose={() => navigate(new URLSearchParams(window.location.search).has('order') ? '/treehouse/cookbook?toonbank=1' : '/islands/cooking')} />
+      ? <CakeStudio key={current.route.path + window.location.search} onClose={back} />
+      : current.route.page === 'cooking-orders'
+      ? <CookbookScreen mode="orders" onNavigate={navigate} />
       : current.route.page === 'cooking-kitchen'
       ? <CookingKitchen onNavigate={navigate} />
       : current.route.page === 'math'
-      ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={sourceLocation ? back : () => navigate('/islands/math')} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
+      ? current.route.mathGame ? <MathModule key={current.route.path} initialGame={current.route.mathGame} onBack={back} onHome={() => navigate('/')} /> : <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'store'
       ? current.route.store === 'groceries' ? <ShopScreen key={current.route.path + window.location.search} initialStore="groceries" onExit={() => navigate('/shop')} onNavigate={navigate} /> : <DecorShop key={current.route.store} store={current.route.store} backLabel={shopRoom ? 'Verder inrichten' : undefined} onBack={back} onNavigate={navigate} />
       : current.route.page === 'plant-collection'
@@ -184,7 +192,7 @@ const App: React.FC = () => {
       : current.route.page === 'challenges'
         ? <IslandEnvironment island={ISLANDS_BY_ID.math} onNavigate={navigate} />
       : current.route.page === 'clock'
-        ? <ClockModule onBack={sourceLocation ? back : () => navigate('/islands/discovery')} />
+        ? <ClockModule onBack={back} />
         : null;
 
   if (worldContent) return <div className="dream-app"><AppShell
@@ -205,4 +213,4 @@ function LoadingScreen() {
   return <div className="platform-loading" role="status"><img src="/images/cocokiki-logo.webp" alt="" />Spellenwereld laden...</div>;
 }
 
-export default App;
+export default function App() { return <><RewardFeedback /><GameApp /></>; }

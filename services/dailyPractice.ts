@@ -1,8 +1,9 @@
+import { TASK_REWARDS } from './taskRewards';
 import { alleVragen, type QuizVraag } from '../data/quiz/vragen';
 import { dagSleutel } from './quiz';
 import { commitLocalState, readDocument } from './localState';
 export const DAILY_KEY = 'cocokiki:daily-practice:v1';
-export const DAILY_REWARD = 10;
+export const DAILY_REWARD = TASK_REWARDS.daily;
 export interface DailyPractice { day: string; answers: Record<string, { choice: string; helped: boolean; reward?: number }> }
 export function dailyQuestions(day = dagSleutel()): QuizVraag[] {
   const all = alleVragen();
@@ -37,6 +38,6 @@ export function dailyEarned(state: DailyPractice): number {
   return dailyQuestions(state.day).reduce((sum, q) => {
     const answer = state.answers[q.id];
     if (!answer || answer.helped || answer.choice !== q.antwoord) return sum;
-    return sum + (answer.reward === DAILY_REWARD ? DAILY_REWARD : 2);
+    return sum + (Number.isSafeInteger(answer.reward) && answer.reward! >= 0 ? answer.reward! : 2);
   }, 0);
 }

@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import './bakkerij-stijl.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowLeft, ArrowUp, Check, Minus, MoreHorizontal, Plus, RotateCcw, ShoppingBasket } from 'lucide-react';
@@ -146,6 +148,7 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
   const submit = (answer: MathChallengeAnswer) => {
     const result = submitMathChallenge(progress, recipe.id, answer);
     if (!commit(result.progress)) return;
+    if (result.correct && (replay || result.coinDelta === 0)) rewardAnswer('recipe-math', `${recipe.id}:${journey.startedAt}`, challenge.id, learningReward());
     setToastCoins(replay ? 0 : result.coinDelta);
     setHint(result.correct ? null : result.hint ?? 'Probeer het nog eens!');
   };

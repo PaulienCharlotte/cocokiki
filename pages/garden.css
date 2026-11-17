@@ -134,3 +134,9 @@ body .tuin.ck-scherm .tuin-status { top: var(--tuin-boven); left: var(--space-4)
 .tuin .tuin-bak { width: min(100%, calc((100cqh / var(--tuin-rijen) - var(--space-12) - var(--space-3)) * 1.6)); }
 @container (max-width:640px) { .tuin .garden__beds { --tuin-rijen: 3; } }
 @media(min-width:641px) { .tuin .tuin__veld { bottom: calc(var(--space-12) * 3 + var(--space-4)); } }
+@media(min-width:701px) { .tuin .tuin__veld { left: calc(var(--space-12) * 2); right: var(--space-4); } }
+@media(max-width:700px) {
+ .tuin .tuin-status { top: calc(var(--space-12) * 2 + var(--space-8)); left: 50%; transform: translateX(-50%); }
+ .tuin .tuin__veld { top: calc(var(--space-12) * 4); }
+}
+@media(max-width:700px) { body .tuin.ck-scherm .tuin-status { top: calc(var(--space-12) * 2 + var(--space-8)); left: 50%; transform: translateX(-50%); } }

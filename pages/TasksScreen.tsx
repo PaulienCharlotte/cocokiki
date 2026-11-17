@@ -1,6 +1,14 @@
+import { TRAVEL_ADVENTURES } from '../data/travel/adventures';
+import { startTravelAdventure } from '../services/travelAdventures';
+import { subscribeLocalState } from '../services/localState';
+import { TASK_REWARDS } from '../services/taskRewards';
+import { GARDEN_CROPS } from '../data/plants/garden';
+import { completedTasks } from '../services/completedTasks';
 import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
-import React, { useState } from 'react';
-import { Armchair, CalendarDays, ChefHat, Sprout } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Compass, Armchair, CalendarDays, ChefHat, Sprout } from 'lucide-react';
+import { IconButton } from '../design-system';
+import InfoKnop from '../components/ui/InfoKnop';
 import DailyPractice from '../components/quiz/DailyPractice';
 import { CHARACTERS } from '../data/characters';
 import { loadCookingProgress, saveCookingProgress } from '../services/cookingProgress';
@@ -9,80 +17,93 @@ import { loadCakeOrder } from '../services/cakeOrder';
 import { loadNursery } from '../services/nurseryProject';
 import { BESTELLINGEN } from '../data/cooking/orders';
 import { LEARNING_COINS } from '../services/learningReward';
-import { DAILY_REWARD, loadDailyPractice, dailyEarned } from '../services/dailyPractice';
+import { DAILY_KEY, DAILY_REWARD, loadDailyPractice, dailyEarned } from '../services/dailyPractice';
 import './tasks.css';
 
-type Area = 'alles' | 'bakken' | 'planten' | 'inrichten' | 'vandaag';
+type Area = 'alles' | 'bakken' | 'planten' | 'inrichten' | 'reizen' | 'vandaag';
 /** Elk gebied heeft de kleur van zijn wereld uit de huisstijl. */
-const WERELD: Record<string, string> = { bakken: 'keuken', planten: 'tuin', inrichten: 'boomhut', vandaag: 'school', alles: 'boomhut' };
+const WERELD: Record<string, string> = { bakken: 'keuken', planten: 'tuin', inrichten: 'boomhut', reizen: 'wereld', vandaag: 'school', alles: 'boomhut' };
 const areas: Array<{ id: Area; name: string; icon: React.ReactNode }> = [
-  { id: 'alles', name: 'Alles', icon: null }, { id: 'bakken', name: 'Bakken', icon: <ChefHat /> }, { id: 'planten', name: 'Planten', icon: <Sprout /> }, { id: 'inrichten', name: 'Inrichten', icon: <Armchair /> }, { id: 'vandaag', name: 'Vandaag', icon: <CalendarDays /> },
+  { id: 'alles', name: 'Alles', icon: null }, { id: 'bakken', name: 'Bakken', icon: <ChefHat /> }, { id: 'planten', name: 'Planten', icon: <Sprout /> }, { id: 'inrichten', name: 'Inrichten', icon: <Armchair /> }, { id: 'reizen', name: 'Reizen', icon: <Compass /> }, { id: 'vandaag', name: 'Vandaag', icon: <CalendarDays /> },
 ];
-export default function TasksScreen({ onNavigate }: { onNavigate: (path: string) => void }) {
+export default function TasksScreen({ coins = 0, onNavigate }: { coins?: number; onNavigate: (path: string) => void }) {
+  const strip = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ prev: false, next: false });
+  const drag = useRef<{ x: number; scroll: number } | null>(null);
+  const slide = (direction: number) => strip.current?.scrollBy({ left: direction * strip.current.clientWidth * .85, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   const requested = new URLSearchParams(window.location.search).get('gebied');
   const [area, setArea] = useState<Area>(areas.some(a => a.id === requested) ? requested as Area : 'alles');
   const [notice, setNotice] = useState('');
-  const daily = loadDailyPractice();
+  const [daily, setDaily] = useState(loadDailyPractice);
+  useEffect(() => subscribeLocalState(() => setDaily(loadDailyPractice()), DAILY_KEY), []);
   const dailyDone = Object.keys(daily.answers).length;
   const progress = loadCookingProgress(), active = lopendeBestelling(progress), projectComplete = loadNursery().stage === 'complete';
-  const rewardFor = (id: string) => {
-    const order = BESTELLINGEN.find(order => order.id === id);
-    if (order) return `Bakbeloning + tot ${order.bonus} CocoCoins bonus`;
-    if (id === 'cake') return loadCakeOrder().delivered ? `${loadCakeOrder().reward} CocoCoins ontvangen` : '5 CocoCoins · 2 extra met tijdsbonus';
-    if (id === 'shop-race') return `Vanaf ${LEARNING_COINS} CocoCoins per goede klant`;
-    if (id === 'clinic') return `${LEARNING_COINS} CocoCoins per consult`;
-    if (id === 'garden') return '2 CocoCoins per taak · oogst extra';
-    return projectComplete ? 'Project afgerond' : 'Tot 100 CocoCoins · voor rekenwerk';
-  };
+  const rewardFor = (id: string) => TRAVEL_ADVENTURES.find(item => item.id === id)?.reward ?? BESTELLINGEN.find(order => order.id === id)?.bonus ?? (id === 'cake' ? TASK_REWARDS.cake : id === 'nursery' ? TASK_REWARDS.nurseryMax : id === 'clinic' ? TASK_REWARDS.clinic : id === 'garden' ? Math.max(...GARDEN_CROPS.map(crop => crop.coins)) : LEARNING_COINS);
+  const finished = new Set(completedTasks().map(task => task.id));
   const cards = [
+    ...TRAVEL_ADVENTURES.map(adventure => ({ id: adventure.id, area: 'reizen', titel: adventure.title, onder: adventure.description, beeld: CHARACTERS.seb.beeld })),
     ...openBestellingen(progress).map(order => ({ id: order.id, area: 'bakken', titel: CHARACTERS[order.klant].naam, onder: order.aanleiding, beeld: CHARACTERS[order.klant].beeld, meta: active?.bestelling.id === order.id ? 'Verder met je bestelling' : 'Bakken' })),
-    { id: 'cake', area: 'bakken', titel: 'Sebs verjaardagstaart', beeld: '/assets/library/cooking/taarten/roze-rand.webp', meta: loadCakeOrder().delivered ? 'Afgeleverd' : 'Taart versieren' },
+    { id: 'cake', area: 'bakken', titel: 'Sebs verjaardagstaart', onder: 'Versier een taart voor Sebs zusje.', beeld: '/assets/library/cooking/taarten/roze-rand.webp', meta: loadCakeOrder().delivered ? 'Afgeleverd' : 'Taart versieren' },
     { id: 'shop-race', area: 'bakken', titel: 'Help in de winkel', onder: 'Reken af voor klanten in Winkelgekte.', beeld: '/games/school/math/race.webp' },
     { id: 'clinic', area: 'planten', titel: 'Help een plant', onder: 'Ontdek wat de plant nodig heeft.', beeld: PLANT_DOCTOR_EMBLEM },
     { id: 'garden', area: 'planten', titel: 'Zaaien en verzorgen', onder: 'Ga verder in je moestuin.', beeld: '/assets/library/plants/garden/navigation.webp' },
-    { id: 'nursery', area: 'inrichten', titel: 'Luna’s babykamer', onder: 'Meten, kiezen en inrichten met een projectbudget van 500.', beeld: '/assets/library/projects/luna-crib.webp', meta: projectComplete ? 'Afgerond' : 'Tot 100 CocoCoins' },
-  ].filter(card => area === 'alles' || card.area === area);
+    { id: 'nursery', area: 'inrichten', titel: 'Luna’s babykamer', onder: 'Meten, kiezen en inrichten met een projectbudget van 500.', beeld: '/assets/library/projects/luna-crib.webp', meta: projectComplete ? 'Afgerond' : `Tot ${TASK_REWARDS.nurseryMax} CocoCoins` },
+  ].filter(card => !finished.has(card.id) && (area === 'alles' || card.area === area));
+  useEffect(() => {
+    const node = strip.current; if (!node) return;
+    const update = () => { const prev = node.scrollLeft > 2, next = node.scrollLeft + node.clientWidth < node.scrollWidth - 2; setEdges(old => old.prev === prev && old.next === next ? old : { prev, next }); };
+    update(); node.addEventListener('scroll', update);
+    const observer = new ResizeObserver(update); observer.observe(node);
+    return () => { node.removeEventListener('scroll', update); observer.disconnect(); };
+  }, [area, cards.length]);
   const choose = (id: string) => {
+    if (TRAVEL_ADVENTURES.some(item => item.id === id)) {
+      if (!startTravelAdventure(id)) { setNotice('Bewaren lukte niet. Probeer opnieuw.'); return; }
+      onNavigate(`/games/topo?avontuur=${encodeURIComponent(id)}&from=tasks`); return;
+    }
     if (id === 'daily') { onNavigate('/opdrachten?gebied=vandaag'); return; }
-    if (id === 'nursery') { onNavigate('/opdrachten/luna-babykamer'); return; }
-    if (id === 'shop-race') { onNavigate('/school/math/race'); return; }
-    if (id === 'clinic') { onNavigate('/plantendokter?from=kiki'); return; }
-    if (id === 'garden') { onNavigate('/plants/garden?from=kiki'); return; }
-    if (id === 'cake') { onNavigate('/games/taartenatelier?order=seb-birthday'); return; }
+    if (id === 'nursery') { onNavigate('/opdrachten/luna-babykamer?from=tasks'); return; }
+    if (id === 'shop-race') { onNavigate('/school/math/race?from=tasks'); return; }
+    if (id === 'clinic') { onNavigate('/plantendokter?from=tasks'); return; }
+    if (id === 'garden') { onNavigate('/plants/garden?from=tasks'); return; }
+    if (id === 'cake') { onNavigate('/games/taartenatelier?order=seb-birthday&from=tasks'); return; }
     const next = active?.bestelling.id === id ? progress : neemBestellingAan(progress, id);
     if (!saveCookingProgress(next)) { setNotice('Opslaan lukte niet. Probeer het opnieuw.'); return; }
-    onNavigate('/treehouse/cookbook?toonbank=1');
+    onNavigate('/cooking/orders?from=tasks');
   };
-  // Het To Do-bord uit de huisstijl: een houten bord op kurk, met elke
-  // opdracht als papieren briefje dat er met een punaise in de wereldkleur
-  // op geprikt is. Geen witte kaarten of kopvlak.
   return <main className="tasks-screen" data-wereld="boomhut">
     <section className="tasks-screen__content">
-      <header className="tasks-header">
-        <h1 className="ck-houtbord tasks-bord">To Do</h1>
-        <nav className="tasks-filters ck-glas" aria-label="Soort opdracht">{areas.map(item => <button type="button" key={item.id} className="tasks-filter" data-wereld={WERELD[item.id]} aria-pressed={area === item.id} onClick={() => { setArea(item.id); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.icon}<span>{item.name}</span></button>)}</nav>
+      <header className="tasks-paper ck-paper-surface">
+        <img className="tasks-paper__art" src="/assets/library/ui/daily-quest.webp" alt="" />
+        <div className="tasks-paper__body">
+          <div className="tasks-paper__heading"><h1 className="tasks-bord">To Do</h1><InfoKnop titel="Opdrachten en beloningen" character="coco">Help een bewoner en verdien munten. Sebs reis geeft een extra bonus als je een 10 haalt op de hele toets. Oefenen blijft daarnaast gewoon munten opleveren.</InfoKnop></div>
+          <nav className="tasks-filters" aria-label="Soort opdracht">{areas.map(item => <button type="button" key={item.id} className="tasks-filter" data-wereld={WERELD[item.id]} aria-pressed={area === item.id} onClick={() => { setArea(item.id); strip.current?.scrollTo({ left: 0 }); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.icon}<span>{item.name}</span></button>)}</nav>
+          <section className="tasks-daily" aria-labelledby="tasks-vandaag"><div className="tasks-daily__content"><h2 id="tasks-vandaag">Vijf voor vandaag</h2><span className="tasks-daily__reward"><span className="ck-munt" aria-hidden="true" />{dailyDone === 5 ? `${dailyEarned(daily)} verdiend` : `Tot +${DAILY_REWARD * 5}`} · {dailyDone}/5</span></div><button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}>{dailyDone === 5 ? 'Bekijk resultaat' : dailyDone ? 'Ga verder' : 'Begin vandaag'}</button></section>
+        </div>
       </header>
       {notice && <p className="tasks-melding ck-papier" role="alert">{notice}</p>}
-      {area !== 'vandaag' && <section className="tasks-daily" aria-labelledby="tasks-vandaag">
-        <img className="tasks-daily__art" src="/assets/library/ui/daily-quest.webp" alt="" />
-        <div className="tasks-daily__content"><span className="tasks-daily__label">Jouw dagavontuur</span>
-          <h2 id="tasks-vandaag">Vijf voor vandaag</h2>
-          <p>Vijf vragen over eten en planten. Elke dag een nieuwe reeks.</p>
-          <span className="tasks-daily__reward"><span className="ck-munt" aria-hidden="true" />{dailyDone === 5 ? `${dailyEarned(daily)} CocoCoins verdiend` : `Verdien tot ${DAILY_REWARD * 5} CocoCoins`}</span>
-          <small>{dailyDone}/5 gedaan · {DAILY_REWARD} CocoCoins per zelfstandig goed antwoord</small>
-        </div>
-        <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}><CalendarDays aria-hidden="true" />{dailyDone === 5 ? 'Bekijk resultaat' : dailyDone ? 'Ga verder' : 'Begin vandaag'}</button>
-      </section>}
-      {area === 'vandaag' ? <DailyPractice /> : <ul className="tasks-briefjes" aria-label="Kies een opdracht">
-        {cards.map((card, index) => <li key={card.id} style={{ '--briefje': index } as React.CSSProperties}>
-          <button type="button" className="tasks-briefje" data-wereld={WERELD[card.area]} onClick={() => choose(card.id)}>
-            <span className="tasks-briefje__plaatje"><img src={card.beeld} alt="" /></span>
-            <strong>{card.titel}</strong>
-            {card.onder && <span className="tasks-briefje__tekst">{card.onder}</span>}
-            <span className="tasks-beloning"><span className="ck-munt" aria-hidden="true" />{rewardFor(card.id)}</span>
-          </button>
-        </li>)}
-      </ul>}
+      {area === 'vandaag' ? <div className="tasks-practice"><DailyPractice /></div> : <div className="tasks-carousel">
+        <ul ref={strip} id="tasks-strip" className="tasks-briefjes" aria-label="Kies een opdracht" onPointerDown={event => {
+          if (event.pointerType !== 'mouse' || event.button !== 0) return;
+          drag.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft };
+        }} onPointerMove={event => {
+          if (event.buttons !== 1) { drag.current = null; return; }
+          if (!drag.current || Math.abs(event.clientX - drag.current.x) < 8) return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          event.currentTarget.scrollLeft = drag.current.scroll + drag.current.x - event.clientX;
+        }} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }} onLostPointerCapture={() => { drag.current = null; }}>
+          {cards.map((card, index) => <li key={card.id} style={{ '--briefje': index } as React.CSSProperties}>
+            <button type="button" className="tasks-briefje" data-wereld={WERELD[card.area]} onClick={() => choose(card.id)}>
+              <span className="tasks-briefje__plaatje"><img src={card.beeld} alt="" draggable={false} /></span>
+              <strong>{card.titel}</strong>
+              {card.onder && <span className="tasks-briefje__tekst">{card.onder}</span>}
+              <span className="tasks-beloning" aria-label={`${rewardFor(card.id)} CocoCoins`}><span className="ck-munt" aria-hidden="true" />{card.id === 'garden' || card.id === 'nursery' ? 'Tot ' : '+'}{rewardFor(card.id)}</span>
+            </button>
+          </li>)}
+        </ul>
+        <nav className="tasks-carousel__controls" aria-label="Blader door opdrachten">{edges.prev && <IconButton className="tasks-strip-control tasks-strip-control--prev ck-glas" label="Vorige opdrachten" icon={<ChevronLeft />} aria-controls="tasks-strip" onClick={() => slide(-1)} />}{edges.next && <IconButton className="tasks-strip-control tasks-strip-control--next ck-glas" label="Meer opdrachten" icon={<ChevronRight />} aria-controls="tasks-strip" onClick={() => slide(1)} />}</nav>
+      </div>}
+
     </section>
   </main>;
 }

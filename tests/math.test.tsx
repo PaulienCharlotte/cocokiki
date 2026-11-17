@@ -619,8 +619,9 @@ test('elk spel gebruikt dezelfde terugknop en dezelfde memorykaart', () => {
   const kaart = readFileSync('components/ui/memory-card.css', 'utf8');
   assert.match(kaart, /\.card-back,\n\.clock-memory-card__back \{ background: var\(--color-primary\)/);
   assert.doesNotMatch(readFileSync('games/clock/clock.css', 'utf8'), /clock-memory-card__back \{ background: linear-gradient/);
-  // De werelddelen tonen hun eigen vlaggen, niet zes keer dezelfde wereldbol.
+  // De werelddelen worden gekozen via de herbruikbare kaart.
   const memory = readFileSync('pages/FlagsMemory.tsx', 'utf8');
-  assert.match(memory, /flag-continents__vlaggen/);
+  assert.match(memory, /ContinentMap onChoose/);
+  assert.doesNotMatch(memory, /flag-continents__vlaggen/);
   assert.doesNotMatch(memory, /Globe2/);
 });

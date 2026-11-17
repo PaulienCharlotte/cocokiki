@@ -29,6 +29,7 @@ import { loadCakeOrder } from '../../services/cakeOrder';
  */
 interface OrderFlowProps {
   progress: CookingProgressState;
+  showBack?: boolean;
   /** Opslaan; geeft `false` terug als dat even niet lukt. */
   onSave: (next: CookingProgressState) => boolean;
   /** Het recept is gekozen en het aantal klopt: begin het kookavontuur. */
@@ -37,7 +38,7 @@ interface OrderFlowProps {
   onExit: () => void;
 }
 
-export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrder }: OrderFlowProps) {
+export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrder, showBack = true }: OrderFlowProps) {
   const [melding, setMelding] = useState('');
   // Welke aantallen al geprobeerd zijn. Net als bij het recept blijft een
   // misser zichtbaar, zodat je niet nog eens hetzelfde aantikt.
@@ -55,15 +56,15 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
     const cakeDelivered = loadCakeOrder().delivered;
     const opdrachtAantal = wachtend.length + (onCakeOrder && !cakeDelivered ? 1 : 0);
     if (!wachtend.length && !onCakeOrder) return <main className="bakkerij-stijl bestel-scherm">
-      <section className="bestel-kaart">
-        <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
+      <section className="bestel-kaart ck-paper-surface">
+        {showBack && <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />}
         <SpeechBubble character="coco" label="de toonbank">Er wacht nu niemand. Blader gerust in het kookboek en bak iets voor jezelf.</SpeechBubble>
         <Button size="large" onClick={onExit}>Naar het overzicht</Button>
       </section>
     </main>;
     return <main className="bakkerij-stijl bestel-scherm">
-      <section className="bestel-kaart">
-        <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />
+      <section className="bestel-kaart ck-paper-surface">
+        {showBack && <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />}
         <SpeechBubble character="coco" label="de toonbank">{opdrachtAantal ? 'Er liggen opdrachten klaar. Wie help je het eerst?' : 'Alle opdrachten zijn afgeleverd. Bekijk je taart of kies zelf een recept.'}</SpeechBubble>
         {melding && <p className="bestel-melding" role="alert">{melding}</p>}
         <CardGrid
@@ -84,14 +85,14 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
 
   const { bestelling, voortgang } = lopend;
   const gekozenRecept = voortgang.recipeId ? RECIPES_BY_ID[voortgang.recipeId] : undefined;
-  const terugNaarToonbank = <IconButton className="bestel-kaart__terug" label="De bestelling terugleggen" icon={<ArrowLeft size={19} />} onClick={() => bewaar(legBestellingTerug(progress))} />;
+  const terugNaarToonbank = !showBack ? <Button variant="quiet" onClick={() => bewaar(legBestellingTerug(progress))}>Leg verzoek terug</Button> : <IconButton className="bestel-kaart__terug" label="De bestelling terugleggen" icon={<ArrowLeft size={19} />} onClick={() => bewaar(legBestellingTerug(progress))} />;
 
   // Scherm 2: welk recept past bij de wens?
   if (!gekozenRecept) {
     const recepten = keuzeRecepten(progress);
     const afgewezen = voortgang.misgrepen > 0;
     return <main className="bakkerij-stijl bestel-scherm">
-      <section className="bestel-kaart">
+      <section className="bestel-kaart ck-paper-surface">
         {terugNaarToonbank}
         <SpeechBubble character={bestelling.klant} label="de bestelling" aside={<span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>}>
           {bestelling.korteWens ?? bestelling.wens}
@@ -124,7 +125,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
   const klaar = voortgang.keerGekozen === goed;
   const misgegokt = !voortgang.aantalInEenKeer && !klaar;
   return <main className="bakkerij-stijl bestel-scherm">
-    <section className="bestel-kaart">
+    <section className="bestel-kaart ck-paper-surface">
       {terugNaarToonbank}
       <SpeechBubble character="coco" label="hoeveel maak je er" tone={klaar ? 'goed' : 'default'}>
         {klaar

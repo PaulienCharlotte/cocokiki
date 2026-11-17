@@ -39,9 +39,9 @@ export interface WorldDestination {
 export const WORLD_DESTINATIONS: WorldDestination[] = [
   { id: 'cooking', label: 'Coco’s Bakkerij', route: '/islands/cooking', position: { x: .23, y: .36, width: .075, height: .075 }, enabled: true },
   { id: 'home', label: 'Mijn boomhut', route: '/treehouse', position: { x: .51, y: .27, width: .075, height: .075 }, enabled: true },
-  { id: 'math', label: 'Rekenwerkplaats', route: '/islands/math', position: { x: .79, y: .36, width: .075, height: .075 }, enabled: true },
-  { id: 'plants', label: 'Kiki’s Plantenkas', route: '/islands/plants', position: { x: .22, y: .57, width: .075, height: .075 }, enabled: true },
-  { id: 'discovery', label: 'Reizen en topografie', route: '/islands/discovery', position: { x: .76, y: .60, width: .075, height: .075 }, enabled: true },
+  { id: 'math', label: 'Lua’s werkplaats', route: '/islands/math', position: { x: .79, y: .36, width: .075, height: .075 }, enabled: true },
+  { id: 'plants', label: 'Kiki’s moestuin', route: '/islands/plants', position: { x: .22, y: .57, width: .075, height: .075 }, enabled: true },
+  { id: 'discovery', label: 'Seb’s ontdekkingskamer', route: '/islands/discovery', position: { x: .76, y: .60, width: .075, height: .075 }, enabled: true },
 ];
 export const WORLD_SHOPS = [
   { id: 'groceries', label: 'Boodschappen', path: '/shop/groceries' },

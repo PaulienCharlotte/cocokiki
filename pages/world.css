@@ -1646,3 +1646,5 @@
 /* Het onderzoek: één vraag tegelijk, en een zachte wenk als je mis kijkt. */
 .clinic__onderzoek { display: grid; gap: var(--space-3); }
 .clinic__miskijk { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-sm); text-align: center; }
+.encyclopedie__raster.encyclopedie__opdrachten { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--space-4); }
+.encyclopedie__opdrachten .encyclopedie__tegel { margin: 0; min-width: 0; padding: var(--space-4); overflow-wrap: anywhere; }

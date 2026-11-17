@@ -11,23 +11,23 @@ import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFl
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
 import NutrientMemoryFlow from '../components/cooking/NutrientMemoryFlow';
 import JourneyStageProgress from '../components/cooking/JourneyStageProgress';
-import OrderFlow, { OrderInvite } from '../components/cooking/OrderFlow';
+import OrderFlow from '../components/cooking/OrderFlow';
 import ShopScreen from './ShopScreen';
 import { RECIPES, RECIPE_CATEGORIES } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeCategory, RecipeConfig } from '../data/cooking/types';
 import { beginDiscoveryStage, createDiscoveryReplay, createMathReplay, createMemoryReplay, loadCookingProgress, restartJourney, saveCookingProgress, startJourney } from '../services/cookingProgress';
 import { getRecipeAccess } from '../data/cooking/availability';
 import { getRecipeIssues } from '../data/cooking/validation';
-import { lopendeBestelling, openBestellingen } from '../services/bakeryOrders';
 
 type ActiveCategory = 'season' | 'all' | 'completed' | 'preparing' | RecipeCategory;
 type ReplayKind = 'discovery' | 'math' | 'memory';
 
 interface CookbookScreenProps {
   onNavigate?: (path: string) => void;
+  mode?: 'recipes' | 'orders';
 }
 
-export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
+export default function CookbookScreen({ onNavigate, mode = 'recipes' }: CookbookScreenProps) {
   const [category, setCategory] = useState<ActiveCategory>('all');
   const [selected, setSelected] = useState<RecipeConfig | null>(() => {
     const id = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('recipe');
@@ -42,9 +42,8 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   const [replayProgress, setReplayProgress] = useState<CookingProgressState | null>(null);
   const [replayKind, setReplayKind] = useState<ReplayKind | null>(null);
   const [notice, setNotice] = useState('');
-  // De toonbank staat voor het kookboek, maar je kunt er altijd omheen: wie
-  // gewoon iets wil bakken blijft in het kookboek bladeren.
-  const [atToonbank, setAtToonbank] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('toonbank') === '1');
+  // Orders are opened explicitly. A pending order never replaces the recipe book.
+  const [atToonbank, setAtToonbank] = useState(() => mode === 'orders' || typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('toonbank') === '1');
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   useEffect(() => {
     if (!import.meta.env.DEV) return;
@@ -108,6 +107,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
   };
 
   const exitJourney = () => {
+    setAtToonbank(mode === 'orders');
     setPlayingRecipeId(null);
     setReplayProgress(null);
     setReplayKind(null);
@@ -118,12 +118,6 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
     setSelected(null); setReplayProgress(replay); setReplayKind('memory'); setPlayingRecipeId(recipe.id);
   };
 
-  const lopend = playingRecipeId ? null : lopendeBestelling(progress);
-  // Zolang het recept en het aantal nog niet rond zijn hoort het kind aan de
-  // toonbank. Daarna is de bestelling een kaartje waar je op terugkomt, zodat
-  // het kookboek een kookboek blijft.
-  const kiezendeBestelling = lopend && !lopend.voortgang.keerGekozen ? lopend : null;
-  const wachtend = openBestellingen(progress);
   const playingRecipe = playingRecipeId ? RECIPES.find(recipe => recipe.id === playingRecipeId) : undefined;
   const activeProgress = replayProgress ?? progress;
   const playingJourney = playingRecipe ? activeProgress.journeys[playingRecipe.id] : undefined;
@@ -167,7 +161,8 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
 
   // De toonbank: hier begint een bestelling, en hier kies je het recept dat
   // bij de wens past. Daarna loopt het gewone kookavontuur door.
-  if (atToonbank || kiezendeBestelling) return <OrderFlow
+  if (atToonbank) return <OrderFlow
+    showBack={false}
     progress={progress}
     onSave={next => {
       if (!saveCookingProgress(next)) return false;
@@ -175,7 +170,7 @@ export default function CookbookScreen({ onNavigate }: CookbookScreenProps) {
       return true;
     }}
     onStart={recipe => { setAtToonbank(false); handleStart(recipe); }}
-    onCakeOrder={() => onNavigate?.('/games/taartenatelier?order=seb-birthday')}
+    onCakeOrder={() => onNavigate?.('/games/taartenatelier?order=seb-birthday&from=orders')}
     onExit={() => { setAtToonbank(false); onNavigate?.('/opdrachten?gebied=bakken'); }}
   />;
 

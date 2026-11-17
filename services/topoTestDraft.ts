@@ -1,5 +1,5 @@
 import { readLocal, writeLocal } from './localProgress';
-export interface TestDraft { answers: Record<string, string>; submitted: boolean; retryIds: string[] | null; orderIds?: string[]; deferredIds?: string[] }
+export interface TestDraft { adventureAttemptId?: string; submittedAt?: string; answers: Record<string, string>; submitted: boolean; retryIds: string[] | null; orderIds?: string[]; deferredIds?: string[] }
 export function testDraftKey(ids: string[]): string { return `cocokiki:topo-test:v1:${JSON.stringify([...ids].sort())}`; }
 export function loadTestDraft(ids: string[]): TestDraft {
   const saved = readLocal<Partial<TestDraft> | null>(testDraftKey(ids), null);
@@ -11,6 +11,6 @@ export function loadTestDraft(ids: string[]): TestDraft {
   // alleen een al nagekeken uitslag houdt zijn oorspronkelijke selectie.
   const submitted = saved?.submitted === true;
   const retryIds = submitted && Array.isArray(saved?.retryIds) ? saved.retryIds.filter(id => validIds.has(id)) : null;
-  return { answers, submitted, retryIds, ...(orderIds.length ? { orderIds } : {}), ...(deferredIds.length ? { deferredIds } : {}) };
+  return { answers, submitted, retryIds, ...(typeof saved?.adventureAttemptId === 'string' ? { adventureAttemptId: saved.adventureAttemptId } : {}), ...(typeof saved?.submittedAt === 'string' && Number.isFinite(Date.parse(saved.submittedAt)) ? { submittedAt: saved.submittedAt } : {}), ...(orderIds.length ? { orderIds } : {}), ...(deferredIds.length ? { deferredIds } : {}) };
 }
 export function saveTestDraft(ids: string[], draft: TestDraft): boolean { return writeLocal(testDraftKey(ids), draft); }

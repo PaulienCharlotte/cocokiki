@@ -68,3 +68,19 @@ body .ck-bovenbalk button.ck-bovenbalk__munten:focus-visible { outline: 3px soli
 
 /* Het compacte saldo heeft ruimte voor munt én bedrag, naast de avatar. */
 body .ck-bovenbalk .world-hud__tools > button.world-hud__balance { width: auto; min-width: calc(var(--space-12) + var(--space-4)); height: auto; flex: 0 0 auto; padding-inline: var(--space-2); }
+
+/* Op tussenbreedtes verhuist het saldo naar het menu: nooit overlappende eilanden. */
+@media (min-width: 601px) and (max-width: 1200px) {
+  body .ck-bovenbalk .ck-bovenbalk__munten { display: none; }
+  body .ck-bovenbalk .ck-bovenbalk__munten-klein { display: flex; align-items: center; }
+}
+
+/* Eén saldo, in dezelfde menupil op alle schermbreedtes. */
+body .ck-bovenbalk .ck-bovenbalk__munten, body:has(.ck-scherm .ck-zone-status) .ck-bovenbalk .ck-bovenbalk__munten { display: none; }
+body .ck-bovenbalk .ck-bovenbalk__munten-klein { display: flex; align-items: center; }
+body .ck-bovenbalk .world-hud__tools { margin-left: auto; flex-shrink: 0; }
+@media(max-width:600px) {
+ body .ck-bovenbalk .world-hud__tools { gap: 0; padding-inline: var(--space-1); }
+ body .ck-bovenbalk .world-hud__tools > button.world-hud__balance { min-width: 0; gap: var(--space-1); padding-inline: var(--space-2); }
+ body .ck-bovenbalk .ck-bovenbalk__munten-klein strong { font-size: var(--font-size-lg); }
+}

@@ -1,3 +1,5 @@
+import InfoKnop from '../components/ui/InfoKnop';
+import NiveauKnop, { NiveauKeuze } from '../components/ui/NiveauKnop';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, CalendarDays, Check, Droplets, Lightbulb, Minus, Plus, Ruler, ShoppingBasket, Sprout, Leaf, X } from 'lucide-react';
 import GardenCropFacts from '../components/plants/GardenCropFacts';
@@ -44,6 +46,7 @@ export function gardenOptions(answer: number): number[] {
 export default function GardenScreen({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [state, setState] = useState(loadGarden);
   const [selected, setSelected] = useState<number | null>(null);
+  const [niveauOpen, setNiveauOpen] = useState(false);
   const [paneel, setPaneel] = useState<'kiezen' | 'kalender' | 'oogst' | 'gewas' | null>(null);
   const [maten, setMaten] = useState(false);
   const [facts, setFacts] = useState<GardenCrop | null>(null);
@@ -94,17 +97,18 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
     <div className="ck-zone-status ck-glas tuin-status">
       <button type="button" className="tuin-volgende-dag" disabled={gardenNeedsCare(state)} title={gardenNeedsCare(state) ? 'Verzorg eerst je planten vandaag' : 'Volgende tuindag'} aria-label={`Tuindag ${state.day}, ${SEASONS[season]}. Volgende tuindag`} onClick={() => { kies(null); act(nextGardenDay(), 'Een nieuwe tuindag. Kijk welke vakken water nodig hebben.'); }}><span><b className="tuin-dag">Tuindag {state.day}</b><small className="tuin-seizoen">{SEASONS[season]}</small></span><ArrowRight size={20} aria-hidden="true" /></button>
       {plot && <><span className="tuin-scheid" aria-hidden="true" /><span className="tuin-stippen" role="img" aria-label={stages[plot.step]}>{stages.slice(1).map((_, i) => <span key={i} className={`ck-stip${i < plot.step ? ' ck-stip--klaar' : ''}${i === plot.step ? ' ck-stip--nu' : ''}`} />)}</span></>}
-      <button type="button" className="ck-niveau tuin-niveau" aria-label={`Rekenniveau ${state.level}, tik voor een ander niveau`} onClick={() => { if (!setGardenLevel(state.level % 3 + 1)) setNotice('Het niveau kon niet worden opgeslagen.'); refresh(); }}>Niveau {state.level}</button>
     </div>
 
     {/* 4. Gereedschap in de vaste volgorde: hint · maten · kalender · mand */}
-    <nav className="ck-zone-gereedschap ck-glas tuin-gereedschap" aria-label="Gereedschap">
+    <nav className="ck-zone-gereedschap ck-glas tuin-gereedschap" aria-label="Gereedschap"><InfoKnop character="kiki">Tik op een vak om te zaaien of een plant te verzorgen. Het hersentje kiest je niveau. In de kalender zie je wanneer je kunt oogsten. Ben je klaar met verzorgen, ga dan bovenaan naar de volgende tuindag.</InfoKnop>
+      <NiveauKnop niveau={state.level} onClick={() => setNiveauOpen(true)} />
       <button type="button" className={`ck-gereedschap${hint || hintLicht ? ' is-aan' : ''}`} aria-label={inTaak && hint ? 'Laat Kiki het voordoen' : 'Hint van Kiki'} onClick={hintKnop}><Lightbulb size={22} aria-hidden="true" /></button>
       <button type="button" className={`ck-gereedschap${maten ? ' is-aan' : ''}`} aria-label="Maten omrekenen" onClick={() => setMaten(true)}><Ruler size={22} aria-hidden="true" /></button>
       <button type="button" className={`ck-gereedschap${paneel === 'kalender' ? ' is-aan' : ''}`} aria-label={`Groeikalender, tuindag ${state.day}, ${SEASONS[season]}`} onClick={() => setPaneel(paneel === 'kalender' ? null : 'kalender')}><CalendarDays size={22} aria-hidden="true" /></button>
       <button type="button" className={`ck-gereedschap tuin-mand${paneel === 'oogst' ? ' is-aan' : ''}`} aria-label={`Mijn oogst, ${harvests.length} mandjes`} onClick={() => setPaneel(paneel === 'oogst' ? null : 'oogst')}><ShoppingBasket size={22} aria-hidden="true" />{harvests.length > 0 && <span className="tuin-mand__aantal" aria-hidden="true">{harvests.length}</span>}</button>
     </nav>
 
+    {niveauOpen && <NiveauKeuze niveau={state.level} keuzes={[{ niveau: 1, tekst: 'Rustig beginnen' }, { niveau: 2, tekst: 'Een stapje verder' }, { niveau: 3, tekst: 'Extra uitdaging' }]} onKies={value => { if (!setGardenLevel(value)) setNotice('Het niveau kon niet worden opgeslagen.'); refresh(); }} onClose={() => setNiveauOpen(false)} />}
     {/* 7. Speelveld: de zes bakken. Tik naast een bak om terug te gaan naar je hele tuin. */}
     <div className="tuin__veld" onClick={event => { if (event.target === event.currentTarget) kies(null); }}>
       <div className="garden__beds" aria-label="Zes tuinvakken" onClick={event => { if (event.target === event.currentTarget) kies(null); }}>
@@ -138,7 +142,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
         return result;
       }} />
       : <>
-        <Kiki blij={blij}>{zin}</Kiki>
+        {(notice || hint || selected !== null) && <Kiki blij={blij}>{zin}</Kiki>}
         <div className="ck-zone-antwoord tuin-antwoord">
           {plot?.step === 4 && crop && selected !== null ? <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => { const id = plot.id; act(harvestGarden(selected, id), 'Je oogst ligt in je mand. Verkoop hem of breng hem naar Coco.'); juich(); setPaneel('oogst'); }}>Oogsten</button>
             : null}

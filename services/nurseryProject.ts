@@ -1,3 +1,4 @@
+import { TASK_REWARDS } from './taskRewards';
 import { NURSERY_ITEMS, NURSERY_QUESTIONS, PROJECT_BUDGET, type NurseryItemId, type NurseryQuestionId } from '../data/projects/nursery';
 import { MIN_PLACEMENT_SCALE, MAX_PLACEMENT_SCALE, SCALE_STEP } from './roomInventory';
 import { commitLocalState, readDocument, readLocalState } from './localState';
@@ -45,7 +46,7 @@ export function answerNursery(revision: number, value: string): 'correct' | 'wro
   const text = value.trim().replace(',', '.');
   if (!/^\d+(\.\d+)?$/.test(text) || Math.abs(Number(text) - q.answer) > .000001) return 'wrong';
   const stages: Record<NurseryQuestionId, NurseryStage> = { height: 'space', space: 'shop', total: 'change', change: 'rug', rug: 'decorate' };
-  const amount = s.helped.includes(id) ? 0 : 12;
+  const amount = s.helped.includes(id) ? 0 : TASK_REWARDS.nurseryStep;
   return save(s, { ...s, solved: [...s.solved, id], stage: stages[id] }, { id: `nursery:v1:question:${id}`, amount }) ? 'correct' : 'save-failed';
 }
 export function toggleNurseryItem(revision: number, id: NurseryItemId): boolean {
@@ -96,7 +97,7 @@ export function nurseryLayoutReady(s: NurseryState): boolean {
 export function finishNursery(revision: number): boolean {
   const s = loadNursery();
   if (s.revision !== revision || s.stage !== 'decorate' || NURSERY_QUESTIONS.some(id => !s.solved.includes(id)) || !nurseryLayoutReady(s)) return false;
-  return save(s, { ...s, stage: 'complete' }, { id: 'nursery:v1:finish', amount: s.solved.filter(id => !s.helped.includes(id)).length * 8 });
+  return save(s, { ...s, stage: 'complete' }, { id: 'nursery:v1:finish', amount: s.solved.filter(id => !s.helped.includes(id)).length * TASK_REWARDS.nurseryFinishStep });
 }
 export function nurseryEarned(): number {
   try { return Object.entries(readLocalState().appliedTransactions).filter(([id]) => id.startsWith('nursery:v1:')).reduce((sum, [, amount]) => sum + amount, 0); } catch { return 0; }

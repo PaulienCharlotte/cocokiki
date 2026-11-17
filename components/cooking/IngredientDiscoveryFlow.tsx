@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import './bakkerij-stijl.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles } from 'lucide-react';
@@ -125,6 +127,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
       setWrongAnswer(optionId);
       return;
     }
+    if (result.coinDelta === 0) rewardAnswer('ingredient-discovery', `${recipe.id}:${journey.startedAt}`, `${ingredient.id}:${question.id}`, learningReward());
     setWrongAnswer(null);
     setToastCoins(result.coinDelta);
   };

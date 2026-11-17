@@ -26,8 +26,8 @@ export const SCHOOL_ACTIVITIES: ActivityDefinition[] = [
 export const ACTIVITY_LIBRARY: ActivityDefinition[] = [
   ...SCHOOL_ACTIVITIES,
   { id: 'recipes', title: 'Recepten', kind: 'collection', path: '/treehouse/cookbook', status: 'available' },
-  { id: 'nutrient-memory', title: 'Voedingsstoffen', kind: 'game', path: '/games/nutrient-memory', status: 'available' },
-  { id: 'plant-clinic', title: 'Plantendokter', subtitle: 'Help een plant die het niet goed doet', kind: 'game', path: '/plantendokter', image: PLANT_DOCTOR_EMBLEM, status: 'available' },
+  { id: 'nutrient-memory', image: '/assets/library/ui/nutrients-game.webp', title: 'Voedingsstoffen', kind: 'game', path: '/games/nutrient-memory', status: 'available' },
+  { id: 'plant-clinic', title: 'Plantendokter', subtitle: 'Help een plant die het niet goed doet', kind: 'collection', path: '/plantendokter', image: PLANT_DOCTOR_EMBLEM, status: 'available' },
   { id: 'plant-family', title: 'Mijn planten', subtitle: 'Kijk hoe het met je eigen planten gaat', kind: 'collection', path: '/plants/collection', image: plantProduct(PLANT_SPECIES[0]?.id)?.image, status: 'available' },
   { id: 'plant-book', title: 'Plantenboek', subtitle: 'Alles over de planten die je kent', kind: 'collection', path: '/encyclopedie', image: '/games/treehouse/encyclopedia-cta.webp', status: 'available' },
   ...RECIPES.map(recipe => ({ id: `recipe:${recipe.id}`, title: recipe.name, kind: 'recipe' as const,

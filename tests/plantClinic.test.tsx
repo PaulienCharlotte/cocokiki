@@ -139,7 +139,7 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   const patient = { ...maakGeval(PATIENT_KINDS[0], () => 0), consultId: 'consult-1' };
 
   const eerste = finishConsult(staat, patient, 0, false);
-  assert.equal(eerste.coins, 2);
+  assert.equal(eerste.coins, 30);
   assert.equal(eerste.stampEarned, false);
   staat = eerste.state;
 
@@ -151,7 +151,7 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   // Een denkstap of herkansing verandert de beloning niet.
   staat = finishConsult(staat, { ...patient, consultId: 'consult-2' }, 0, true).state;
   const derde = finishConsult(staat, { ...patient, consultId: 'consult-3' }, 2, false);
-  assert.equal(derde.coins, 2);
+  assert.equal(derde.coins, 30);
   assert.equal(derde.stampEarned, true);
   assert.equal(hasStamp(derde.state, patient.speciesId), true);
   assert.equal(derde.state.correct[patient.speciesId], STAMPS_NEEDED);
@@ -195,7 +195,7 @@ test('het spreekuur begint met onderzoeken, niet met gokken', () => {
   // Pas als je gekeken hebt mag je zeggen dat je genoeg weet.
   assert.match(scherm, /Ik weet genoeg<\/span><\/button>/);
   // De plantennaam staat bovenaan; een losse schermtitel leidt alleen af.
-  assert.doesNotMatch(scherm, />Plantendokter</);
+  assert.match(scherm, />Plantendokter</);
   // De diagnose en de behandeling komen pas later.
   assert.doesNotMatch(scherm, new RegExp(PLANT_PROBLEM_LABEL['te-veel-zon']));
 });
@@ -235,11 +235,11 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   assert.equal(scherm.split('ck-keuzes').length - 1, 1);
   // De knoppen komen uit het ontwerpsysteem, niet uit eigen maaksel.
   assert.match(scherm, /ck-button ck-button--primary/);
-  assert.match(scherm, /ck-button ck-button--quiet/);
+  assert.match(scherm, /ck-icon-button/);
   // Kiki staat niet in beeld tot er om hulp gevraagd wordt.
   assert.doesNotMatch(scherm, /kiki-tip/);
   assert.doesNotMatch(scherm, /Kiki zegt/);
-  assert.match(scherm, /Kiki, help eens/);
+  assert.match(scherm, /Hint van Kiki/);
   // Kiki brengt de patiënt binnen; Coco hoort bij de keuken, niet hier.
   assert.match(scherm, /avatars\/kiki/);
   assert.doesNotMatch(scherm, /avatars\/coco/);
@@ -269,8 +269,8 @@ test('de bonusvraag biedt drie namen met precies één goede', () => {
 
 test('de naam van de patiënt blijft geheim tot de plant gered is', () => {
   const scherm = renderToStaticMarkup(<PlantClinicScreen />);
-  assert.match(scherm, /Wie is dit\?/);
-  assert.match(scherm, /Een nieuwe pati(ë|&#x[0-9a-f]+;)nt/);
+  assert.match(scherm, /Plantendokter/);
+  assert.match(scherm, /Wat zie je aan de plant/);
   // Geen enkele soortnaam mag al in beeld staan.
   for (const species of PLANT_SPECIES) {
     assert.ok(!scherm.includes(species.scientificName), `${species.scientificName} verklapt de plant`);

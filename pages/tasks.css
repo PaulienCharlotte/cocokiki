@@ -1,102 +1,58 @@
-/* Het To Do-bord in de CocoKiki-huisstijl (docs/HUISSTIJL.md: "Hout: To Do-bord").
-   Kurk als achtergrond, een houten naambord, en elke opdracht als papieren
-   briefje met een punaise in de kleur van zijn wereld.
-   Alleen variabelen en klassen uit styles/cocokiki-tokens.css. */
 @import '../styles/cocokiki-tokens.css';
+@import '../styles/paper-surface.css';
 
-.tasks-screen { min-height: 100dvh; padding: 96px 16px 48px; background: var(--ck-hout) url('/dreamworld/to-do-board.webp') center / cover fixed; font-family: var(--ck-font-tekst); font-weight: 800; color: var(--ck-cacao); }
-.tasks-screen__content { max-width: 64rem; margin: auto; }
-
-/* Kop: houten naambord en de filters als glazen pil */
-.tasks-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
-.tasks-bord { margin: 0; padding: 8px 30px; font-size: var(--ck-maat-titel); line-height: 1.1; transform: rotate(-1.5deg); animation: ck-pop .5s var(--ck-veer) both; }
-.tasks-filters { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; }
-.tasks-filter { display: inline-flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; cursor: pointer; transition: transform .2s var(--ck-veer), background var(--ck-normaal); }
-.tasks-filter svg { width: 20px; height: 20px; }
-.tasks-filter:hover { transform: scale(1.05); background: rgba(255, 255, 255, .45); }
-.tasks-filter[aria-pressed=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
-.tasks-filter:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }
-
-/* Briefjes: papier, een punaise in de wereldkleur, een tikje scheef */
-.tasks-briefjes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 24px; margin: 0; padding: 0; list-style: none; }
-.tasks-briefjes > li { animation: ck-pop .5s var(--ck-veer) both; animation-delay: calc(var(--briefje, 0) * 60ms); }
-.tasks-briefje {
-  position: relative; display: flex; flex-direction: column; gap: 6px; width: 100%; height: 100%;
-  padding: 26px 16px 18px; border: 0; border-radius: 6px 6px 18px 6px; text-align: left; cursor: pointer;
-  background: var(--ck-room); color: var(--ck-cacao); font-family: var(--ck-font-tekst);
-  box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28);
-  transform: rotate(-1.2deg); transition: transform var(--ck-normaal) var(--ck-veer), box-shadow var(--ck-normaal);
+.tasks-screen { position: fixed; inset: 0; overflow: hidden; padding: calc(var(--ck-tik-min) + var(--space-8)) clamp(var(--space-6), 8vw, calc(var(--space-12) * 3)) var(--space-8); background: var(--ck-hout) url('/dreamworld/to-do-board.webp') center / 100% 100% no-repeat; color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.3 var(--ck-font-tekst); }
+.tasks-screen__content { display: flex; flex-direction: column; gap: var(--space-5); height: 100%; max-width: calc(var(--space-12) * 26); margin: auto; min-height: 0; }
+.tasks-paper.ck-paper-surface { display: grid; grid-template-columns: calc(var(--ck-tik-min) * 2.8) minmax(0,1fr); align-items: center; gap: var(--space-6); flex-shrink: 0; width: min(100%, calc(var(--ck-tik-min) * 20)); align-self: center; padding: var(--space-5) 6%; background: none; }
+.tasks-paper.ck-paper-surface::before { background-size: 100% 220%; }
+.tasks-paper__art { width: 100%; max-height: calc(var(--ck-tik-min) * 3); object-fit: contain; }
+.tasks-paper__body { display: grid; gap: var(--space-2); min-width: 0; }
+.tasks-paper__heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.tasks-bord { margin: 0; font: 800 var(--ck-maat-titel)/1 var(--ck-font-kop); }
+.tasks-paper__heading .ck-icon-button { background: transparent; color: var(--ck-cacao); border: 0; box-shadow: none; }
+.tasks-filters { display: flex; gap: var(--space-1); padding: var(--space-1) 0; overflow-x: auto; scrollbar-width: none; }
+.tasks-filter { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--ck-tik-min); padding: var(--space-2) var(--space-3); border: 0; border-radius: var(--ck-rond-knop); background: transparent; color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); cursor: pointer; }
+.tasks-filter svg { width: var(--ck-maat-tekst); height: var(--ck-maat-tekst); }
+.tasks-filter[aria-pressed=true] { background: var(--ck-zon); }
+.tasks-filter:focus-visible, .tasks-briefje:focus-visible { outline: var(--ck-onderkant) solid var(--ck-actief); outline-offset: calc(var(--ck-onderkant) / 2); }
+.tasks-daily { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.tasks-daily__content { min-width: 0; }
+.tasks-daily h2 { margin: 0; font: 800 var(--ck-maat-knop)/1.2 var(--ck-font-kop); }
+.tasks-daily__reward { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--ck-maat-tekst); }
+.tasks-daily__reward .ck-munt { width: var(--ck-maat-tekst); height: var(--ck-maat-tekst); }
+.tasks-daily .ck-knop { font-size: var(--ck-maat-tekst); flex-shrink: 0; }
+.tasks-carousel { position: relative; flex: 1; min-height: 0; }
+.tasks-briefjes { display: flex; align-items: stretch; height: 100%; min-height: 0; gap: var(--space-5); margin: 0; padding: var(--space-3) var(--ck-tik-min); list-style: none; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ck-tik-min); scrollbar-width: none; touch-action: pan-x; }
+.tasks-briefjes > li { flex: 0 0 clamp(calc(var(--ck-tik-min) * 3.2), 23%, calc(var(--ck-tik-min) * 4.4)); min-width: 0; display: flex; scroll-snap-align: start; }
+.tasks-briefje { position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; max-height: calc(var(--ck-tik-min) * 7); padding: var(--space-10) 12% 14%; gap: var(--space-2); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border: 0; color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.25 var(--ck-font-tekst); text-align: left; cursor: pointer; transition: transform var(--ck-normaal) var(--ck-veer); }
+.tasks-briefje:hover { transform: translateY(calc(var(--space-1) * -1)); }
+.tasks-briefje__plaatje { display: grid; place-items: center; flex: 1; min-height: 0; max-height: calc(var(--ck-tik-min) * 2.4); }
+.tasks-briefje__plaatje img { width: 100%; height: 100%; min-height: 0; object-fit: contain; user-select: none; }
+.tasks-briefje strong { font: 800 var(--ck-maat-knop)/1.1 var(--ck-font-kop); overflow-wrap: anywhere; }
+.tasks-briefje__tekst { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: var(--ck-maat-tekst); }
+.tasks-beloning { display: inline-flex; order: -1; align-self: flex-end; align-items: center; gap: var(--space-1); flex-shrink: 0; white-space: nowrap; font: 800 var(--ck-maat-tekst)/1 var(--ck-font-kop); }
+.tasks-beloning .ck-munt { width: var(--ck-maat-tekst); height: var(--ck-maat-tekst); }
+.tasks-carousel__controls { position: absolute; inset: 0; pointer-events: none; }
+.tasks-carousel__controls .tasks-strip-control { position: absolute; top: 45%; pointer-events: auto; width: var(--ck-tik-min); height: var(--ck-tik-min); border-radius: 50%; background: var(--ck-glas); border: 1px solid var(--ck-glas-rand); color: var(--ck-cacao); box-shadow: none; }
+.tasks-strip-control--prev { left: 0; }.tasks-strip-control--next { right: 0; }
+.tasks-practice { min-height: 0; overflow: auto; }
+.daily-practice { display: grid; gap: var(--space-4); max-width: calc(var(--ck-tik-min) * 12); margin: auto; padding: var(--space-5); background: var(--ck-room); border-radius: var(--ck-rond-kaart); color: var(--ck-cacao); }
+.daily-practice h2 { margin: 0; font-family: var(--ck-font-kop); }.daily-practice small { font-size: var(--ck-maat-tekst); }
+.tasks-melding { margin: 0; padding: var(--space-3); }
+@media(max-width:600px) {
+ .tasks-screen { padding: calc(var(--ck-tik-min) + var(--space-5)) var(--space-4) var(--space-5); }
+ .tasks-screen__content { gap: var(--space-3); }
+ .tasks-paper.ck-paper-surface { grid-template-columns: calc(var(--ck-tik-min) * 1.6) minmax(0,1fr); gap: var(--space-2); padding: var(--space-4) 6%; }
+ .tasks-paper__body { display: contents; }
+ .tasks-paper__art { grid-column: 1; grid-row: 1 / span 2; }
+ .tasks-paper__heading { grid-column: 2; grid-row: 1; }.tasks-bord { font-size: var(--ck-maat-kop); }
+ .tasks-filters { grid-column: 1 / -1; grid-row: 3; }
+ .tasks-filter { padding-inline: var(--space-2); }
+ .tasks-daily { grid-column: 2; grid-row: 2; display: grid; gap: var(--space-2); }
+ .tasks-daily h2 { font-size: var(--ck-maat-tekst); }
+ .tasks-daily .ck-knop { width: 100%; padding-inline: var(--space-2); }
+ .tasks-briefjes { padding-inline: var(--space-2); scroll-padding-inline: var(--space-2); }.tasks-briefjes > li { flex-basis: 76%; }
+ .tasks-briefje strong { font-size: var(--ck-maat-tekst); }.tasks-carousel__controls { display: none; }
 }
-.tasks-briefjes > li:nth-child(2n) .tasks-briefje { transform: rotate(1.1deg); }
-.tasks-briefjes > li:nth-child(3n) .tasks-briefje { transform: rotate(-.4deg); }
-.tasks-briefje::before { content: ""; position: absolute; top: 8px; left: 50%; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .8), var(--ck-actief) 45%, var(--ck-actief-rand)); box-shadow: 0 3px 4px rgba(40, 20, 5, .35); }
-.tasks-briefje:hover { transform: rotate(0) translateY(-6px); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 22px 30px rgba(74, 42, 26, .32); }
-.tasks-briefje:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 4px; }
-.tasks-briefje__plaatje { display: grid; place-items: center; aspect-ratio: 1.5; margin-bottom: 4px; border-radius: 14px; background: var(--ck-plekje); overflow: hidden; }
-.tasks-briefje__plaatje img { width: 78%; height: 88%; object-fit: contain; }
-.tasks-briefje strong { font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; line-height: 1.15; }
-.tasks-briefje__tekst { font-size: 16px; font-weight: 700; line-height: 1.3; }
-
-/* De beloning: een munt met een gele pil, onderaan het briefje */
-.tasks-beloning { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; margin-top: auto; padding: 4px 12px 4px 4px; border-radius: 999px; background: color-mix(in srgb, var(--ck-zon) 30%, var(--ck-room)); font-size: 15px; font-weight: 900; line-height: 1.2; }
-.tasks-beloning .ck-munt { width: 24px; height: 24px; flex: 0 0 24px; }
-.tasks-briefje .tasks-beloning { margin-top: auto; padding-top: 4px; }
-
-/* "Vijf voor vandaag": een bonusbriefje in druif, breed bovenaan */
-.tasks-briefje--vandaag { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 32px; padding: 26px 24px 20px; cursor: default; border-left: 8px solid var(--ck-druif); transform: rotate(-.6deg); }
-.tasks-briefje--vandaag::before { background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .8), var(--ck-druif) 45%, var(--ck-druif-rand)); }
-.tasks-briefje--vandaag:hover { transform: rotate(-.6deg); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28); }
-.tasks-briefje--vandaag h2 { margin: 0; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); }
-.tasks-briefje--vandaag p { margin: 2px 0 8px; font-size: 17px; font-weight: 700; }
-.tasks-briefje--vandaag .ck-knop svg { width: 22px; height: 22px; }
-.tasks-melding { margin: 0 0 20px; padding: 12px 18px; }
-
-/* De oefening van vandaag ligt ook op papier */
-.daily-practice { display: grid; gap: 16px; max-width: 44rem; margin: auto; padding: 24px; background: var(--ck-room); border-radius: var(--ck-rond-kaart); box-shadow: 0 2px 0 var(--ck-schaduw-rand), 0 14px 24px rgba(74, 42, 26, .28); }
-
-@media (max-width: 600px) {
-  .tasks-screen { padding: 84px 12px 32px; }
-  .tasks-header { justify-content: center; }
-  .tasks-bord { font-size: 32px; }
-  .tasks-filters { justify-content: center; border-radius: 24px; }
-  .tasks-filter { min-height: 44px; padding: 0 12px; font-size: 16px; }
-  .tasks-briefjes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 12px; }
-  .tasks-briefje { padding: 24px 10px 12px; }
-  .tasks-briefje strong { font-size: 18px; }
-  .tasks-briefje__tekst { display: none; }
-  .tasks-beloning { font-size: 14px; }
-  .tasks-briefje--vandaag .ck-knop { width: 100%; }
-  .daily-practice { padding: 14px; }
-}
-
-/* Gedeelde getekende materialen: levende tekst boven op rustig papier en hout. */
-.tasks-bord.ck-hout { padding: var(--space-3) var(--space-10); border: 0; border-radius: 0; background: url('/assets/library/ui/wooden-nameplate.webp') center / 100% 180% no-repeat; box-shadow: none; filter: drop-shadow(0 var(--space-1) var(--space-2) var(--color-overlay)); }
-.tasks-briefjes .tasks-briefje { padding: var(--space-10) var(--space-5) var(--space-6); min-height: 21rem; background: url('/assets/library/ui/pinned-paper.webp') center / 100% 100% no-repeat; border-radius: 0; box-shadow: none; filter: drop-shadow(0 var(--space-2) var(--space-3) var(--color-overlay)); }
-.tasks-briefjes .tasks-briefje::before { display: none; }
-.tasks-briefje__plaatje { background: transparent; }
-.tasks-daily { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr); align-items: center; gap: var(--space-5); margin-bottom: var(--space-8); padding: var(--space-5) var(--space-6); border-radius: var(--radius-card); background: url('/assets/library/ui/pinned-paper.webp') center / 100% 300% no-repeat; filter: drop-shadow(0 var(--space-2) var(--space-3) var(--color-overlay)); }
-.tasks-daily__art { grid-column: 1; grid-row: 1 / span 2; width: 100%; max-height: 13rem; object-fit: contain; filter: drop-shadow(0 var(--space-2) var(--space-2) var(--color-overlay)); }
-.tasks-daily__content { grid-column: 2; display: grid; gap: var(--space-2); }
-.tasks-daily > .ck-knop { grid-column: 2; justify-self: start; }
-.tasks-daily__label { color: var(--ck-hout-donker); font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: .08em; }
-.tasks-daily h2 { margin: 0; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); line-height: var(--line-height-tight); }
-.tasks-daily p { margin: 0; font-size: var(--font-size-md); }
-.tasks-daily__reward { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--font-size-lg); font-weight: var(--font-weight-heavy); }
-.tasks-daily__reward .ck-munt { flex-shrink: 0; }
-.tasks-daily small { font-size: var(--font-size-md); line-height: var(--line-height-default); }
-@media (max-width: 600px) {
-  .tasks-daily { grid-template-columns: var(--space-12) minmax(0, 1fr); gap: var(--space-3); padding: var(--space-5) var(--space-4); }
-  .tasks-daily__art { width: calc(var(--space-12) + var(--space-4)); max-width: none; align-self: start; }
-  .tasks-daily__content { padding-left: var(--space-2); }
-  .tasks-daily h2 { font-size: var(--font-size-xl); }
-  .tasks-daily > .ck-knop { grid-column: 1 / -1; width: 100%; }
-  .tasks-briefjes .tasks-briefje { padding: var(--space-8) var(--space-3) var(--space-5); min-height: 18rem; }
-}
-@media (max-width: 600px) {
-  .tasks-daily { grid-template-columns: calc(var(--space-12) * 2) minmax(0, 1fr); }
-  .tasks-daily__content { display: contents; }
-  .tasks-daily__art { grid-column: 1; grid-row: 1 / span 2; width: 100%; align-self: center; }
-  .tasks-daily__label { grid-column: 2; grid-row: 1; align-self: end; }
-  .tasks-daily h2 { grid-column: 2; grid-row: 2; align-self: start; }
-  .tasks-daily p, .tasks-daily__reward, .tasks-daily small { grid-column: 1 / -1; }
-}
+@media(max-height:600px) and (min-width:601px) { .tasks-paper.ck-paper-surface { padding-block: var(--space-2); }.tasks-paper__art { max-height: var(--ck-tik-min); }.tasks-briefje__tekst { -webkit-line-clamp: 2; } }
+@media(prefers-reduced-motion:reduce) { .tasks-briefje { transition: none; } }

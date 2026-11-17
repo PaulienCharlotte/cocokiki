@@ -1,3 +1,4 @@
+import { requestedTravelAdventure } from '../services/travelAdventures';
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Gamepad2, Map, MousePointer2, Play, Settings2, Type, Wand2, X } from 'lucide-react';
 import { Location } from '../types';
@@ -47,8 +48,9 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
   useEffect(() => registerNavigationGuard(proceed => {
     pendingExit.current = proceed; setConfirmExit(true);
   }, 1), []);
+  const [travelAdventure] = useState(() => requestedTravelAdventure(window.location.search));
   const [savedTest] = useState(() => readLocal<{ selection?: Selection } | null>('cocokiki:active-topo-test:v1', null));
-  const [selection, setSelection] = useState<Selection>(() => savedTest?.selection ? validateSelection(savedTest.selection) : initialSelection());
+  const [selection, setSelection] = useState<Selection>(() => travelAdventure ? validateSelection(travelAdventure.selection) : savedTest?.selection ? validateSelection(savedTest.selection) : initialSelection());
   const [timer, setTimer] = useState(false);
   const [viewportHeight, setViewportHeight] = useState<number>();
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     resize(); viewport?.addEventListener('resize', resize);
     return () => viewport?.removeEventListener('resize', resize);
   }, []);
-  const [session, setSession] = useState<Session | null>(() => savedTest?.selection ? { id: Date.now(), mode: 'test', locations: studyLocations(validateSelection(savedTest.selection)), pairs: [] } : null);
+  const [session, setSession] = useState<Session | null>(() => !travelAdventure && savedTest?.selection ? { id: Date.now(), mode: 'test', locations: studyLocations(validateSelection(savedTest.selection)), pairs: [] } : null);
   const exitTest = useRef<(() => void) | null>(null);
   const registerTestExit = useCallback((request: (() => void) | null) => { exitTest.current = request; }, []);
   const closeSession = useCallback(() => setSession(null), []);
@@ -238,7 +240,7 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
         {session.mode === 'memory' || session.mode === 'quiz'
           ? <LocationMemoryGame key={session.id} mode={session.mode} pairs={session.pairs} choicePool={pairs} onAnswer={onAnswer} onContinue={() => continueRoute(session.mode)} onRepeat={() => start(session.mode, session.pairs.map(pair => pair.id))} onRetry={ids => start(session.mode, ids)} onExit={() => setSession(null)} />
           : session.mode === 'test'
-            ? <div className="test-workspace"><ToetsGame key={session.id} provinceId={selection.areaId} clusterId="all" studyPool={session.locations} registerExit={registerTestExit} onExit={closeSession} onPractice={ids => start('master', ids, selection, true)} /></div>
+            ? <div className="test-workspace"><ToetsGame key={session.id} provinceId={selection.areaId} clusterId="all" adventureId={travelAdventure?.id} studyPool={session.locations} registerExit={registerTestExit} onExit={closeSession} onPractice={ids => start('master', ids, selection, true)} /></div>
             : <GameEngine key={session.id} mode={session.mode} areaId={selection.areaId} locations={session.locations} mapLocations={session.practiceIds ? session.locations : locations} timerEnabled={session.practiceIds ? false : timer} onAnswer={onAnswer} onContinue={() => session.practiceIds ? start('master', session.practiceIds, selection, true) : continueRoute(session.mode)} onRepeat={() => start(session.mode, session.locations.map(location => location.id), selection, !!session.practiceIds)} onRetry={ids => start(session.mode, ids, selection, !!session.practiceIds)} onExit={() => setSession(null)} />}
       </main> : <main className="discover-page">
             {mapControls()}

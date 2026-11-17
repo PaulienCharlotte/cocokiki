@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import './bakkerij-stijl.css';
 import { isCooktopZone } from '../../data/cooking/cooktopScene';
 import React, { useEffect, useRef, useState } from 'react';
@@ -138,13 +140,16 @@ export default function CookingExperience(props: Props) {
     }
     let nextSession = updateCookingStep(saved, patch);
     if (advance) nextSession = advancePreparation(nextSession, recipe);
+    const rewardStep = () => {
+      if (advance && !saved.completedStepIds.includes(liveStep.id) && nextSession.completedStepIds.includes(liveStep.id)) rewardAnswer('recipe-preparation', `${recipe.id}:${saved.attemptId}`, liveStep.id, learningReward());
+    };
     if (advance && preparation.steps.every(item => nextSession.completedStepIds.includes(item.id))) {
       const result = storage.complete(current, recipe, nextSession);
       if (!result.ok) { setMessage(result.message); setRetry(value => value + 1); return; }
-      if (await persist(result.progress)) setMessage(null);
+      if (await persist(result.progress)) { rewardStep(); setMessage(null); }
       return;
     }
-    if (await persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } })) setMessage(null);
+    if (await persist({ ...current, preparationSessions: { ...current.preparationSessions, [recipe.id]: nextSession } })) { rewardStep(); setMessage(null); }
   };
   /** Alleen waar je kijkt verschuift; wat af is blijft af. */
   const blader = (richting: 'terug' | 'verder') => {

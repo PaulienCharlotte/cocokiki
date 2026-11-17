@@ -1,3 +1,4 @@
+import { TASK_REWARDS } from '../../services/taskRewards';
 import type { CharacterId } from '../characters';
 import type { RecipeCategory } from './types';
 
@@ -54,7 +55,7 @@ export const BESTELLINGEN: Bestelling[] = [
     eis: { soort: 'zonder', ingredientIds: ['milk', 'yogurt'], woord: 'zuivel' },
     afwijzing: 'Daar zit zuivel in. Dat kan ik niet hebben.',
     dank: 'Precies goed, en genoeg voor ons alle vier. We gaan buiten zitten.',
-    bonus: 5,
+    bonus: TASK_REWARDS.bakery,
   },
   {
     id: 'seb-verjaardag',
@@ -66,7 +67,7 @@ export const BESTELLINGEN: Bestelling[] = [
     eis: { soort: 'categorie', categorie: 'baking' },
     afwijzing: 'Dat komt niet uit de oven. Ze willen juist iets wat warm uit de oven komt.',
     dank: 'Veertien stuks, en ze kwamen uit de oven. Zaterdag wordt goed.',
-    bonus: 5,
+    bonus: TASK_REWARDS.bakery,
   },
   {
     id: 'lua-tussendoor',
@@ -78,7 +79,7 @@ export const BESTELLINGEN: Bestelling[] = [
     eis: { soort: 'snel', minuten: 10 },
     afwijzing: 'Dat duurt me te lang. Ik moet over tien minuten weer verder.',
     dank: 'Op tijd, en voor ons drieën. Nu kan ik weer rekenen.',
-    bonus: 5,
+    bonus: TASK_REWARDS.bakery,
   },
 ];
 

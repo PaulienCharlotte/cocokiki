@@ -1,3 +1,4 @@
+@import '../../styles/paper-surface.css';
 @import '../../styles/cocokiki-tokens.css';
 
 /* De bakkerij deelt materiaal met het To Do-bord; de bediening blijft echte UI. */
@@ -159,3 +160,16 @@
 .bakkerij-stijl .discovery-card--question .discovery-card__content, .bakkerij-stijl .discovery-card--correct .discovery-card__content { gap: var(--space-4); margin-top: 0; }
 .bakkerij-stijl .discovery-card--question .discovery-card__ingredient, .bakkerij-stijl .discovery-card--correct .discovery-card__ingredient { width: calc(var(--space-12) * 3); height: calc(var(--space-12) * 2); }
 .cooking-tap__vessel:has(.cooking-food-sprite) { max-width: calc(var(--space-12) * 6); }
+
+/* Papier is de buitenmaat; tekst en antwoorden blijven binnen de naden. */
+.bakkerij-stijl .bestel-kaart { box-sizing: border-box; padding: var(--space-8); min-width: 0; }
+.bakkerij-stijl .bestel-kaart > *, .bakkerij-stijl .bestel-kaart .ck-zegt__wolk { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .bakkerij-stijl .bestel-kaart { padding: var(--space-5); }
+}
+/* Recipe copy and badges stay inside the printed stitch, not the rectangular hit area. */
+.bakkerij-stijl .recipe-card__button { padding: var(--space-6) 10% var(--space-6); }
+
+.bakkerij-stijl .bestel-kaart.ck-paper-surface { background: none; border: 0; box-shadow: none; padding: var(--space-10) var(--ck-tik-min); }
+.bakkerij-stijl .bestel-kaart.ck-paper-surface::before { background-size: 100% 180%; }
+@media(max-width:600px) { .bakkerij-stijl .bestel-kaart.ck-paper-surface { padding: var(--space-8); } }

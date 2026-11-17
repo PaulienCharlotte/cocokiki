@@ -1,3 +1,4 @@
+import { TASK_REWARDS } from '../../services/taskRewards';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft, BookHeart, Brush, Copy, Download, Droplets, Eraser, Layers, Minus, PaintBucket, Plus, Redo2, RotateCcw, RotateCw, Save, Sparkles, Trash2, Undo2,
@@ -245,9 +246,9 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
   if (isOrder && !order.started) return <section className="taart-klaar"><article className="taart-klaar__kaart">
     <IconButton label="Terug naar de toonbank" icon={<ArrowLeft size={19} />} onClick={onClose} />
     <SpeechBubble character="seb" label="een verjaardagstaart">Mijn zusje is jarig! Ze houdt van roze en aardbeien. Versier jij een roze taart met minstens één aardbei?</SpeechBubble>
-    <p>Verdien 5 muntjes bij het afleveren.</p>
+    <p>Verdien {TASK_REWARDS.cake} muntjes bij het afleveren.</p>
     <Button variant="secondary" aria-pressed={timed} onClick={() => setTimed(value => !value)}>{timed ? 'Met tijdsbonus: aan' : 'Met tijdsbonus: uit'}</Button>
-    <p>Met tijdsbonus: 2 extra muntjes binnen 5 minuten. Daarna mag je rustig verder.</p>
+    <p>Met tijdsbonus: {TASK_REWARDS.cakeSpeed} extra muntjes binnen 5 minuten. Daarna mag je rustig verder.</p>
     <Button onClick={() => {
       const next = { started: true, timed, elapsed: 0, delivered: false, reward: 0 };
       if (saveCakeOrder(next)) setOrder(next);

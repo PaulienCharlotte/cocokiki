@@ -1,0 +1,3 @@
+.ck-dialog.spel-uitleg { background: var(--ck-room); color: var(--ck-cacao); border: 1px solid var(--ck-hout-licht); font-family: var(--ck-font-tekst); }
+.spel-uitleg .ck-dialog__title { font-family: var(--ck-font-kop); }
+.spel-uitleg .ck-zegt__wolk { background: var(--ck-glas); }

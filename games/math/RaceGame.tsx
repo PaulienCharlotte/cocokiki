@@ -1,5 +1,10 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
+import { difficultyBonus } from './progress';
+import InfoKnop from '../../components/ui/InfoKnop';
+import NiveauKnop from '../../components/ui/NiveauKnop';
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronDown, Lightbulb, Users, Volume2, VolumeX, Wallet } from 'lucide-react';
+import { Lightbulb, Users, Volume2, VolumeX, Wallet } from 'lucide-react';
 import NiveauPaneel from './NiveauPaneel';
 import { expressionText, resultStatus, validAnswer } from './engine';
 import DragChoice from './DragChoice';
@@ -161,6 +166,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
     const correct = validAnswer(question, value); onSound(correct);
     if (!correct) { statistics.current.mistakes++; setWrong(value); setHint(true); return; }
     statistics.current.correct++; statistics.current.score++;
+    rewardAnswer('math:race', raceId, order.current, learningReward(1, false, difficultyBonus(level)));
     vonken(scherm.current?.querySelector(`[data-waarde="${value}"]`) ?? null);
     const klanten = statistics.current.score;
     setScore(klanten); setWrong(null); setHint(false);
@@ -193,14 +199,14 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
       <span className="wk-stippen" role="img" aria-label={`${score} klanten geholpen`}>
         {Array.from({ length: STIPPEN }, (_, i) => <span key={i} className={`ck-stip${i < klaar ? ' ck-stip--klaar' : ''}${started && i === klaar ? ' ck-stip--nu' : ''}`} />)}
       </span>
-      {onLevel ? <button type="button" className="ck-niveau wk-niveau" aria-haspopup="dialog" aria-label={`Niveau ${level}, kies een ander niveau`} onClick={() => setNiveauKiezen(true)}>Niveau {level}<ChevronDown size={16} aria-hidden="true" /></button>
-        : <span className="ck-niveau">Niveau {level}</span>}
-      <span className="ck-status-extra" aria-live="polite">{einde ? <><span className="wk-scheid" /><span className="ck-munt wk-munt" aria-hidden="true" /><b className="wk-plus">{einde.saved ? `+${einde.reward}` : '…'}</b><span>{statistics.current.correct} klanten</span></> : beloning !== null && <><span className="wk-scheid" /><b className="wk-plus">+1</b>{beloning && <><span className="wk-kaartje" aria-hidden="true">★</span><span>{beloning}</span></>}</>}</span>
+
+      <span className="ck-status-extra" aria-live="polite">{einde ? <><span className="wk-scheid" /><span className="ck-munt wk-munt" aria-hidden="true" /><b className="wk-plus">{einde.saved ? `+${einde.reward}` : '…'}</b><span>{statistics.current.correct} klanten</span></> : beloning !== null && <><span className="wk-scheid" /><b className="wk-plus">+{learningReward(1, false, difficultyBonus(level))}</b>{beloning && <><span className="wk-kaartje" aria-hidden="true">★</span><span>{beloning}</span></>}</>}</span>
     </div>
 
     {niveauKiezen && onLevel && <NiveauPaneel game="race" level={level} onKies={onLevel} onClose={() => setNiveauKiezen(false)} />}
     {/* 4. Gereedschap: alleen wat dit spel nodig heeft. Een rekenmachine zou de race wegnemen. */}
-    <div className="ck-zone-gereedschap ck-glas wk-gereedschap" role="toolbar" aria-label="Gereedschap">
+    <div className="ck-zone-gereedschap ck-glas wk-gereedschap" role="toolbar" aria-label="Gereedschap"><InfoKnop character="lua">Help de klanten door hun som op te lossen. Kies het goede antwoord voordat de klant weg is. Het hersentje kiest je niveau.</InfoKnop>
+      {onLevel && <NiveauKnop niveau={level} onClick={() => setNiveauKiezen(true)} />}
       <button type="button" className={`ck-gereedschap${hint ? ' is-aan' : ''}`} aria-label="Hint van Baby Lua" aria-pressed={hint} disabled={!started} onClick={() => setHint(value => !value)}><Lightbulb size={22} aria-hidden="true" /></button>
       {onToggleSound && <><span className="wk-lijn" aria-hidden="true" />
         <button type="button" className={`ck-gereedschap${sound ? ' is-aan' : ''}`} aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} aria-pressed={!!sound} onClick={onToggleSound}>{sound ? <Volume2 size={22} aria-hidden="true" /> : <VolumeX size={22} aria-hidden="true" />}</button></>}

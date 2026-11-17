@@ -8,3 +8,13 @@
 .food-illustration { display: grid; gap: var(--space-2); margin: 0; width: 100%; }
 .food-illustration img { display: block; width: 100%; height: clamp(8rem, 24vh, 14rem); object-fit: contain; border-radius: var(--radius-control); }
 .food-illustration figcaption { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: var(--line-height-default); }
+.food-explore { display: grid; gap: var(--space-3); }
+.food-explore h3 { margin: 0; color: var(--ck-cacao); font: 800 var(--ck-maat-knop)/1.2 var(--ck-font-kop); }
+.food-explore__products { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-3); }
+.food-explore__products button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--ck-tik-min); padding: var(--space-3); border: 0; border-radius: var(--ck-rond-knop); background: var(--ck-plekje); color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); cursor: pointer; }
+.food-explore__products img { width: var(--ck-tik-min); height: var(--ck-tik-min); object-fit: contain; }
+.food-explore__products button:focus-visible { outline: var(--ck-onderkant) solid var(--ck-actief); }
+.food-article .food-related .ck-button { color: var(--ck-cacao); }
+@media(max-width:600px) { .food-explore__products { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+.food-hint, .food-illustration figcaption { color: var(--ck-cacao); font-size: var(--ck-maat-tekst); }
+.food-word { color: var(--ck-cacao); text-decoration-color: var(--ck-actief); }

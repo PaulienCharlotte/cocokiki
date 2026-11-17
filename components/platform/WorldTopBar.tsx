@@ -88,7 +88,8 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
       <div className="world-hud__tools ck-glas">
         {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Mijn spellen openen" size="small" icon={<Gamepad2 size={20} />} onClick={() => onNavigate('/mijn-spellen')} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Alle spellen openen" size="small" icon={<Gamepad2 size={20} />} onClick={() => onNavigate('/mijn-spellen')} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="To Do openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         {/* In een spel met een eigen statuseiland staan de munten hier, in het menu. */}
         <button type="button" className="world-hud__balance ck-bovenbalk__munten-klein" aria-label={`${coins} CocoCoins · Mijn munten openen`} onClick={() => onNavigate?.('/munten')}>
@@ -108,7 +109,6 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <ChevronDown size={19} aria-hidden="true" />
           </button>
           {profileOpen && <div className="world-profile__menu" id={menuId} role="menu" aria-label="Profielmenu">
-            <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onHome(); }}><Map size={21} />Wereldkaart</button>
             <div className="world-profile__identity">
               <img src={avatar.image} alt="" />
               <div><strong>Hoi!</strong><span>{sessie?.naam ?? 'Gast'}</span></div>
@@ -135,8 +135,9 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
             <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
             {onNavigate && <>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 />Mijn spellen</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 />Alle spellen</button>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />To Do</button>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}><BookOpen />Encyclopedie</button>
             </>}
           </nav>}
         </div>

@@ -1,0 +1,10 @@
+.reward-feedback { position: fixed; inset: 0; z-index: 10000; pointer-events: none; }
+.reward-feedback__burst { position: absolute; display: flex; align-items: center; gap: var(--ck-onderkant); font: 800 var(--ck-maat-speelgetal)/1 var(--ck-font-kop); color: var(--ck-cacao); transform: translate(-50%, -50%); animation: reward-pop 1.8s var(--ck-veer) both; }
+.reward-feedback__burst strong { padding: var(--ck-onderkant); border-radius: var(--ck-rond-knop); background: var(--ck-room); }
+.reward-feedback .reward-feedback__coin { width: var(--ck-tik-min); height: var(--ck-tik-min); flex-shrink: 0; animation: reward-flight 1.8s ease-in-out both; }
+.reward-feedback__spark { position: absolute; top: calc(var(--ck-maat-kop) * -1); color: var(--ck-zon); }
+body:has(.reward-feedback__burst) :is(.world-hud__balance, [data-coin-balance]) { animation: reward-balance .5s var(--ck-veer); }
+@keyframes reward-pop { 0% { opacity: 0; scale: .4; } 18%,65% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: .9; } }
+@keyframes reward-flight { 0%,45% { translate: 0 0; rotate: -15deg; } 80%,100% { translate: var(--reward-dx) var(--reward-dy); scale: .4; rotate: 20deg; } }
+@keyframes reward-balance { 50% { transform: scale(1.14); } }
+@media (prefers-reduced-motion: reduce) { .reward-feedback__burst { animation: none; }.reward-feedback .reward-feedback__coin { animation: none; }body:has(.reward-feedback__burst) :is(.world-hud__balance, [data-coin-balance]) { animation: none; } }

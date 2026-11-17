@@ -1,3 +1,4 @@
+import { answerCoins } from '../../services/answerRewards';
 import type { ClockGameId, ClockLevel, ClockProgress, ClockRaceMode } from './types';
 import { commitLocalState, readDocument, readLocalState } from '../../services/localState';
 import { learningReward } from '../../services/learningReward';
@@ -67,8 +68,9 @@ export function rewardClockRound(game: ClockGameId, level: ClockLevel, roundId: 
     const milestone = `clock:${game}:level:${level}`;
     const first = !Object.prototype.hasOwnProperty.call(state.appliedTransactions, milestone);
     const amount = learningReward(solved);
+    const remaining = Math.max(0, amount - answerCoins(`clock:${game}`, roundId));
     const next = completeClockLevel(loadClockProgress(), game, level).progress;
-    const operations = first ? [{ id: milestone, amount }, { id, amount: 0 }] : [{ id, amount }];
+    const operations = first ? [{ id: milestone, amount: remaining }, { id, amount: 0 }] : [{ id, amount: remaining }];
     return commitLocalState({ [CLOCK_PROGRESS_KEY]: JSON.stringify(next) }, operations).status === 'applied' ? amount : 0;
   } catch { return 0; }
 }

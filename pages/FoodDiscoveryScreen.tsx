@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../services/answerRewards';
+import { learningReward } from '../services/learningReward';
 import React, { useState } from 'react';
 import { ArrowLeft, Droplets, Flame, Heart, Microscope, Utensils, Wind } from 'lucide-react';
 import { INGREDIENTS } from '../data/cooking/catalog';
@@ -13,6 +15,7 @@ import './food-discovery.css';
 import '../components/cooking/bakkerij-stijl.css';
 
 export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path: string) => void }) {
+  const [roundId, setRoundId] = useState(() => crypto.randomUUID());
   const [view, setView] = useState<'products' | 'body' | 'lessons'>('products');
   const [productId, setProductId] = useState<string | null>(null);
   const [termId, setTermId] = useState<string | null>(null);
@@ -51,7 +54,7 @@ export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path:
           { id: 'red-blood-cells', icoon: <Droplets /> }, { id: 'oxygen', icoon: <Wind /> }, { id: 'cells', icoon: <Microscope /> },
           { id: 'blood', icoon: <Heart /> }, { id: 'digestion', icoon: <Utensils /> }, { id: 'energy', icoon: <Flame /> },
         ].map(item => ({ ...item, titel: FOOD_TERMS_BY_ID[item.id].title }))} onChoose={setTermId} />}
-        {view === 'lessons' && <CardGrid label="Kies een ontdekking" cards={FOOD_LESSONS.map(item => ({ id: item.id, titel: item.title, beeld: item.image, meta: completed.includes(item.id) ? 'Ontdekt' : `${item.questions.length} ontdekkingen` }))} onChoose={id => { setLessonId(id); setStep(-1); }} />}
+        {view === 'lessons' && <CardGrid label="Kies een ontdekking" cards={FOOD_LESSONS.map(item => ({ id: item.id, titel: item.title, beeld: item.image, meta: completed.includes(item.id) ? 'Ontdekt' : `${item.questions.length} ontdekkingen` }))} onChoose={id => { setRoundId(crypto.randomUUID()); setLessonId(id); setStep(-1); }} />}
       </> : <>
         <img className="food-discovery__image" src={lesson.image} alt="" />
         {step === -1 ? <>
@@ -59,7 +62,7 @@ export default function FoodDiscoveryScreen({ onNavigate }: { onNavigate: (path:
           <Button onClick={next}>Ontdekken</Button>
         </> : question ? <>
           <SpeechBubble character="coco" label={lesson.title} aside={`${step + 1} / ${lesson.questions.length}`}>{question.question}</SpeechBubble>
-          <ChoiceList label="Kies je antwoord" disabled={selected !== null} choices={question.choices.map((label, index) => ({ id: String(index), label, staat: selected === null ? undefined : index === question.answer ? 'goed' as const : selected === index ? 'mis' as const : undefined }))} onChoose={id => setSelected(Number(id))} />
+          <ChoiceList label="Kies je antwoord" disabled={selected !== null} choices={question.choices.map((label, index) => ({ id: String(index), label, staat: selected === null ? undefined : index === question.answer ? 'goed' as const : selected === index ? 'mis' as const : undefined }))} onChoose={id => { if (selected !== null) return; const choice = Number(id); if (choice === question.answer) rewardAnswer('food-lesson', roundId, `${lesson.id}:${step}`, learningReward()); setSelected(choice); }} />
           {selected !== null && <><p className="food-discovery__explanation" role="status">{question.explanation}</p><Button onClick={next}>Verder</Button></>}
         </> : <>
           <SpeechBubble character="coco" label="ontdekt">Je hebt {lesson.title.toLowerCase()} ontdekt. Zullen we het in de keuken gebruiken?</SpeechBubble>

@@ -1,3 +1,4 @@
+import { answerCoins } from '../../services/answerRewards';
 import { commitLocalState, readDocument, readLocalState, subscribeLocalState } from '../../services/localState';
 import { resultStatus } from './engine';
 import { RACE_DAILY_COIN_CAP } from './config';
@@ -33,6 +34,12 @@ export function difficultyBonus(level: MathLevel, snel = false): number {
   return (MATH_LEVELS.includes(level) ? level - 1 : 0) + (snel ? 1 : 0);
 }
 
+/** Munten per goed antwoord. Redactiesommen zijn meer denkwerk: 5 op niveau 1 tot 7 op niveau 5. */
+export function muntenPerAntwoord(game: MathGameId, level: MathLevel): number {
+  if (game === 'add-subtract') return 5 + Math.floor(((MATH_LEVELS.includes(level) ? level : 1) - 1) / 2);
+  return learningReward(1, false, difficultyBonus(level));
+}
+
 export function emptyMathProgress(): MathProgress {
   return { version: 1, games: Object.fromEntries(MATH_GAME_IDS.map(id => [id, { completed: [], best: {} }])) as MathProgress['games'] };
 }
@@ -64,8 +71,11 @@ export const subscribeMathProgress = (listener: () => void) => subscribeLocalSta
 export function levelUnlocked(_progress: MathProgress, _game: MathGameId, level: MathLevel): boolean {
   return MATH_LEVELS.includes(level);
 }
+/** Redactiesommen beginnen op niveau 4: lagere niveaus kauwen te veel voor. Lager kiezen kan nog wel. */
+const START_NIVEAU: Partial<Record<MathGameId, MathLevel>> = { 'add-subtract': 4 };
 export function nextMathLevel(progress: MathProgress, game: MathGameId): MathLevel {
-  return MATH_LEVELS.find(level => !progress.games[game].completed.includes(level)) ?? 5;
+  const vanaf = START_NIVEAU[game] ?? 1;
+  return MATH_LEVELS.find(level => level >= vanaf && !progress.games[game].completed.includes(level)) ?? 5;
 }
 export function finishMathLevel(game: MathGameId, level: MathLevel, result: MathResult, now = new Date()): { ok: boolean; reward: number; progress: MathProgress } {
   const progress = loadMathProgress();
@@ -87,7 +97,8 @@ export function finishMathLevel(game: MathGameId, level: MathLevel, result: Math
       const reward = learningReward(result.correct, false, difficultyBonus(level, result.correct >= CHECKOUT_FAST_AFTER));
       earnings.days[day] = earned + reward;
       earnings.runs[result.raceId] = { reward, signature };
-      const saved = commitLocalState({ [MATH_PROGRESS_KEY]: JSON.stringify(next), [RACE_EARNINGS_KEY]: JSON.stringify(earnings) }, [{ id: `math:checkout:${result.raceId}`, amount: reward }]);
+      const remaining = Math.max(0, reward - answerCoins('math:race', result.raceId));
+      const saved = commitLocalState({ [MATH_PROGRESS_KEY]: JSON.stringify(next), [RACE_EARNINGS_KEY]: JSON.stringify(earnings) }, [{ id: `math:checkout:${result.raceId}`, amount: remaining }]);
       return { ok: saved.status === 'applied' || saved.status === 'duplicate', reward: saved.status === 'applied' ? reward : 0, progress: saved.status === 'invalid' ? progress : next };
     } catch { return { ok: false, reward: 0, progress }; }
   }
@@ -95,12 +106,12 @@ export function finishMathLevel(game: MathGameId, level: MathLevel, result: Math
   if (!Number.isSafeInteger(solved) || solved < result.correct || solved > result.total) return { ok: false, reward: 0, progress };
   const roundId = result.roundId ?? `legacy:${game}:${level}:${JSON.stringify(result)}`;
   if (!roundId || roundId.length > 500) return { ok: false, reward: 0, progress };
-  const operations = [{ id: `math:round:${game}:${roundId}`, amount: learningReward(solved, false, difficultyBonus(level)) }];
+  const totalReward = solved * muntenPerAntwoord(game, level);
+  const operations = [{ id: `math:round:${game}:${roundId}`, amount: Math.max(0, totalReward - answerCoins(`math:${game}`, roundId)) }];
   // Read the receipt before committing so replays can report only newly earned coins.
   const before = loadRewardLedger();
-  const reward = operations.filter(operation => !Object.prototype.hasOwnProperty.call(before, operation.id)).reduce((sum, operation) => sum + operation.amount, 0);
   const saved = commitLocalState({ [MATH_PROGRESS_KEY]: JSON.stringify(next) }, operations);
-  return { ok: saved.status === 'applied' || saved.status === 'duplicate', reward: saved.status === 'applied' ? reward : 0, progress: saved.status === 'invalid' ? progress : next };
+  return { ok: saved.status === 'applied' || saved.status === 'duplicate', reward: saved.status === 'applied' && !Object.hasOwn(before, operations[0].id) ? totalReward : 0, progress: saved.status === 'invalid' ? progress : next };
 }
 
 function loadRewardLedger() { try { return readLocalState().appliedTransactions; } catch { return {}; } }

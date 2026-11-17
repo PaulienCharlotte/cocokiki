@@ -77,11 +77,11 @@ test('Dreamworld renders five floating destinations and compact tools', () => {
   assert.equal((html.match(/class="dream-hotspot"/g) ?? []).length, 5);
   assert.doesNotMatch(html, /world-bridge/);
   assert.match(html, /aria-label="Mijn boomhut openen"/);
-  assert.match(html, /aria-label="Rekenwerkplaats openen"/);
+  assert.match(html, /aria-label="Lua’s werkplaats openen"/);
   assert.doesNotMatch(html, /aria-label="Koken openen"/);
-  assert.match(html, /aria-label="Kiki’s Plantenkas openen"/);
+  assert.match(html, /aria-label="Kiki’s moestuin openen"/);
   assert.match(html, /aria-label="Coco’s Bakkerij openen"/);
-  assert.match(html, /aria-label="Reizen en topografie openen"/);
+  assert.match(html, /aria-label="Seb’s ontdekkingskamer openen"/);
   // Het taaleiland staat niet op de kaart zolang er niets te doen is.
   assert.doesNotMatch(html, /aria-label="Taal/);
   assert.doesNotMatch(html, /aria-label="Uitdagingen openen"/);

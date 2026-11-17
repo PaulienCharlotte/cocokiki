@@ -1,5 +1,6 @@
 // One atomic write keeps the existing wallet and related documents together.
 export const LOCAL_STATE_KEY = 'cocokiki:currency:v1';
+export const REWARD_EVENT = 'cocokiki:reward-earned';
 export const LOCAL_STATE_EVENT = 'cocokiki:local-state-change';
 interface LocalState {
   version: 2;
@@ -37,6 +38,7 @@ export function commitLocalState(documents: Record<string, string>, operations: 
   try {
     const state = readLocalState();
     let applied = false;
+    let earned = 0;
     for (const operation of operations) {
       if (!operation.id || !Number.isSafeInteger(operation.amount)) return { status: 'invalid' as const, balance: state.balance };
       if (Object.prototype.hasOwnProperty.call(state.appliedTransactions, operation.id)) {
@@ -44,6 +46,7 @@ export function commitLocalState(documents: Record<string, string>, operations: 
         continue;
       }
       if (state.balance + operation.amount < 0) return { status: 'insufficient' as const, balance: state.balance };
+      if (operation.amount > 0 && !operation.id.startsWith('balance:')) earned += operation.amount;
       state.balance += operation.amount;
       state.appliedTransactions[operation.id] = operation.amount;
       applied = true;
@@ -52,6 +55,7 @@ export function commitLocalState(documents: Record<string, string>, operations: 
     localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state));
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('cocokiki:currency-change', { detail: state.balance }));
+      if (earned > 0) window.dispatchEvent(new CustomEvent(REWARD_EVENT, { detail: { amount: earned, balance: state.balance } }));
       window.dispatchEvent(new CustomEvent(LOCAL_STATE_EVENT, { detail: Object.keys(documents) }));
     }
     return { status: applied || operations.length === 0 ? 'applied' as const : 'duplicate' as const, balance: state.balance };

@@ -163,3 +163,29 @@ main.wereld-scherm.ck-scherm .ck-kaarten.is-plek { transform: none; }
 .wereld-plek { grid-template-rows: auto; }
 .wereld-plek:hover .wereld-plek__bol img { transform: none; }
 .clinic__emblem { width: var(--space-12); height: var(--space-12); object-fit: contain; flex: 0 0 var(--space-12); }
+
+/* Het spelbeeld krijgt het grootste deel van het medaillon. */
+main.wereld-scherm.ck-scherm.heeft-klembord { --bol: clamp(80px, 7cqw, 112px); }
+.wereld-scherm .wereld-plek__bol img { width: 94%; height: 94%; }
+@media (max-width: 600px) {
+  main.wereld-scherm.ck-scherm.heeft-klembord { --bol: clamp(68px, 19cqw, 88px); }
+}
+main.wereld-scherm.ck-scherm.heeft-klembord.world-location--lua .ck-kaarten.is-plek:has(> li:nth-child(5)) { --bol: clamp(80px, 7cqw, 112px); }
+.wereld-scherm .wereld-plek__bol { max-width: 100%; height: auto; aspect-ratio: 1; }
+@container (max-width: 640px) {
+  main.wereld-scherm.ck-scherm.heeft-klembord.world-location--lua .ck-kaarten.is-plek:has(> li:nth-child(5)) { --bol: clamp(68px, 19cqw, 88px); }
+}
+
+/* Huisjes vormen één compositie: naambord direct boven het klembord. */
+main.wereld-scherm.ck-scherm.heeft-klembord { --huis-rand: clamp(16px, 4cqw, 64px); --huis-bordhoogte: calc(var(--kb) * .675); }
+main.wereld-scherm.ck-scherm.heeft-klembord .wereld-naambord { top: auto; left: auto; right: var(--huis-rand); bottom: calc(var(--huis-bordhoogte) + var(--space-8)); max-width: calc(var(--kb) - var(--space-8)); transform: none; margin: 0; text-align: center; box-sizing: border-box; }
+main.wereld-scherm.ck-scherm.heeft-klembord .ck-kaarten.is-plek { right: var(--huis-rand); bottom: var(--space-4); }
+main.wereld-scherm.ck-scherm.heeft-klembord.world-location--lua:has(.ck-kaarten > li:nth-child(5)) { --kb: clamp(500px, 48cqw, 720px); --huis-bordhoogte: calc(var(--kb) * .34 + var(--bol) * 2 + var(--space-2)); }
+@container(max-width:640px) {
+ main.wereld-scherm.ck-scherm.heeft-klembord, main.wereld-scherm.ck-scherm.heeft-klembord.world-location--lua:has(.ck-kaarten > li:nth-child(5)) { --kb: calc(100cqw - var(--ck-rand) * 2); --huis-rand: var(--ck-rand); }
+ main.wereld-scherm.ck-scherm.heeft-klembord .wereld-naambord { font-size: var(--font-size-lg); padding: var(--space-3) var(--space-5); }
+ main.wereld-scherm.ck-scherm.heeft-klembord.world-location--lua:has(.ck-kaarten > li:nth-child(5)) { --huis-bordhoogte: calc(var(--kb) * .34 + var(--bol) * 3 + var(--space-4)); }
+}
+@media(max-height:600px) and (min-width:701px) {
+ main.wereld-scherm.ck-scherm.heeft-klembord { --kb: min(44vw, 65vh); --bol: clamp(58px, 8vh, 88px); }
+}

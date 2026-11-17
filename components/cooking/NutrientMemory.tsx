@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import React, { useEffect, useRef, useState } from 'react';
 import { Check, Leaf } from 'lucide-react';
 import type { NutrientMemoryConfig } from '../../data/cooking/nutrients';
@@ -5,9 +7,11 @@ import { createNutrientDeck, hideMismatchedCards, memoryComplete, revealNutrient
 import { memoryBoardIds } from '../../services/memoryBoards';
 
 export default function NutrientMemory({ config, onComplete }: { config: NutrientMemoryConfig; onComplete: () => void }) {
+  const [roundId] = useState(() => crypto.randomUUID());
   const [deck] = useState(() => createNutrientDeck(config));
   const [state, setState] = useState<MemoryState>({ openIds: [], matchedIds: [] });
   const announced = useRef(false);
+  const paid = useRef(new Set<string>());
   const done = memoryComplete(state, deck);
   const pairIds = [...new Set<string>(deck.map(card => card.nutrientId))];
   const activeIds = new Set(memoryBoardIds(pairIds, state.matchedIds.length / 2, 6));
@@ -17,8 +21,14 @@ export default function NutrientMemory({ config, onComplete }: { config: Nutrien
     return () => window.clearTimeout(timer);
   }, [state.openIds]);
   useEffect(() => {
+    for (const pair of pairIds) {
+      const cards = deck.filter(card => card.nutrientId === pair);
+      if (!paid.current.has(pair) && cards.length === 2 && cards.every(card => state.matchedIds.includes(card.id))) {
+        if (rewardAnswer('nutrient-memory', roundId, pair, learningReward()).applied) paid.current.add(pair);
+      }
+    }
     if (done && !announced.current) { announced.current = true; onComplete(); }
-  }, [done, onComplete]);
+  }, [done, onComplete, state.matchedIds]);
   if (!deck.length) return <p role="alert">Deze memory heeft nog niet genoeg geldige voedingsstoffen.</p>;
   return <section aria-label="Voedingsstoffenmemory" className="nutrient-memory">
     <p className="nutrient-memory__score" role="status">{state.matchedIds.length / 2} van {config.pairCount ?? 4} paren{state.openIds.length === 2 ? ' · Deze horen niet bij elkaar. Probeer opnieuw.' : state.matchedIds.length ? ' · Goed gevonden!' : ''}</p>

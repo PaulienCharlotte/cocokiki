@@ -1,0 +1,9 @@
+.continent-map { width: min(100%, 64rem); margin: auto; color: var(--ck-cacao); }
+.continent-map svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 var(--space-2) var(--space-4) var(--color-overlay)); }
+.continent-map__region { cursor: pointer; outline: none; }
+.continent-map__region path { fill: var(--continent-color); stroke: var(--ck-room); stroke-width: 5; stroke-linejoin: round; transition: filter var(--motion-fast); }
+.continent-map__region:hover path, .continent-map__region:focus-visible path { filter: brightness(1.12); stroke: var(--ck-cacao); stroke-width: 7; }
+.continent-map__legend { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-5); }
+.continent-map__legend button { display: flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); padding: var(--space-2) var(--space-4); border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-pill); color: var(--ck-cacao); background: var(--ck-room); font: inherit; font-weight: var(--font-weight-bold); cursor: pointer; }
+.continent-map__legend button > span { width: var(--space-4); height: var(--space-4); background: var(--continent-color); border-radius: var(--radius-pill); }
+@media(prefers-reduced-motion:reduce) { .continent-map__region path { transition: none; } }

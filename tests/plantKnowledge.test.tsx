@@ -51,12 +51,12 @@ test('de verst gevorderde planten staan bovenaan en de stand klopt', () => {
   assert.equal(KNOWLEDGE_LABEL[3], 'Compleet');
 });
 
-test('de encyclopedie toont planten pas als je ze ontdekt hebt', () => {
+test('de encyclopedie toont alle plantdoelen, maar hun kennis blijft gesloten tot ontdekking', () => {
   const scherm = renderToStaticMarkup(<EncyclopediaScreen onNavigate={() => undefined} />);
   assert.match(scherm, /Encyclopedie/);
   // Er staat een leeg vakje per soort, dus je ziet dat er iets te halen valt.
   assert.equal(scherm.split('is-slot').length - 1, PLANT_SPECIES.length);
-  assert.match(scherm, new RegExp(`Planten<small>0/${PLANT_SPECIES.length}</small>`));
+  assert.match(scherm, new RegExp(`Verzorgde planten<small>0/${PLANT_SPECIES.length}</small>`));
   // De dagquiz mag namen als antwoordopties tonen; alleen de kennisafdeling blijft gesloten.
   const begin = scherm.indexOf('id="afdeling-planten"');
   const einde = scherm.indexOf('</section>', begin);
@@ -64,6 +64,6 @@ test('de encyclopedie toont planten pas als je ze ontdekt hebt', () => {
   const raster = scherm.slice(begin, einde);
   for (const species of PLANT_SPECIES) {
     assert.ok(!raster.includes(species.origin), `${species.commonName} verklapt zijn herkomst`);
-    assert.ok(!raster.includes(species.commonName), `${species.commonName} verklapt zijn naam`);
+    assert.ok(raster.includes(species.commonName), `${species.commonName} is zichtbaar als doel`);
   }
 });

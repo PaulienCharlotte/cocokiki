@@ -1,0 +1,4 @@
+.niveau-knop { position: relative; flex-shrink: 0; min-width: var(--touch-target); min-height: var(--touch-target); }
+.niveau-knop__getal { position: absolute; right: var(--space-1); bottom: var(--space-1); font-family: var(--ck-font-kop); font-size: var(--font-size-xs); line-height: 1; padding: var(--space-1); border-radius: var(--radius-pill); background: var(--ck-room); color: var(--ck-cacao); }
+.niveau-keuze__lijst { display: grid; gap: var(--space-3); }
+.niveau-keuze__lijst .ck-button { text-align: left; justify-content: flex-start; white-space: normal; }
