@@ -16,7 +16,7 @@ const RECHT = [
 export const paaltjes: Sometype = {
   id: 'paaltjes',
   naam: 'Paaltjessom',
-  aanpak: 'Reken eerst uit hoeveel stukken er tussen passen. Tel er dan één bij, want aan het begin staat er ook een.',
+  aanpak: 'Tel de stukken. Plus één voor het begin.',
   valkuil: 'De paal aan het begin vergeten. Zes stukken hebben zeven palen.',
   niveaus: [1, 2, 3, 4, 5],
   maak(level, index, random) {
@@ -32,7 +32,7 @@ export const paaltjes: Sometype = {
         verhaal: `Om een vierkant gazon van ${zijde} bij ${zijde} m worden bomen geplant. De bomen staan steeds ${stap} m van elkaar, helemaal rondom.`,
         nodig: [String(zijde), String(stap)],
         zoek: 'het aantal bomen rondom het gazon',
-        aanpak: 'Reken eerst de omtrek uit. Deel die door de afstand. Rondom hoort er géén boom extra bij.',
+        aanpak: 'Omtrek gedeeld door de afstand. Rondom geen extra.',
         stappen: [
           { vraag: 'Hoe lang is de rand van het gazon helemaal rond?', som: `${zijde} × 4`, antwoord: omtrek, eenheid: 'm', tip: 'Een vierkant heeft vier even lange kanten.' },
           { vraag: `Hoeveel stukken van ${stap} m passen daarin?`, som: `{1} ÷ ${stap}`, antwoord: aantal, eenheid: 'stukken', tip: `Deel de omtrek door ${stap}.` },

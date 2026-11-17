@@ -1,3 +1,5 @@
+import NiveauKnop from '../../components/ui/NiveauKnop';
+import NiveauPaneel from './NiveauPaneel';
 import React, { useState } from 'react';
 import { ArrowLeft, Calculator, Ruler, Star, Volume2, VolumeX } from 'lucide-react';
 import { Button, Dialog } from '../../design-system';
@@ -14,18 +16,20 @@ export function MathHeader({ game, level, progress, onBack, onHome = onBack, onL
   // hoofdrekenen. Bij de tafels en de race zou een rekenmachine het spel
   // wegnemen.
   const [rekenmachine, setRekenmachine] = useState(false);
+  const [niveauKiezen, setNiveauKiezen] = useState(false);
   const [maten, setMaten] = useState(false);
   return <header className="math-game-header">
     {/* De uitgang staat in elk spel als eerste in de rij, als rond icoon. */}
     <button className="math-icon-tool math-terug" type="button" aria-label={game ? 'Terug naar het rekeneiland' : 'Terug naar School'} title={game ? 'Rekeneiland' : 'School'} onClick={onBack}><ArrowLeft size={20} aria-hidden="true" /></button>
     <button className="math-header-brand" type="button" onClick={onHome} aria-label="Naar de wereld"><img src="/images/cocokiki-logo.webp" alt="CocoKiki" /></button>
     <h1>{config?.title ?? 'Rekenavonturen'}</h1>
-    {game && config && !zonderNiveau && <MathLevelSlider game={game} level={level} progress={progress} onLevel={onLevel} />}
+    {game && config && !zonderNiveau && <NiveauKnop niveau={level} onClick={() => setNiveauKiezen(true)} />}
     <span className="math-wallet" aria-label={`${coins} CocoCoins`}><CocoCoin size={24} />{coins}</span>
     {game === 'add-subtract' && <button type="button" className="math-icon-tool" aria-label="Rekenmachine openen" title="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={20} aria-hidden="true" /></button>}
     {/* Maten zijn naslag, geen hulp bij het antwoord: die staan bij elk
         rekenspel klaar. */}
     {game && game !== 'race' && <button type="button" className="math-icon-tool" aria-label="Maten omrekenen" title="Maten" aria-haspopup="dialog" onClick={() => setMaten(true)}><Ruler size={20} aria-hidden="true" /></button>}
+    {niveauKiezen && game && <NiveauPaneel game={game} level={level} onKies={onLevel} onClose={() => setNiveauKiezen(false)} />}
     {rekenmachine && <Rekenmachine som={vraag} onClose={() => setRekenmachine(false)} />}
     {maten && <Maten onClose={() => setMaten(false)} />}
     {onSound && game !== 'race' && <button type="button" className="math-icon-tool" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} title={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={onSound}>{sound ? <Volume2 size={20} /> : <VolumeX size={20} />}</button>}

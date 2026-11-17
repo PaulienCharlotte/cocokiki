@@ -11,7 +11,7 @@ import {
   advanceJourney,
   answerDiscoveryQuestion,
   collectCurrentIngredient,
-  saveCookingProgress,
+  saveCookingProgress, saveCookingProgressFresh,
   showDiscoveryQuestion,
   showIngredientCollection,
   skipKnownIngredient,
@@ -59,7 +59,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   }, [discovery?.step, ingredientId, reviewing]);
 
   const commit = (next: CookingProgressState) => {
-    if (!replay && !saveCookingProgress(next)) { setPendingSave(next); return false; }
+    if (!replay && !saveCookingProgressFresh(next)) { setPendingSave(next); return false; }
     setPendingSave(null);
     onProgressChange(next);
     return true;

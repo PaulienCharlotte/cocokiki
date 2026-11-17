@@ -17,7 +17,7 @@ const SOORTEN = [
 export const tijdsduur: Sometype = {
   id: 'tijdsduur',
   naam: 'Tijdsom',
-  aanpak: 'Spring eerst naar het hele uur, dan de hele uren door, en tel aan het eind het laatste stukje erbij. Nooit gewoon aftrekken: een uur heeft 60 minuten, geen 100.',
+  aanpak: 'Spring naar het hele uur. Een uur is 60 minuten, geen 100.',
   valkuil: 'De tijden als gewone getallen aftrekken. 14.28 − 13.46 is geen 82.',
   niveaus: [2, 3, 4, 5],
   maak(level, index, random) {

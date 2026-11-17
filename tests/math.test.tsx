@@ -312,8 +312,9 @@ test('interactive math views expose real controls for mouse, touch and keyboard'
   assert.match(header, /aria-label="Naar de wereld"/);
   const hubHeader = renderToStaticMarkup(<MathHeader game={null} level={1} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
   assert.match(hubHeader, /alt="CocoKiki"/);
-  // De moeilijkheid is een schuifbalk; niets staat meer op slot.
-  assert.match(header, /type="range"/);
+  // De moeilijkheid is via de hersenknop te kiezen; niets staat meer op slot.
+  assert.match(header, /lucide-brain/);
+  assert.match(header, /aria-haspopup="dialog"/);
   assert.match(header, /Niveau 1/);
   assert.doesNotMatch(header, /disabled=""/);
   const race = renderToStaticMarkup(<RaceGame level={1} onFinish={() => undefined} />);
@@ -509,7 +510,7 @@ test('checkout levels alternate at least five task forms with consistent equatio
   assert.match(combined.hint, /eerst.*daarna/);
 });
 
-test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en een schuifbalk', () => {
+test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en een hersenknop', () => {
   // Elk rekenspel deelt dezelfde schil uit de huisstijl: de vaste zones.
   const session = readFileSync('games/math/MathSession.tsx', 'utf8');
   for (const zone of ['ck-scherm', 'ck-zone-status', 'ck-zone-gereedschap', 'ck-zone-personage', 'ck-zone-antwoord', 'data-wereld="school"']) assert.match(session, new RegExp(zone));
@@ -520,7 +521,8 @@ test('elk rekenspel heeft dezelfde schil: een achtergrond, één flashcard en ee
   // De moeilijkheid is een schuifbalk, voor elk spel even ver open.
   for (const game of MATH_GAMES) for (const level of MATH_LEVELS) assert.equal(levelUnlocked(emptyMathProgress(), game.id, level), true);
   const header = renderToStaticMarkup(<MathHeader game="balance" level={3} progress={emptyMathProgress()} onBack={() => undefined} onLevel={() => undefined} />);
-  assert.match(header, /type="range"/);
+  assert.match(header, /lucide-brain/);
+  assert.match(header, /aria-haspopup="dialog"/);
   assert.match(header, /Niveau 3/);
 });
 
@@ -610,7 +612,7 @@ test('de tekeningen van Lua en de rotsen blijven binnen hun eigen vakje', () => 
 
 test('elk spel gebruikt dezelfde terugknop en dezelfde memorykaart', () => {
   // Eén soort terugknop: een rond pijltje met de bestemming in het label.
-  for (const bestand of ['pages/FlagsMemory.tsx', 'games/clock/ClockControls.tsx', 'games/clock/WorldTimes.tsx', 'components/cooking/IngredientDiscoveryFlow.tsx', 'components/shop/BasketPractice.tsx']) {
+  for (const bestand of ['pages/FlagsMemory.tsx', 'components/cooking/IngredientDiscoveryFlow.tsx', 'components/shop/BasketPractice.tsx']) {
     const bron = readFileSync(bestand, 'utf8');
     assert.doesNotMatch(bron, /startIcon=\{<ArrowLeft[^}]*\}\s*onClick=\{on(Back|Exit)/, `${bestand} heeft nog een tekstknop om terug te gaan`);
     assert.match(bron, /IconButton label="Terug naar/, `${bestand} mist de ronde terugknop`);
@@ -624,4 +626,28 @@ test('elk spel gebruikt dezelfde terugknop en dezelfde memorykaart', () => {
   assert.match(memory, /ContinentMap onChoose/);
   assert.doesNotMatch(memory, /flag-continents__vlaggen/);
   assert.doesNotMatch(memory, /Globe2/);
+});
+
+test('Lua tempotoets gebruikt gekozen tafels en stopt antwoorden exact na een minuut', async () => {
+  const { TEMPO_DURATION_MS, tempoQuestion, tempoAnswer } = await import('../games/red-baby-lua/tempo');
+  assert.equal(TEMPO_DURATION_MS, 60_000);
+  const q = tempoQuestion([7], () => 0.5);
+  assert.equal(q.a, 7); assert.equal(q.answer, q.a * q.b);
+  const next = tempoQuestion([7], () => 0.5, q);
+  assert.notEqual(next.b, q.b);
+  assert.equal(tempoAnswer(q, String(q.answer), 59_999, 60_000), 'correct');
+  assert.equal(tempoAnswer(q, String(q.answer), 60_000, 60_000), 'expired');
+  assert.equal(tempoAnswer(q, '', 1, 60_000), 'empty');
+  assert.equal(tempoAnswer(q, '1e2', 1, 60_000), 'empty');
+  assert.equal(tempoAnswer(q, String(q.answer + 1), 1, 60_000), 'wrong');
+});
+
+test('plus en delen hebben verschillende getekende rekentekens en behoud van voorleestekst', async () => {
+  const { default: RekenTekst } = await import('../components/ui/RekenTekst');
+  const plus = renderToStaticMarkup(<RekenTekst tekst="12 + 3" />);
+  const divide = renderToStaticMarkup(<RekenTekst tekst="12 ÷ 3" />);
+  assert.ok(plus.includes('12 + 3'));
+  assert.ok(divide.includes('12 ÷ 3'));
+  assert.equal((divide.match(/<circle/g) ?? []).length, 2);
+  assert.equal((plus.match(/<circle/g) ?? []).length, 0);
 });

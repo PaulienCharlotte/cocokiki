@@ -43,3 +43,4 @@ main.clinic.ck-scherm { box-sizing: border-box; padding: calc(var(--space-12) * 
  .clinic .clinic__tellers { justify-content: flex-start; }
 }
 .clinic .ck-keuzes.is-los .ck-keuze, .clinic .ck-keuzes.is-los .ck-keuze > span { text-align: left; }
+.clinic .clinic__beloning { margin: 0; padding: var(--space-3); border-radius: var(--radius-control); }

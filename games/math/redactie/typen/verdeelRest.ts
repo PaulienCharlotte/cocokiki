@@ -10,7 +10,7 @@ const VERHALEN = [
 export const verdeelRest: Sometype = {
   id: 'verdeelRest',
   naam: 'Verdeelsom met rest',
-  aanpak: 'Kijk hoeveel ieder krijgt in hele stuks. Reken uit hoeveel er dan uitgedeeld is. Wat dan nog over is, is de rest.',
+  aanpak: 'Hoeveel krijgt ieder? Wat overblijft is de rest.',
   valkuil: 'Het antwoord van de deling geven. De vraag is niet wat ieder krijgt, maar wat er overblijft.',
   niveaus: [2, 3, 4],
   maak(level, index, random) {

@@ -2,6 +2,8 @@ import { normalizeTopoAnswer as normalize, scoreTopoTest } from '../services/top
 import { claimTravelAdventure, loadTravelAdventures } from '../services/travelAdventures';
 import { loadStaticJson } from '../services/staticJson';
 
+import SpeechBubble from './ui/SpeechBubble';
+import './topography/topo-dialog.css';
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
@@ -334,7 +336,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
     if (!adventureId) return;
     const claim = claimTravelAdventure(adventureId, provinceId, locations.map(item => item.id));
     setTravelSaveFailed(claim.status === 'save-failed');
-    setTravelMessage(claim.status === 'earned' ? `Een 10! +${claim.reward} CocoCoins extra. Je reis staat nu in je encyclopedie.` : claim.status === 'save-failed' ? 'Je toets is bewaard. De reisbeloning bewaren lukte nog niet; probeer je reisbeloning opnieuw te bewaren.' : claim.status === 'already-earned' ? 'Deze reis staat al in je encyclopedie.' : 'Oefen gerust verder. Haal een 10 op de hele kaart om Sebs reis af te ronden.');
+    setTravelMessage(claim.status === 'earned' ? `Reis voltooid! +${claim.reward} CocoCoins.` : claim.status === 'save-failed' ? 'Je toets is bewaard. Bewaar je beloning opnieuw.' : claim.status === 'already-earned' ? 'Deze reis heb je al verdiend.' : 'Oefen verder. Een 10 rondt onze reis af.');
   };
   const submit = () => {
     const active = loadTravelAdventures().active;
@@ -359,7 +361,7 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       className={`toets-game test-focused${isFullscreen ? ' is-fullscreen' : ''}`}
     >
       <header className="test-focused__toolbar">
-        <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span>{travelMessage && <p className="topo-travel-message" role="status">{travelMessage}</p>}</div>
+        <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span>{travelMessage && <SpeechBubble character="seb" className="topo-travel-message">{travelMessage}</SpeechBubble>}</div>
         <div>
           {submitted && travelSaveFailed && <Button variant="quiet" size="small" onClick={claimTravel}>Bewaar reisbeloning</Button>}
           {!submitted && <Button variant="quiet" size="small" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}>Toets nakijken</Button>}
@@ -412,24 +414,26 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
           </>}
         </div>
       </section>
-      {panel === 'resume' && <Dialog open title="Er is een vorige uitslag" description="Wil je een nieuwe toets beginnen of je vorige uitslag bekijken?" onClose={restoreResult} primaryAction={<Button onClick={restart}>Nieuwe toets beginnen</Button>} secondaryAction={<Button variant="secondary" onClick={restoreResult}>Vorige uitslag bekijken</Button>} />}
-      {panel === 'help' && <Dialog open title="Zo werkt de toets" onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Ik ga beginnen</Button>}>
+      {panel === 'resume' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Er is een vorige uitslag" description="Wil je een nieuwe toets beginnen of je vorige uitslag bekijken?" onClose={restoreResult} primaryAction={<Button onClick={restart}>Nieuwe toets beginnen</Button>} secondaryAction={<Button variant="secondary" onClick={restoreResult}>Vorige uitslag bekijken</Button>} />}
+      {panel === 'help' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Zo werkt de toets" onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Ik ga beginnen</Button>}>
         <TipCoach coach="seb">Tik op een nummer of letter op de kaart. Typ de naam en kies Volgende plek. Weet je het even niet? Kies Later terugkomen. Die plek komt na de andere lege plekken terug. Klaar met alles? Kies bovenaan Toets nakijken.</TipCoach>
       </Dialog>}
-      {panel === 'settings' && <Dialog open title="Voor ouders" onClose={() => setPanel(null)} primaryAction={<Button variant="secondary" startIcon={<Shuffle size={18} />} disabled={submitted} onClick={shuffle}>Nummering husselen</Button>} secondaryAction={<Button variant="quiet" onClick={() => setPanel('restart')}>Nieuwe toets</Button>}>
+      {panel === 'settings' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Voor ouders" onClose={() => setPanel(null)} primaryAction={<Button variant="secondary" startIcon={<Shuffle size={18} />} disabled={submitted} onClick={shuffle}>Nummering husselen</Button>} secondaryAction={<Button variant="quiet" onClick={() => setPanel('restart')}>Nieuwe toets</Button>}>
         <p>Nummers en letters wisselen van plek. Ingevulde antwoorden blijven bij de juiste locatie bewaard.</p>
       </Dialog>}
-      {panel === 'restart' && <Dialog open title="Nieuwe toets starten?" description="De ingevulde antwoorden van deze toets worden gewist." onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Deze toets houden</Button>} secondaryAction={<Button variant="danger" onClick={restart}>Nieuwe toets starten</Button>} />}
-      {panel === 'submit' && <Dialog open title="Nog niet alles ingevuld" description={`${locations.length - filled} plekken zijn nog leeg. Wil je verdergaan of toch nakijken?`} onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Verder invullen</Button>} secondaryAction={<Button variant="secondary" onClick={submit}>Toch nakijken</Button>} />}
-      {panel === 'review' && result && <Dialog open className="test-review" title={`Jouw toets · ${result.grade}`} description={`${result.correct} van ${result.total} goed`} onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Terug naar de kaart</Button>}>
+      {panel === 'restart' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Nieuwe toets starten?" description="De ingevulde antwoorden van deze toets worden gewist." onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Deze toets houden</Button>} secondaryAction={<Button variant="danger" onClick={restart}>Nieuwe toets starten</Button>} />}
+      {panel === 'submit' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Nog niet alles ingevuld" description={`${locations.length - filled} plekken zijn nog leeg. Wil je verdergaan of toch nakijken?`} onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Verder invullen</Button>} secondaryAction={<Button variant="secondary" onClick={submit}>Toch nakijken</Button>} />}
+      {panel === 'review' && result && <Dialog open className="test-review topo-paper-dialog ck-paper-surface" title={`Jouw toets · ${result.grade}`} description={`${result.correct} van ${result.total} goed`} onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Terug naar de kaart</Button>}>
         <ul>{locations.map(location => <li key={location.id}><button type="button" onClick={() => { setActiveId(location.id); setPanel(null); }}>
           {result.details[location.id] ? <CheckCircle size={18} /> : <XCircle size={18} />}<span>{locationLabel(location)}<strong>{location.name}</strong><small>{answers[location.id] || 'Niet ingevuld'}</small></span>
         </button></li>)}</ul>
       </Dialog>}
       {!storageOk && <p role="alert">Opslaan lukt niet. Houd deze toets open om je antwoorden te bewaren.</p>}
-      {leaving && <Dialog open title="Toets even verlaten?" description={storageOk ? 'Je antwoorden blijven bewaard. Je kunt later verdergaan.' : 'Je antwoorden zijn nog niet opgeslagen. Als je vertrekt, kun je ze kwijtraken.'} onClose={() => setLeaving(false)}
+      {leaving && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Toets even verlaten?" onClose={() => setLeaving(false)}
         primaryAction={<Button onClick={() => setLeaving(false)}>Verder met de toets</Button>}
-        secondaryAction={<Button variant="secondary" onClick={() => { const proceed = pendingExit.current; pendingExit.current = null; setLeaving(false); proceed?.(); }}>Toets verlaten</Button>} />}
+        secondaryAction={<Button variant="secondary" onClick={() => { const proceed = pendingExit.current; pendingExit.current = null; setLeaving(false); proceed?.(); }}>Toets verlaten</Button>}>
+        <SpeechBubble character="seb">{storageOk ? 'Je antwoorden blijven bewaard. Je kunt later verdergaan.' : 'Bewaren lukt nog niet. Blijf even, zodat je antwoorden niet verloren gaan.'}</SpeechBubble>
+      </Dialog>}
     </div>
   );
 };

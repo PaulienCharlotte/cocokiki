@@ -16,7 +16,7 @@ export const mathAssets = {
   kitchen: '/assets/library/treehouse/rooms/kitchen-furnished.webp', shop: '/games/destinations/shop-interior.webp',
 };
 export const mathEnvironments: Record<MathGameId, string> = {
-  multiply: ASSET_LIBRARY.games.babyLua.background, divide: mathAssets.garden, 'add-subtract': mathAssets.forest,
+  multiply: ASSET_LIBRARY.games.babyLua.background, divide: mathAssets.garden, 'add-subtract': `${supplied}/story-room.webp`,
   missing: mathAssets.kitchen, balance: `${supplied}/honey-room.webp`, race: `${supplied}/checkout-room.webp`,
   maten: '/games/school/school-interior.webp',
 };

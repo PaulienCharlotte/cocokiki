@@ -1,3 +1,5 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import React, { useEffect, useRef, useState } from 'react';
 import AnalogClock from './AnalogClock';
 import { createMemoryDeck, formatDigitalTime } from './timeEngine';
@@ -43,6 +45,7 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
     if (open.length !== 2) return;
     const [first, second] = open.map(id => deck.find(card => card.id === id)!);
     if (first.pairId === second.pairId) {
+      rewardAnswer('clock:memory', roundId.current, first.pairId, learningReward());
       const nextMatched = [...matched, first.pairId];
       setMatched(nextMatched);
       setOpen([]);

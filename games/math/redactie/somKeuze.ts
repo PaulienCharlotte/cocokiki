@@ -76,23 +76,43 @@ const machtVanTien = (tekst: string) => /^1(0{1,5}|00\.000|\.000)$/.test(kaal(te
 /** Waarom je deze som neemt, in één zin. Een eigen zin op de stap gaat voor. */
 export function waarom(stap: Stap, juist: Som): string {
   if (stap.waarom) return stap.waarom;
-  if (juist.teken === '×' && machtVanTien(juist.rechts)) return `Keer ${juist.rechts}: je gaat naar een kleinere maat, dus er passen er meer in.`;
-  if (juist.teken === '÷' && machtVanTien(juist.rechts)) return `Gedeeld door ${juist.rechts}: je gaat naar een grotere maat, dus het getal wordt kleiner.`;
+  // De maat-uitleg (cm naar m) past alleen als je echt een maat omrekent, niet bij "hoe vaak past het".
+  const maatOmrekenen = /^(mm|cm|dm|m|km|g|gram|kg|mg|ml|cl|dl|l|liter|m²|m³|cm²|cm³)$/i.test(stap.eenheid.trim());
+  if (juist.teken === '÷' && stap.eenheid.trim() === 'keer') return `Delen: hoe vaak past ${juist.rechts} in ${juist.links}?`;
+  if (!maatOmrekenen) { /* val terug op de gewone uitleg hieronder */ }
+  else if (juist.teken === '×' && machtVanTien(juist.rechts)) return `Keer ${juist.rechts}: kleinere maat, dus een groter getal.`;
+  else if (juist.teken === '÷' && machtVanTien(juist.rechts)) return `Gedeeld door ${juist.rechts}: grotere maat, dus een kleiner getal.`;
   return {
-    '×': 'Keer, want je neemt hetzelfde een paar keer.',
-    '÷': 'Delen, want je verdeelt eerlijk of kijkt hoe vaak het past.',
-    '+': 'Plus, want je voegt samen wat erbij komt.',
-    '−': 'Min, want er gaat iets af of je zoekt wat er overblijft.',
+    '×': 'Keer: hetzelfde een paar keer.',
+    '÷': 'Delen: eerlijk verdelen, of kijken hoe vaak het past.',
+    '+': 'Plus: er komt iets bij.',
+    '−': 'Min: er gaat iets af.',
   }[juist.teken];
 }
 
 /** Een wedervraag bij een verkeerde som: Lua zet je aan het denken in plaats van het voor te zeggen. */
+/** Een getal dat het kind koos maar dat niet in deze som hoort; dat getal wordt vaag. */
+export function overbodigGetal(gekozen: Som | null, juist: Som): string | null {
+  if (!gekozen) return null;
+  const hoort = [kaal(juist.links), kaal(juist.rechts)];
+  return [gekozen.links, gekozen.rechts].find(g => !hoort.includes(kaal(g))) ?? null;
+}
+
+/**
+ * De fout bepaalt de hint: één gerichte vraag die precies dit denkprobleem raakt,
+ * in plaats van een rij algemene tips. Geen sleutelwoordtrucjes.
+ */
 export function wedervraag(gekozen: Som | null, juist: Som): string {
-  if (gekozen && gekozen.teken === juist.teken) {
-    return juist.teken === '÷' ? 'Welk getal ga je verdelen, en waarover? Begin met wat je hebt.'
-      : juist.teken === '−' ? 'Begin bij het getal waar iets vanaf gaat.'
-      : 'Kijk nog eens welke getallen bij deze stap horen.';
-  }
-  const groter = juist.teken === '×' || juist.teken === '+';
-  return `Wordt het antwoord ${groter ? 'groter' : 'kleiner'} of ${groter ? 'kleiner' : 'groter'} dan ${juist.links}? Lees de vraag van deze stap nog eens.`;
+  if (!gekozen) return 'Wat wil je weten?';
+  if (overbodigGetal(gekozen, juist)) return 'Eén getal hoort hier niet bij.';
+  const a = gekozen.teken, b = juist.teken;
+  if (a === b) return b === '÷' ? 'Welk getal verdeel je? Dat komt vooraan.'
+    : 'Begin met het grootste getal.';
+  if (a === '+' && b === '×') return 'Hoeveel groepjes? En hoeveel in elk?';
+  if (a === '×' && b === '+') return 'Gelijke groepjes, of komt er iets bij?';
+  if ((a === '+' && b === '−') || (a === '−' && b === '+')) return 'Wordt het meer of minder?';
+  if ((a === '×' && b === '÷') || (a === '÷' && b === '×')) return 'Verdeel je, of wordt het een paar keer zo veel?';
+  if (b === '÷') return 'Wat wordt er verdeeld?';
+  if (b === '×') return 'Wat is een paar keer hetzelfde?';
+  return b === '−' ? 'Wat gaat eraf?' : 'Wat komt erbij?';
 }

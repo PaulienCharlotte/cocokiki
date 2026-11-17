@@ -1,7 +1,7 @@
 import { TASK_REWARDS } from '../../services/taskRewards';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ArrowLeft, BookHeart, Brush, Copy, Download, Droplets, Eraser, Layers, Minus, PaintBucket, Plus, Redo2, RotateCcw, RotateCw, Save, Sparkles, Trash2, Undo2,
+  BookHeart, Brush, Copy, Download, Droplets, Eraser, Layers, Minus, PaintBucket, Plus, Redo2, RotateCcw, RotateCw, Save, Sparkles, Trash2, Undo2,
 } from 'lucide-react';
 import { Button, IconButton } from '../../design-system';
 import { TAART_BODEMS, TAART_BODEMS_BY_ID, VERSIERINGEN } from '../../data/cake/catalog';
@@ -27,9 +27,9 @@ import { cakeMeetsOrder, deliverCakeOrder, loadCakeOrder, saveCakeOrder } from '
  * tegelijk aanstaan: op een versieringstabblad tekent het werkblad niet mee.
  */
 const KLEUREN = [
-  { id: '#fffdf8', naam: 'Wit' }, { id: '#f49ac1', naam: 'Roze' }, { id: '#7ec4e8', naam: 'Blauw' },
-  { id: '#b08ad4', naam: 'Paars' }, { id: '#f7c948', naam: 'Geel' }, { id: '#7bbd6a', naam: 'Groen' },
-  { id: '#7b4b2a', naam: 'Chocolade' },
+  { id: '--ck-room', naam: 'Wit' }, { id: '--ck-bes', naam: 'Roze' }, { id: '--ck-wereld', naam: 'Blauw' },
+  { id: '--ck-druif', naam: 'Paars' }, { id: '--ck-zon', naam: 'Geel' }, { id: '--ck-tuin', naam: 'Groen' },
+  { id: '--ck-hout-donker', naam: 'Chocolade' },
 ];
 const PENSELEN: Array<{ id: Penseel; naam: string; icoon: React.ReactNode }> = [
   { id: 'lijn', naam: 'Tekenen', icoon: <Brush size={20} /> },
@@ -51,7 +51,7 @@ const MAX_TERUG = 12;
 /** De taart in de encyclopedie hoeft niet groot te zijn; dat scheelt opslag. */
 const GALERIJ_MAAT = 420;
 
-export default function CakeStudio({ onClose }: { onClose: () => void }) {
+export default function CakeStudio({ onClose, onFreePlay }: { onClose: () => void; onFreePlay?: () => void }) {
   const isOrder = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('order') === 'seb-birthday';
   const [order, setOrder] = useState(loadCakeOrder);
   const [busy, setBusy] = useState(false);
@@ -236,15 +236,15 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
     try { await bewaar(true); } finally { setBusy(false); }
   };
 
-  if (isOrder && order.delivered) return <section className="taart-klaar"><article className="taart-klaar__kaart">
+  if (isOrder && order.delivered) return <section className="taart-klaar"><article className="taart-klaar__kaart ck-paper-surface">
     {ontwerp.voorbeeld && <img src={ontwerp.voorbeeld} alt="Jouw verjaardagstaart" />}
     <SpeechBubble character="seb" label="afgeleverd">Dank je! Een roze taart met aardbeien, precies wat mijn zusje leuk vindt. Dit wordt een feest!</SpeechBubble>
     <p>{order.reward} muntjes verdiend. Deze bestelling is afgeleverd.</p>
-    <Button onClick={onClose}>Naar de toonbank</Button>
+    {onFreePlay && <Button onClick={onFreePlay}>Versier nog een taart</Button>}
+    <Button variant="secondary" onClick={onClose}>Bekijk To Do</Button>
   </article></section>;
 
-  if (isOrder && !order.started) return <section className="taart-klaar"><article className="taart-klaar__kaart">
-    <IconButton label="Terug naar de toonbank" icon={<ArrowLeft size={19} />} onClick={onClose} />
+  if (isOrder && !order.started) return <section className="taart-klaar"><article className="taart-klaar__kaart ck-paper-surface">
     <SpeechBubble character="seb" label="een verjaardagstaart">Mijn zusje is jarig! Ze houdt van roze en aardbeien. Versier jij een roze taart met minstens één aardbei?</SpeechBubble>
     <p>Verdien {TASK_REWARDS.cake} muntjes bij het afleveren.</p>
     <Button variant="secondary" aria-pressed={timed} onClick={() => setTimed(value => !value)}>{timed ? 'Met tijdsbonus: aan' : 'Met tijdsbonus: uit'}</Button>
@@ -258,7 +258,7 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
   </article></section>;
 
   if (klaar) return <section className="taart-klaar" aria-live="polite">
-    <article className="taart-klaar__kaart">
+    <article className="taart-klaar__kaart ck-paper-surface">
       {ontwerp.voorbeeld && <img src={ontwerp.voorbeeld} alt="Jouw taart" />}
       <p className="taart-klaar__kop"><Sparkles size={19} aria-hidden="true" />Je taart staat klaar</p>
       <div className="taart-klaar__acties">
@@ -277,24 +277,21 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
     </article>
   </section>;
 
-  return <main className="taart-atelier" aria-label="Taartenatelier">
-    <header className="taart-atelier__balk">
-      <IconButton label="Terug naar de bakkerij" icon={<ArrowLeft size={19} />} onClick={onClose} />
+  return <main className={`taart-atelier${isOrder ? ' is-bestelling' : ''}`} data-wereld="keuken" aria-label="Taartenatelier">
+    <nav className="taart-atelier__balk ck-glas" aria-label="Taartgereedschap">
       <div className="taart-atelier__opslaan">
         <IconButton label="Ongedaan maken" icon={<Undo2 size={19} />} disabled={!standen.terug} onClick={stapTerug} />
         <IconButton label="Opnieuw uitvoeren" icon={<Redo2 size={19} />} disabled={!standen.vooruit} onClick={stapVooruit} />
         <IconButton label="Opnieuw beginnen" icon={<RotateCcw size={19} />} onClick={opnieuw} />
         <IconButton label="Taart als plaatje opslaan" icon={<Download size={19} />} onClick={() => void exporteer()} />
         <IconButton label="Bewaren" icon={<Save size={19} />} onClick={() => void bewaar(false)} />
-        <Button disabled={busy} onClick={() => void finish()}>{isOrder ? 'Naar de toonbank' : 'Klaar'}</Button>
       </div>
-    </header>
+    </nav>
 
-    {isOrder && <div className="taart-opdracht" role="status">
-      <strong>Voor Seb: een roze taart met aardbeien</strong>
-      <span>{cakeMeetsOrder(bodemId, versieringen) ? 'Alles voor de bestelling staat erop' : 'Kies een roze taart en voeg een aardbei toe'}</span>
-      {order.timed && <span>{order.elapsed < 300 ? `Tijdsbonus: ${Math.floor((300 - order.elapsed) / 60)}:${String(Math.floor((300 - order.elapsed) % 60)).padStart(2, '0')}` : 'De bonustijd is voorbij. Maak je taart rustig af.'}</span>}
-    </div>}
+    {isOrder && <SpeechBubble className="taart-opdracht-gids" character="coco" aside={order.timed ? <span>{order.elapsed < 300 ? `${Math.floor((300 - order.elapsed) / 60)}:${String(Math.floor((300 - order.elapsed) % 60)).padStart(2, '0')}` : 'Rustig verder'}</span> : undefined}>
+      {cakeMeetsOrder(bodemId, versieringen) ? 'Je taart is klaar voor Seb.' : 'Maak een roze taart met aardbeien.'}
+    </SpeechBubble>}
+    <div className="taart-atelier__klaar"><Button disabled={busy} onClick={() => void finish()}>Klaar</Button></div>
     <div className="taart-atelier__werk">
       <div className="taart-atelier__midden">
         <CakeCanvas
@@ -314,7 +311,7 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
         />
       </div>
 
-      {actief && <div className="taart-instellingen" aria-label="Geselecteerde versiering">
+      {actief && <div className="taart-instellingen ck-glas" aria-label="Geselecteerde versiering">
         <div className="taart-instellingen__maat">
           <IconButton label="Kleiner maken" icon={<Minus size={18} />} disabled={actief.schaal <= MIN_SCHAAL}
             onClick={() => pasAan({ schaal: Math.max(MIN_SCHAAL, Number((actief.schaal - .15).toFixed(2))) })} />
@@ -336,10 +333,10 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
       </div>}
       {melding && <p className="taart-melding" role="status">{melding}</p>}
 
-      <section className="taart-paneel" aria-label="Kiezen en versieren">
+      <section className="taart-paneel ck-glas" aria-label="Kiezen en versieren">
         <nav className="taart-paneel__tabs" aria-label="Wat wil je doen">
           {TABBLADEN.map(item => <button key={item.id} type="button" className={tab === item.id ? 'is-actief' : ''}
-            aria-pressed={tab === item.id} onClick={() => setTab(item.id)}>{item.naam}</button>)}
+            aria-pressed={tab === item.id} onClick={() => { setTab(item.id); setGekozen(null); }}>{item.naam}</button>)}
         </nav>
 
         {tab === 'taart' && <ul className="taart-paneel__lijst" aria-label="Kies een taart">
@@ -358,7 +355,7 @@ export default function CakeStudio({ onClose }: { onClose: () => void }) {
           </div>
           <div className="taart-tekenen__rij taart-kleuren" role="group" aria-label="Kies een kleur">
             {KLEUREN.map(item => <button key={item.id} type="button" className={`taart-kleur${kleur === item.id ? ' is-actief' : ''}`}
-              style={{ background: item.id }} aria-pressed={kleur === item.id} aria-label={item.naam} title={item.naam} onClick={() => setKleur(item.id)} />)}
+              style={{ background: `var(${item.id})` }} aria-pressed={kleur === item.id} aria-label={item.naam} title={item.naam} onClick={() => setKleur(item.id)} />)}
           </div>
           <div className="taart-tekenen__rij taart-dikte" role="group" aria-label="Kies de dikte">
             {DIKTES.map(item => <button key={item.naam} type="button" className={`taart-knop${dikte === item.waarde ? ' is-actief' : ''}`}

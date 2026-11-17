@@ -1,14 +1,16 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Lightbulb, Minus, Plus, RotateCcw } from 'lucide-react';
 import { Button, IconButton } from '../../design-system';
 import { COUNTRY_FLAGS } from '../../data/flags';
 import AnalogClock from './AnalogClock';
-import { ClockCompletion } from './ClockControls';
+import { ClockCompletion, ClockGameHeader } from './ClockControls';
 import { cityTime, correctWorldTime, createWorldTimeQuestion, relativeDayText, timeDifferenceText, WORLD_CITIES, WORLD_LEVEL_LABELS, worldTimeHint } from './worldTimeEngine';
 import type { ClockLevel } from './types';
 import './world-times.css';
 
-interface Props { initialLevel: ClockLevel; completedLevels: ClockLevel[]; onBack: () => void; onComplete: (level: ClockLevel, roundId: string) => number }
+interface Props { key?: React.Key; practiceOnly?: boolean; onNext?: () => void; onLevelSelect?: (level: ClockLevel) => void; initialLevel: ClockLevel; completedLevels: ClockLevel[]; onBack: () => void; onComplete: (level: ClockLevel, roundId: string) => number }
 
 export function WorldClock() {
   const [base, setBase] = useState(Date.now);
@@ -46,8 +48,8 @@ export function WorldClock() {
 
 import { useActivityAnalytics } from '../../services/useActivityAnalytics';
 
-export default function WorldTimes({ initialLevel, completedLevels, onBack, onComplete }: Props) {
-  const [mode, setMode] = useState<'clock' | 'practice'>('clock');
+export default function WorldTimes({ initialLevel, completedLevels, onBack, onComplete, practiceOnly = false, onNext, onLevelSelect }: Props) {
+  const [mode, setMode] = useState<'clock' | 'practice'>(practiceOnly ? 'practice' : 'clock');
   const [level, setLevel] = useState(initialLevel);
   const [question, setQuestion] = useState(() => createWorldTimeQuestion(initialLevel, 0));
   const [index, setIndex] = useState(0);
@@ -74,18 +76,14 @@ export default function WorldTimes({ initialLevel, completedLevels, onBack, onCo
     setAnswer(''); setDay(0); setFeedback(null); setHint(false); answered.current = false; advancing.current = false;
   };
   return <main className="clock-game world-times" aria-labelledby="world-times-title">
-    <header className="world-times__header"><IconButton label="Terug naar de klokspellen" icon={<ArrowLeft size={19} />} onClick={onBack} /><h1 id="world-times-title">Wereldtijden</h1></header>
-    <div className="world-times__modes" role="group" aria-label="Wereldtijden kiezen">
-      <Button variant={mode === 'clock' ? 'secondary' : 'quiet'} aria-pressed={mode === 'clock'} onClick={() => setMode('clock')}>Wereldklok</Button>
-      <Button variant={mode === 'practice' ? 'secondary' : 'quiet'} aria-pressed={mode === 'practice'} onClick={() => setMode('practice')}>Oefenen</Button>
-    </div>
+    <ClockGameHeader title="Tijd op reis" level={level} completed={completedLevels} onBack={onBack} onLevelChange={value => { reset(value); onLevelSelect?.(value); }} />
+    {!practiceOnly && <div className="world-times__modes" role="group" aria-label="Wereldtijden kiezen"><span>Wereldklok</span><Button onClick={() => setMode(mode === 'clock' ? 'practice' : 'clock')}>{mode === 'clock' ? 'Oefenen' : 'Wereldklok'}</Button></div>}
     {mode === 'clock' ? <WorldClock /> : <section className="world-times__practice" aria-label="Tijdverschillen oefenen">
-      <label className="world-times__level">Niveau<select aria-label="Wereldtijden niveau" value={level} onChange={event => reset(Number(event.target.value) as ClockLevel)}>{([1,2,3,4,5] as ClockLevel[]).map(value => <option key={value} value={value}>{value} · {WORLD_LEVEL_LABELS[value]}{completedLevels.includes(value) ? ' ✓' : ''}</option>)}</select></label>
       <progress value={index + Number(feedback === 'correct')} max={5} aria-label="Opgeloste wereldtijden" />
       <div className="world-times__journey"><div><strong>{COUNTRY_FLAGS[question.from.country]} {question.from.name}</strong><AnalogClock time={source} color="green" /><b className="world-times__digital">{source.digital}</b><small>{source.date}</small></div><ArrowRight size={24} aria-hidden="true" /><div><span className="world-times__flag" aria-hidden="true">{COUNTRY_FLAGS[question.to.country]}</span><h2 ref={questionHeading} tabIndex={-1}>Hoe laat is het in {question.to.name}?</h2><p>{target.offset === source.offset ? 'Dezelfde tijd als' : `${timeDifferenceText(target.offset - source.offset)} dan`} {question.from.name}.</p></div></div>
       <form className="world-times__answer" onSubmit={event => {
         event.preventDefault(); if (!answer || answered.current) return;
-        if (correctWorldTime(question, answer, day)) { answered.current = true; setFeedback('correct'); }
+        if (correctWorldTime(question, answer, day)) { answered.current = true; rewardAnswer('clock:world-times', roundId.current, index, learningReward()); setFeedback('correct'); }
         else { setFeedback('wrong'); setHint(true); }
       }}>
         <label>Tijd in {question.to.name}<input type="time" aria-label={`Tijd in ${question.to.name}`} required value={answer} disabled={answered.current} onInput={event => { setAnswer(event.currentTarget.value); setFeedback(null); }} onChange={event => { setAnswer(event.target.value); setFeedback(null); }} /></label>
@@ -95,7 +93,7 @@ export default function WorldTimes({ initialLevel, completedLevels, onBack, onCo
       <div role="status" className="world-times__feedback">{feedback === 'correct' ? `Goed! In ${question.to.name} is het ${target.digital}. ${relativeDayText(target.day - source.day)}.` : feedback === 'wrong' ? 'Nog niet helemaal. Gebruik de tip en probeer het nog eens.' : ''}</div>
       <Button variant="quiet" size="small" startIcon={<Lightbulb size={18} />} aria-expanded={hint} onClick={() => setHint(value => !value)}>Tip</Button>
       {hint && <p className="world-times__hint">{worldTimeHint(question)}</p>}
-      {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onBack} />}
+      {reward !== null && <ClockCompletion reward={reward} onReplay={() => reset()} onHub={onNext ?? onBack} />}
     </section>}
   </main>;
 }

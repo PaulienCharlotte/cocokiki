@@ -10,7 +10,7 @@ import type { CookingProgressState, MathChallengeConfig, RecipeConfig } from '..
 import {
   advanceJourney,
   continueMathChallenges,
-  saveCookingProgress,
+  saveCookingProgress, saveCookingProgressFresh,
   startMathChallenges,
   submitMathChallenge,
   type MathChallengeAnswer,
@@ -80,7 +80,7 @@ export default function MathChallengeFlow({ recipe, progress, onProgressChange, 
   }, [challenge?.id]);
 
   const commit = (next: CookingProgressState) => {
-    if (!replay && !saveCookingProgress(next)) { setPendingSave(next); return false; }
+    if (!replay && !saveCookingProgressFresh(next)) { setPendingSave(next); return false; }
     setPendingSave(null);
     onProgressChange(next);
     return true;

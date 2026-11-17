@@ -1,0 +1,13 @@
+@import '../../styles/cocokiki-tokens.css';
+@import '../../styles/paper-surface.css';
+.ck-dialog:is(.topo-exit-dialog, .topo-paper-dialog) { box-sizing: border-box; padding: calc(var(--space-12) + var(--space-4)) calc(var(--space-8) + var(--space-6)) var(--space-12); background: none; border: 0; border-radius: 0; box-shadow: none; color: var(--ck-cacao); filter: drop-shadow(0 var(--space-4) var(--space-6) var(--ck-schaduw-rand)); }
+:is(.topo-exit-dialog, .topo-paper-dialog).ck-paper-surface::before { inset: 0; }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-dialog__copy h2 { color: var(--ck-cacao); font-family: var(--ck-font-kop); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-button--primary { background: var(--ck-wereld); color: var(--ck-cacao); box-shadow: 0 var(--ck-onderkant) 0 var(--ck-wereld-rand); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-button--quiet { background: var(--ck-glas); border-color: var(--ck-hout-licht); color: var(--ck-cacao); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-zegt__naam strong { color: var(--ck-bes); }
+.topo-travel-message .ck-zegt__naam strong { color: var(--ck-bes); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-dialog__close { top: var(--space-6); right: var(--space-6); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-dialog__copy h2 { margin: 0; padding-right: var(--space-8); }
+:is(.topo-exit-dialog, .topo-paper-dialog) .ck-dialog__actions { gap: var(--space-4); margin-top: var(--space-6); }
+@media (max-width: 600px) { .ck-dialog:is(.topo-exit-dialog, .topo-paper-dialog) { padding: calc(var(--space-12) + var(--space-4)) var(--space-8) var(--space-10); } }

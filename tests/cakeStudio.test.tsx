@@ -1,3 +1,7 @@
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import CakeStudio from '../components/cake/CakeStudio';
+import { CAKE_ORDER_KEY } from '../services/cakeOrder';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
@@ -79,4 +83,34 @@ test('de galerij bewaart taarten, nieuwste eerst, en gooit rommel weg', () => {
   // Boven het maximum valt de rest eraf.
   const veel = migreerGalerij(Array.from({ length: MAX_GALERIJ + 5 }, (_item, i) => ({ id: `t${i}`, beeld: plaatje })));
   assert.equal(veel.length, MAX_GALERIJ);
+});
+
+
+test('een afgeleverde taart biedt vrij versieren aan zonder de bestelling te resetten', () => {
+  const previousStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const delivered = JSON.stringify({ started: true, delivered: true, timed: false, elapsed: 42, reward: 5 });
+  let writes = 0;
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => key === CAKE_ORDER_KEY ? delivered : null,
+    setItem: () => { writes++; },
+  } });
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { search: '?order=seb-birthday' } } });
+  try {
+    const markup = renderToStaticMarkup(<CakeStudio onClose={() => undefined} onFreePlay={() => undefined} />);
+    assert.match(markup, /Versier nog een taart/);
+    assert.match(markup, /Deze bestelling is afgeleverd/);
+    assert.equal(writes, 0);
+    Object.defineProperty(globalThis, 'window', { configurable: true, value: { location: { search: '' } } });
+    const free = renderToStaticMarkup(<CakeStudio onClose={() => undefined} />);
+    assert.match(free, /aria-label="Taartenatelier"/);
+    assert.match(free, /taart-vlak__bodem/);
+    assert.doesNotMatch(free, /Deze bestelling is afgeleverd|Terug naar de bakkerij/);
+    assert.equal(writes, 0);
+  } finally {
+    if (previousStorage) Object.defineProperty(globalThis, 'localStorage', previousStorage);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
+    if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
 });

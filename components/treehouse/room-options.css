@@ -7,7 +7,7 @@
 .treehouse-interior .terrace-doctor-trigger { left: auto; right: 122px; }
 .treehouse-interior .room-inventory-trigger > span,
 .treehouse-interior .kitchen-cookbook-trigger > span { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.treehouse-interior .room-inventory-trigger b { position: absolute; right: -5px; top: -5px; min-width: 18px; height: 18px; border: 1px solid var(--color-surface); background: var(--color-success-soft); color: var(--color-primary); font-size: 10px; }
+.treehouse-interior .room-inventory-trigger b { position: absolute; right: -5px; top: -5px; min-width: 18px; height: 18px; border: 1px solid var(--color-surface); background: var(--color-success-soft); color: var(--color-primary); font-size: var(--font-size-sm); }
 .treehouse-interior .room-inventory-trigger:hover,
 .treehouse-interior .kitchen-cookbook-trigger:hover { background: var(--color-surface-soft); border-color: var(--color-primary); }
 .treehouse-interior .treehouse-interior__pan-controls { position: fixed; z-index: 14; top: 48%; left: 12px; right: 12px; display: flex; justify-content: space-between; pointer-events: none; transform: translateY(-50%); }

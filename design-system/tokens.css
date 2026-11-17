@@ -48,8 +48,9 @@
 
   /* Huisstijl: Nunito voor tekst (Baloo 2 voor koppen staat in cocokiki-tokens.css). */
   --font-family-friendly: "Nunito", system-ui, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
+  /* Huisstijl: nooit kleiner dan 16px. */
+  --font-size-xs: 1rem;
+  --font-size-sm: 1rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.625rem;

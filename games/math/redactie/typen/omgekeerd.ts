@@ -4,7 +4,7 @@ import { heelGetal, maakSom, type Sometype } from '../types';
 export const omgekeerd: Sometype = {
   id: 'omgekeerd',
   naam: 'Terugrekensom',
-  aanpak: 'Begin bij het eind en loop terug. Wat erbij kwam haal je eraf, wat eraf ging tel je erbij.',
+  aanpak: 'Begin bij het eind en reken terug.',
   valkuil: 'Gewoon meedoen met het verhaal. Kwam er iets bij, dan moet je bij het terugrekenen juist aftrekken.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

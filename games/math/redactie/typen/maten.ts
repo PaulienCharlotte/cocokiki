@@ -4,7 +4,7 @@ import { getal, heelGetal, kiesUit, maakSom, type Sometype } from '../types';
 export const maten: Sometype = {
   id: 'maten',
   naam: 'Matensom',
-  aanpak: 'Staan er twee maten in de som? Maak ze eerst gelijk, bijvoorbeeld alles in centimeters. Reken daarna pas.',
+  aanpak: 'Maak de maten eerst gelijk.',
   valkuil: 'Meters en centimeters gewoon op elkaar delen. 5 m ÷ 25 cm is geen 0,2.',
   niveaus: [2, 3, 4, 5],
   maak(level, index, random) {

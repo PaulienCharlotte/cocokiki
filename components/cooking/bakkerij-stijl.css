@@ -159,7 +159,21 @@
 .cooking-discovery-feedback .ck-dialog__actions { margin-top: var(--space-5); }
 .bakkerij-stijl .discovery-card--question .discovery-card__content, .bakkerij-stijl .discovery-card--correct .discovery-card__content { gap: var(--space-4); margin-top: 0; }
 .bakkerij-stijl .discovery-card--question .discovery-card__ingredient, .bakkerij-stijl .discovery-card--correct .discovery-card__ingredient { width: calc(var(--space-12) * 3); height: calc(var(--space-12) * 2); }
-.cooking-tap__vessel:has(.cooking-food-sprite) { max-width: calc(var(--space-12) * 6); }
+.cooking-tap__vessel:has(.cooking-food-sprite) { width: min(calc(var(--space-12) * 6), 60vw); max-width: 100%; }
+.cooking-tap__scene:has(.cooking-food-sprite) { width: min(calc(var(--space-12) * 6), 60vw); }
+.bakkerij-stijl .cooking-card__coach { width: min(100%, calc(var(--space-12) * 12)); margin-inline: auto; }
+.bakkerij-stijl .cooking-card__coach .ck-zegt__naam strong { color: var(--ck-bes); }
+.bakkerij-stijl .cooking-card__coach .ck-zegt__tekst { color: var(--ck-cacao); font-size: var(--ck-maat-tekst); }
+.cooking-card__notice { display: block; margin-top: var(--space-2); }
+.bakkerij-stijl .cooking-card__coach.ck-zegt .ck-zegt__wolk { background: var(--ck-glas); backdrop-filter: blur(var(--space-3)); }
+.bakkerij-stijl .cooking-card__coach.ck-zegt .ck-zegt__naam strong { color: var(--ck-bes); }
+.bakkerij-stijl .cooking-card--cutting > .cooking-card__scene { flex: none; min-height: calc(var(--space-12) * 6); }
+.bakkerij-stijl .cooking-card--cutting > .cooking-card__coach { flex-shrink: 0; }
+.bakkerij-stijl .cooking-stage__bar--compact { position: absolute; z-index: 5; top: var(--space-4); left: 50%; right: auto; transform: translateX(-50%); width: min(calc(var(--space-12) * 12), calc(100% - var(--space-8))); justify-content: space-between; background: none; }
+.bakkerij-stijl .cooking-stage__bar--compact .cooking-stage__icon,
+.bakkerij-stijl .cooking-weighing__controls .ck-button,
+.bakkerij-stijl .cooking-weighing__controls .ck-icon-button { background: var(--ck-glas); color: var(--ck-cacao); border-color: var(--ck-glas-rand); box-shadow: none; backdrop-filter: blur(var(--space-3)); }
+.bakkerij-stijl .cooking-weighing > .ck-button { background: var(--ck-keuken); color: var(--ck-cacao); }
 
 /* Papier is de buitenmaat; tekst en antwoorden blijven binnen de naden. */
 .bakkerij-stijl .bestel-kaart { box-sizing: border-box; padding: var(--space-8); min-width: 0; }

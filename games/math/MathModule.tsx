@@ -1,3 +1,4 @@
+import { answerCoins } from '../../services/answerRewards';
 import React, { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import MathHub from './MathHub';
 import { MathHeader } from './MathControls';
@@ -40,7 +41,7 @@ export default function MathModule({ onBack = () => undefined, onHome = onBack, 
     if (!game) return;
     // Een huiswerkblad telt niet mee voor de niveaus: het staat los van de
     // oefenrondes. De stand per blad bewaart de sessie zelf.
-    if (huiswerk) { setOutcome({ result, reward: 0, saved: true }); return; }
+    if (huiswerk) { setOutcome({ result, reward: answerCoins(`math:${game}`, result.roundId ?? ''), saved: true }); return; }
     const saved = finishMathLevel(game, level, result);
     setProgress(saved.progress); setOutcome({ result, reward: saved.reward, saved: saved.ok });
   }, [game, level, huiswerk]);

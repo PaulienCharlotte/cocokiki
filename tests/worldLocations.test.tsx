@@ -128,7 +128,8 @@ test('de kookstudio heeft de oorspronkelijke ingerichte keuken en behoudt recept
 test('losse spellen blijven bereikbaar in het spelmenu en Lua krijgt projecten', () => {
   for (const game of MATH_GAMES) assert.ok(FAVORITE_GAME_CATALOG.some(item => item.id === `math:${game.id}`));
   for (const id of ['clock', 'topo', 'flags-memory']) assert.ok(FAVORITE_GAME_CATALOG.some(item => item.id === id));
-  assert.ok(!FAVORITE_GAME_CATALOG.some(item => item.id === 'plant-clinic' || item.path === '/games/taartenatelier'));
+  assert.ok(!FAVORITE_GAME_CATALOG.some(item => item.id === 'plant-clinic'));
+  assert.ok(FAVORITE_GAME_CATALOG.some(item => item.id === 'taartenatelier' && item.path === '/games/taartenatelier'));
   assert.equal(DISCOVERY_ROOMS.lua.objects[0].path, '/opdrachten/luna-babykamer');
   assert.equal(DISCOVERY_ROOMS.seb.objects.find(item => item.id === 'atlas')?.path, '/encyclopedie?tab=plekken');
   assert.equal(DISCOVERY_ROOMS.seb.objects.find(item => item.id === 'topo')?.path, '/games/topo');
@@ -201,4 +202,13 @@ test('elk voedingsmiddel biedt toegang tot andere producten en de gedeelde voedi
   assert.match(html, /Voedingsstoffen ontdekken/);
   assert.match(html, /Vitamine C/);
   assert.match(html, /Eiwitten/);
+});
+
+
+test('de ingerichte studio’s openen taart, rekenen en wereldkaartmemory met de juiste terugweg', () => {
+  assert.equal(DISCOVERY_ROOMS.coco.objects.find(item => item.id === 'cake')?.path, '/games/taartenatelier');
+  assert.equal(DISCOVERY_ROOMS.seb.objects.find(item => item.id === 'world-memory')?.path, '/games/flags-memory');
+  for (const id of ['abacus', 'balance', 'measure']) assert.ok(DISCOVERY_ROOMS.lua.objects.find(item => item.id === id)?.path?.startsWith('/school/math/'));
+  assert.equal(withLocationOrigin('/games/taartenatelier', 'coco'), '/games/taartenatelier?from=coco');
+  assert.equal(withLocationOrigin('/games/flags-memory', 'seb'), '/games/flags-memory?from=seb');
 });

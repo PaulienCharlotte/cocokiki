@@ -37,8 +37,8 @@ export default function PlantAdoptionDialog({ plants, onName, onDone }: PlantAdo
       <header className="plant-adopt__intro">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.plant} alt="" />
         <div>
-          <h2 id="plant-adopt-title">Jeeee! Een nieuwe plant!</h2>
-          <p>Hoe zullen we hem noemen?</p>
+          <h2 id="plant-adopt-title">Je hebt een plant geadopteerd!</h2>
+          <p>Hij hoort nu bij je Plantenfamilie. Hoe gaat hij heten?</p>
         </div>
       </header>
 
@@ -48,7 +48,7 @@ export default function PlantAdoptionDialog({ plants, onName, onDone }: PlantAdo
       </div>
 
       <form onSubmit={event => { event.preventDefault(); verder(); }}>
-        <label className="plant-adopt__field" htmlFor="plant-nickname">Naam van je plant</label>
+        <label className="plant-adopt__field" htmlFor="plant-nickname">Naam van je plant
         <input
           id="plant-nickname"
           ref={inputRef}
@@ -58,7 +58,8 @@ export default function PlantAdoptionDialog({ plants, onName, onDone }: PlantAdo
           placeholder="Bijvoorbeeld Henk"
           onChange={event => setName(event.target.value)}
         />
-        <button type="submit" className="plant-adopt__confirm"><Check aria-hidden="true" />{name.trim() ? 'Zo gaat hij heten' : 'Later een naam kiezen'}</button>
+        </label>
+        <button type="submit" className="plant-adopt__confirm plant-adopt__actions"><Check aria-hidden="true" />{name.trim() ? 'Zo gaat hij heten' : 'Later een naam kiezen'}</button>
       </form>
 
       {plants.length > 1 && <small className="plant-adopt__counter">Plant {index + 1} van {plants.length}</small>}

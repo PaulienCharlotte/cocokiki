@@ -10,7 +10,7 @@ const SPUL = [
 export const dozijn: Sometype = {
   id: 'dozijn',
   naam: 'Dozijnsom',
-  aanpak: 'Maak eerst van de dozijnen gewone stuks: een dozijn is 12, een gros is 144. Reken daarna verder.',
+  aanpak: 'Een dozijn is 12.',
   valkuil: 'Met het aantal dozijnen rekenen alsof het stuks zijn.',
   niveaus: [1, 2, 3, 4, 5],
   maak(level, index, random) {

@@ -2,13 +2,14 @@ import { TRAVEL_ADVENTURES } from '../data/travel/adventures';
 import { studyLocations } from '../data/learning';
 import { commitLocalState, readDocument } from './localState';
 import { loadTestDraft } from './topoTestDraft';
+import { currentTravelStep, loadTravelJourney } from './travelJourney';
 import { scoreTopoTest } from './topoScoring';
 export const TRAVEL_ADVENTURES_KEY = 'cocokiki:travel-adventures:v1';
 interface TravelAttempt { adventureId: string; attemptId: string; startedAt: string }
 interface TravelCompletion { grade: 10; completedAt: string; attemptId: string; locationIds: string[] }
-interface TravelState { version: 1; active: TravelAttempt | null; completed: Record<string, TravelCompletion> }
+interface TravelState { version: 1; active: TravelAttempt | null; attempts: Record<string, TravelAttempt>; completed: Record<string, TravelCompletion> }
 export function loadTravelAdventures(): TravelState {
-  const empty: TravelState = { version: 1, active: null, completed: {} };
+  const empty: TravelState = { version: 1, active: null, attempts: {}, completed: {} };
   try {
     const raw = JSON.parse(readDocument(TRAVEL_ADVENTURES_KEY) ?? 'null');
     if (raw?.version !== 1) return empty;
@@ -16,8 +17,13 @@ export function loadTravelAdventures(): TravelState {
       const completion = raw.completed?.[adventure.id];
       if (completion?.grade === 10 && typeof completion.attemptId === 'string' && Number.isFinite(Date.parse(completion.completedAt)) && Array.isArray(completion.locationIds) && completion.locationIds.length > 0 && completion.locationIds.every((id: unknown) => typeof id === 'string')) empty.completed[adventure.id] = completion;
     }
+    for (const adventure of TRAVEL_ADVENTURES) {
+      const attempt = raw.attempts?.[adventure.id];
+      if (attempt?.adventureId === adventure.id && typeof attempt.attemptId === 'string' && Number.isFinite(Date.parse(attempt.startedAt))) empty.attempts[adventure.id] = attempt;
+    }
     const active = raw.active;
     if (TRAVEL_ADVENTURES.some(item => item.id === active?.adventureId) && typeof active.attemptId === 'string' && Number.isFinite(Date.parse(active.startedAt))) empty.active = active;
+    if (empty.active) empty.attempts[empty.active.adventureId] = empty.active;
     return empty;
   } catch { return empty; }
 }
@@ -27,12 +33,13 @@ export function startTravelAdventure(id: string): boolean {
   const state = loadTravelAdventures();
   if (state.completed[id]) return true;
   if (state.active?.adventureId === id) return true;
-  return commitLocalState({ [TRAVEL_ADVENTURES_KEY]: JSON.stringify({ ...state, active: { adventureId: id, attemptId: crypto.randomUUID(), startedAt: new Date().toISOString() } }) }).status === 'applied';
+  const attempt = state.attempts[id] ?? { adventureId: id, attemptId: crypto.randomUUID(), startedAt: new Date().toISOString() };
+  return commitLocalState({ [TRAVEL_ADVENTURES_KEY]: JSON.stringify({ ...state, active: attempt, attempts: { ...state.attempts, [id]: attempt } }) }).status === 'applied';
 }
 export function requestedTravelAdventure(search: string) {
   const id = new URLSearchParams(search).get('avontuur');
   const state = loadTravelAdventures();
-  return TRAVEL_ADVENTURES.find(item => item.id === id && (state.active?.adventureId === id || state.completed[item.id]));
+  return TRAVEL_ADVENTURES.find(item => item.id === id && (state.active?.adventureId === id || state.attempts[item.id] || state.completed[item.id]));
 }
 /** Read the saved, submitted full test. A URL, rounded grade or partial retry is never proof. */
 export function claimTravelAdventure(id: string, areaId: string, testedIds: string[]): { status: 'earned' | 'already-earned' | 'not-ready' | 'save-failed'; reward: number } {
@@ -42,6 +49,8 @@ export function claimTravelAdventure(id: string, areaId: string, testedIds: stri
   if (state.completed[id]) return { status: 'already-earned', reward: 0 };
   const active = state.active;
   if (!active || active.adventureId !== id) return { status: 'not-ready', reward: 0 };
+  const journey = loadTravelJourney(adventure);
+  if (journey && (journey.attemptId !== active.attemptId || currentTravelStep(adventure, journey) !== 'test')) return { status: 'not-ready', reward: 0 };
   const locations = studyLocations(adventure.selection), expectedIds = locations.map(item => item.id);
   if (!expectedIds.length || testedIds.length !== expectedIds.length || new Set(testedIds).size !== expectedIds.length || expectedIds.some(key => !testedIds.includes(key))) return { status: 'not-ready', reward: 0 };
   const draft = loadTestDraft(expectedIds);

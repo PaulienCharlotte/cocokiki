@@ -10,7 +10,7 @@ const WAREN = [
 export const prijsPerStuk: Sometype = {
   id: 'prijsPerStuk',
   naam: 'Prijs per stuk',
-  aanpak: 'Reken eerst uit wat één stuk kost. Daarna kun je elk ander aantal uitrekenen.',
+  aanpak: 'Reken eerst uit wat één kost.',
   valkuil: 'De prijs uit het verhaal meteen keer het nieuwe aantal doen. Die prijs hoort bij meer dan één stuk.',
   niveaus: [2, 3, 4, 5],
   maak(level, index, random) {

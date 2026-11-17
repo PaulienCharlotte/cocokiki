@@ -54,7 +54,7 @@ export const WORLD_LOCATIONS: WorldLocation[] = [
   },
   {
     id: 'lua', islandId: 'math', path: '/islands/math', name: 'Lua’s werkplaats',
-    background: '/games/school/math/adventures/story-room.webp',
+    background: '/dreamworld/lua-workshop.webp',
     clipboard: '/assets/library/school/klembord.webp',
     backgroundPosition: { desktop: 'center', mobile: 'center' },
     accentColor: 'var(--ck-actief)', character: { id: 'lua', name: CHARACTERS.lua.naam },

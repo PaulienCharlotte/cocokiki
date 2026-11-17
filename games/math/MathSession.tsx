@@ -1,5 +1,4 @@
 import { rewardAnswer } from '../../services/answerRewards';
-import { learningReward } from '../../services/learningReward';
 import { muntenPerAntwoord } from './progress';
 import { IconButton, Button } from '../../design-system';
 import HulpPaneel from '../../components/ui/HulpPaneel';

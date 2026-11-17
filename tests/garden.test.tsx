@@ -151,6 +151,8 @@ test('de opdracht toont maar één handeling of één omrekening; hulp toont het
   const base = { crop, level: 1, onHelp: () => true, onSubmit: () => 'correct' };
   const action = renderToStaticMarkup(<GardenTaskPanel {...base} plot={plot} />);
   assert.match(action, /Plant vier zaadjes/);
+  assert.equal((action.match(/aria-pressed=/g) ?? []).length, 13);
+  assert.match(action, /aria-label="30 cm"/);
   assert.doesNotMatch(action, /id="garden-answer"/);
   assert.doesNotMatch(action, /Over dit gewas|Mijn plantenburen/);
   const conversion = renderToStaticMarkup(<GardenTaskPanel {...base} plot={{ ...plot, part: 'conversion' }} />);
@@ -161,6 +163,14 @@ test('de opdracht toont maar één handeling of één omrekening; hulp toont het
   assert.match(helped, /geen CocoCoins/);
   assert.doesNotMatch(helped, /id="garden-answer"/);
 });
+test('extra meetkeuzes tellen alleen bij de juiste afstand, niet bij vier willekeurige plekken', () => stored(() => {
+  assert.ok(plantGardenPlot(0, 'carrot'));
+  const plot = loadGarden().plots[0]!;
+  assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 1, 2, 3]), 'wrong');
+  assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 4, 8, 12]), 'wrong');
+  assert.equal(loadCurrency(), 0);
+  assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 2, 4, 6]), 'correct');
+}));
 test('beschadigde moestuindata wordt begrensd en het scherm toont zes bereikbare vakken', () => stored(() => {
   assert.deepEqual(migrateGarden(null), emptyGarden());
   const restored = migrateGarden({ ...emptyGarden(), day: -1, level: 99, plots: [{ id: 'p', cropId: 'carrot', step: 999 }, { id: 'p', cropId: 'carrot', step: 4 }], harvests: [{ id: 'p', cropId: 'carrot' }] });

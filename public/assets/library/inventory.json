@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-16T11:21:50.029Z",
-  "count": 688,
+  "generatedAt": "2026-11-16T18:47:50.860Z",
+  "count": 690,
   "assets": [
     {
       "id": "assets:baby-lua:backgrounds:jungle-source",
@@ -3057,6 +3057,12 @@
       "format": "webp"
     },
     {
+      "id": "assets:library:ui:nutrients-game",
+      "path": "/assets/library/ui/nutrients-game.webp",
+      "category": "ui",
+      "format": "webp"
+    },
+    {
       "id": "assets:library:ui:pinned-paper",
       "path": "/assets/library/ui/pinned-paper.webp",
       "category": "ui",
@@ -3401,6 +3407,12 @@
     {
       "id": "games:school:math:adventures:squirrel",
       "path": "/games/school/math/adventures/squirrel.webp",
+      "category": "games",
+      "format": "webp"
+    },
+    {
+      "id": "games:school:math:adventures:story-room",
+      "path": "/games/school/math/adventures/story-room.webp",
       "category": "games",
       "format": "webp"
     },

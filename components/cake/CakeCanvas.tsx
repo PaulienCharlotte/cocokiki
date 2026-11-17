@@ -106,11 +106,12 @@ export default forwardRef<CakeCanvasHandle, Props>(function CakeCanvas({
   const streek = (van: { x: number; y: number }, naar: { x: number; y: number }) => {
     const context = doek.current?.getContext('2d');
     if (!context) return;
+    const verf = kleur.startsWith('--') && vlak.current ? getComputedStyle(vlak.current).getPropertyValue(kleur).trim() : kleur;
     context.lineCap = 'round';
     context.lineJoin = 'round';
     context.globalCompositeOperation = penseel === 'gum' ? 'destination-out' : 'source-over';
-    context.strokeStyle = kleur;
-    context.fillStyle = kleur;
+    context.strokeStyle = verf;
+    context.fillStyle = verf;
     if (penseel === 'stippen') {
       context.beginPath();
       context.arc(naar.x, naar.y, dikte * .9, 0, Math.PI * 2);
@@ -128,11 +129,13 @@ export default forwardRef<CakeCanvasHandle, Props>(function CakeCanvas({
         const x = van.x + (naar.x - van.x) * deel;
         const y = van.y + (naar.y - van.y) * deel;
         toef(context, x, y, straal);
-        context.fillStyle = '#ffffff55';
+        context.fillStyle = vlak.current ? getComputedStyle(vlak.current).getPropertyValue('--ck-wit').trim() : verf;
+        context.globalAlpha = .34;
         context.beginPath();
         context.arc(x - straal * .18, y - straal * .18, straal * .22, 0, Math.PI * 2);
         context.fill();
-        context.fillStyle = kleur;
+        context.globalAlpha = 1;
+        context.fillStyle = verf;
       }
       return;
     }

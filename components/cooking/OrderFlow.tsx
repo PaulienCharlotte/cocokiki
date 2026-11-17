@@ -1,6 +1,6 @@
 import './bakkerij-stijl.css';
 import React, { useState } from 'react';
-import { ArrowLeft, Users } from 'lucide-react';
+import { ArrowLeft, Users, X } from 'lucide-react';
 import { Button, IconButton } from '../../design-system';
 import CardGrid from '../ui/CardGrid';
 import ChoiceList from '../ui/ChoiceList';
@@ -85,7 +85,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
 
   const { bestelling, voortgang } = lopend;
   const gekozenRecept = voortgang.recipeId ? RECIPES_BY_ID[voortgang.recipeId] : undefined;
-  const terugNaarToonbank = !showBack ? <Button variant="quiet" onClick={() => bewaar(legBestellingTerug(progress))}>Leg verzoek terug</Button> : <IconButton className="bestel-kaart__terug" label="De bestelling terugleggen" icon={<ArrowLeft size={19} />} onClick={() => bewaar(legBestellingTerug(progress))} />;
+  const terugNaarToonbank = <IconButton className="bestel-kaart__sluit" label="Verzoek wegleggen" icon={<X size={20} />} onClick={() => bewaar(legBestellingTerug(progress))} />;
 
   // Scherm 2: welk recept past bij de wens?
   if (!gekozenRecept) {

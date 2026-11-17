@@ -53,3 +53,4 @@ import './completedTasks.test';
 import "./answerRewards.test";
 
 import "./travelAdventures.test";
+import './speechBubbleGuard.test';

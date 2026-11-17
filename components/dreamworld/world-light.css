@@ -1,0 +1,5 @@
+.world-light-switch { position: absolute; z-index: 5; right: var(--space-4); bottom: var(--space-4); }
+.world-light-switch button { color: var(--ck-cacao); }
+.unit-test--live.is-night { background-image: url('/assets/library/treehouse/overview/treehouse-clearing-night.webp'); }
+.unit-test--live.is-night .unit-test__room { filter: brightness(.8) saturate(.85); }
+.unit-test--live .world-light-switch { bottom: calc(var(--space-12) + var(--space-8)); }

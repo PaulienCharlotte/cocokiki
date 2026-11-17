@@ -103,15 +103,15 @@ test('clock components expose one shared SVG clock and accessible controls', () 
   assert.match(setClock, /Tijdlijn/);
   assert.match(setClock, /Een uur verder/);
   assert.match(setClock, /15 minuten verder/);
-  assert.match(setClock, /Niveaus/);
-  assert.match(setClock, /Niveau 3 · Kwartieren/);
+  assert.match(setClock, /Niveau 3, kies een ander niveau/);
+  assert.match(setClock, /lucide-brain/);
+  assert.match(setClock, /aria-haspopup="dialog"/);
   assert.match(setClock, /data-clock-hand="hour"/);
   assert.match(setClock, /data-clock-hand="minute"/);
 
   const race = renderToStaticMarkup(<ClockRaceGame initialLevel={4} completedLevels={[]} onBack={() => undefined} onComplete={() => 0} />);
-  assert.match(race, /Analoog/);
-  assert.match(race, /Digitaal/);
-  assert.match(race, /Allebei/);
+  assert.match(race, /Soort klok kiezen/);
+  assert.doesNotMatch(race, /clock-race__modes/);
 });
 
 test('world clocks follow seasonal offsets and differing DST change dates', () => {
@@ -171,8 +171,8 @@ test('het klokavontuur opent direct en de tijdlijn springt via hele en halve ure
   const { default: ClockTimeLine, timeLineAnchor } = await import('../games/clock/ClockTimeLine');
   const html = renderToStaticMarkup(<ClockModule onBack={() => undefined} />);
   assert.match(html, /Zet de klok/);
-  assert.match(html, /Andere spelvorm/);
-  assert.match(html, /Op reis met Seb/);
+  assert.match(html, /Spelvorm overslaan/);
+  assert.match(html, /Wereldklokken openen/);
   assert.doesNotMatch(html, /Kies een klokspel|clock-hub/);
   assert.deepEqual(timeLineAnchor(25), { anchor: 30, jump: -5 });
   assert.deepEqual(timeLineAnchor(35), { anchor: 30, jump: 5 });

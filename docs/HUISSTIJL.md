@@ -10,6 +10,12 @@ Dit document beschrijft hoe **elk** scherm van CocoKiki eruitziet, waar alles st
 
 CocoKiki is een spel waarin kinderen leren zonder te merken dat ze leren. Ze helpen personages, verdienen munten en richten hun boomhut in. Niets mag aanvoelen als een werkblad, formulier of schoolapp. De wereld is de interface. De bediening is modern, vloeibaar glas dat over die wereld zweeft.
 
+## Materiaalkeuze bij het hoofdmenu
+
+De getekende materialen en aankleding van de encyclopedie en het bestaande To Do-bord zijn de referentie voor de plekken die direct vanuit het hoofdmenu bereikbaar zijn. Gebruik dezelfde getekende houten borden, vastgepinde briefjes en rijke illustraties; vervang die niet door een tweede systeem van gladde roomkleurige kaarten. De To Do-uitnodigingen op de homepage horen zichtbaar bij de briefjes op het To Do-bord. Het bestaande To Do-bord blijft de basis.
+
+Dieper in een spel hoeft niet alles op papier. Kies daar het materiaal dat bij de handeling hoort: het keukenblad, de moestuin of het werkvlak. De vaste bediening, letters, wereldkleuren, spraakwolk en reacties blijven gedeeld. Glas blijft voor de vaste bediening en panelen. Getekende materialen en de functionele spelbediening vormen zo samen één CocoKiki-stijl.
+
 ## De zes basisregels
 
 1. **De wereld is de interface.** Prijzen, maten en hoeveelheden hangen áán dingen in de wereld (hangkaartjes). Een plek waar iets moet gebeuren licht op (doel). Er komen geen vraagvakken of witte kaarten over de illustratie.

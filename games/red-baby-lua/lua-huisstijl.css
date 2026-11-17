@@ -72,10 +72,11 @@
   .lua-huisstijl .ck-bel { width: 76px; height: 76px; font-size: 28px; }
   .lua-huisstijl .lua-einde { flex-direction: column-reverse; align-items: stretch; }
   .lua-huisstijl .lua-tables > div { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-  .lua-huisstijl .lua-menu { top: 46%; padding: 40px 16px 18px; }
+  .lua-huisstijl .lua-menu { top: calc(var(--space-12) * 3 + var(--space-5)); transform: translateX(-50%); max-height: calc(100dvh - var(--space-12) * 5); overflow: auto; padding: 40px 16px 18px; }
 }
 
 /* Oude regels (paarse knop, scrollend menu) mogen hier niet meer winnen. */
 .lua-game-shell.lua-huisstijl .lua-menu, .lua-game-shell.lua-huisstijl .lua-results { overflow: visible; max-height: none; }
 .lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd { background: var(--ck-actief); border: 0; box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); color: var(--ck-wit); }
 .lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd:disabled { opacity: .6; }
+@media(max-width:700px) { .lua-huisstijl .lua-status { top: calc(var(--space-12) * 2 + var(--space-8)); }.lua-huisstijl .lua-bord { top: calc(var(--space-12) * 4); } }

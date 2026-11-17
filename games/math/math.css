@@ -44,7 +44,7 @@
 .is-correct .adventure-feedback { color: var(--color-success); animation: adventure-pop 450ms ease-out; }
 .is-wrong .adventure-feedback { color: var(--color-error); animation: adventure-shake 220ms ease-out; }
 .math-hint-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; max-width: 620px; }
-.math-hint { background: #eff2e7f2; padding: 8px 12px; border-radius: 8px; font-size: 15px; line-height: 1.4; margin: 0; }
+.math-hint { background: #eff2e7f2; padding: 8px 12px; border-radius: 8px; font-size: var(--font-size-sm); line-height: 1.4; margin: 0; }
 .adventure-plant { position: absolute; bottom: 4%; width: 23%; max-height: 270px; object-fit: contain; pointer-events: none; }
 .adventure-plant--left { left: -7%; }
 .adventure-plant--right { right: -7%; }
@@ -82,7 +82,7 @@
 .quantity-token--acorn { width: 22px; height: 28px; background: #c8aa73; border-radius: 35% 35% 48% 48%; border-top: 8px solid #847950; box-shadow: inset -3px -3px #a08c5e; }
 .quantity-token--cookie { background: #dfbf83; border-radius: 50%; box-shadow: inset -3px -3px #b59866, 1px 2px 2px #473d2926; }
 .quantity-token--cookie::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: #7c6750; box-shadow: 6px 4px #7c6750, -6px 5px #7c6750, -2px -7px #7c6750; }
-.quantity-token b { position: absolute; z-index: 1; bottom: -6px; right: -7px; padding: 1px 2px; border-radius: 3px; background: #f7f5ea; color: #493e30; font-size: 10px; line-height: 1.2; }
+.quantity-token b { position: absolute; z-index: 1; bottom: -6px; right: -7px; padding: 1px 2px; border-radius: 3px; background: #f7f5ea; color: #493e30; font-size: var(--font-size-sm); line-height: 1.2; }
 .is-success .winter-squirrel { animation: squirrel-run 650ms ease-in-out; }
 .is-success .winter-bird { animation: bird-fly 650ms ease-in-out; }
 .is-success .winter-hollow .quantity { animation: adventure-pop 500ms ease; }
@@ -116,7 +116,7 @@
 .checkout-answers { width: min(560px,100%); }
 .checkout-hud { width: 100%; display: flex; align-items: center; justify-content: center; gap: 20px; background: #f4f3e9e8; border-radius: 8px; padding: 10px 12px; color: var(--color-primary); font-weight: 750; }
 .checkout-hud span { display: inline-flex; gap: 5px; align-items: center; }
-.checkout-hud span:last-child { font-size: 13px; }
+.checkout-hud span:last-child { font-size: var(--font-size-sm); }
 .checkout-start { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; color: #3f5848; }
 .checkout-start h2 { background: #faf8f2ed; padding: 10px; border-radius: 8px; margin: 0; font-size: 24px; }
 .adventure-start { display: inline-flex; gap: 8px; align-items: center; justify-content: center; min-height: 52px; padding: 10px 20px; border: 0; border-radius: 8px; background: #526b4f; color: #faf8f2; font-size: 20px; font-weight: 800; }
@@ -149,11 +149,11 @@
   .math-module { padding: 124px 12px 20px; background-attachment: scroll; }
   .math-game-header { top: 8px; min-height: 94px; width: calc(100% - 16px); gap: 6px; flex-wrap: wrap; padding: 6px 8px; }
   .math-game-header h1 { font-size: 17px; width: calc(100% - 58px); margin: 0; flex: 1; }
-  .math-level-select { margin-left: 50px; margin-right: auto; height: 36px; min-height: 44px; font-size: 13px; }
+  .math-level-select { margin-left: 50px; margin-right: auto; height: 36px; min-height: 44px; font-size: var(--font-size-sm); }
   .math-game-header:not(:has(.math-level-select)) { min-height: 58px; flex-wrap: nowrap; }
   .math-game-header:not(:has(.math-level-select)) h1 { font-size: 16px; }
   .math-module:not(.math-adventure) { padding-top: 86px; }
-  .math-game-header .math-wallet { font-size: 15px; }
+  .math-game-header .math-wallet { font-size: var(--font-size-sm); }
   .math-game-header > .math-icon-tool:last-child:not(:first-child) { width: 40px; }
   .math-game { min-height: calc(100dvh - 144px); }
   .math-session { min-height: calc(100dvh - 150px); }
@@ -174,7 +174,7 @@
   .winter-find .quantity { max-height: 80px; overflow-y: auto; padding-bottom: 8px; }
   .winter-find .quantity-token { width: 17px; height: 22px; }
   .winter-stock { height: 75px; }
-  .winter-total { font-size: 15px; }
+  .winter-total { font-size: var(--font-size-sm); }
   .cookie-scene { height: 240px; }
   .cookie-tray { width: 82%; left: 9%; }
   .cookie-chef { width: 22%; bottom: 30px; height: 120px; }
@@ -182,17 +182,17 @@
   .cookie-tray__contents { inset: 26% 19% 22%; }
   .cookie-tray .quantity { gap: 4px; }
   .cookie-tray .quantity-token { width: 21px; height: 21px; }
-  .scene-caption { font-size: 15px; }
+  .scene-caption { font-size: var(--font-size-sm); }
   .honey-jars { height: 290px; gap: 25px; padding-top: 25px; }
   .honey-jar { width: 37%; }
   .honey-jar__glass > span { font-size: 18px; padding: 6px 0; }
   .honey-herbs { left: -2%; }
   .checkout-hud { gap: 12px; flex-wrap: wrap; font-size: 16px; }
-  .checkout-hud span:last-child { font-size: 12px; }
+  .checkout-hud span:last-child { font-size: var(--font-size-sm); }
   .checkout-counter { min-height: 215px; gap: 12px; padding: 12px 0; }
   .checkout-product img { height: 120px; }
   .checkout-product strong { font-size: 16px; padding: 5px 8px; }
-  .adventure-feedback { font-size: 14px; min-height: 32px; margin-top: 6px; }
+  .adventure-feedback { font-size: var(--font-size-sm); min-height: 32px; margin-top: 6px; }
   .math-lua .lua-game-shell { min-height: calc(100dvh - 140px); }
 }
 @media (max-width: 380px) {

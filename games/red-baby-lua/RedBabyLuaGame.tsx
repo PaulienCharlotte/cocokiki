@@ -1,5 +1,11 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
+import { difficultyBonus } from '../math/progress';
+import InfoKnop from '../../components/ui/InfoKnop';
+import LuaTempo from './LuaTempo';
+import NiveauKnop from '../../components/ui/NiveauKnop';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
+import { Heart, Home, Pause, Play, RotateCcw, Settings2, Star, Volume2, VolumeX } from 'lucide-react';
 import NiveauPaneel from '../math/NiveauPaneel';
 import Phaser from 'phaser';
 import { analytics } from '../../services/analytics';
@@ -17,7 +23,7 @@ import { LUA_LEVEL_TABLES, luaMathResult } from '../math/luaBridge';
 import './lua-huisstijl.css';
 
 /** De tafels die je kunt aanzetten. Mix staat ernaast en betekent: alles. */
-const TAFELS = Array.from({ length: 12 }, (_, index) => index + 1);
+const TAFELS = Array.from({ length: 20 }, (_, index) => index + 1);
 
 interface Props {
   onHome: () => void;
@@ -63,6 +69,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
   const coinSessionId = useRef(crypto.randomUUID());
   const [sessionCoins, setSessionCoins] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
+  const [tempoOpen, setTempoOpen] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location?.search ?? '').get('tempo') === '1');
   const [niveauKiezen, setNiveauKiezen] = useState(false);
   const reducedMotion = useMemo(() => matchMedia('(prefers-reduced-motion: reduce)').matches, []);
 
@@ -163,6 +170,7 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
     difficultyRef.current = nextDifficulty(difficultyRef.current, nextStats.streak, !firstTry);
     const comboBonus = 0;
     const earned = currencyReward(preferences.mode === 'challenge' ? 'mix' : preferences.table, firstTry) + comboBonus;
+    if (mathAdventure) rewardAnswer('math:multiply', coinSessionId.current, round, learningReward(1, false, difficultyBonus(mathAdventure.level)));
     if (!mathAdventure) { setCoins(awardCurrencyOnce(`lua:${coinSessionId.current}:${round}:${activeQuestion.id}`, earned).balance); setSessionCoins(previous => previous + earned); }
     setStats(nextStats);
     setFeedback(`${FEEDBACK[round % FEEDBACK.length]} ${activeQuestion.explanation}${comboBonus ? ` · Combo +${comboBonus}` : ''}`);
@@ -190,21 +198,22 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
   return <div className="lua-game-shell ck-scherm lua-huisstijl" data-wereld="school">
     <div className="lua-canvas" ref={mountRef} aria-hidden="true" />
     <div className="lua-overlay">
-      {phase === 'menu' && <>
+      {tempoOpen && <LuaTempo table={preferences.table} onClose={() => setTempoOpen(false)} />}
+      {phase === 'menu' && !tempoOpen && <>
         <section className="lua-menu ck-glas" aria-labelledby="lua-title">
           <h1 id="lua-title" className="ck-houtbord lua-titel">Red Baby Lua!</h1>
-          <p>Oefen keer- en deelsommen, ontwijk de rotsen en help Lua veilig door de jungle.</p>
+          <button type="button" className="ck-knop ck-knop--zacht" onClick={() => setTempoOpen(true)}>Tempotoets · 1 minuut</button>
           {setupControls && <div className="lua-setup-controls">{setupControls}</div>}
-          {!mathAdventure && <fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong><small>{mode.detail}</small></button>)}</div></fieldset>}
+          {!mathAdventure && <fieldset className="lua-modes"><legend>Kies je avontuur</legend><div>{MODE_INFO.map(mode => <button key={mode.id} type="button" aria-pressed={preferences.mode === mode.id} onClick={() => updatePreference('mode', mode.id)}><strong>{mode.label}</strong></button>)}</div></fieldset>}
           {/* Je mag meerdere tafels tegelijk aanzetten, of in één tik alles door
               elkaar met Mix. Ook als je via het rekeneiland binnenkomt. */}
           <fieldset className="lua-tables"><legend>Welke tafels wil je oefenen?</legend><div>
             {TAFELS.map(value => <button key={value} type="button" aria-pressed={gekozenTafels.includes(value)} onClick={() => wisselTafel(value)}>{value}</button>)}
             <button type="button" className="lua-mix" aria-pressed={preferences.table === 'mix'} onClick={() => updatePreference('table', 'mix')}>Mix</button>
           </div></fieldset>
-          {niveau && onLevel && <button type="button" className="ck-niveau lua-niveau" aria-haspopup="dialog" aria-label={`Niveau ${niveau}, kies een ander niveau`} onClick={() => setNiveauKiezen(true)}>Niveau {niveau}<ChevronDown size={16} aria-hidden="true" /></button>}
         </section>
-        <div className="ck-zone-gereedschap ck-glas lua-gereedschap" role="toolbar" aria-label="Gereedschap">
+        <div className="ck-zone-gereedschap ck-glas lua-gereedschap" role="toolbar" aria-label="Gereedschap"><InfoKnop character="lua">Kies de tafels die je wilt oefenen. Reken de som uit en kies het goede antwoord om Lua te helpen. Met het hersentje verander je het niveau.</InfoKnop>
+          {niveau && onLevel && phase !== 'results' && <NiveauKnop niveau={niveau} onClick={() => { setPaused(true); setNiveauKiezen(true); }} />}
           <button type="button" className={`ck-gereedschap${preferences.sound ? ' is-aan' : ''}`} aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 size={22} /> : <VolumeX size={22} />}</button>
         </div>
         <div className="ck-zone-antwoord"><button type="button" className="ck-knop ck-knop--hoofd lua-play" disabled={!sceneReady} onClick={startSession}><Play size={22} />{sceneReady ? 'Start avontuur' : 'Even laden...'}</button></div>
@@ -215,12 +224,13 @@ export default function RedBabyLuaGame({ onHome, onCoinsChange, mathAdventure, s
         <div className={`ck-zone-status ck-glas lua-status${einde ? ' is-open' : ''}`}>
           {!calm && <span className="lua-hearts" aria-label={`${hearts} hartjes`}>{Array.from({ length: 3 }, (_, index) => <Heart key={index} size={22} fill={index < hearts ? 'currentColor' : 'none'} />)}</span>}
           <span className="lua-stippen" role="img" aria-label={`Som ${round} van ${ROUND_COUNT}`}>{Array.from({ length: ROUND_COUNT }, (_, i) => <span key={i} className={`ck-stip${i < round - (phase === 'active' ? 1 : 0) ? ' ck-stip--klaar' : ''}${i === round - 1 && phase === 'active' ? ' ck-stip--nu' : ''}`} />)}</span>
-          {niveau && onLevel && phase !== 'results' ? <button type="button" className="ck-niveau lua-niveau" aria-haspopup="dialog" aria-label={`Niveau ${niveau}, kies een ander niveau`} onClick={() => { setPaused(true); setNiveauKiezen(true); }}>Niveau {niveau}<ChevronDown size={16} aria-hidden="true" /></button> : <span className="ck-niveau">{niveau ? `Niveau ${niveau}` : stage}</span>}
+          {!niveau && <span className="ck-niveau">{stage}</span>}
           <span className="ck-status-extra" aria-live="polite">{einde?.saved && <><span className="ck-munt lua-munt" aria-hidden="true" /><b>+{einde.reward}</b></>}</span>
           {!calm && phase !== 'results' && <span className="lua-tijd" aria-label={`${Math.ceil(remaining * 100)} procent tijd over`}><span style={{ width: `${remaining * 100}%` }} /></span>}
         </div>
         {/* 4. Gereedschap: pauze en geluid */}
-        <div className="ck-zone-gereedschap ck-glas lua-gereedschap" role="toolbar" aria-label="Gereedschap">
+        <div className="ck-zone-gereedschap ck-glas lua-gereedschap" role="toolbar" aria-label="Gereedschap"><InfoKnop character="lua">Kies de tafels die je wilt oefenen. Reken de som uit en kies het goede antwoord om Lua te helpen. Met het hersentje verander je het niveau.</InfoKnop>
+          {niveau && onLevel && phase !== 'results' && <NiveauKnop niveau={niveau} onClick={() => { setPaused(true); setNiveauKiezen(true); }} />}
           {!calm && phase !== 'results' && <button type="button" className={`ck-gereedschap${paused ? ' is-aan' : ''}`} aria-label={paused ? 'Doorgaan' : 'Pauzeren'} onClick={() => setPaused(value => !value)}>{paused ? <Play size={22} /> : <Pause size={22} />}</button>}
           <button type="button" className={`ck-gereedschap${preferences.sound ? ' is-aan' : ''}`} aria-label={preferences.sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={() => updatePreference('sound', !preferences.sound)}>{preferences.sound ? <Volume2 size={22} /> : <VolumeX size={22} />}</button>
         </div>

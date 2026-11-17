@@ -4,7 +4,7 @@ import { heelGetal, maakSom, type Sometype } from '../types';
 export const somVerschil: Sometype = {
   id: 'somVerschil',
   naam: 'Som-en-verschilsom',
-  aanpak: 'Haal eerst het verschil van het totaal af: dan hebben ze evenveel. Deel dat door twee. Tel het verschil weer op voor de grootste.',
+  aanpak: 'Totaal min verschil, dan delen door twee.',
   valkuil: 'Het totaal meteen door twee delen. Dan krijgen ze evenveel, en dat is niet zo.',
   niveaus: [4, 5],
   maak(level, index, random) {

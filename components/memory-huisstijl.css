@@ -27,7 +27,7 @@
 :is(.ck-scherm, .topo-huisstijl) .memory-card .card-back img { width: 38%; height: auto; filter: drop-shadow(0 2px 3px rgba(40, 20, 5, .3)); }
 :is(.ck-scherm, .topo-huisstijl) .memory-card:hover:not(:disabled) .card-back { transform: translateY(-3px); }
 :is(.ck-scherm, .topo-huisstijl) .memory-card .card-front { border-radius: 18px; background: var(--ck-room); border: 3px solid var(--ck-wit); box-shadow: 0 6px 0 var(--ck-schaduw-rand), 0 12px 22px rgba(40, 20, 5, .2); color: var(--ck-cacao); }
-:is(.ck-scherm, .topo-huisstijl) .memory-card .card-front small { font-family: var(--ck-font-tekst); font-weight: 900; font-size: 14px; color: var(--ck-cacao-zacht); text-transform: uppercase; letter-spacing: .04em; }
+:is(.ck-scherm, .topo-huisstijl) .memory-card .card-front small { font-family: var(--ck-font-tekst); font-weight: 900; font-size: var(--font-size-sm); color: var(--ck-cacao-zacht); text-transform: uppercase; letter-spacing: .04em; }
 :is(.ck-scherm, .topo-huisstijl) .memory-card .memory-text { font-family: var(--ck-font-kop); font-weight: 800; font-size: clamp(16px, 1.4cqw, 20px); line-height: 1.15; text-align: center; padding: 0 6px; }
 :is(.ck-scherm, .topo-huisstijl) .memory-card .memory-flag { font-size: clamp(38px, 4.2cqw, 64px); line-height: 1; }
 :is(.ck-scherm, .topo-huisstijl) .memory-card.matched .card-front { border-color: var(--ck-actief); box-shadow: 0 6px 0 var(--ck-actief-rand), 0 0 0 4px color-mix(in srgb, var(--ck-actief) 25%, transparent); }

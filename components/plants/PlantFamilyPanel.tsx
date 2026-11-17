@@ -81,7 +81,7 @@ export default function PlantFamilyPanel({ onNavigate, onClose }: { onNavigate?:
       {family.plants.length === 0 ? <div className="plant-family__empty">
         <img src={ASSET_LIBRARY.avatars.kikiPoses.explore} alt="" />
         <p>Je hebt nog geen plant geadopteerd.</p>
-        <small>Koop er een in de plantenwinkel, dan mag jij hem een naam geven.</small>
+        <small>Koop een plant in de plantenwinkel. Zo adopteer je hem en mag jij hem een naam geven.</small>
       </div> : gekozen ? <PlantDetail
         plant={gekozen}
         nu={nu}

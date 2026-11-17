@@ -1,5 +1,9 @@
+import { rewardAnswer } from '../../services/answerRewards';
+import { learningReward } from '../../services/learningReward';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Check } from 'lucide-react';
+import InfoKnop from '../../components/ui/InfoKnop';
+import { Button } from '../../design-system';
+import { Check, Settings2 } from 'lucide-react';
 import AnalogClock from './AnalogClock';
 import { loadClockRaceMode, saveClockRaceMode } from './clockProgress';
 import { clockTimeKey, createRaceRound, formatDigitalTime, formatDutchTime, sameClockTime } from './timeEngine';
@@ -71,17 +75,14 @@ export default function ClockRaceGame({ initialLevel, completedLevels, onBack, o
 
   const select = (key: string, isCorrect: boolean) => {
     if (correctSelection || wrongSelections.includes(key)) return;
-    if (isCorrect) setCorrectSelection(key);
+    if (isCorrect) { rewardAnswer('clock:race', roundId.current, roundIndex, learningReward()); setCorrectSelection(key); }
     else setWrongSelections(current => [...current, key]);
   };
 
   const digitalPrompt = level >= 4 && roundIndex % 2 === 1;
 
   return <main className="clock-game clock-race">
-    <ClockGameHeader title="Klokkenrace" level={level} completed={completedLevels} onBack={onBack} onLevelChange={reset} />
-    <div className="clock-race__modes" role="group" aria-label="Kies het soort klok">
-      {MODES.map(option => <button key={option.id} type="button" aria-pressed={mode === option.id} onClick={() => chooseMode(option.id)}>{option.label}</button>)}
-    </div>
+    <ClockGameHeader title="Klokkenrace" level={level} completed={completedLevels} onBack={onBack} onLevelChange={reset} extraTools={<InfoKnop titel="Soort klok kiezen" icon={<Settings2 />}>{MODES.map(option => <Button key={option.id} variant={mode === option.id ? 'secondary' : 'quiet'} aria-pressed={mode === option.id} onClick={() => chooseMode(option.id)}>{option.label}</Button>)}</InfoKnop>} />
     <section className="clock-instruction">
       <span>Welke klok hoort bij</span><h2>{digitalPrompt ? formatDigitalTime(round.target) : formatDutchTime(round.target)}?</h2>
       <small>Opdracht {roundIndex + 1} van {ROUND_COUNT}</small>

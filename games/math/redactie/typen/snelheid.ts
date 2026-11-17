@@ -4,7 +4,7 @@ import { heelGetal, kiesUit, maakSom, type Sometype } from '../types';
 export const snelheid: Sometype = {
   id: 'snelheid',
   naam: 'Snelheidsom',
-  aanpak: 'Km per uur zegt hoe ver je in 60 minuten komt. Reken eerst om naar het stukje tijd dat je nodig hebt.',
+  aanpak: 'Km per uur: zo ver kom je in 60 minuten.',
   valkuil: 'Minuten en uren door elkaar halen: 20 minuten is geen 20 uur, maar een derde uur.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

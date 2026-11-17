@@ -43,7 +43,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
       <div className="discovery-room__scene">
         <img className="world-location__background discovery-room__background" src={location.background} alt="" draggable={false} fetchPriority="high" />
         <nav aria-label={`Ontdek ${room.title}`}>
-          {room.objects.map(object => <button type="button" key={object.id} className="discovery-object" style={{ '--object-x': `${object.x}%`, '--object-y': `${object.y}%` } as React.CSSProperties} onClick={() => open(object)}>
+          {room.objects.map(object => <button type="button" key={object.id} className="discovery-object" data-object={object.id} style={{ '--object-x': `${object.x}%`, '--object-y': `${object.y}%` } as React.CSSProperties} onClick={() => open(object)}>
             <span className="discovery-object__light" aria-hidden="true" />
             <span className="discovery-object__label ck-glas">{object.label}</span>
           </button>)}

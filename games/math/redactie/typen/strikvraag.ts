@@ -4,7 +4,7 @@ import { heelGetal, maakSom, type Sometype } from '../types';
 export const strikvraag: Sometype = {
   id: 'strikvraag',
   naam: 'Strikvraag',
-  aanpak: 'Niet elk getal in het verhaal heb je nodig. Lees eerst wat je zoekt, en streep alleen de getallen aan die daarbij horen.',
+  aanpak: 'Niet elk getal heb je nodig.',
   valkuil: 'Elk getal gebruiken omdat het er staat. Het verhaal zet je soms expres op het verkeerde been.',
   niveaus: [2, 3, 4, 5],
   maak(level, index, random) {

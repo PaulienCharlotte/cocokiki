@@ -34,6 +34,12 @@ export interface Stap {
    * een keer bij komt. Bij het nakijken staat de som er wél.
    */
   verborgen?: boolean;
+  /** Uitleg over de theorie van deze stap; op niveau 1 vertelt Lua dit vóór je begint. */
+  uitleg?: string;
+  /** Getallen die niet in het verhaal staan, met wat ze betekenen: { '60': 'minuten in een uur' }. */
+  weetjes?: Record<string, string>;
+  /** Andere sommen die óók goed zijn, zoals '4 × {1}' naast '35 − {1}'. Hun getallen komen bij de tegels. */
+  ook?: string[];
   /** De tip als je bij déze stap vastloopt. */
   tip: string;
   /**
@@ -56,6 +62,8 @@ export interface Redactiesom extends MathQuestion {
   /** Wat je zoekt, in één zin: 'het aantal palen'. */
   zoek: string;
   stappen: Stap[];
+  /** Andere goede aanpakken met eigen stappen. De eerste som van het kind kiest de route. */
+  routes?: Stap[][];
   /** Hoe je achteraf controleert of het klopt. */
   controle: string;
   /**

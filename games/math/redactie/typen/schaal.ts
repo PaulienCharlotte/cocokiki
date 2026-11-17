@@ -7,7 +7,7 @@ const ROUTES = ['van Amsterdam naar Utrecht', 'van de camping naar het strand', 
 export const schaal: Sometype = {
   id: 'schaal',
   naam: 'Schaalsom',
-  aanpak: 'Schaal 1 : 50.000 betekent: 1 cm op de kaart is 50.000 cm in het echt. Reken eerst in centimeters, dan om naar kilometers (100.000 cm is 1 km).',
+  aanpak: 'Kaart-cm keer de schaal. 100.000 cm is 1 km.',
   valkuil: 'Vergeten om te rekenen. 300.000 cm is geen 300.000 km, maar 3 km.',
   niveaus: [4, 5],
   maak(level, index, random) {

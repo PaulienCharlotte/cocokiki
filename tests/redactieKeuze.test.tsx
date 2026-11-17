@@ -39,10 +39,12 @@ test('een omgedraaide som telt bij plus en keer, niet bij min en delen', () => {
   assert.ok(!zelfdeSom(leesSom('100 ÷ 5')!, leesSom('5 ÷ 100')!));
   assert.ok(zelfdeSom(leesSom('3 × € 2,00')!, leesSom('€2,00 × 3')!));
   // De verkeerde keuze krijgt een wedervraag, geen antwoord.
-  assert.match(wedervraag(leesSom('5 ÷ 100'), leesSom('100 ÷ 5')!), /verdelen/);
+  assert.match(wedervraag(leesSom('5 ÷ 100'), leesSom('100 ÷ 5')!), /verdeel/);
   assert.doesNotMatch(wedervraag(leesSom('100 × 5'), leesSom('100 ÷ 5')!), /20/);
   // Omrekenen krijgt een eigen uitleg.
-  assert.match(waarom({ vraag: '', som: '', antwoord: 0, eenheid: '', tip: '' }, leesSom('8 × 10')!), /kleinere maat/);
+  assert.match(waarom({ vraag: '', som: '', antwoord: 0, eenheid: 'mm', tip: '' }, leesSom('8 × 10')!), /kleinere maat/);
+  // "Hoe vaak past 100 gram in 150 gram" is geen maat omrekenen.
+  assert.match(waarom({ vraag: '', som: '', antwoord: 0, eenheid: 'keer', tip: '' }, leesSom('150 ÷ 100')!), /hoe vaak past 100 in 150/);
 });
 
 test('een tussenvraag zegt nooit de som voor', () => {

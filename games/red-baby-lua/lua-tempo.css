@@ -1,0 +1,19 @@
+.lua-tempo { position: absolute; inset: 0; z-index: 90; display: grid; grid-template-rows: auto 1fr; gap: var(--space-4); padding: calc(var(--space-12) * 2) var(--space-4) var(--space-4); box-sizing: border-box; color: var(--ck-cacao); overflow-y: auto; background: var(--ck-glas); }
+.lua-tempo__header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border-radius: var(--radius-pill); max-width: 40rem; width: 100%; justify-self: center; box-sizing: border-box; }
+.lua-tempo h1 { flex: 1; margin: 0; font-family: var(--ck-font-kop); font-size: var(--font-size-xl); }
+.lua-tempo__header > strong { font-family: var(--ck-font-kop); font-size: var(--font-size-xl); padding-right: var(--space-3); }
+.lua-tempo__paper { display: grid; align-content: center; justify-items: center; gap: var(--space-4); align-self: center; justify-self: center; max-width: 32rem; width: 100%; padding: var(--space-8); box-sizing: border-box; background: var(--ck-room); border-radius: var(--radius-dialog); text-align: center; }
+.lua-tempo__paper h2, .lua-tempo__paper p { margin: 0; }
+.lua-tempo form { display: grid; justify-items: stretch; gap: var(--space-3); width: 100%; }
+.lua-tempo__sum { font-family: var(--ck-font-kop); font-size: var(--ck-maat-speelgetal); }
+.lua-tempo input { width: 100%; box-sizing: border-box; min-height: var(--touch-target); text-align: center; font: inherit; font-size: var(--font-size-2xl); color: var(--ck-cacao); border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-control); background: var(--ck-wit); }
+.lua-tempo__notice { min-height: 1.5em; font-size: var(--font-size-sm); }
+@media(max-width:600px) { .lua-tempo { padding-top: calc(var(--space-12) + var(--space-6)); }.lua-tempo__paper { padding: var(--space-5); }.lua-tempo h1 { font-size: var(--font-size-lg); } }
+/* Zelf kiezen: keer, delen of door elkaar, en de tafels tot 20 */
+.lua-tempo__keuze { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.lua-tempo__keuze button, .lua-tempo__tafels button { min-height: var(--ck-tik-min); padding: 0 18px; border: 0; border-radius: var(--ck-rond-knop); background: var(--ck-plekje); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; box-shadow: 0 4px 0 var(--ck-schaduw-rand); cursor: pointer; transition: transform var(--ck-snel); }
+.lua-tempo__keuze button:active, .lua-tempo__tafels button:active { transform: translateY(3px); }
+.lua-tempo__keuze button.is-gekozen, .lua-tempo__tafels button.is-gekozen { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-actief-rand); }
+.lua-tempo__vraag { font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; }
+.lua-tempo__tafels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; }
+.lua-tempo__tafels button { padding: 0; }

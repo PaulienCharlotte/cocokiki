@@ -76,7 +76,7 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
       {step.tapTool ? <motion.button type="button" className="cooking-tap__tool" animate={toolControls} whileHover={{ scale: 1.05 }} whileTap={{ scale: .92 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`}>
         <CookingAssetImage src={frameFor(step.toolByCount, state.count, step.tapTool.asset)} />
       </motion.button> : <motion.button type="button" className="cooking-tap__overlay" whileTap={{ scale: .94, rotate: -2 }} onClick={repeat} aria-label={`${step.title}, tik ${step.target} keer`} />}
-    </div><span className="cooking-tap__label">{step.foodSprite ? ['Snijd de appel doormidden', 'Verwijder het klokhuis en maak partjes', 'Snijd de partjes in blokjes', 'De appelblokjes zijn klaar!'][Math.min(3, state.count)] : step.tapLabel ?? 'Tik op het plaatje'}</span><div className="cooking-dots" aria-label={`${state.count} van ${step.target}`}>
+    </div>{!step.foodSprite && <span className="cooking-tap__label">{step.tapLabel ?? 'Tik op het plaatje'}</span>}<div className="cooking-dots" aria-label={`${state.count} van ${step.target}`}>
       {Array.from({ length: step.target }, (_, index) => <i key={index} className={index < state.count ? 'is-done' : ''} />)}
     </div>{step.foodSprite && state.count >= step.target && <Button onClick={() => onComplete({ count: state.count })}>Appelblokjes klaar</Button>}</div>;
   }
@@ -89,7 +89,7 @@ export default function CookingInteraction({ step, state, onChange, onComplete, 
         <Button variant="quiet" startIcon={<Minus />} onClick={() => change(-step.increments[0])}>{step.increments[0]} {suffix} terug</Button>
         <IconButton label="Weegschaal leegmaken" icon={<RotateCcw />} onClick={() => onChange({ quantity: 0 })} />
       </div><Button disabled={state.quantity !== step.target} onClick={() => onComplete()}>
-        {state.quantity === step.target ? `Precies ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'}!` : `Maak er ${step.target} ${step.unit === 'gram' ? 'gram' : 'milliliter'} van`}
+        Klaar met wegen
       </Button></div>;
   }
   if (step.mechanic === 'heat') return <HeatInteraction step={step} state={state} onChange={onChange} onComplete={onComplete} onMiss={onMiss} />;

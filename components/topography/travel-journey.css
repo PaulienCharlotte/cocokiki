@@ -1,0 +1,26 @@
+@import '../../styles/cocokiki-tokens.css';
+@import '../../styles/paper-surface.css';
+.travel-route { box-sizing: border-box; min-height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-5) var(--space-8); background: var(--ck-hout) url('/dreamworld/topo-interior.webp') center / cover fixed; color: var(--ck-cacao); font-family: var(--ck-font-tekst); }
+.travel-route__sheet { width: min(100%, calc(var(--space-12) * 15)); box-sizing: border-box; margin: auto; padding: var(--space-10) var(--space-10) var(--space-8); }
+.travel-route h1 { margin: 0 0 var(--space-5); font-size: var(--ck-maat-kop); }
+.travel-route p { font-size: var(--ck-maat-tekst); font-weight: 800; }
+.travel-route__steps { display: grid; gap: var(--space-2); list-style: none; padding: 0; }
+.travel-route__steps button { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: var(--ck-tik-min); padding: var(--space-3); background: var(--ck-glas); color: var(--ck-cacao); border: 0; border-radius: var(--ck-rond-knop); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); text-align: left; cursor: pointer; }
+.travel-route__steps button > span { display: grid; place-items: center; width: var(--space-8); height: var(--space-8); background: var(--ck-zon); border-radius: var(--radius-pill); flex: none; }
+.travel-route__steps strong { flex: 1; }
+.travel-route__steps small { font-size: var(--font-size-md); }
+.travel-route__steps [aria-current=step] { outline: var(--space-1) solid var(--ck-wereld); }
+.travel-route__steps [aria-disabled=true] { background: none; }
+.travel-route .ck-button--primary, .travel-facts .ck-button--primary { background: var(--ck-wereld); color: var(--ck-cacao); box-shadow: 0 var(--ck-onderkant) 0 var(--ck-wereld-rand); }
+.travel-play { min-height: 100dvh; background: var(--ck-room); }
+.travel-play .session-page { padding-top: calc(var(--space-12) * 2); }
+.travel-play__pause { position: fixed; z-index: 25; left: var(--space-4); top: calc(var(--space-12) * 2); min-height: var(--touch-target); padding: var(--space-2) var(--space-4); border: 0; color: var(--ck-cacao); font: 800 var(--font-size-md) var(--ck-font-tekst); cursor: pointer; }
+.travel-facts { height: 100dvh; box-sizing: border-box; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,calc(var(--space-12) * 7)); gap: var(--space-4); padding: calc(var(--space-12) * 2) var(--space-4) var(--space-4); background: var(--ck-room); }
+.travel-facts__map { min-height: 0; min-width: 0; }
+.travel-facts__notes { overflow-y: auto; padding: var(--space-8) var(--space-5); }
+.travel-facts__notes nav { display: grid; gap: var(--space-1); margin: var(--space-4) 0; }
+.travel-facts__notes nav button { min-height: var(--touch-target); padding: var(--space-2); background: var(--ck-glas); border: 0; border-radius: var(--ck-rond-knop); color: var(--ck-cacao); font: 800 var(--font-size-md) var(--ck-font-tekst); text-align: left; cursor: pointer; }
+.travel-route__notice { position: fixed; bottom: var(--space-4); left: var(--space-4); z-index: 30; padding: var(--space-3); background: var(--ck-room); color: var(--ck-cacao); }
+.travel-route .ck-zegt__naam strong, .travel-facts .ck-zegt__naam strong { color: var(--ck-bes); }
+.travel-route__sheet > p:last-child { margin-bottom: var(--space-4); }
+@media(max-width:600px) { .travel-route { padding: calc(var(--space-12) + var(--space-6)) var(--space-3) var(--space-4); } .travel-route__sheet { padding: var(--space-8) var(--space-4); } .travel-route h1 { font-size: var(--ck-maat-knop); } .travel-facts { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) minmax(0,1fr); padding-top: calc(var(--space-12) + var(--space-6)); } .travel-facts__notes { padding: var(--space-5) var(--space-4); } }

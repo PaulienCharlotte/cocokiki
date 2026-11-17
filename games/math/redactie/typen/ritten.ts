@@ -17,7 +17,7 @@ const SOORTEN = [
 export const ritten: Sometype = {
   id: 'ritten',
   naam: 'Ritjessom',
-  aanpak: 'Deel eerst. Blijft er een stukje over, dan is er nog een hele keer nodig — ook al is die niet vol. Komt het precies uit, dan niet.',
+  aanpak: 'Deel. Blijft er iets over? Dan nog één keer extra.',
   valkuil: 'De rest laten liggen. Een halve rit bestaat niet, dus altijd naar boven.',
   niveaus: [1, 2, 3, 4, 5],
   maak(level, index, random) {

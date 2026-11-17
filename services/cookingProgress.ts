@@ -321,6 +321,17 @@ export function saveCookingProgress(progress: CookingProgressState, spend?: { id
   return saved;
 }
 
+/** Zet een snapshot op de nieuwste opgeslagen revisie, zodat een verouderde
+ * kopie (bijv. een dubbel uitgevoerd effect) het spel niet laat vastlopen. */
+export function saveCookingProgressFresh(progress: CookingProgressState): boolean {
+  if (saveCookingProgress(progress)) return true;
+  try {
+    const saved = JSON.parse(readDocument(COOKING_PROGRESS_KEY) ?? 'null');
+    progress.revision = saved?.revision ?? 0;
+  } catch { return false; }
+  return saveCookingProgress(progress);
+}
+
 function clone(progress: CookingProgressState): CookingProgressState {
   return structuredClone(progress);
 }

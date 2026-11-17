@@ -11,6 +11,12 @@ import IslandEnvironment from '../pages/IslandEnvironment';
 import ShopScreen from '../pages/ShopScreen';
 import ShopMenu from '../components/dreamworld/ShopMenu';
 import WorldHub from '../pages/WorldHub';
+import TreehouseUnitTest from '../pages/TreehouseUnitTest';
+import { loadVillageInvitation, loadVillageInvitations } from '../services/villageInvitation';
+import { COOKING_PROGRESS_KEY, createEmptyCookingProgress } from '../services/cookingProgress';
+import { openBestellingen, neemBestellingAan } from '../services/bakeryOrders';
+import VillageGuide from '../components/dreamworld/VillageGuide';
+import { loadWorldNight, WORLD_LIGHT_KEY } from '../services/worldLight';
 import AppShell from '../components/platform/AppShell';
 import { FLAG_MEMORY_PAIRS } from '../pages/FlagsMemory';
 import LocationMemoryGame from '../components/LocationMemoryGame';
@@ -149,18 +155,21 @@ test('three global shops are addressable without cluttering island activities', 
   assert.equal(islandForActivity('/encyclopedie?tab=voeding')?.id, 'cooking');
   assert.equal(islandForActivity('/games/topo')?.id, 'discovery');
 });
-test('world map has no visible name pills and shops stay available in the shared menu', () => {
+test('village buildings are navigable without badges and the full menu stays available', () => {
   const world = renderToStaticMarkup(<WorldHub coins={20} onNavigate={() => undefined} />);
   assert.doesNotMatch(world, /dream-map__index/);
-  assert.equal((world.match(/class="dream-island-icon"/g) ?? []).length, 5);
+  assert.doesNotMatch(world, /class="dream-island-icon"/);
   assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 5);
-  assert.doesNotMatch(world, /dream-hotspot__label/);
+  for (const action of ['Bak met Coco', 'Plant met Kiki', 'Help Baby Lua', 'Ontdek met Seb', 'Versier je boomhut']) assert.ok(world.includes(action));
+  assert.doesNotMatch(world, /village-destination__sign|village-destination__character|village-world__welcome/);
+  assert.match(world, /aria-label="Alle spellen openen"/);
+  assert.match(world, /aria-label="Encyclopedie openen"/);
   assert.ok(existsSync(`public${ISLAND_ICONS_IMAGE}`));
   assert.deepEqual(Object.keys(ISLAND_ICON_POSITIONS).sort(), DREAM_ISLANDS.map(island => island.id).sort());
   assert.equal(new Set(Object.values(ISLAND_ICON_POSITIONS).map(position => position.join(':'))).size, 6);
   assert.match(world, /aria-label="Winkels openen"/);
   assert.doesNotMatch(world, /aria-label="Kaart naar (links|rechts)"/);
-  for (const asset of ['/dreamworld/village/landscape.webp', '/dreamworld/village/portrait.webp']) {
+  for (const asset of ['/dreamworld/village/landscape-quests.webp', '/dreamworld/village/portrait-v2.webp']) {
     assert.ok(existsSync(`public${asset}`));
     assert.ok(world.includes(asset));
   }
@@ -244,5 +253,78 @@ test('ronde wereld laat bij overzichtszoom lucht rondom vrij op desktop en mobie
     assert.equal(view.x, 0); assert.equal(view.y, 0);
     assert.ok(image.width * view.scale <= width * .8 + .001);
     assert.ok(image.height * view.scale <= height * .8 + .001);
+  }
+});
+
+
+test('village and treehouse share the saved daylight choice without changing room routes', () => {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const values = new Map<string, string>();
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+  } });
+  try {
+    values.set(WORLD_LIGHT_KEY, 'night');
+    assert.equal(loadWorldNight(), true);
+    const world = renderToStaticMarkup(<WorldHub coins={20} onNavigate={() => undefined} />);
+    const treehouse = renderToStaticMarkup(<TreehouseUnitTest onNavigate={() => undefined} />);
+    assert.match(world, /village-world is-night/);
+    assert.match(treehouse, /unit-test--live is-night/);
+    assert.match(treehouse, /Daglicht tonen/);
+    assert.match(treehouse, /Woonkamer openen/);
+    values.set(WORLD_LIGHT_KEY, 'day');
+    assert.equal(loadWorldNight(), false);
+    const day = renderToStaticMarkup(<TreehouseUnitTest onNavigate={() => undefined} />);
+    assert.doesNotMatch(day, /unit-test--live is-night/);
+    assert.match(day, /Nachtlucht tonen/);
+    assert.ok(existsSync('public/assets/library/treehouse/overview/treehouse-clearing-night.webp'));
+  } finally {
+    if (previous) Object.defineProperty(globalThis, 'localStorage', previous);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
+  }
+});
+
+
+test('village guide offers real available tasks, resumes active work and never starts it on render', () => {
+  const previous = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const values = new Map<string, string>();
+  let writes = 0;
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: () => { writes++; },
+  } });
+  try {
+    const empty = createEmptyCookingProgress();
+    const order = openBestellingen(empty)[0];
+    assert.ok(order);
+    values.set(COOKING_PROGRESS_KEY, JSON.stringify(empty));
+    const first = loadVillageInvitation();
+    assert.equal(first?.id, order.id);
+    assert.equal(first?.character, 'coco');
+    assert.equal(first?.continuing, false);
+    const choices = loadVillageInvitations();
+    assert.equal(choices.length, 3);
+    for (const choice of choices) assert.ok(existsSync(`public${choice.image}`));
+    assert.equal(new Set(choices.map(item => item.character)).size, choices.length);
+    assert.equal(new Set(choices.map(item => item.id)).size, choices.length);
+    assert.ok(choices.some(item => item.character === 'seb'));
+    assert.ok(choices.some(item => item.character === 'luna'));
+    const markup = renderToStaticMarkup(<VillageGuide onNavigate={() => undefined} />);
+    assert.match(markup, /ck-zegt__gids/);
+    assert.equal((markup.match(/ck-zegt__illustratie/g) ?? []).length, 3);
+    assert.match(markup, /Bekijk opdracht/);
+    assert.equal((markup.match(/data-task=/g) ?? []).length, 3);
+    const active = neemBestellingAan(empty, order.id);
+    values.set(COOKING_PROGRESS_KEY, JSON.stringify(active));
+    assert.equal(loadVillageInvitation()?.path, '/cooking/orders?from=tasks');
+    assert.equal(loadVillageInvitation()?.continuing, true);
+    active.orders[order.id].status = 'geleverd';
+    values.set(COOKING_PROGRESS_KEY, JSON.stringify(active));
+    assert.notEqual(loadVillageInvitation()?.id, order.id);
+    assert.equal(writes, 0);
+  } finally {
+    if (previous) Object.defineProperty(globalThis, 'localStorage', previous);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
   }
 });

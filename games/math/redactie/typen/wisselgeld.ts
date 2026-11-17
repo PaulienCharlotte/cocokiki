@@ -10,7 +10,7 @@ const WINKEL = [
 export const wisselgeld: Sometype = {
   id: 'wisselgeld',
   naam: 'Wisselgeldsom',
-  aanpak: 'Reken eerst uit wat alles samen kost. Trek dat daarna af van het geld waarmee je betaalt.',
+  aanpak: 'Wat je betaalt, min wat het kost.',
   valkuil: 'De prijs van één stuk van het briefje aftrekken en vergeten dat je er meer koopt.',
   niveaus: [1, 2, 3, 4],
   maak(level, index, random) {

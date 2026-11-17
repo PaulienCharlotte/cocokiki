@@ -36,38 +36,38 @@
 .clock-game-header h1 { margin: 0; text-align: center; font-size: 1.15rem; }
 .clock-level-picker { min-width: 0; display: grid; grid-template-columns: minmax(112px, 1fr) auto; align-items: center; gap: 8px; }
 .clock-level-picker__label { min-width: 0; display: grid; gap: 1px; text-align: right; }
-.clock-level-picker__label span { color: #6f8069; font-size: .64rem; font-weight: 850; text-transform: uppercase; }
-.clock-level-picker__label strong { overflow: hidden; color: #564b45; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.clock-level-picker__label span { color: #6f8069; font-size: var(--font-size-sm); font-weight: 850; text-transform: uppercase; }
+.clock-level-picker__label strong { overflow: hidden; color: #564b45; font-size: var(--font-size-sm); text-overflow: ellipsis; white-space: nowrap; }
 .clock-levels { display: flex; justify-content: flex-end; gap: 4px; }
-.clock-levels button { position: relative; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid #d8cfc4; border-radius: 50%; background: #f2ece5; color: #776b64; font-size: .72rem; font-weight: 850; }
+.clock-levels button { position: relative; width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 1px solid #d8cfc4; border-radius: 50%; background: #f2ece5; color: #776b64; font-size: var(--font-size-sm); font-weight: 850; }
 .clock-levels button[aria-pressed='true'] { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
 .clock-levels button svg { position: absolute; right: -2px; bottom: -2px; padding: 1px; border-radius: 50%; background: #fff9ef; color: var(--color-primary); }
-.clock-round-meta { display: flex; justify-content: space-between; margin: 12px 2px; color: var(--color-text-muted); font-size: .8rem; }
+.clock-round-meta { display: flex; justify-content: space-between; margin: 12px 2px; color: var(--color-text-muted); font-size: var(--font-size-sm); }
 
 /* De kaarten zelf staan in components/ui/memory-card.css, samen met die van
    het vlaggenmemory; hier alleen hoe ze op het bord liggen. */
 .clock-memory__grid { width: min(100%, 720px); margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-2); perspective: 900px; }
 
 .clock-instruction { width: min(100%, 650px); margin: 14px auto 8px; padding: 12px 16px; border-left: 4px solid #789071; background: #f5efe5; text-align: center; }
-.clock-instruction span { color: #6f625d; font-size: .8rem; }
+.clock-instruction span { color: #6f625d; font-size: var(--font-size-sm); }
 .clock-instruction h2 { margin: 2px 0; font-size: clamp(1.3rem, 4vw, 2rem); }
 .clock-instruction small { color: #6d7d67; font-weight: 750; }
 .clock-set__workspace { width: min(100%, 760px); margin: 0 auto; display: grid; grid-template-columns: minmax(260px, 1fr) 230px; align-items: center; gap: 20px; }
 .clock-set__workspace > .analog-clock { width: min(100%, 390px); justify-self: center; }
 .clock-set__controls { display: grid; gap: 10px; }
 .clock-set__controls > div { display: grid; grid-template-columns: 1fr 44px 46px 44px; align-items: center; gap: 5px; padding: 7px; border: 1px solid #d8cec2; border-radius: 8px; background: #fffdf9; }
-.clock-set__controls span { color: var(--color-text-muted); font-size: .76rem; font-weight: 750; }
+.clock-set__controls span { color: var(--color-text-muted); font-size: var(--font-size-sm); font-weight: 750; }
 .clock-set__controls button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid #bfccba; border-radius: 8px; background: #eaf1e7; color: #4f6850; }
 .clock-set__controls button svg { width: 18px; }
 .clock-set__controls strong { text-align: center; font-size: 1.15rem; }
-.clock-game__feedback { min-height: 32px; display: grid; place-items: center; margin-top: 5px; color: #665b55; font-size: .84rem; font-weight: 750; text-align: center; }
+.clock-game__feedback { min-height: 32px; display: grid; place-items: center; margin-top: 5px; color: #665b55; font-size: var(--font-size-sm); font-weight: 750; text-align: center; }
 .clock-game__feedback span { display: inline-flex; align-items: center; gap: 5px; }
 .clock-game__feedback .is-correct { color: var(--color-primary); }
 .clock-game__feedback .is-wrong { color: #92534e; }
 .clock-game__actions { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
 
 .clock-race__modes { width: fit-content; display: flex; margin: 12px auto 0; padding: 3px; border: 1px solid #d8cfc4; border-radius: 8px; background: #eee8df; }
-.clock-race__modes button { min-height: 34px; padding: 5px 13px; border: 0; border-radius: 6px; background: transparent; color: #71655f; font-size: .76rem; font-weight: 800; }
+.clock-race__modes button { min-height: 34px; padding: 5px 13px; border: 0; border-radius: 6px; background: transparent; color: #71655f; font-size: var(--font-size-sm); font-weight: 800; }
 .clock-race__modes button[aria-pressed='true'] { background: #fffdf9; color: #4e694f; box-shadow: 0 2px 6px #5d44331c; }
 
 .clock-race__choices { width: min(100%, 860px); margin: 24px auto 8px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
@@ -90,7 +90,7 @@
   .clock-module { padding: 82px 7px 12px; background-attachment: scroll; }
   .clock-hub, .clock-game { width: 100%; }
   .clock-hub__intro { justify-content: flex-start; gap: 12px; padding-bottom: 14px; }
-  .clock-hub__intro span { font-size: .85rem; }
+  .clock-hub__intro span { font-size: var(--font-size-sm); }
   .clock-game { min-height: calc(100dvh - 90px); padding: 10px; }
   .clock-game-header { grid-template-columns: auto 1fr; gap: 6px; padding-bottom: 8px; }
   .clock-game-header h1 { text-align: right; font-size: 1rem; }
@@ -106,7 +106,7 @@
   .clock-set__controls button { width: 40px; height: 40px; }
   .clock-race__choices { gap: 3px; margin-top: 12px; }
   .clock-race__choices button { padding: 3px; }
-  .clock-race__choices .clock-choice-label { font-size: .68rem; }
+  .clock-race__choices .clock-choice-label { font-size: var(--font-size-sm); }
   .clock-digital-choice { font-size: clamp(1.15rem, 8vw, 2rem); }
   .clock-completion { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .clock-completion p { justify-content: center; }

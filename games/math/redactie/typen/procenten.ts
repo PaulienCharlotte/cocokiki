@@ -18,7 +18,7 @@ const DELERS: Record<number, { deler: number; woord: string }> = {
 export const procenten: Sometype = {
   id: 'procenten',
   naam: 'Procentsom',
-  aanpak: 'Reken eerst het deel uit: 10% is een tiende, dus delen door 10. Kijk daarna pas of de vraag dat deel wil, of juist wat er overblijft.',
+  aanpak: '10% is een tiende: deel door 10. Wil de vraag dat deel, of de rest?',
   valkuil: 'Stoppen bij het deel. De vraag is vaak hoeveel er ná de korting overblijft.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

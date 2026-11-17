@@ -4,7 +4,7 @@ import { heelGetal, maakSom, type Sometype } from '../types';
 export const inhoud: Sometype = {
   id: 'inhoud',
   naam: 'Inhoudsom',
-  aanpak: 'Reken eerst de bodem uit (lengte keer breedte), dan keer de hoogte. 1000 cm³ is 1 liter.',
+  aanpak: 'Lengte × breedte × hoogte. 1000 cm³ is 1 liter.',
   valkuil: 'Stoppen bij cm³. De vraag is vaak hoeveel liter het is.',
   niveaus: [4, 5],
   maak(level, index, random) {

@@ -1,0 +1,57 @@
+@import '../styles/paper-surface.css';
+@import '../styles/cocokiki-tokens.css';
+
+/* Alleen het spellenoverzicht: munten en gedeelde spelkaarten blijven intact. */
+body .my-games.my-games--gallery { min-height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-6) var(--space-12); color: var(--ck-cacao); font-family: var(--ck-font-tekst); background-image: linear-gradient(var(--ck-schaduw-rand), var(--ck-schaduw-rand)), url('/games/school/school-interior.webp'); background-position: center; background-size: cover; background-attachment: fixed; }
+.my-games.my-games--gallery .my-games__content { width: min(100%, calc(var(--space-12) * 24)); max-width: none; margin: auto; padding: 0; border-radius: 0; background: transparent; }
+.my-games__heading { display: grid; justify-items: center; gap: var(--space-2); margin-bottom: var(--space-8); }
+.my-games--gallery .my-games__heading h1 { margin: 0; padding: var(--space-4) var(--space-10); font-size: var(--ck-maat-titel); background-size: 100% 175%; }
+.my-games__heading p { margin: 0; padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); background: var(--ck-glas); color: var(--ck-cacao); font-size: var(--ck-maat-tekst); font-weight: 800; }
+.my-games--gallery .my-games__section + .my-games__section { margin-top: var(--space-8); }
+.my-games__section h2 { width: fit-content; margin: 0 0 var(--space-4); padding: var(--space-2) var(--space-5); border-radius: var(--ck-rond-knop); color: var(--ck-cacao); font-size: var(--ck-maat-kop); }
+.my-games__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); list-style: none; padding: 0; margin: 0; }
+.my-games__item { position: relative; min-width: 0; }
+.my-games__card.ck-speelkaart { box-sizing: border-box; width: 100%; height: 100%; display: flex; flex-direction: column; border: 1px solid var(--ck-glas-rand); padding: var(--space-3); background: linear-gradient(145deg, var(--ck-room), color-mix(in srgb, var(--ck-room) 82%, transparent)); backdrop-filter: blur(var(--space-2)); -webkit-backdrop-filter: blur(var(--space-2)); }
+.my-games__art { display: grid; place-items: center; width: 100%; aspect-ratio: 1.6; margin-bottom: var(--space-2); border-radius: var(--ck-rond-knop); background: radial-gradient(ellipse at center, color-mix(in srgb, var(--ck-actief) 16%, var(--ck-room)), transparent 72%); }
+.my-games__art img { width: 80%; height: 100%; max-height: calc(var(--space-12) * 3); object-fit: contain; filter: drop-shadow(0 var(--space-1) var(--space-2) var(--ck-schaduw-rand)); transition: transform var(--ck-normaal) var(--ck-veer); }
+.my-games__caption { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--space-12); width: 100%; padding: var(--space-1) var(--space-2); box-sizing: border-box; text-align: left; }
+.my-games__caption strong { font: 800 var(--ck-maat-knop)/1.1 var(--ck-font-kop); }
+.my-games__caption svg { flex: none; width: var(--space-5); height: var(--space-5); color: var(--ck-cacao); }
+.my-games__card:hover .my-games__art img { transform: translateY(calc(var(--space-1) * -1)) scale(1.04); }
+.my-games__card:focus-visible { outline: var(--space-1) solid var(--ck-zon); outline-offset: var(--space-1); }
+.my-games--gallery .game-pin { top: var(--space-1); right: var(--space-1); }
+.my-games--gallery .game-pin .ck-icon-button { min-width: var(--ck-tik-min); min-height: var(--ck-tik-min); }
+.my-games--gallery .game-pin .ck-icon-button::before { background: var(--ck-glas); }
+.my-games--gallery .game-pin [aria-pressed=true]::before { background: var(--ck-zon); }
+@media (max-width: 1000px) { .my-games__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  body .my-games.my-games--gallery { padding: calc(var(--space-12) + var(--space-8)) var(--space-3) var(--space-8); }
+  .my-games__heading { gap: var(--space-1); margin-bottom: var(--space-5); }
+  .my-games--gallery .my-games__heading h1 { font-size: var(--ck-maat-kop); }
+  .my-games__heading p { font-size: var(--font-size-md); }
+  .my-games__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .my-games__card.ck-speelkaart { padding: var(--space-2); }
+  .my-games__art { aspect-ratio: 1; }
+  .my-games__art img { width: 90%; max-height: calc(var(--space-12) * 3); }
+  .my-games__caption { padding-inline: var(--space-1); }
+  .my-games__caption strong { font-size: var(--ck-maat-tekst); }
+  .my-games__caption svg { width: var(--space-4); height: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) { .my-games__card, .my-games__art img { transition: none; } }
+@media (max-width: 600px) {
+  .my-games__caption strong { min-width: 0; font-size: var(--font-size-md); overflow-wrap: anywhere; }
+  .my-games__caption svg { display: none; }
+}
+
+/* Hoofdmenu: de getekende kaartjes van het To Do-bord zijn de referentie. */
+.my-games__card.ck-paper-surface { padding: var(--space-8) var(--space-5) var(--space-6); border: 0; border-radius: 0; background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; filter: drop-shadow(0 var(--space-2) var(--space-3) var(--ck-schaduw-rand)); }
+.my-games__card.ck-paper-surface::before { inset: 0; }
+.my-games__art { background: none; }
+.my-games--gallery .game-pin { right: var(--space-2); top: var(--space-5); }
+.my-games--gallery .game-pin .ck-icon-button::before { background: transparent; box-shadow: none; }
+.my-games--gallery .game-pin [aria-pressed=true]::before { background: var(--ck-zon); }
+@media (max-width: 600px) {
+ .my-games__card.ck-paper-surface { padding: var(--space-6) var(--space-3) var(--space-5); }
+ .my-games--gallery .game-pin { right: 0; top: var(--space-4); }
+ .my-games__art img { width: 100%; }
+}

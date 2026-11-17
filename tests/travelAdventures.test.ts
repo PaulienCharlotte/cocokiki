@@ -1,3 +1,4 @@
+import { ensureTravelJourney, currentTravelStep, recordTravelStep, travelStepIds, loadTravelJourney, TRAVEL_STEP_TOTAL, type PracticeTravelStep } from '../services/travelJourney';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { TRAVEL_ADVENTURES } from '../data/travel/adventures';
@@ -80,3 +81,54 @@ test('shared scoring preserves the existing spelling and rounding rules', () => 
   const rounded = scoreTopoTest(many, Object.fromEntries(many.slice(1).map(place => [place.id, place.name])));
   assert.equal(rounded.grade, 10); assert.notEqual(rounded.correct, rounded.total);
 });
+
+
+test('reis onthoudt ontdekkingen, bewaart meerdere gebieden en hervat dezelfde poging', () => stored(() => {
+  assert.ok(TRAVEL_ADVENTURES.length > 1);
+  assert.ok(startTravelAdventure(adventure.id));
+  const attempt = loadTravelAdventures().active!;
+  const run = ensureTravelJourney(adventure, attempt.attemptId)!;
+  assert.equal(currentTravelStep(adventure, run), 'facts');
+  const first = travelStepIds(adventure, 'facts')[0];
+  assert.equal(recordTravelStep(adventure, attempt.attemptId, 'find', travelStepIds(adventure, 'find')[0]), false);
+  assert.equal(recordTravelStep(adventure, attempt.attemptId, 'facts', 'unknown'), false);
+  assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', first));
+  assert.ok(startTravelAdventure(TRAVEL_ADVENTURES[1].id));
+  assert.ok(startTravelAdventure(adventure.id));
+  assert.equal(loadTravelAdventures().active!.attemptId, attempt.attemptId);
+  assert.deepEqual(loadTravelJourney(adventure)!.facts, [first]);
+  assert.equal(loadCurrency(), 0);
+}));
+
+test('nieuwe reis vraagt alle stappen voor de eindbeloning en betaalt elke stap eenmaal', () => stored(() => {
+  assert.ok(startTravelAdventure(adventure.id));
+  const attempt = loadTravelAdventures().active!;
+  assert.ok(ensureTravelJourney(adventure, attempt.attemptId));
+  assert.ok(submit());
+  assert.equal(claimTravelAdventure(adventure.id, 'gr', ids).status, 'not-ready');
+  for (const phase of ['facts', 'memory', 'find', 'master'] as PracticeTravelStep[]) {
+    for (const id of travelStepIds(adventure, phase)) assert.ok(recordTravelStep(adventure, attempt.attemptId, phase, id));
+    for (const id of travelStepIds(adventure, phase)) assert.ok(recordTravelStep(adventure, attempt.attemptId, phase, id));
+  }
+  assert.equal(currentTravelStep(adventure, loadTravelJourney(adventure)!), 'test');
+  assert.equal(loadCurrency(), TRAVEL_STEP_TOTAL);
+  assert.equal(claimTravelAdventure(adventure.id, 'gr', ids).reward, adventure.reward);
+  assert.equal(loadCurrency(), adventure.reward + TRAVEL_STEP_TOTAL);
+  assert.equal(claimTravelAdventure(adventure.id, 'gr', ids).reward, 0);
+}));
+
+test('mislukt bewaren rondt geen reisstap af en betaalt niet; opnieuw proberen betaalt eenmaal', () => stored(block => {
+  assert.ok(startTravelAdventure(adventure.id));
+  const attempt = loadTravelAdventures().active!;
+  assert.ok(ensureTravelJourney(adventure, attempt.attemptId));
+  const all = travelStepIds(adventure, 'facts');
+  for (const id of all.slice(0, -1)) assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', id));
+  block(true);
+  assert.equal(recordTravelStep(adventure, attempt.attemptId, 'facts', all.at(-1)!), false);
+  assert.equal(loadTravelJourney(adventure)!.facts.length, all.length - 1);
+  assert.equal(loadCurrency(), 0);
+  block(false);
+  assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', all.at(-1)!));
+  assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', all.at(-1)!));
+  assert.equal(loadCurrency(), 10);
+}));

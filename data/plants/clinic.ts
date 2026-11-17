@@ -198,7 +198,8 @@ export function clueText(species: PlantSpecies, geval: Geval, spot: ClueSpot): s
     return AARDE_TEKST[geval.aarde];
   }
   // Kiki noemt alleen feiten; welke oorzaak het is zegt ze niet.
-  return `Het baasje zegt: ${PLEK_TEKST[geval.plek]}, en ${SEIZOEN_TEKST[geval.seizoen]}.`;
+  const plek = PLEK_TEKST[geval.plek];
+  return `${plek[0].toUpperCase()}${plek.slice(1)}, en ${SEIZOEN_TEKST[geval.seizoen]}.`;
 }
 
 /** Het gereedschap in de dokterstas. */
@@ -353,7 +354,7 @@ export { PLANT_PROBLEM_LABEL, PLANT_SPECIES_BY_ID };
 
 /** Wat het baasje vertelt: de plek, het seizoen en wanneer hij water kreeg. */
 export function baasjeTekst(species: PlantSpecies, geval: Geval): string {
-  return `${clueText(species, geval, 'plek')} Hij kreeg ${wanneerGegoten(geval.dagenGeleden)} voor het laatst water.`;
+  return `${clueText(species, geval, 'plek')} Water: ${wanneerGegoten(geval.dagenGeleden)}.`;
 }
 
 /* ------------------------------------------------------------------ *

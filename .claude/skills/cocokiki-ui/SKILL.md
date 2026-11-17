@@ -216,10 +216,13 @@ spel, als rond icoon van `--touch-target` groot, met de bestemming in
 dingen op één lijn, even hoog, in elk spel dezelfde volgorde. Een knop die per
 scherm verspringt moet je elke keer opnieuw zoeken.
 
-**Moeilijkheid is een schuifbalk, geen slot.** Een kind dat al verder is hoeft
-zich niet eerst door niveau 1 te werken. De balk staat in de balk boven het
-spel; wat je op dat niveau oefent staat in `aria-valuetext`, niet op het
-scherm. Zie `games/math/MathControls.tsx`.
+**Niveau kies je via het hersentje, zonder slot.** Een kind dat al verder is
+hoeft zich niet eerst door niveau 1 te werken. Gebruik de gedeelde
+`components/ui/NiveauKnop.tsx` in de linker gereedschapsbalk, naast de
+rekenmachine, het meetlatje en andere aanwezige hulpmiddelen. De knop opent
+het bestaande niveaupaneel; zet geen extra niveauknop in de statusbalk.
+Het kleine cijfer toont het huidige niveau en de voorleesnaam noemt het
+volledig. Wat je op elk niveau oefent staat in het paneel.
 
 Harde regels:
 
@@ -316,3 +319,7 @@ repo. Commentaar legt uit *waarom*, niet wat de regel al zegt.
 `docs/ui-consistentie.md` houdt bij welke oude stukken nog niet aan dit
 bestand voldoen, en in welke volgorde ze opgeruimd worden. Bouw niets nieuws
 in de oude stijl erbij.
+
+## Navigatie en uitleg — 16 november 2026
+
+Op verzoek staan gereedschappen consequent links. Op telefoon vormen zij één horizontale rij onder het hoofdmenu. De bladwijzer is onderdeel van die rij. Het saldo staat op alle breedtes in de hoofdmenupil. Losse instructieregels vervallen: gebruik InfoKnop voor uitleg op verzoek. De vraag en noodzakelijke feedback blijven in het spel. Bij huisjes mogen naambord en klembord als één compositie meer beeld bedekken.

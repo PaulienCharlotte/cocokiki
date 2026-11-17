@@ -14,7 +14,7 @@ const DOEL = ['begint het schoolkamp', 'is Mira jarig', 'komt opa logeren'];
 export const kalender: Sometype = {
   id: 'kalender',
   naam: 'Kalendersom',
-  aanpak: 'Tel eerst hoeveel dagen de maand nog heeft. Wat er dan nog over is, tel je verder in de volgende maand.',
+  aanpak: 'Tel eerst tot het eind van de maand.',
   valkuil: 'Vergeten hoeveel dagen de maand heeft. April heeft er 30, maart 31.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

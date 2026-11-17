@@ -4,7 +4,7 @@ import { heelGetal, kiesUit, maakSom, type Sometype } from '../types';
 export const gemiddelde: Sometype = {
   id: 'gemiddelde',
   naam: 'Gemiddeldesom',
-  aanpak: 'Tel eerst alles bij elkaar op. Deel dat door het aantal keer. Dan weet je wat het per keer gemiddeld was.',
+  aanpak: 'Tel alles op. Deel door het aantal.',
   valkuil: 'Delen door het verkeerde getal. Tel goed hoeveel keer het is: drie dagen is delen door 3.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

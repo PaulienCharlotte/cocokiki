@@ -156,7 +156,7 @@ const GameApp: React.FC = () => {
       : current.route.page === 'nutrient-memory'
       ? <NutrientMemoryScreen onBack={back} />
       : current.route.page === 'taartenatelier'
-      ? <CakeStudio key={current.route.path + window.location.search} onClose={back} />
+      ? <CakeStudio key={current.route.path + window.location.search} onClose={back} onFreePlay={() => navigate('/games/taartenatelier')} />
       : current.route.page === 'cooking-orders'
       ? <CookbookScreen mode="orders" onNavigate={navigate} />
       : current.route.page === 'cooking-kitchen'

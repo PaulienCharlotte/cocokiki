@@ -4,7 +4,7 @@ import { heelGetal, kiesUit, maakSom, type Sometype } from '../types';
 export const breukdeel: Sometype = {
   id: 'breukdeel',
   naam: 'Breuksom',
-  aanpak: 'Reken eerst uit hoeveel één deel is: deel door het getal onder de streep. Neem dan zoveel delen als het getal boven de streep.',
+  aanpak: 'Deel door het getal onder de streep. Neem zoveel delen als erboven staat.',
   valkuil: 'Alleen delen door het onderste getal en dan stoppen. 3/4 is drie van die delen, niet één.',
   niveaus: [2, 3, 4, 5],
   maak(level, index, random) {
@@ -22,7 +22,7 @@ export const breukdeel: Sometype = {
           : `Jip heeft ${breuk} van zijn puzzel af. Dat zijn ${deel * teller} stukjes. Uit hoeveel stukjes bestaat de hele puzzel?`,
         nodig: [String(teller), String(noemer), String(deel * teller)],
         zoek: index % 2 ? 'het gewicht van een volle trommel' : 'het aantal stukjes van de hele puzzel',
-        aanpak: 'Hier ken je het stuk en zoek je het geheel. Reken eerst uit hoeveel één deel is, en neem dan alle delen.',
+        aanpak: 'Reken uit hoeveel één deel is. Neem dan alle delen.',
         stappen: [
           { vraag: `${deel * teller} is ${teller} delen. Hoeveel is één deel?`, som: `${deel * teller} ÷ ${teller}`, antwoord: deel, eenheid: index % 2 ? 'gram' : 'stukjes', tip: `Verdeel het over ${teller} delen.` },
           { vraag: `Het geheel is ${noemer} delen. Hoeveel is dat?`, som: `{1} × ${noemer}`, antwoord: heel, eenheid: index % 2 ? 'gram' : 'stukjes', tip: `Het getal onder de streep zegt hoeveel delen er in het geheel gaan.` },

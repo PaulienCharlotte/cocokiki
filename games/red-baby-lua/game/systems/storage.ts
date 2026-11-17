@@ -9,8 +9,8 @@ export function loadPreferences(): Preferences {
   try {
     const saved = JSON.parse(localStorage.getItem(PREFS_KEY) ?? 'null');
     const tafels = saved && (saved.table === 'mix'
-      || (Array.isArray(saved.table) && saved.table.length > 0 && saved.table.every((table: unknown) => Number.isInteger(table) && (table as number) >= 1 && (table as number) <= 12))
-      || (saved.table >= 1 && saved.table <= 12));
+      || (Array.isArray(saved.table) && saved.table.length > 0 && saved.table.every((table: unknown) => Number.isInteger(table) && (table as number) >= 1 && (table as number) <= 20))
+      || (saved.table >= 1 && saved.table <= 20));
     return tafels
       ? { ...DEFAULT_PREFERENCES, ...saved, mode: saved.mode ?? (saved.calm ? 'calm' : 'adventure') }
       : DEFAULT_PREFERENCES;

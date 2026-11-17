@@ -11,3 +11,7 @@ De tuinstatus heeft een eigen rij onder de appnavigatie. Volgende tuindag zit in
 Alle winkels laden de gedeelde productlayout, ook bij rechtstreeks openen van meubel- en plantenwinkels. De catalogus krijgt de beschikbare schermhoogte, met grotere productvakken en rustig vrij scrollen zonder geforceerde rijsprongen.
 
 Didactische achtergrond: Nederlandse kloktaal gebruikt hele en halve uren als referentie. De beschrijving van de ouder lijkt op een tijdlijn met sprongen; dit is een interpretatie, niet een vaststelling van de schoolmethode. Zie SLO, Klokkijken en tijd: https://www.slo.nl/publish/pages/9621/katern_klokkijken_en_tijd.pdf.
+
+## Vaste niveau-ingang
+
+`components/ui/NiveauKnop.tsx` is de gedeelde niveauknop: een hersenicoon met klein huidig niveau, voldoende raakvlak en een volledige voorleesnaam. Hij staat in de rechter gereedschapsbalk bij moestuin, rekenen (inclusief redactiesommen), Winkelgekte, Baby Lua en kloklezen. Niveau staat niet meer als losse actie in de statusbalk. De bestaande rekenniveaupanelen blijven behouden; tuin en klok gebruiken hetzelfde rechter hulppaneelpatroon via `NiveauKeuze`.

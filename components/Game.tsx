@@ -1,3 +1,4 @@
+import TravelJourney from './topography/TravelJourney';
 import { requestedTravelAdventure } from '../services/travelAdventures';
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Brain, ChevronDown, Flag, Gamepad2, Map, MousePointer2, Play, Settings2, Type, Wand2, X } from 'lucide-react';
@@ -36,7 +37,7 @@ const ICONS: Record<PlayMode, React.ComponentType<{ size?: number }>> = {
   test: BookOpen,
 };
 
-export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
+function TopoGame({ onHome, onBack }: Partial<GameModuleProps>) {
   const rootRef = useRef<HTMLDivElement>(null);
   const headerBottom = useTopoHeaderBottom(rootRef);
   const pendingExit = useRef<(() => void) | null>(null);
@@ -259,4 +260,10 @@ export default function Game({ onHome, onBack }: Partial<GameModuleProps>) {
     {!storageAvailable && <p className="storage-warning" role="status">Je voortgang kan in deze browser niet worden bewaard.</p>}
     <TopoExitDialog open={confirmExit} onStay={stay} onLeave={leave} />
   </div>;
+}
+
+
+export default function Game(props: Partial<GameModuleProps>) {
+  const [adventure] = useState(() => requestedTravelAdventure(window.location.search));
+  return adventure ? <TravelJourney adventure={adventure} /> : <TopoGame {...props} />;
 }

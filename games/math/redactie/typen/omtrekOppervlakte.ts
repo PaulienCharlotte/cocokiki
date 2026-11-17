@@ -4,7 +4,7 @@ import { heelGetal, maakSom, type Sometype } from '../types';
 export const omtrekOppervlakte: Sometype = {
   id: 'omtrekOppervlakte',
   naam: 'Omtrek of oppervlakte',
-  aanpak: 'Kijk eerst of het om de rand gaat (omtrek: alle kanten optellen) of om de vloer (oppervlakte: lengte keer breedte).',
+  aanpak: 'Rand: alle kanten optellen. Vloer: lengte × breedte.',
   valkuil: 'Omtrek en oppervlakte verwisselen. Een hek gaat om de rand, tegels liggen op de vloer.',
   niveaus: [3, 4, 5],
   maak(level, index, random) {

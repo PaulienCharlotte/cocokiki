@@ -1,6 +1,9 @@
-import React from 'react';
-import { ArrowLeft, Check, RotateCcw } from 'lucide-react';
-import { Button, IconButton } from '../../design-system';
+import React, { useContext, useState } from 'react';
+import { ClockAdventureTools } from './ClockAdventureTools';
+import InfoKnop from '../../components/ui/InfoKnop';
+import NiveauKnop, { NiveauKeuze } from '../../components/ui/NiveauKnop';
+import { Check, RotateCcw } from 'lucide-react';
+import { Button } from '../../design-system';
 import CocoCoin from '../../components/platform/CocoCoin';
 import type { ClockLevel } from './types';
 
@@ -30,14 +33,12 @@ export function LevelPicker({ level, onChange, completed = [] }: { level: ClockL
   </div>;
 }
 
-export function ClockGameHeader({ title, level, onBack, onLevelChange, completed }: { title: string; level: ClockLevel; onBack: () => void; onLevelChange: (level: ClockLevel) => void; completed: ClockLevel[] }) {
-  // In de huisstijl is dit het statuseiland: de naam van het spel (tik om
-  // terug te gaan naar de klokspellen) en de vijf niveaus als bolletjes.
-  return <header className="clock-game-header ck-zone-status ck-glas">
-    <IconButton label="Terug naar Seb" className="clock-game-header__terug" icon={<><ArrowLeft size={16} aria-hidden="true" /><span>{title}</span></>} onClick={onBack} />
-    <h1 className="sr-only">{title}</h1>
-    <LevelPicker level={level} onChange={onLevelChange} completed={completed} />
-  </header>;
+export function ClockGameHeader({ title, level, onBack, onLevelChange, completed, extraTools }: { extraTools?: React.ReactNode; title: string; level: ClockLevel; onBack: () => void; onLevelChange: (level: ClockLevel) => void; completed: ClockLevel[] }) {
+  const [niveauOpen, setNiveauOpen] = useState(false);
+  const adventureTools = useContext(ClockAdventureTools);
+  return <><nav className="ck-zone-gereedschap ck-glas clock-level-tools" aria-label="Gereedschap"><NiveauKnop niveau={level} onClick={() => setNiveauOpen(true)} />{extraTools}{adventureTools}<InfoKnop character="seb">Sleep de wijzers om de tijd te zetten. Je kunt ook de plus- en minknoppen gebruiken. Het meetlatje opent de tijdlijn. De wereldbol vergelijkt tijden in steden. Met overslaan ga je naar een andere spelvorm.</InfoKnop></nav>
+    {niveauOpen && <NiveauKeuze niveau={level} keuzes={([1,2,3,4,5] as ClockLevel[]).map(niveau => ({ niveau, tekst: CLOCK_LEVEL_LABELS[niveau] + (completed.includes(niveau) ? ' ✓' : '') }))} onKies={value => onLevelChange(value as ClockLevel)} onClose={() => setNiveauOpen(false)} />}
+    <header className="clock-game-header"><h1 className="ck-houtbord">{title}</h1></header></>;
 }
 
 export function ClockCompletion({ reward, onReplay, onHub }: { reward: number; onReplay: () => void; onHub: () => void }) {
@@ -45,6 +46,6 @@ export function ClockCompletion({ reward, onReplay, onHub }: { reward: number; o
     <span className="clock-completion__check"><Check aria-hidden="true" /></span>
     <div><strong>Niveau voltooid</strong><p>{reward > 0 ? <>Je verdient <CocoCoin size={18} /> {reward} CocoCoins.</> : 'Geoefend! Voor getoonde antwoorden krijg je geen munten. Elke ronde wordt maar eenmaal beloond.'}</p></div>
     <Button size="small" startIcon={<RotateCcw size={16} />} onClick={onReplay}>Nog een keer</Button>
-    <Button size="small" variant="secondary" onClick={onHub}>Volgende spelvorm</Button>
+    <Button size="small" variant="secondary" onClick={onHub}>Verder</Button>
   </section>;
 }

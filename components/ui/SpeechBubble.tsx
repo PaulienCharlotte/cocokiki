@@ -20,17 +20,20 @@ interface SpeechBubbleProps {
   tone?: 'default' | 'goed' | 'alert';
   /** Id voor de tekst in de wolk, zodat een kaart ernaar kan verwijzen. */
   textId?: string;
+  /** Kleine illustratie bij een uitnodiging; gebruikt dezelfde wolk. */
+  illustration?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }
 
-export default function SpeechBubble({ character, label, aside, tone = 'default', textId, children, className }: SpeechBubbleProps) {
+export default function SpeechBubble({ character, label, aside, tone = 'default', textId, illustration, children, className }: SpeechBubbleProps) {
   const { naam, beeld } = CHARACTERS[character];
   return <div className={`ck-zegt${tone === 'default' ? '' : ` is-${tone}`}${className ? ` ${className}` : ''}`} role="status">
     <img className="ck-zegt__gids" src={PROFILE_AVATARS.find(avatar => avatar.id === (character === 'seb' ? 'stokstaartje' : character))?.image ?? beeld} alt={naam} />
     <div className="ck-zegt__wolk">
+      {illustration && <div className="ck-zegt__illustratie">{illustration}</div>}
       <p className="ck-zegt__naam">
-        <strong>{naam}</strong>{label && <span> · {label}</span>}
+        <strong>{naam}</strong>{label && <span className="ck-zegt__label"> · {label}</span>}
         {aside && <span className="ck-zegt__erbij">{aside}</span>}
       </p>
       <p className="ck-zegt__tekst" id={textId}>{children}</p>

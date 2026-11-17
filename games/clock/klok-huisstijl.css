@@ -7,7 +7,7 @@
 .clock-module.klok-scherm, .clock-hub.wereld-scherm { position: fixed; inset: 0; z-index: 1; overflow: clip; min-height: 0; padding: 0; background: none; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
 .klok-scherm__achtergrond, .clock-hub .world-location__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .clock-module.klok-scherm:has(> .clock-hub) > .klok-scherm__achtergrond { display: none; }
-.clock-hub .wereld-plek__meta { font-size: 14px; font-weight: 900; color: var(--ck-cacao-zacht); }
+.clock-hub .wereld-plek__meta { font-size: var(--font-size-sm); font-weight: 900; color: var(--ck-cacao-zacht); }
 
 /* Het spel: geen wit paneel, maar een speelveld tussen het statuseiland en de knoppen */
 .klok-scherm .clock-game {
@@ -106,3 +106,46 @@
 .clock-travel-dialog .world-times__city select { max-width: 100%; }
 .clock-travel-dialog .world-times__travel { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 @media(max-width:700px) { .klok-avontuur .clock-game-header.ck-zone-status { top: calc(var(--space-12) + var(--space-6)); }.clock-variation { top: calc(var(--space-12) * 3 + var(--space-5)); left: var(--space-2); right: var(--space-2); justify-content: center; }.clock-variation .ck-button { font-size: var(--font-size-sm); padding: var(--space-2); }.clock-travel-dialog .world-times__clocks { grid-template-columns: 1fr; }.clock-travel-dialog .world-times__city .analog-clock { max-width: 9rem; } }
+.klok-avontuur .clock-level-tools { top: calc(var(--space-12) * 2); right: var(--space-4); z-index: 30; }
+@media(max-width:700px) { .klok-avontuur .clock-level-tools { top: calc(var(--space-12) + var(--space-6)); } }
+/* De bediening blijft echte UI, met dezelfde zachte materialen als de wereld. */
+.klok-scherm .clock-set__controls button, .klok-scherm .clock-game__actions .ck-button { border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-control); background: var(--ck-room); color: var(--ck-cacao); box-shadow: var(--shadow-soft); font-family: var(--ck-font-tekst); }
+.klok-scherm .clock-game__actions .ck-button:last-child { background: var(--color-primary); color: var(--color-on-primary); box-shadow: var(--shadow-soft); }
+.clock-travel-dialog select { font: inherit; color: var(--ck-cacao); background: var(--ck-room); border: 1px solid var(--ck-hout-licht); border-radius: var(--radius-control); min-height: var(--touch-target); padding: var(--space-2) var(--space-3); width: 100%; }
+.clock-travel-dialog .world-times__city { padding: var(--space-3); background: var(--ck-glas); border-radius: var(--radius-card); }
+.clock-travel-dialog .world-times__city > span, .clock-travel-dialog .world-times__city > small { font-size: var(--font-size-sm); }
+.clock-travel-dialog input[type=range] { accent-color: var(--ck-wereld); }
+
+/* Eén rustige titel en één gereedschapskolom; geen tweede menubalk. */
+.klok-avontuur .clock-game { padding-top: calc(var(--space-12) * 3); padding-left: calc(var(--space-12) * 2); }
+.klok-avontuur .clock-level-tools { position: fixed; left: var(--space-4); right: auto; top: calc(var(--space-12) * 2); display: flex; flex-direction: column; gap: var(--space-2); z-index: 30; }
+.klok-avontuur .clock-game-header { position: static; background: none; border: 0; box-shadow: none; padding: 0; margin-bottom: var(--space-4); }
+.klok-avontuur .clock-game-header h1 { width: fit-content; margin: 0 auto; font-size: var(--font-size-xl); }
+.klok-avontuur .world-times__practice { max-width: 52rem; margin: auto; padding: var(--space-5); border-radius: var(--radius-card); background: var(--ck-room); }
+@media (max-width: 600px) {
+  .klok-avontuur .clock-game { padding: calc(var(--space-12) * 3) var(--space-3) var(--space-6); }
+  .klok-avontuur .clock-level-tools { top: calc(var(--space-12) + var(--space-6)); left: var(--space-3); flex-direction: row; }
+  .klok-avontuur .clock-game-header h1 { font-size: var(--font-size-lg); }
+}
+.klok-avontuur .clock-game-header { display: flex; justify-content: center; width: 100%; min-height: 0; }
+.klok-avontuur .clock-game-header h1 { white-space: nowrap; text-align: center; }
+
+/* Klok en bediening vormen één werkplek, met de hoofdactie erbij. */
+.klok-avontuur .clock-game { min-height: 0; gap: var(--space-3); padding-bottom: var(--space-6); }
+.klok-avontuur .clock-set .clock-instruction { background: none; border: 0; box-shadow: none; backdrop-filter: none; padding: var(--space-2); display: flex; align-items: center; gap: var(--space-4); }
+.klok-avontuur .clock-set .clock-instruction h2 { font-size: var(--font-size-xl); }
+.klok-avontuur .clock-set .clock-instruction h2 span { font: inherit; }
+.klok-avontuur .clock-set__workspace { width: min(100%, 48rem); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: center; gap: var(--space-8); margin: 0; }
+.klok-avontuur .clock-set__workspace > .analog-clock { width: 100%; max-width: min(42vh, 24rem); justify-self: center; }
+.klok-avontuur .clock-set__controls { display: grid; gap: var(--space-3); width: 100%; padding: var(--space-4); border-radius: var(--radius-card); background: var(--ck-glas); box-sizing: border-box; }
+.klok-avontuur .clock-set__controls > div { background: none; box-shadow: none; border: 0; padding: 0; }
+.klok-avontuur .clock-set .clock-game__actions { position: static; margin: 0; display: flex; width: 100%; }
+.klok-avontuur .clock-set .clock-game__actions .ck-button { width: 100%; }
+@media(max-width:700px) {
+ .klok-avontuur .clock-set__workspace { grid-template-columns: minmax(0,1fr); gap: var(--space-4); max-width: 26rem; }
+ .klok-avontuur .clock-set__workspace > .analog-clock { max-width: min(34vh, 17rem); }
+ .klok-avontuur .clock-game { padding-top: calc(var(--space-12) * 3); }
+}
+.klok-avontuur .clock-set .clock-game__actions .ck-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: auto; min-height: var(--touch-target); padding: var(--space-3) var(--space-4); }
+.klok-avontuur .clock-set .clock-game__actions .ck-button span { color: inherit; font: inherit; }
+.klok-avontuur .clock-set .clock-game__actions .ck-button svg { width: var(--space-5); height: var(--space-5); }

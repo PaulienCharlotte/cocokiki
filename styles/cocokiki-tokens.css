@@ -354,3 +354,11 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
+
+/* Gereedschap staat overal links; een telefoon krijgt één rij eronder. */
+body .ck-scherm .ck-zone-gereedschap, body .my-games .ck-zone-gereedschap { left: var(--space-4); right: auto; }
+body .ck-scherm .ck-zone-gereedschap > .ck-icon-button { background: transparent; border: 0; box-shadow: none; color: var(--ck-cacao); }
+@media(max-width:700px) {
+ body .ck-scherm .ck-zone-gereedschap, body .my-games .ck-zone-gereedschap { left: var(--space-2); right: var(--space-2); top: calc(var(--space-12) + var(--space-6)); flex-direction: row; align-items: center; gap: var(--space-1); width: auto; max-width: calc(100% - var(--space-4)); overflow-x: auto; box-sizing: border-box; border-radius: var(--radius-pill); }
+ body .ck-scherm .ck-zone-gereedschap > * { flex-shrink: 0; }
+}

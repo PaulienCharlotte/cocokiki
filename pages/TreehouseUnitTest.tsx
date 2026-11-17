@@ -1,3 +1,6 @@
+import { useWorldLight } from '../services/worldLight';
+import WorldLightSwitch from '../components/dreamworld/WorldLightSwitch';
+import '../components/dreamworld/world-light.css';
 import CocoCoin from '../components/platform/CocoCoin';
 import React, { useEffect, useRef, useState } from 'react';
 import { RotateCcw, ArrowLeft, ArrowRight, ZoomOut, ZoomIn, Plus, SlidersHorizontal, Trash2, Armchair } from 'lucide-react';
@@ -17,6 +20,7 @@ interface RoomDrag { id: string; pointer: number; startX: number; startY: number
 
 export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: string) => void }) {
   const live = !!onNavigate;
+  const { night, toggleNight } = useWorldLight();
   const [joined, setJoined] = useState(true);
   const [zoom, setZoom] = useState(100);
   const [panned, setPanned] = useState(false);
@@ -78,7 +82,8 @@ export default function TreehouseUnitTest({ onNavigate }: { onNavigate?: (path: 
   const selectedRoom = rooms.find(room => room.id === removeId);
   const price = live ? roomTemplatePrice(loadRoomExpansions(), templateId) : 0;
   const addPlaces = live ? [house.slots[0] ?? { column: 0, floor: -1, x: 0, y: 0, width: layout.width, height: 240 }] : house.slots.slice(0, 1);
-  return <main className={`unit-test${live ? ' unit-test--live' : ''}`} aria-label="Mijn boomhut">
+  return <main className={`unit-test${live ? ' unit-test--live' : ''}${live && night ? ' is-night' : ''}`} aria-label="Mijn boomhut">
+    {live && <WorldLightSwitch night={night} onToggle={toggleNight} />}
     <header className="unit-test__toolbar">
       <div className="unit-test__controls" role="toolbar" aria-label="Bouwgereedschap">
         {live && <IconButton label="Meubelwinkel openen" icon={<Armchair size={19} />} onClick={() => onNavigate?.('/shop/furniture')} />}

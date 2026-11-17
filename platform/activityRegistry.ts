@@ -25,6 +25,7 @@ export const SCHOOL_ACTIVITIES: ActivityDefinition[] = [
 ];
 export const ACTIVITY_LIBRARY: ActivityDefinition[] = [
   ...SCHOOL_ACTIVITIES,
+  { id: 'taartenatelier', title: 'Taarten versieren', subtitle: 'Maak je eigen feesttaart', kind: 'game', path: '/games/taartenatelier', image: '/assets/library/cooking/taarten/roze-rand.webp', status: 'available' },
   { id: 'recipes', title: 'Recepten', kind: 'collection', path: '/treehouse/cookbook', status: 'available' },
   { id: 'nutrient-memory', image: '/assets/library/ui/nutrients-game.webp', title: 'Voedingsstoffen', kind: 'game', path: '/games/nutrient-memory', status: 'available' },
   { id: 'plant-clinic', title: 'Plantendokter', subtitle: 'Help een plant die het niet goed doet', kind: 'collection', path: '/plantendokter', image: PLANT_DOCTOR_EMBLEM, status: 'available' },

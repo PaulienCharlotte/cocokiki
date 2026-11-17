@@ -1,6 +1,6 @@
 import InfoKnop from '../components/ui/InfoKnop';
 import NiveauKnop, { NiveauKeuze } from '../components/ui/NiveauKnop';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { ArrowRight, CalendarDays, Check, Droplets, Lightbulb, Minus, Plus, Ruler, ShoppingBasket, Sprout, Leaf, X } from 'lucide-react';
 import GardenCropFacts from '../components/plants/GardenCropFacts';
 import { GARDEN_CROPS, GARDEN_CROPS_BY_ID, SEASONS, formatGardenNumber, gardenNeighbours, gardenPairAdvice, gardenSeason, gardenTask, type GardenCrop } from '../data/plants/garden';
@@ -188,6 +188,7 @@ export function GardenTaskPanel({ plot, crop, level, hint = false, blij = false,
   const assisted = Boolean(plot.helpedParts?.includes(gardenPartKey(plot)));
   const planting = part === 'action' && plot.step === 0;
   const measuring = part === 'action' && plot.step > 0;
+  const jugId = useId().replace(/:/g, "");
   const capacity = task.waterMl && task.waterMl > 1000 ? 3000 : 1000;
   const [positions, setPositions] = useState<number[]>([0]);
   const [water, setWater] = useState(0);
@@ -210,22 +211,35 @@ export function GardenTaskPanel({ plot, crop, level, hint = false, blij = false,
   const vulTot = (event: React.PointerEvent<HTMLDivElement>) => {
     if (assisted || !(event.buttons & 1) && event.type !== 'pointerdown') return;
     const rect = event.currentTarget.getBoundingClientRect();
-    const deel = Math.max(0, Math.min(1, (rect.bottom - event.clientY) / rect.height));
+    const deel = Math.max(0, Math.min(1, (rect.top + rect.height * 252 / 280 - event.clientY) / (rect.height * 220 / 280)));
     setWater(Math.round(deel * capacity / 50) * 50); setError('');
   };
   return <>
     <Kiki blij={blij}>{error || (assisted ? explanation : hint ? tip : prompt)}</Kiki>
 
     {/* In de wereld: de meetlat over de bak, of de maatbeker ernaast. */}
-    {planting && <div className="garden-ruler ck-glas" role="group" aria-label="Plant je rij op de meetlat">{Array.from({ length: 7 }, (_, index) => <button type="button" key={index} disabled={assisted} aria-label={`${formatGardenNumber(index * crop.spacing / 2)} cm${displayedPositions.includes(index) ? ', geplant' : ''}`} aria-pressed={displayedPositions.includes(index)} onClick={() => { if (index === 0) return; setPositions(current => current.includes(index) ? current.filter(value => value !== index) : current.length < 4 ? [...current, index] : current); setError(''); }}><span aria-hidden="true">{displayedPositions.includes(index) ? <Sprout /> : ''}</span><small>{index % 2 === 0 ? formatGardenNumber(index * crop.spacing / 2) : ''}</small></button>)}<span className="garden-ruler__unit">cm</span></div>}
+    {planting && <div className="garden-ruler ck-glas" role="group" aria-label="Plant je rij op de meetlat">{Array.from({ length: 13 }, (_, tick) => { const index = tick; return <button type="button" key={index} disabled={assisted} aria-label={`${formatGardenNumber(index * crop.spacing / 2)} cm${displayedPositions.includes(index) ? ', geplant' : ''}`} aria-pressed={displayedPositions.includes(index)} onClick={() => { if (index === 0) return; setPositions(current => current.includes(index) ? current.filter(value => value !== index) : current.length < 4 ? [...current, index] : current); setError(''); }}><span aria-hidden="true">{displayedPositions.includes(index) ? <Sprout /> : ''}</span><small>{formatGardenNumber(index * crop.spacing / 2)}</small></button>; })}<span className="garden-ruler__unit">cm</span></div>}
     {measuring && <div className="garden-measure">
-      <div ref={beker} className="garden-jug ck-glas" role="slider" tabIndex={assisted ? -1 : 0} aria-label="Maatbeker" aria-valuemin={0} aria-valuemax={capacity} aria-valuenow={displayedWater} aria-valuetext={`${displayedWater} ml`}
+      <div ref={beker} className="garden-jug" role="slider" tabIndex={assisted ? -1 : 0} aria-label="Maatbeker" aria-readonly={assisted} aria-valuemin={0} aria-valuemax={capacity} aria-valuenow={displayedWater} aria-valuetext={`${displayedWater} ml`}
         onPointerDown={event => { event.currentTarget.setPointerCapture(event.pointerId); vulTot(event); }} onPointerMove={vulTot}
-        onKeyDown={event => { if (assisted) return; if (event.key === 'ArrowUp' || event.key === 'ArrowRight') setWater(Math.min(capacity, water + 50)); if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') setWater(Math.max(0, water - 50)); }}>
-        <span className="garden-jug__water" style={{ height: `${displayedWater / capacity * 100}%` }} />
-        {[capacity, capacity * .75, capacity * .5, capacity * .25].map(mark => <span className="garden-jug__mark" style={{ top: `${(1 - mark / capacity) * 100}%` }} key={mark}>{mark}</span>)}
+        onKeyDown={event => { if (assisted) return; if (['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].includes(event.key)) event.preventDefault(); if (event.key === 'ArrowUp' || event.key === 'ArrowRight') setWater(Math.min(capacity, water + 50)); if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') setWater(Math.max(0, water - 50)); }}>
+        <svg className="garden-jug__drawing" viewBox="0 0 170 280" aria-hidden="true">
+          <defs><clipPath id={jugId}><path d="M28 32 L18 20 H116 V222 Q116 252 86 252 H58 Q28 252 28 222 Z" /></clipPath></defs>
+          <path className="garden-jug__handle" d="M116 64 H134 Q156 64 156 86 V160 Q156 184 134 184 H116" />
+          <path className="garden-jug__body" d="M28 32 L18 20 H116 V222 Q116 252 86 252 H58 Q28 252 28 222 Z" />
+          <g clipPath={`url(#${jugId})`}>
+            <rect className="garden-jug__water" x="28" y={252 - displayedWater / capacity * 220} width="88" height={displayedWater / capacity * 220} />
+            {displayedWater > 0 && <path className="garden-jug__waterline" d={`M28 ${252 - displayedWater / capacity * 220} H116`} />}
+          </g>
+          <path className="garden-jug__shine" d="M36 46 V214" />
+          {Array.from({ length: 21 }, (_, i) => <g key={i}>
+            <path className="garden-jug__tick" d={`M${i % 2 ? 94 : 86} ${252 - i * 11} H110`} />
+            {i % 2 === 0 && <text className="garden-jug__label" x="80" y={252 - i * 11} dominantBaseline="middle" textAnchor="end">{capacity * i / 20}</text>}
+          </g>)}
+          <text className="garden-jug__label" x="72" y="14" textAnchor="middle">ml</text>
+        </svg>
       </div>
-      <b className="garden-measure__stand">{displayedWater} ml</b>
+      <b className="garden-measure__stand ck-hangkaartje__label ck-glas">{displayedWater} ml</b>
       {!assisted && <div className="garden-measure__buttons">
         <button type="button" className="ck-gereedschap ck-glas" aria-label="50 ml minder" onClick={() => setWater(Math.max(0, water - 50))}><Minus size={22} aria-hidden="true" /></button>
         <button type="button" className="ck-gereedschap ck-glas" aria-label="50 ml meer" onClick={() => setWater(Math.min(capacity, water + 50))}><Plus size={22} aria-hidden="true" /></button>

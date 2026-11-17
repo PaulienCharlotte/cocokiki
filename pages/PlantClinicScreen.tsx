@@ -278,20 +278,19 @@ export default function PlantClinicScreen() {
   // Zodra de behandeling klopt staat de plant er weer goed bij, ook tijdens de bonusvraag.
   const genezen = fase === 'naam' || fase === 'klaar';
   const plaatje = genezen ? product.image : patient.image;
-  const resterend = Math.max(0, STAMPS_NEEDED - (clinic.correct[species.id] ?? 0));
 
   /** Kiki is de enige stem: de vraag, de aanwijzing en het oordeel komen uit haar mond. */
   // Alleen de blaadjes kun je zien. Hoe de aarde voelt en waar hij staat
   // kun je niet van een plaatje aflezen: dat onderzoek je, of je vraagt het.
   const ONDERZOEK_VRAAG = !waargenomen.blad ? 'Wat zie je aan de plant?'
-    : !waargenomen.aarde ? 'Voel nu eens aan de aarde.'
-    : !gevonden.includes('plek') ? 'Vraag het baasje nog hoe hij verzorgd wordt.'
+    : !waargenomen.aarde && getoond !== 'aarde' ? 'Voel aan de aarde.'
+    : !gevonden.includes('plek') && getoond !== 'plek' ? 'Vraag hoe hij verzorgd wordt.'
     : 'Weet je genoeg?';
   const bericht = melding ? melding
     : fase === 'naam' ? 'Hij is gered! Wist je nog hoe deze plant heet?'
     : fase === 'klaar' ? (naamGoed === null ? TREATMENT_SUCCESS[juist]
-      : naamGoed ? `Goed onthouden, dit is inderdaad een ${species.commonName.toLowerCase()}.`
-      : `Dit was een ${species.commonName.toLowerCase()}. Nu weet je het voor de volgende keer.`)
+      : naamGoed ? `Ja, een ${species.commonName.toLowerCase()}!`
+      : `Dit is een ${species.commonName.toLowerCase()}.`)
     : fase !== 'onderzoek' ? KIKI_VRAAG[fase]
     // Tijdens het onderzoek bevestigt Kiki wat je zag en stelt ze meteen de
     // volgende vraag, zodat er nooit keuzes zonder vraag op het scherm staan.
@@ -310,7 +309,6 @@ export default function PlantClinicScreen() {
         <img className="clinic__emblem" src={PLANT_DOCTOR_EMBLEM} alt="Plantendokter" />
         <div>
           <h1 id="clinic-title">Plantendokter</h1>
-          <em>{fase === 'klaar' ? species.commonName : ''}</em>
         </div>
         <div className="clinic__tellers">
           <p className="clinic__consult" aria-label={`Patiënt ${consult} van ${CONSULTS_PER_SPREEKUUR}`}>{consult}/{CONSULTS_PER_SPREEKUUR}</p>
@@ -396,7 +394,7 @@ export default function PlantClinicScreen() {
           <CocoCoin size={28} /> +{afloop.coins + (naamGoed ? NAAM_BONUS : 0)} {afloop.coins + (naamGoed ? NAAM_BONUS : 0) === 1 ? 'CocoCoin' : 'CocoCoins'}
           {afloop.stampEarned
             ? <strong><Stamp aria-hidden="true" />Stempel voor {species.commonName}</strong>
-            : <small>Nog {resterend} keer goed voor zijn stempel</small>}
+            : null}
         </p>
         {klaarMetSpreekuur && <p className="clinic__oogst">
           Spreekuur klaar! {oogst.coins} CocoCoins verdiend{oogst.stamps > 0 ? ` en ${oogst.stamps} ${oogst.stamps === 1 ? 'stempel' : 'stempels'}` : ''}.

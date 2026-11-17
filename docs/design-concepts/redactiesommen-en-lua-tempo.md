@@ -1,0 +1,7 @@
+# Redactiesommen en Lua's tempotoets — 16 november 2026
+
+Redactiesommen hebben een eigen warme schrijfkamer: `story-room.webp`, een imagegen-illustratie met hout, boeken, potloden en een rustig middenvlak; geen tekst, personages of jungle. De prompt vroeg een liggende, gedetailleerde 3D-spelwereld in de CocoKiki-huisstijl. De definitieve asset is als WebP opgeslagen.
+
+Het boekje links opent de bestaande somnavigatie in het gedeelde hulppaneel. De tien bolletjes en bladnaam staan niet meer in de bovenbalk. Rechts blijven de gereedschappen. Op mobiel gebruikt het werkblad de ruimte onder één gereedschapsrij; de dubbele tekst van Lua is daar verborgen. Na het markeren van de getallen klapt de vraag tot twee regels in, met Hele vraag lezen. De schoolvragen en hun berekeningen zijn inhoudelijk ongewijzigd.
+
+Baby Lua heeft een extra optie Tempotoets, naast het bestaande avontuur. Het is een afzonderlijke minuut binnen dezelfde Lua-omgeving, met de reeds geselecteerde tafels. Alleen keersommen, vrije numerieke invoer en Enter, direct verder na een antwoord, en onbeperkt overslaan. Overslaan en fouten geven geen punten. De deadline wordt met de klok gemeten, ook na tabwisselen; antwoorden op of na de deadline tellen niet mee. Bij voltooien worden eenmaal twee CocoCoins per goed antwoord toegekend via de bestaande transactieservice. Deze modus verandert de gewone Lua-avontuurresultaten of niveauvoortgang niet.
