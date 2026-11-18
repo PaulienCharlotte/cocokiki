@@ -70,13 +70,16 @@
 
 /* Telefoon: Lua boven de bellen, bellen in een rij van vier, niets overlapt */
 @container (max-width: 640px) {
-  .winkelgekte .wk-speelveld { top: 26%; height: 30%; }
+  .winkelgekte .wk-speelveld { top: max(26%, 210px); height: 30%; }
   .winkelgekte .wk-vracht { width: 56%; }
   .winkelgekte .ck-hangkaartje__label { max-width: 100px; padding: 4px 8px; }
   .winkelgekte .wk-som { font-size: 28px; padding: 4px 16px; }
   .winkelgekte .wk-einde { flex-direction: column-reverse; align-items: stretch; width: 100%; }
   .winkelgekte .wk-personage { right: calc(var(--ck-rand) + 64px); bottom: calc(var(--ck-rand) + 96px); }
   .winkelgekte .wk-personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
+  /* Twee rijen onderin (sommenkeuze + knop, of twee knoppen na de ronde): Lua schuift mee omhoog. */
+  .winkelgekte:has(.wk-start) .wk-personage,
+  .winkelgekte:has(.wk-einde .ck-knop + .ck-knop) .wk-personage { bottom: calc(var(--ck-rand) + 150px); }
   .winkelgekte .wk-antwoord { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
   .winkelgekte .wk-bellen { gap: 8px; }
   .winkelgekte .ck-bel { width: 68px; height: 68px; font-size: 26px; }

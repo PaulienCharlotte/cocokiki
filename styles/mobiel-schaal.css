@@ -1,0 +1,66 @@
+/* Schaalbaarheid op telefoon (staand en liggend).
+   Gedeelde correcties die voor alle spellen gelden, zodat zones elkaar niet
+   overlappen. Alleen variabelen uit cocokiki-tokens.css / design-system. */
+
+/* Liggende telefoon: het gereedschap staat links als kolom. Het personage
+   linksonder schuift ernaast, zodat ballon en gereedschap niet overlappen. */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* De gereedschapskolom mag niet onder het scherm uit lopen. */
+  html body .ck-scherm .ck-zone-gereedschap { max-height: calc(100dvh - var(--space-12) * 2); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+  html body .ck-scherm .ck-zone-personage { left: calc(var(--space-4) + var(--space-12) + var(--space-6)); }
+  html body .ck-scherm .ck-zone-personage .ck-ballon__tekst { max-width: min(26cqw, 360px); margin-bottom: var(--space-2); }
+}
+
+/* Rekenspellen op een liggende telefoon: het speelveld krijgt de ruimte tussen
+   de bovenbalk en de bellen, naast de gereedschapskolom. */
+@media (max-height: 500px) and (orientation: landscape) {
+  html body .rekenspel:not(.rekenspel--add-subtract) .rekenspel__veld {
+    top: calc(var(--space-12) + var(--space-6)); bottom: calc(var(--space-12) * 2);
+    left: calc(var(--space-12) * 2); right: var(--space-4); gap: var(--space-2);
+  }
+  html body .rekenspel .rekenspel__bord { font-size: var(--font-size-xl, 28px); padding: var(--space-1) var(--space-4); }
+  html body .rekenspel .rekenspel__veld { justify-content: safe center; }
+  /* Verdelen: oogst links, mandjes rechts, zodat alles tussen bovenbalk en Lua past. */
+  html body .rekenspel .berry-game { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: end; gap: var(--space-3); padding-top: 0; }
+  html body .rekenspel .berry-harvest { margin: 0; min-height: 0; padding: var(--space-2) var(--space-3); }
+  html body .rekenspel .berry-baskets { --basket-height: calc(var(--space-12) * 2.5); }
+  html body .rekenspel .berry-basket { min-height: 0; }
+}
+
+/* Klok op een liggende telefoon: klok links, bediening rechts, knoptekst heel. */
+@media (max-height: 500px) and (orientation: landscape) {
+  html body .klok-avontuur .clock-game { padding-top: calc(var(--space-12) + var(--space-8)); padding-bottom: var(--space-3); gap: var(--space-1); }
+  html body .klok-avontuur .clock-set__workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); max-width: 40rem; }
+  html body .klok-avontuur .clock-set__workspace > .analog-clock { max-width: min(52vh, 15rem); }
+  html body .klok-avontuur .clock-set__controls { grid-template-columns: minmax(0, 1fr); padding: var(--space-3); gap: var(--space-2); }
+  html body .klok-avontuur .clock-set .clock-game__actions .ck-button { white-space: nowrap; }
+  html body .klok-avontuur .clock-set .clock-instruction { padding: 0; }
+}
+
+/* Moestuin op een liggende telefoon: zes bakken in één rij, zodat ze groot
+   genoeg blijven om te tikken en de namen leesbaar zijn. */
+@media (max-height: 500px) and (orientation: landscape) {
+  html body .tuin.ck-scherm .tuin-status { top: var(--space-3); left: calc(var(--space-12) + var(--space-6)); transform: none; }
+  html body .tuin.ck-scherm .tuin-gereedschap { top: calc(var(--space-12) + var(--space-6)); }
+  html body .tuin .tuin__veld { top: calc(var(--space-12) + var(--space-8)); bottom: calc(var(--space-12) * 2); left: calc(var(--space-12) * 2); right: var(--space-4); }
+  html body .tuin .garden__beds { --tuin-rijen: 1; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); gap: var(--space-2); }
+}
+
+/* Taartenatelier op een liggende telefoon: taart links, keuzepaneel rechts,
+   "Klaar" rechtsonder eronder. Zo bedekt het paneel de taart niet. */
+@media (max-height: 500px) and (orientation: landscape) {
+  html body .taart-atelier { padding: calc(var(--space-12) + var(--space-6)) var(--space-4) calc(var(--ck-tik-min) + var(--space-5)) calc(var(--ck-tik-min) + var(--space-8)); }
+  html body .taart-atelier__werk { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: minmax(0, 1fr); gap: var(--space-3); }
+  html body .taart-atelier__midden { grid-row: 1; grid-column: 1; }
+  html body .taart-paneel { grid-row: 1; grid-column: 2; align-self: stretch; min-height: 0; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+  html body .taart-paneel__lijst { flex-wrap: wrap; align-content: flex-start; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+  html body .taart-paneel__lijst button { width: 3.25rem; height: 3.25rem; }
+  html body .taart-atelier .taart-atelier__balk { top: calc(var(--space-12) + var(--space-6)); max-height: calc(100% - var(--space-12) * 2 - var(--space-6)); }
+}
+
+/* Spraakwolken op een liggende telefoon: iets kleinere letter (nooit onder 16 px),
+   zodat de wolk niet het halve scherm vult. */
+@media (max-height: 500px) and (orientation: landscape) {
+  html body .ck-scherm .ck-zone-personage .ck-ballon__tekst { font-size: var(--font-size-md); line-height: 1.25; }
+  html body .ck-scherm .ck-zone-personage .ck-ballon__gezicht { width: var(--space-12); height: var(--space-12); }
+}

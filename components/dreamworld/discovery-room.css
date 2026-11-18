@@ -43,3 +43,32 @@ body .ck-scherm.discovery-room .ck-zone-gereedschap {
 .discovery-crops img { width: var(--ck-tik-min); height: var(--ck-tik-min); object-fit: contain; }
 /* Een lang woord breekt netjes af in plaats van uit het vakje te steken. */
 .discovery-object__label { overflow-wrap: break-word; hyphens: auto; }
+
+/* Telefoon: de veeg-hint lag over knoppen onderin de kamer. Hij verschijnt
+   even en verdwijnt dan vanzelf, zodat alle plekken tikbaar blijven. */
+.discovery-object__label { hyphens: manual; }
+@media (max-width: 900px) {
+  .discovery-room__swipe { animation: discovery-swipe-hint 5s var(--ck-veer, ease) forwards; }
+}
+@keyframes discovery-swipe-hint {
+  0% { opacity: 0; transform: translateY(8px); }
+  10%, 75% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(8px); visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .discovery-room__swipe { animation: none; display: none; }
+}
+
+/* Liggende telefoon: de kamer wordt hoger dan het scherm zodat voorwerpen en
+   hun labels niet op elkaar vallen. Vegen kan dan alle kanten op. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .discovery-room__scene { height: max(100%, calc(var(--space-12) * 13)); width: max(100%, calc(var(--space-12) * 13 * var(--scene-ratio))); }
+  /* Label naast de lichtring in plaats van eronder: zo passen dicht bij elkaar liggende voorwerpen. */
+  .discovery-object { flex-direction: row; width: auto; gap: var(--space-1); transform: translate(calc(var(--ck-tik-min) * -0.5 - var(--ck-onderkant)), -50%); }
+  .discovery-object__label { font-size: var(--font-size-md); white-space: nowrap; max-width: none; }
+  /* Helemaal rechts in de kamer: label links van de ring, anders valt het onder de infoknop. */
+  .discovery-object[style*="--object-x: 9"] { flex-direction: row-reverse; transform: translate(calc(-100% + var(--ck-tik-min) * 0.5 + var(--ck-onderkant)), -50%); }
+  .discovery-room__viewport { touch-action: pan-x pan-y; }
+  .discovery-room__heading h1 { font-size: var(--ck-maat-tekst); }
+  .discovery-room__swipe { display: block; position: absolute; bottom: var(--ck-rand); left: 50%; translate: -50% 0; margin: 0; padding: var(--ck-onderkant) var(--space-4); pointer-events: none; font-size: var(--font-size-md); white-space: nowrap; }
+}

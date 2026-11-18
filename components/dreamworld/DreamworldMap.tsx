@@ -28,8 +28,8 @@ export default function DreamworldMap({ onNavigate }: { onNavigate: (path: strin
       event.currentTarget.style.setProperty('--village-look-x', `${((event.clientX - rect.left) / rect.width - .5) * 6}px`);
       event.currentTarget.style.setProperty('--village-look-y', `${((event.clientY - rect.top) / rect.height - .5) * 4}px`);
     }} onPointerLeave={event => { event.currentTarget.style.setProperty('--village-look-x', '0px'); event.currentTarget.style.setProperty('--village-look-y', '0px'); }}>
-      <picture><source media="(max-width: 900px)" srcSet="/dreamworld/village/portrait-v2.webp" /><img className="village-world__landscape" src="/dreamworld/village/landscape-quests.webp" alt="Ontdek Coco’s bakkerij, Kiki’s kas, Baby Lua’s werkplaats en Sebs ontdekkershuis rond jouw boomhut" draggable={false} fetchPriority="high" /></picture>
-      {night && <picture className="village-world__lamplight" aria-hidden="true"><source media="(max-width: 900px)" srcSet="/dreamworld/village/portrait-v2.webp" /><img src="/dreamworld/village/landscape-quests.webp" alt="" /></picture>}
+      <picture><source media="(max-width: 900px) and (orientation: portrait)" srcSet="/dreamworld/village/portrait-v2.webp" /><img className="village-world__landscape" src="/dreamworld/village/landscape-quests.webp" alt="Ontdek Coco’s bakkerij, Kiki’s kas, Baby Lua’s werkplaats en Sebs ontdekkershuis rond jouw boomhut" draggable={false} fetchPriority="high" /></picture>
+      {night && <picture className="village-world__lamplight" aria-hidden="true"><source media="(max-width: 900px) and (orientation: portrait)" srcSet="/dreamworld/village/portrait-v2.webp" /><img src="/dreamworld/village/landscape-quests.webp" alt="" /></picture>}
       <nav aria-label="Gebouwen in Dreamworld">
         {WORLD_DESTINATIONS.filter(destination => destination.enabled).map(destination => {
           const story = VILLAGE_STORIES[destination.id];

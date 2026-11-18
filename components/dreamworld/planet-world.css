@@ -30,7 +30,7 @@
 .village-world.entering-plants .village-world__scene { transform-origin: 56% 33%; }
 .village-world.entering-math .village-world__scene { transform-origin: 18% 65%; }
 .village-world.entering-discovery .village-world__scene { transform-origin: 57% 65%; }
-@media (max-width: 900px) {
+@media (max-width: 900px) and (orientation: portrait) {
   .village-world__scene { top: var(--space-12); }
   .village-world .dream-hotspot { width: 40%; height: 21%; }
   .village-world [data-building=cooking] { left: 24%; top: 29%; }
@@ -48,7 +48,7 @@
 /* De lantaarns en ramen houden hun warme licht terwijl de omgeving slaapt. */
 .village-world__scene .village-world__lamplight { position: absolute; inset: 0; pointer-events: none; mask-image: radial-gradient(ellipse 6% 9% at 16% 34%, var(--ck-wit), transparent), radial-gradient(ellipse 5% 8% at 40% 45%, var(--ck-wit), transparent), radial-gradient(ellipse 6% 9% at 18% 68%, var(--ck-wit), transparent), radial-gradient(ellipse 5% 9% at 51% 34%, var(--ck-wit), transparent), radial-gradient(ellipse 6% 8% at 53% 67%, var(--ck-wit), transparent); }
 .village-world__lamplight img { width: 100%; height: 100%; object-fit: fill; }
-@media (max-width: 900px) {
+@media (max-width: 900px) and (orientation: portrait) {
   .village-world__scene .village-world__lamplight { mask-image: radial-gradient(ellipse 7% 6% at 22% 32%, var(--ck-wit), transparent), radial-gradient(ellipse 6% 6% at 53% 45%, var(--ck-wit), transparent), radial-gradient(ellipse 8% 6% at 24% 65%, var(--ck-wit), transparent), radial-gradient(ellipse 7% 6% at 70% 32%, var(--ck-wit), transparent), radial-gradient(ellipse 8% 6% at 73% 65%, var(--ck-wit), transparent); }
 }
 /* Eén materiaal en één raster; de bestaande papierasset gebruikt negen vlakken.
@@ -75,6 +75,24 @@
  .village-guide__choices { display: flex; gap: var(--space-3); overflow-x: auto; padding: var(--space-2) var(--space-4); scroll-snap-type: x mandatory; scroll-padding-inline: var(--space-4); scrollbar-width: thin; }
  .village-guide__choices > li { flex: 0 0 min(78%, calc(var(--space-12) * 7)); scroll-snap-align: start; }
  .village-guide .village-guide__note { height: 100%; padding-inline: var(--space-5); }
+ }
+@media (max-width: 900px) and (orientation: portrait) {
  .village-world__scene { top: calc(var(--space-12) * 4); }
 }
 @media (prefers-reduced-motion:reduce) { .village-guide__note, .village-guide__action svg { transition: none; } }
+
+/* Liggende telefoon: de briefjes worden een smalle strook bovenin, zodat het
+   eiland zelf zichtbaar en tikbaar blijft. */
+@media (max-height: 500px) and (orientation: landscape) {
+ .village-guide { top: calc(var(--space-12) + var(--space-4)); }
+ .village-guide__choices { padding-block: var(--space-1); }
+ .village-guide__choices > li { flex-basis: min(40%, calc(var(--space-12) * 6)); }
+ .village-world__scene { top: 0; }
+ .village-destination__label { font-size: var(--font-size-md); padding-inline: var(--space-3); }
+ .village-guide .village-guide__note { grid-template-columns: var(--space-12) minmax(0,1fr); gap: var(--space-2); min-height: 0; padding: var(--space-8) var(--space-5) var(--space-4); }
+ .village-guide__art { height: var(--space-12); }
+ .village-guide__name { display: none; }
+ .village-guide__copy { gap: 0; }
+ .village-guide__text { min-height: 0; font-size: var(--font-size-md); }
+ .village-guide__action { min-height: 0; }
+}

@@ -22,6 +22,15 @@
   background: var(--color-surface); box-shadow: none;
   color: var(--color-text); animation: none;
 }
+/* Verkennen: het weetje zweeft als glazen kaart over de kaart, zodat de kaart even groot blijft. */
+.topo-app .explore-stage > .map-fact-card.discovery-detail {
+  position: absolute; z-index: 1100; left: var(--space-3); right: var(--space-3); bottom: var(--space-3);
+  width: auto; max-width: calc(var(--space-12) * 11); margin: 0;
+  max-height: min(36%, calc(var(--space-12) * 4)); overflow-y: auto; overscroll-behavior: contain;
+  border-radius: var(--ck-rond-kaart); box-shadow: 0 6px 0 var(--ck-schaduw-rand);
+  animation: fact-card-in .18s ease-out;
+}
+.topo-app .explore-stage:has(> .discovery-detail) .leaflet-bottom { display: none; }
 .topo-app .discovery-detail h3 { color: var(--color-text); font-size: var(--font-size-md); }
 .topo-app .discovery-detail .fact-card-text { font-size: var(--font-size-sm); color: var(--color-text); }
 .topo-app .discovery-detail .icon-button { width: var(--touch-target); height: var(--touch-target); }
@@ -30,4 +39,15 @@
 @media (max-width: 600px) {
   .topo-app .map-control-panel { max-height: min(74dvh, calc(var(--topo-viewport, 100dvh) - var(--topo-header-bottom, calc(var(--space-12) * 2)) - var(--space-4))); }
   .topo-app .map-fact-card.discovery-detail { padding: var(--space-2); gap: var(--space-2); }
+}
+/* Liggende telefoon: het weetje zweeft als kolom rechts over de kaart. */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* De kaartbediening zweeft linksboven over de kaart; de kaart krijgt de hele hoogte. */
+  .topo-app.view-discover:not(.in-session) .discover-page { position: relative; padding-bottom: var(--space-2); }
+  .topo-app.view-discover:not(.in-session) .map-control-shell { position: absolute; z-index: 1150; left: var(--space-2); top: calc(var(--topo-header-bottom, calc(var(--space-12) * 2)) + var(--space-3)); padding: var(--space-2); }
+  .topo-app.view-discover:not(.in-session) .discovery-footer { display: none; }
+  .topo-app .explore-stage > .map-fact-card.discovery-detail {
+    left: auto; right: var(--space-2); top: var(--space-2); bottom: var(--space-2);
+    width: min(48%, calc(var(--space-12) * 7)); max-height: none; align-content: start;
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { WorldLocation } from '../../platform/worldLocations';
 import { DISCOVERY_ROOMS, type DiscoveryObject } from '../../platform/discoveryRooms';
 import { withLocationOrigin } from '../../services/locationNavigation';
@@ -15,6 +15,12 @@ import './discovery-room.css';
 export default function WorldLocationLayout({ location, onNavigate }: { location: WorldLocation; onNavigate: (path: string) => void }) {
   const { play } = useMathSound();
   const pan = useRef<{ x: number; scroll: number } | null>(null);
+  const viewport = useRef<HTMLDivElement>(null);
+  // Op een liggende telefoon is de kamer hoger dan het scherm: begin in het midden.
+  useLayoutEffect(() => {
+    const element = viewport.current;
+    if (element && element.scrollHeight > element.clientHeight) element.scrollTop = (element.scrollHeight - element.clientHeight) / 2;
+  }, [location.id]);
   const room = DISCOVERY_ROOMS[location.id];
   const [selected, setSelected] = useState<DiscoveryObject | null>(null);
   const ingredient = selected?.action === 'ingredient' ? INGREDIENTS.find(item => item.id === selected.contentId) : null;
@@ -31,7 +37,7 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     <nav className="ck-zone-gereedschap ck-glas" aria-label="Gereedschap">
       <InfoKnop titel="Kijk eens rond" character={location.id}>Tik op een voorwerp om een boek te openen, iets te ontdekken of verder te werken. Spellen vind je bovenin bij de gameknop. Nieuwe verzoeken staan op je To Do-lijst.</InfoKnop>
     </nav>
-    <div className="discovery-room__viewport" tabIndex={0} aria-label="Kijk rond in de kamer" onPointerDown={event => {
+    <div ref={viewport} className="discovery-room__viewport" tabIndex={0} aria-label="Kijk rond in de kamer" onPointerDown={event => {
       if (event.pointerType !== 'mouse' || (event.target as HTMLElement).closest('button')) return;
       pan.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft };
       event.currentTarget.setPointerCapture(event.pointerId);

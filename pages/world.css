@@ -1602,6 +1602,25 @@
   .cooking-room.cookbook-library-room { padding: 84px 8px 12px; }
   .recipe-library__filters button { padding-inline: 12px; }
 }
+/* Kookboek op telefoon (staand en liggend): filters in één veegrij, recepten als
+   rooster dat verticaal scrolt, zodat je meerdere recepten tegelijk ziet. */
+@media (max-width: 600px), (max-height: 500px) {
+  .cookbook-library-room .recipe-library { gap: var(--space-2); }
+  .cookbook-library-room .recipe-library .recipe-library__filters { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; margin-inline: calc(var(--space-2) * -1); padding: 2px var(--space-2) 4px; scroll-padding-inline: var(--space-2); }
+  .cookbook-library-room .recipe-library__filters::-webkit-scrollbar { display: none; }
+  .cookbook-library-room .recipe-library__filters > button { flex: 0 0 auto; white-space: nowrap; }
+  .cookbook-library-room .recipe-library__grid { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-columns: auto; align-content: start; gap: var(--space-2); overflow-x: hidden; overflow-y: auto; padding: 0 0 var(--space-4); scroll-snap-type: none; }
+  .cookbook-library-room .recipe-library__grid > div { scroll-snap-align: none; }
+  .cookbook-library-room .recipe-card__button { padding: var(--space-4) var(--space-2) var(--space-3); }
+  .cookbook-library-room .recipe-card__visual { min-height: 0; }
+  .cookbook-library-room .recipe-card__art { height: calc(var(--space-12) * 2); }
+  .cookbook-library-room .recipe-card__copy { gap: var(--space-1); padding: var(--space-2) var(--space-1) 0; }
+  .cookbook-library-room .recipe-card__copy > strong { font-size: var(--font-size-md); overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; }
+  .cookbook-library-room .recipe-card__status { position: static; justify-self: start; margin-top: var(--space-1); }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .cooking-room.cookbook-library-room { padding: 72px max(var(--space-4), env(safe-area-inset-right)) 8px max(var(--space-4), env(safe-area-inset-left)); }
+}
 .world-hud { position: fixed; min-height: 64px; background: rgb(255 250 241 / 16%); border-color: #ffffff55; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 6px 24px #3c2d3d12; border-radius: 24px; }
 .world-hud__brand { width: 156px; }
 .world-hud__tools { gap: 10px; }

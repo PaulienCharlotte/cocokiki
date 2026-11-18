@@ -283,7 +283,7 @@
 .taart-opdracht-gids .ck-zegt__tekst { color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); }
 .taart-opdracht-gids .ck-zegt__wolk { background: var(--ck-glas); }
 @media (max-width: 700px) {
- .taart-atelier { padding-right: calc(var(--ck-tik-min) + var(--space-6)); }
+ .taart-atelier { padding-right: calc(var(--ck-tik-min) + var(--space-6)); padding-bottom: calc(var(--ck-tik-min) + var(--space-6)); }
  .taart-atelier .taart-atelier__balk { top: calc(var(--space-12) + var(--space-6)); left: var(--space-3); }
  .taart-atelier .taart-atelier__opslaan { width: auto; }
  .taart-atelier__klaar { right: var(--space-3); bottom: var(--space-3); }

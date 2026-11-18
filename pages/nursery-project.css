@@ -39,9 +39,9 @@
   .interieur__plek { width: 22%; }
   .interieur__koop:nth-child(n) { bottom: 34%; }
   .interieur .interieur__status { top: 132px; }
-  .interieur__antwoord { left: var(--ck-rand); right: var(--ck-rand); bottom: 200px; justify-content: center; flex-wrap: wrap; }
+  .interieur__antwoord { left: var(--ck-rand); right: var(--ck-rand); bottom: 216px; justify-content: center; flex-wrap: wrap; }
   .interieur__antwoord .ck-bel { width: 68px; height: 68px; font-size: 22px; }
-  .interieur__personage .ck-ballon__tekst { max-width: calc(100vw - 120px); margin-bottom: 0; }
+  .interieur__personage .ck-ballon__tekst { max-width: calc(100vw - 120px); margin-bottom: 0; font-size: var(--font-size-md); line-height: 1.25; }
   .interieur__veld.is-inrichten { padding: 72px 64px 220px 12px; }
 }
 
