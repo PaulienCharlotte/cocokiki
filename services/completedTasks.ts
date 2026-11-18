@@ -13,7 +13,8 @@ export function completedTasks() {
     id: order.id, title: order.aanleiding, image: CHARACTERS[order.klant].beeld, description: order.dank,
   }));
   if (loadCakeOrder().delivered) tasks.push({ id: 'cake', title: 'Sebs verjaardagstaart', image: '/assets/library/cooking/taarten/roze-rand.webp', description: 'De verjaardagstaart is afgeleverd.' });
-  if (loadNursery().stage === 'complete') tasks.push({ id: 'nursery', title: 'Luna’s babykamer', image: '/assets/library/projects/luna-crib.webp', description: 'Gemeten, gekozen en ingericht.' });
+  if (loadNursery('luna').stage === 'complete') tasks.push({ id: 'nursery', title: 'Luna’s kamer', image: '/assets/library/projects/luna-crib.webp', description: 'Gemeten, gekozen en ingericht.' });
+  if (loadNursery('kerst').stage === 'complete') tasks.push({ id: 'kerst', title: 'Coco’s kerstkamer', image: '/assets/library/shop/decor/products/christmas-japandi-tree.webp?v=3', description: 'Gemeten, gekozen en ingericht.' });
   const travel = loadTravelAdventures();
   for (const adventure of TRAVEL_ADVENTURES) if (travel.completed[adventure.id]) tasks.push({ id: adventure.id, title: adventure.title, image: adventure.image, description: 'Met een 10 op de hele toets afgerond.' });
   return tasks;

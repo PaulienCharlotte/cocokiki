@@ -1,5 +1,7 @@
 # Uitlijning en opdrachten — 16 november 2026
 
+18 november: de To Do-header heeft een aparte volle rij voor categoriefilters. Illustratie, titel en dagopdracht delen de bovenste rij; de dagknop staat in een eigen gridkolom. Binnenmarges zijn 10% van het papier, zodat ook de slagschaduw binnen de gestikte rand blijft. Op 360 px komen de dagopdracht en knop onder de titel, met dezelfde veilige marges. Luna gebruikt het oorspronkelijke blonde meisje (`kiki.webp`); de profielavatar met stabiel id `avonturier` heet nu Kai. Bestaande profielkeuzes blijven geldig.
+
 Opdrachtpapier rekent zijn buitenmaat inclusief padding. Tekst en beloningen
 hebben een flexibele breedte en blijven binnen de gestikte rand. Op 360px staat
 er één opdracht per rij. De huisjes gebruiken grotere medaillons met 94%

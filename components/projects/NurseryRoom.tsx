@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Check, Minus, Plus } from 'lucide-react';
 import { IconButton } from '../../design-system';
-import { NURSERY_ITEMS, type NurseryItemId } from '../../data/projects/nursery';
+import type { NurseryItemId } from '../../data/projects/nursery';
 import { MIN_PLACEMENT_SCALE, MAX_PLACEMENT_SCALE } from '../../services/roomInventory';
-import { nurseryPoint, positionNursery, prepareNurseryRoom, resizeNursery, type NurseryState } from '../../services/nurseryProject';
+import { actiefProject, nurseryPoint, positionNursery, prepareNurseryRoom, resizeNursery, type NurseryState } from '../../services/nurseryProject';
 
 interface Props { state: NurseryState; onSave: (ok: boolean) => void }
 interface Drag {
@@ -27,11 +27,11 @@ export default function NurseryRoom({ state, onSave }: Props) {
     d.element.classList.remove('is-dragging');
     if (!cancel && d.moved) onSave(positionNursery(d.revision, d.id, d.next.x, d.next.y));
   };
-  const item = NURSERY_ITEMS.find(i => i.id === selected), point = selected && state.positions[selected];
+  const item = actiefProject().items.find(i => i.id === selected), point = selected && state.positions[selected];
   return <>
-    <div ref={scene} className="nursery-room" aria-label="Luna’s projectkamer" onPointerDown={e => { if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('nursery-room__background')) setSelected(null); }}>
-      <img className="nursery-room__background" src="/assets/library/treehouse/rooms/blush-front-v1.webp" alt="Luna’s kamer met houten vloer" draggable={false} />
-      {NURSERY_ITEMS.filter(i => state.positions[i.id]).map(item => {
+    <div ref={scene} className="nursery-room" aria-label={actiefProject().titel} onPointerDown={e => { if (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('nursery-room__background')) setSelected(null); }}>
+      <img className="nursery-room__background" src={actiefProject().kamer} alt="" draggable={false} />
+      {actiefProject().items.filter(i => state.positions[i.id]).map(item => {
         const p = state.positions[item.id]!;
         return <button type="button" key={item.id} className={`nursery-room__item--${item.id}`} disabled={complete} aria-label={`${item.name} verplaatsen`} aria-pressed={selected === item.id} style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${item.width * (p.scale ?? 1)}%`, zIndex: selected === item.id ? 100 : Math.round(p.y) }}
           onFocus={() => setSelected(item.id)} onClick={() => setSelected(item.id)}

@@ -26,7 +26,7 @@ export function loadVillageInvitations(): VillageInvitation[] {
   const journey = TRAVEL_ADVENTURES.find(item => item.id === travel.active?.adventureId && !travel.completed[item.id]);
   const nextJourney = journey ?? TRAVEL_ADVENTURES.find(item => !travel.completed[item.id]);
   if (nextJourney) choices.push({ id: nextJourney.id, character: 'seb', text: journey ? `Verder op reis naar ${journey.areaName}?` : `Ga je mee naar ${nextJourney.areaName}?`, path: '/opdrachten?gebied=reizen', continuing: Boolean(journey) });
-  const nursery = loadNursery();
+  const nursery = loadNursery('luna');
   if (nursery.stage !== 'complete') choices.push({ id: 'nursery', character: 'luna', text: nursery.stage !== 'brief' ? 'Zullen we verder inrichten?' : 'Help je Luna inrichten?', path: '/opdrachten/luna-babykamer?from=tasks', continuing: nursery.stage !== 'brief' });
   if (Object.keys(loadDailyPractice().answers).length < 5) choices.push({ id: 'daily', character: 'lua', text: 'Doe je mee met vijf voor vandaag?', path: '/opdrachten?gebied=vandaag', continuing: false });
   return choices.sort((a, b) => Number(b.continuing) - Number(a.continuing)).slice(0, 3).map(choice => {

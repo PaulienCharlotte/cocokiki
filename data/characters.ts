@@ -15,7 +15,8 @@ export interface Character {
 }
 
 export const CHARACTERS: Record<CharacterId, Character> = {
-  luna: { naam: 'Luna', beeld: '/images/avatars/luna-profile.webp', gebied: 'inrichten' },
+  // Het oorspronkelijke blonde Kiki-meisje is nu Luna; Kiki blijft de plantengids.
+  luna: { naam: 'Luna', beeld: '/images/avatars/kiki.webp', gebied: 'inrichten' },
   kiki: { naam: 'Kiki', beeld: '/images/avatars/kiki/kiki-plant.webp', gebied: 'planten' },
   coco: { naam: 'Coco', beeld: '/images/avatars/coco-profile.webp', gebied: 'koken' },
   // Visueel gecontroleerd: Lua is de luiaard, luiaard.webp het stokstaartje.

@@ -7,6 +7,7 @@ export const NURSERY_ITEMS = [
   { id: 'shelf', name: 'Boekenkast', price: 95, image: DECOR_PRODUCTS_BY_ID['japandi-open-bookcase'].image, width: 14, frame: [187, 73, 646, 1391, 1024, 1536], required: false },
   { id: 'chair', name: 'Leesstoel', price: 60, image: DECOR_PRODUCTS_BY_ID['armchair-clay-front'].image, width: 19, frame: [27, 52, 1257, 1107, 1312, 1199], required: false },
 ] as const;
-export type NurseryItemId = typeof NURSERY_ITEMS[number]['id'];
+/** Een meubel-id; elke inrichtopdracht heeft zijn eigen lijst (zie data/projects/index.ts). */
+export type NurseryItemId = string;
 export const NURSERY_QUESTIONS = ['height', 'space', 'total', 'change', 'rug'] as const;
 export type NurseryQuestionId = typeof NURSERY_QUESTIONS[number];

@@ -8,7 +8,7 @@ export type TreehouseSectionId = 'cookbook';
 export type AppRoute =
   | { page: 'coins'; path: '/munten' }
   | { page: 'my-games'; path: '/mijn-spellen' }
-  | { page: 'nursery-project'; path: '/opdrachten/luna-babykamer' }
+  | { page: 'nursery-project'; path: '/opdrachten/luna-babykamer' | '/opdrachten/kerstkamer' }
   | { page: 'tasks'; path: '/opdrachten' }
   | { page: 'garden'; path: '/plants/garden' }
   | { page: 'home'; path: '/' }
@@ -84,7 +84,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   const canonical = LEGACY_ROUTES[normalized] ?? normalized;
   let route: AppRoute;
   if (canonical === '/') route = { page: 'home', path: '/' };
-  else if (canonical === '/opdrachten/luna-babykamer') route = { page: 'nursery-project', path: '/opdrachten/luna-babykamer' };
+  else if (canonical === '/opdrachten/luna-babykamer' || canonical === '/opdrachten/kerstkamer') route = { page: 'nursery-project', path: canonical };
   else if (canonical === '/munten') route = { page: 'coins', path: '/munten' };
   else if (canonical === '/mijn-spellen') route = { page: 'my-games', path: '/mijn-spellen' };
   else if (canonical === '/opdrachten') route = { page: 'tasks', path: '/opdrachten' };

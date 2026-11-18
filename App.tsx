@@ -142,7 +142,7 @@ const GameApp: React.FC = () => {
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
       : current.route.page === 'nursery-project'
-      ? <NurseryProjectScreen onNavigate={navigate} />
+      ? <NurseryProjectScreen key={current.route.path} onNavigate={navigate} />
       : current.route.page === 'coins'
       ? <CoinsScreen coins={coins} onNavigate={navigate} />
       : current.route.page === 'my-games'

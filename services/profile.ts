@@ -6,8 +6,8 @@ export const PROFILE_AVATARS = [
   { id: 'lua', label: 'Lua', image: '/images/avatars/lua-profile.webp' },
   { id: 'samen', label: 'Samen', image: '/images/avatars/samen.webp' },
   { id: 'stokstaartje', label: 'Seb', image: '/images/avatars/luiaard.webp' },
-  { id: 'luna', label: 'Luna', image: '/images/avatars/luna-profile.webp' },
-  { id: 'avonturier', label: 'Avonturier', image: '/images/avatars/avonturier.webp' },
+  { id: 'luna', label: 'Luna', image: '/images/avatars/kiki.webp' },
+  { id: 'avonturier', label: 'Kai', image: '/images/avatars/avonturier.webp' },
 ] as const;
 
 export type ProfileAvatarId = typeof PROFILE_AVATARS[number]['id'];
