@@ -49,9 +49,9 @@ export function decorViewImage(product: DecorProduct, view: number): string {
 
 export const DECOR_SHEET = '/assets/library/shop/decor/furniture-plants-sheet.webp';
 
-export const DECOR_STORES: Record<DecorStoreId, { label: string; eyebrow: string }> = {
-  furniture: { label: 'Meubelwinkel', eyebrow: 'Maak je boomhut eigen' },
-  plants: { label: 'Plantenwinkel', eyebrow: 'Groen voor iedere kamer' },
+export const DECOR_STORES: Record<DecorStoreId, { label: string; eyebrow: string; background: string; backgroundAlt: string }> = {
+  furniture: { label: 'Meubelwinkel', eyebrow: 'Maak je boomhut eigen', background: '/assets/library/shop/decor/furniture-interior.webp', backgroundAlt: 'Een warme meubelwinkel met houten meubels en een knusse zithoek' },
+  plants: { label: 'Plantenwinkel', eyebrow: 'Groen voor iedere kamer', background: '/dreamworld/locations/kiki-greenhouse-discovery.webp', backgroundAlt: 'Een zonnige plantenwinkel in Kiki’s kas, vol groene planten en bloemen' },
 };
 
 export const DECOR_CATEGORIES: Record<DecorStoreId, Array<{ id: 'all' | DecorCategory; label: string }>> = {
@@ -145,6 +145,9 @@ const turnable = (id: string, name: string, category: DecorCategory, price: numb
 });
 
 export const DECOR_PRODUCTS: DecorProduct[] = [
+  { ...furniture('terrace-garden-bench', 'Tuinbankje', 'seating', 80), roomWidth: 29 },
+  { ...furniture('creative-worktable', 'Creatieve werktafel', 'tables', 85), roomWidth: 27 },
+  { ...furniture('wooden-radio', 'Houten radio', 'lighting', 30), roomWidth: 9 },
   { ...furniture('christmas-japandi-tree', 'Knusse kerstboom', 'christmas', 85), roomWidth: 19 },
   { ...furniture('christmas-fir-wreath', 'Groene kerstkrans', 'christmas', 35), roomWidth: 11 },
   { ...furniture('christmas-oak-star', 'Houten kerstster', 'christmas', 25), roomWidth: 10 },

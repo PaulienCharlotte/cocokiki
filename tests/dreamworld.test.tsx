@@ -311,8 +311,9 @@ test('village guide offers real available tasks, resumes active work and never s
     assert.ok(choices.some(item => item.character === 'seb'));
     assert.ok(choices.some(item => item.character === 'luna'));
     const markup = renderToStaticMarkup(<VillageGuide onNavigate={() => undefined} />);
-    assert.match(markup, /ck-zegt__gids/);
-    assert.equal((markup.match(/ck-zegt__illustratie/g) ?? []).length, 3);
+    assert.equal((markup.match(/class="village-guide__avatar"/g) ?? []).length, 3);
+    assert.equal((markup.match(/village-guide__note ck-paper-surface/g) ?? []).length, 4);
+    assert.doesNotMatch(markup, /Waar heb je zin in/);
     assert.match(markup, /Bekijk opdracht/);
     assert.equal((markup.match(/data-task=/g) ?? []).length, 3);
     const active = neemBestellingAan(empty, order.id);

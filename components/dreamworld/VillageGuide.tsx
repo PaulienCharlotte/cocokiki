@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-import SpeechBubble from '../ui/SpeechBubble';
+import { CHARACTERS } from '../../data/characters';
+import { PROFILE_AVATARS } from '../../services/profile';
 import { loadVillageInvitations } from '../../services/villageInvitation';
 import { subscribeLocalState } from '../../services/localState';
 
@@ -10,18 +11,17 @@ export default function VillageGuide({ onNavigate }: { onNavigate: (path: string
   useEffect(() => subscribeLocalState(() => setInvitations(loadVillageInvitations())), []);
   if (!invitations.length) return null;
   return <aside className="village-guide" aria-label="Kies een To Do-avontuur">
-    <h2>Waar heb je zin in?<span>Veeg voor meer</span></h2>
     <ul className="village-guide__choices" aria-label="Open opdrachten">
       {invitations.map(invitation => <li key={invitation.id} data-task={invitation.id} data-wereld={invitation.world}>
-        <SpeechBubble className="village-guide__note ck-paper-surface" character={invitation.character} illustration={<img src={invitation.image} alt="" draggable={false} />}>
-          {invitation.text}
-          <button className="village-guide__action" type="button" aria-label={`${invitation.continuing ? 'Ga verder' : 'Bekijk opdracht'}: ${invitation.text}`} onClick={() => onNavigate(invitation.path)}>{invitation.continuing ? 'Ga verder' : 'Bekijk opdracht'}<ArrowRight aria-hidden="true" /></button>
-        </SpeechBubble>
+        <button className="village-guide__note ck-paper-surface" type="button" aria-label={`${invitation.continuing ? 'Ga verder' : 'Bekijk opdracht'}: ${invitation.text}`} onClick={() => onNavigate(invitation.path)}>
+          <span className="village-guide__art"><img src={invitation.image} alt="" draggable={false} /><img className="village-guide__avatar" src={PROFILE_AVATARS.find(avatar => avatar.id === (invitation.character === 'seb' ? 'stokstaartje' : invitation.character))?.image ?? CHARACTERS[invitation.character].beeld} alt="" /></span>
+          <span className="village-guide__copy"><strong className="village-guide__name">{CHARACTERS[invitation.character].naam}</strong><span className="village-guide__text">{invitation.text}</span><span className="village-guide__action">{invitation.continuing ? 'Ga verder' : 'Bekijk opdracht'}<ArrowRight aria-hidden="true" /></span></span>
+        </button>
       </li>)}
       <li className="village-guide__more" data-wereld="boomhut">
-        <button type="button" className="village-guide__more-link ck-paper-surface" onClick={() => onNavigate('/opdrachten')}>
-          <img src="/assets/library/ui/daily-quest.webp" alt="" />
-          <span><strong>Meer avonturen</strong><small>Bekijk alle To Do’s</small></span><ArrowRight aria-hidden="true" />
+        <button type="button" className="village-guide__note ck-paper-surface" onClick={() => onNavigate('/opdrachten')}>
+          <span className="village-guide__art"><img src="/assets/library/ui/daily-quest.webp" alt="" /></span>
+          <span className="village-guide__copy"><strong className="village-guide__name">To Do</strong><span className="village-guide__text">Ontdek meer avonturen.</span><span className="village-guide__action">Alle To Do’s<ArrowRight aria-hidden="true" /></span></span>
         </button>
       </li>
     </ul>

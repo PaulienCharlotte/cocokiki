@@ -1,5 +1,7 @@
 /* Keep the grocery layout bounded without changing the separate decor stores. */
 .shop-room { box-sizing: border-box; }
+.decor-shop--furniture .shop-room__background { object-position: left center; }
+.decor-shop--plants .shop-room__background { object-position: center; }
 .shop-room :is(.shop-catalog, .shop-drawer), .decor-shop :is(.shop-catalog, .shop-drawer) { background-color: var(--color-surface); backdrop-filter: blur(var(--space-4)); border-color: var(--ck-glas-rand); }
 .shop-room .shop-catalog {
   box-sizing: border-box; width: min(54rem, 66vw); min-width: 0; max-width: 100%;

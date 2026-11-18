@@ -90,8 +90,8 @@ export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Teru
     savePlantFamily(next);
   };
 
-  return <main className={`shop-room decor-shop decor-shop--${store}`}>
-    <img className="shop-room__background" src="/games/shop/shop-street.webp" alt="Het gezellige winkelplein" />
+  return <main className={`shop-room decor-shop decor-shop--${store}`} data-wereld={store === 'plants' ? 'tuin' : 'boomhut'}>
+    <img className="shop-room__background" src={definition.background} alt={definition.backgroundAlt} />
     <button className="shop-dismiss" type="button" onClick={onBack} aria-label={backLabel} />
     <section className="shop-catalog decor-shop__catalog" aria-labelledby="decor-shop-title">
       <header className="shop-catalog__header">
