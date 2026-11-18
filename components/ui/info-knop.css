@@ -1,3 +1,8 @@
-.ck-dialog.spel-uitleg { background: var(--ck-room); color: var(--ck-cacao); border: 1px solid var(--ck-hout-licht); font-family: var(--ck-font-tekst); }
-.spel-uitleg .ck-dialog__title { font-family: var(--ck-font-kop); }
-.spel-uitleg .ck-zegt__wolk { background: var(--ck-glas); }
+/* Uitleg = het personage praat, linksonder, in de ballon uit de huisstijl. */
+.ck-uitleg-laag { position: fixed; inset: 0; z-index: 70; background: color-mix(in srgb, var(--ck-cacao) 18%, transparent); animation: ck-uitleg-in .2s ease both; }
+.ck-uitleg { position: absolute; left: var(--space-4); bottom: var(--space-4); right: var(--space-4); max-width: 640px; }
+.ck-uitleg .ck-ballon__gezicht { width: 88px; height: 88px; object-position: top; animation: ck-pop .4s var(--ck-veer) both; }
+.ck-uitleg .ck-ballon__tekst { margin: 0 0 var(--space-6); animation: ck-pop .45s var(--ck-veer) both; }
+@keyframes ck-uitleg-in { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 600px) { .ck-uitleg .ck-ballon__gezicht { width: 64px; height: 64px; } .ck-uitleg .ck-ballon__tekst { margin-bottom: var(--space-4); } }
+@media (prefers-reduced-motion: reduce) { .ck-uitleg-laag, .ck-uitleg * { animation: none; } }

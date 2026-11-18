@@ -272,8 +272,8 @@
 }
 
 /* Optionele gereedschappen rechts; de taart houdt het midden vrij. */
-.taart-atelier { position: relative; grid-template-rows: minmax(0, 1fr); padding-right: calc(var(--ck-tik-min) + var(--space-8)); }
-.taart-atelier .taart-atelier__balk { position: absolute; z-index: 4; right: var(--space-4); top: calc(var(--space-12) * 2); width: auto; max-height: calc(100% - var(--space-12) * 4); padding: var(--space-1); overflow-y: auto; }
+.taart-atelier { position: relative; grid-template-rows: minmax(0, 1fr); padding-left: calc(var(--ck-tik-min) + var(--space-8)); }
+.taart-atelier .taart-atelier__balk { position: absolute; z-index: 4; left: var(--space-4); top: calc(var(--space-12) * 2); width: auto; max-height: calc(100% - var(--space-12) * 4); padding: var(--space-1); overflow-y: auto; }
 .taart-atelier__opslaan { flex-direction: column; flex-wrap: nowrap; width: auto; gap: var(--space-1); }
 .taart-atelier__opslaan .ck-icon-button { width: var(--ck-tik-min); height: var(--ck-tik-min); }
 .taart-atelier__klaar { position: absolute; z-index: 4; right: var(--space-4); bottom: var(--space-4); }
@@ -284,7 +284,7 @@
 .taart-opdracht-gids .ck-zegt__wolk { background: var(--ck-glas); }
 @media (max-width: 700px) {
  .taart-atelier { padding-right: calc(var(--ck-tik-min) + var(--space-6)); }
- .taart-atelier .taart-atelier__balk { top: calc(var(--space-12) + var(--space-6)); right: var(--space-3); }
+ .taart-atelier .taart-atelier__balk { top: calc(var(--space-12) + var(--space-6)); left: var(--space-3); }
  .taart-atelier .taart-atelier__opslaan { width: auto; }
  .taart-atelier__klaar { right: var(--space-3); bottom: var(--space-3); }
  .taart-opdracht-gids { left: var(--space-3); top: calc(var(--space-12) + var(--space-6)); width: calc(100% - var(--ck-tik-min) - var(--space-8)); }

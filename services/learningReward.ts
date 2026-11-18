@@ -1,5 +1,6 @@
 /** Punten en sterren blijven spelgebonden; munten volgen overal deze regel. */
-export const LEARNING_COINS = 2;
+import { MOEILIJK_EXTRA, PER_ANTWOORD } from './economie';
+export const LEARNING_COINS = PER_ANTWOORD;
 
 /**
  * Munten voor wat je oplost.
@@ -9,6 +10,6 @@ export const LEARNING_COINS = 2;
  * gewoon lonen, maar minder dan de moeilijke.
  */
 export function learningReward(solved = 1, answerRevealed = false, bonus = 0): number {
-  const extra = Number.isSafeInteger(bonus) && bonus > 0 ? Math.min(bonus, 6) : 0;
+  const extra = Number.isSafeInteger(bonus) && bonus > 0 ? Math.min(bonus, MOEILIJK_EXTRA) : 0;
   return !answerRevealed && Number.isSafeInteger(solved) && solved > 0 ? solved * (LEARNING_COINS + extra) : 0;
 }

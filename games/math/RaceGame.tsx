@@ -10,7 +10,9 @@ import { expressionText, resultStatus, validAnswer } from './engine';
 import DragChoice from './DragChoice';
 import type { MathLevel, MathQuestion, MathResult } from './types';
 import { techniqueHint } from './techniqueHint';
-import { createCheckoutQuestion } from './checkoutQuestions';
+import { createCheckoutQuestion, type CheckoutSoort } from './checkoutQuestions';
+const SOORT_KEY = 'cocokiki:winkelgekte-soort:v1';
+const SOORTEN: Array<[CheckoutSoort, string, string]> = [['alles', 'Alles', 'Alle sommen'], ['+', '+', 'Plussommen'], ['-', '−', 'Minsommen'], ['*', '×', 'Keersommen'], ['/', ':', 'Deelsommen']];
 import CheckoutConveyor from './CheckoutConveyor';
 import { CHECKOUT_FALL_MS, checkoutOrderSeconds, checkoutTravel } from './checkoutTiming';
 import { CHARACTERS } from '../../data/characters';
@@ -73,7 +75,10 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
   /** Voor de start kies je het niveau op het label in het statuseiland. */
   onLevel?: (level: MathLevel) => void;
 }) {
-  const [question, setQuestion] = useState(() => createCheckoutQuestion(level));
+  // Welke sommen: alles, of alleen +, −, × of :. Zo is Winkelgekte ook een tempotoets per rekenteken.
+  const [soort, setSoort] = useState<CheckoutSoort>(() => { try { const s = localStorage.getItem(SOORT_KEY); return (SOORTEN.some(([id]) => id === s) ? s : 'alles') as CheckoutSoort; } catch { return 'alles'; } });
+  const soortRef = useRef(soort); soortRef.current = soort;
+  const [question, setQuestion] = useState(() => createCheckoutQuestion(level, 0, Math.random, soort));
   const questionRef = useRef(question);
   // De klok telt af voor de klant die nu op de band staat, niet voor de ronde:
   // de ronde duurt tot er iemand van de band valt.
@@ -104,8 +109,8 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
   };
   const advance = () => {
     if (finished.current) return;
-    let next = createCheckoutQuestion(level, ++order.current);
-    for (let retry = 0; retry < 6 && next.id === questionRef.current.id; retry++) next = createCheckoutQuestion(level, order.current);
+    let next = createCheckoutQuestion(level, ++order.current, Math.random, soortRef.current);
+    for (let retry = 0; retry < 6 && next.id === questionRef.current.id; retry++) next = createCheckoutQuestion(level, order.current, Math.random, soortRef.current);
     questionRef.current = next;
     duur.current = checkoutOrderSeconds(level, order.current) * 1000;
     orderDeadline.current = Date.now() + duur.current;
@@ -182,7 +187,7 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
   // De som staat op de band; Lua zegt alleen iets als het helpt.
   const uitslag = einde ? resultStatus('race', level, statistics.current) : null;
   const zin = einde ? `Je hielp ${statistics.current.correct} ${statistics.current.correct === 1 ? 'klant' : 'klanten'}. ${uitslag?.passed && level < 5 ? 'Klaar voor een sneller niveau?' : 'Nog een keer?'}`
-    : notice || (!started ? 'De band gaat bij elke klant een beetje sneller.'
+    : notice || (!started ? 'Kies welke sommen je wilt. De band gaat bij elke klant een beetje sneller.'
     : wrong !== null ? techniqueHint(question)
     : techniqueHint(question));
   const som = `${expressionText(question.left)} = ${expressionText(question.right)}`;
@@ -239,7 +244,13 @@ export default function RaceGame({ level, onFinish, onSound = () => undefined, s
             : <>{uitslag?.passed && level < 5 && <button className="ck-knop ck-knop--zacht" type="button" onClick={einde.onReplay}>Nog een keer</button>}
               <button className="ck-knop ck-knop--hoofd" type="button" onClick={uitslag?.passed && level < 5 ? einde.onNext : einde.onReplay}>{uitslag?.passed && level < 5 ? `Naar niveau ${level + 1}` : 'Nog een keer'}</button></>}
         </div>
-        : !started ? <button className="ck-knop ck-knop--hoofd" type="button" onClick={begin}>Open de winkel</button>
+        : !started ? <div className="wk-start">
+          <div className="wk-soorten" role="radiogroup" aria-label="Welke sommen?">
+            {SOORTEN.map(([id, teken, naam]) => <button key={id} type="button" role="radio" aria-checked={soort === id} aria-label={naam}
+              onClick={() => { setSoort(id); try { localStorage.setItem(SOORT_KEY, id); } catch { /* alleen gemak */ } const q = createCheckoutQuestion(level, 0, Math.random, id); questionRef.current = q; setQuestion(q); }}>{teken}</button>)}
+          </div>
+          <button className="ck-knop ck-knop--hoofd" type="button" onClick={begin}>Open de winkel</button>
+        </div>
         : <div className="wk-bellen" role="group" aria-label="Antwoorden" key={order.current}>
           {question.options.map((value, i) => <DragChoice key={value} value={value} label={`€${value}`} className={`ck-bel ck-glas ck-bel--${i + 1}${wrong === value ? ' is-fout' : ''}`}
             disabled={finished.current || falling} targetRef={doel} onOver={setOver} onChoose={answer} onDrop={value => answer(value)}>

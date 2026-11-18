@@ -80,3 +80,18 @@
 .lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd { background: var(--ck-actief); border: 0; box-shadow: 0 var(--ck-onderkant) 0 var(--ck-actief-rand); color: var(--ck-wit); }
 .lua-game-shell.lua-huisstijl .lua-play.ck-knop--hoofd:disabled { opacity: .6; }
 @media(max-width:700px) { .lua-huisstijl .lua-status { top: calc(var(--space-12) * 2 + var(--space-8)); }.lua-huisstijl .lua-bord { top: calc(var(--space-12) * 4); } }
+
+/* Startscherm met iconen: rijtjes schuifknoppen in plaats van zinnen. */
+.lua-huisstijl .lua-kies { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--ck-glas); border: 2px solid var(--ck-wit); }
+.lua-huisstijl .lua-kies button { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; min-width: 48px; justify-content: center; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; cursor: pointer; transition: background .25s var(--ck-veer), transform .2s var(--ck-veer); }
+.lua-huisstijl .lua-kies--klein button { padding: 0 12px; font-size: 20px; }
+.lua-huisstijl .lua-kies button:hover { transform: translateY(-2px); }
+.lua-huisstijl .lua-kies button[aria-checked=true] { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-actief-rand); }
+.lua-huisstijl .lua-kies button:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.lua-huisstijl .lua-rij { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+/* Tafels kleiner, Mix als laatste rondje in het rooster. */
+.lua-huisstijl .lua-menu .lua-tables > div { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.lua-huisstijl .lua-menu .lua-tables button { width: 46px; height: 46px; font-size: 18px; }
+.lua-huisstijl .lua-menu .lua-tables .lua-mix { grid-column: auto; min-width: 0; width: 46px; height: 46px; border-radius: 50%; font-size: 16px; }
+/* Het startpaneel iets lager en compacter, zodat het houten bord niet onder het topmenu verdwijnt. */
+@media (min-width: 761px) { .lua-huisstijl .lua-menu { top: calc(50% + 28px); transform: translate(-50%, -50%); gap: 10px; padding-top: 40px; } }

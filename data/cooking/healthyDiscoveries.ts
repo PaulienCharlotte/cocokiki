@@ -1,6 +1,7 @@
 import { GEZONDE_INGREDIENTEN } from './healthyRecipes';
 import { NUTRIENTS_BY_ID } from './nutrients';
 import type { IngredientDiscoveryConfig } from './types';
+import { PER_ANTWOORD } from '../../services/economie';
 
 const vragen: Record<string, { vraag: string; goed: string; fout: [string, string] }> = {
   'wholewheat-pasta': { vraag: 'Waarom kiezen we volkoren pasta?', goed: 'Die bevat meer vezels dan witte pasta.', fout: ['Die levert vooral meer calcium dan witte pasta.', 'Die wordt van alleen de kiem van graan gemaakt.'] },
@@ -27,7 +28,7 @@ export const GEZONDE_ONTDEKKINGEN: IngredientDiscoveryConfig[] = GEZONDE_INGREDI
   return { ingredientId: ingredient.id, title: `Ontdek ${ingredient.name.toLowerCase()}!`, collectionLabel: ingredient.name,
     educationalText: ingredient.origin!, heroFact: ingredient.facts[0], origin: { label: 'Van plant tot keuken', text: ingredient.origin! },
     nutrition: (ingredient.nutrientIds ?? []).map(id => ({ nutrient: NUTRIENTS_BY_ID[id].name, role: NUTRIENTS_BY_ID[id].bodyFunction })),
-    foodKnowledge: { label: 'In de keuken', text: ingredient.facts[0] }, rewardCoins: 5, encyclopediaEntryId: ingredient.id, difficulty: 1,
+    foodKnowledge: { label: 'In de keuken', text: ingredient.facts[0] }, rewardCoins: PER_ANTWOORD, encyclopediaEntryId: ingredient.id, difficulty: 1,
     questions: [{ id: `${ingredient.id}-knowledge`, type: 'single-choice', prompt: vraag.vraag, options: [{ id: 'juist', label: vraag.goed }, { id: 'anders', label: vraag.fout[0] }, { id: 'nog-anders', label: vraag.fout[1] }], correctOptionId: 'juist', feedbackExplanation: ingredient.facts[0] + ' ' + ingredient.origin, learningGoal: ['wholewheat-pasta', 'brown-rice', 'pepper', 'apple'].includes(ingredient.id) ? 'nutrition' : 'source' },
       { id: `${ingredient.id}-apply`, type: 'single-choice', prompt: verbanden[ingredient.id].vraag,
         options: [{ id: 'verband', label: verbanden[ingredient.id].goed }, { id: 'ander-verband', label: verbanden[ingredient.id].fout[0] }, { id: 'nog-een-verband', label: verbanden[ingredient.id].fout[1] }],

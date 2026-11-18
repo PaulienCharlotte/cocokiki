@@ -8,13 +8,12 @@ import FoodKnowledgeDialog from '../food/FoodKnowledge';
 import GardenCropFacts from '../plants/GardenCropFacts';
 import { Button, Dialog } from '../../design-system';
 import InfoKnop from '../ui/InfoKnop';
-import { Volume2, VolumeX } from 'lucide-react';
 import { useMathSound } from '../../games/math/useMathSound';
 import './discovery-room.css';
 
 /** The room is a visual entrance into existing knowledge and ongoing projects. */
 export default function WorldLocationLayout({ location, onNavigate }: { location: WorldLocation; onNavigate: (path: string) => void }) {
-  const { sound, toggleSound, play } = useMathSound();
+  const { play } = useMathSound();
   const pan = useRef<{ x: number; scroll: number } | null>(null);
   const room = DISCOVERY_ROOMS[location.id];
   const [selected, setSelected] = useState<DiscoveryObject | null>(null);
@@ -31,7 +30,6 @@ export default function WorldLocationLayout({ location, onNavigate }: { location
     </header>
     <nav className="ck-zone-gereedschap ck-glas" aria-label="Gereedschap">
       <InfoKnop titel="Kijk eens rond" character={location.id}>Tik op een voorwerp om een boek te openen, iets te ontdekken of verder te werken. Spellen vind je bovenin bij de gameknop. Nieuwe verzoeken staan op je To Do-lijst.</InfoKnop>
-      <button type="button" className="ck-knop ck-knop--rond" aria-label={sound ? 'Geluid uitzetten' : 'Geluid aanzetten'} onClick={toggleSound}>{sound ? <Volume2 /> : <VolumeX />}</button>
     </nav>
     <div className="discovery-room__viewport" tabIndex={0} aria-label="Kijk rond in de kamer" onPointerDown={event => {
       if (event.pointerType !== 'mouse' || (event.target as HTMLElement).closest('button')) return;

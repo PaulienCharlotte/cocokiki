@@ -46,34 +46,34 @@ test('metrische opdrachten rekenen cm naar mm en dm, drie tussenruimtes en cl na
   assert.equal(gardenTask(crop, 0, 1).answer, 50);
   assert.equal(gardenTask(crop, 0, 2).answer, .5);
   assert.equal(gardenTask(crop, 0, 3).answer, 1.5);
-  assert.equal(gardenTask(crop, 1, 1).answer, 100);
-  assert.equal(gardenTask(crop, 1, 2).answer, .1);
-  assert.equal(gardenTask(crop, 2, 2).answer, .4);
+  assert.equal(gardenTask(crop, 1, 1).answer, 200);
+  assert.equal(gardenTask(crop, 1, 2).answer, .2);
+  assert.equal(gardenTask(crop, 2, 2).answer, .6);
   assert.equal(gardenTask(crop, 3, 2).answer, .7);
   assert.equal(gardenTask(crop, 3, 3).answer, 2.8);
   assert.equal(parseGardenNumber(' 0,1 '), .1);
   assert.equal(parseGardenNumber('0.1'), .1);
   for (const value of ['', '1,2,3', '1e2', '-1', 'Infinity', '0.1 liter']) assert.equal(parseGardenNumber(value), null);
 });
-test('plaatsen en omrekenen zijn aparte opdrachten met eenmalige beloningen', () => stored(() => {
+test('plaatsen en omrekenen zijn aparte opdrachten met één beloning per stap', () => stored(() => {
   assert.ok(plantGardenPlot(0, 'carrot'));
   assert.equal(plantGardenPlot(0, 'tomato'), false);
   const plot = loadGarden().plots[0]!;
   assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 1, 2, 3]), 'wrong');
   assert.equal(solveGardenPart(0, plot.id, 0, 'conversion', '50'), 'stale');
   assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 2, 4, 6]), 'correct');
-  assert.equal(loadCurrency(), 2);
+  assert.equal(loadCurrency(), 0);
   assert.equal(loadGarden().plots[0]!.step, 0);
   assert.equal(solveGardenPart(0, plot.id, 0, 'action', '', [0, 2, 4, 6]), 'stale');
   assert.equal(solveGardenPart(0, plot.id, 0, 'conversion', '5'), 'wrong');
   assert.equal(solveGardenPart(0, plot.id, 0, 'conversion', '50'), 'correct');
   assert.equal(loadCurrency(), 4);
-  assert.equal(solveGardenPart(0, plot.id, 1, 'conversion', '100'), 'correct');
-  assert.equal(solveGardenPart(0, plot.id, 1, 'action', '', [], 200), 'wrong');
-  assert.equal(solveGardenPart(0, plot.id, 1, 'action', '', [], 100), 'correct');
-  assert.equal(solveGardenPart(0, plot.id, 2, 'conversion', '400'), 'stale');
+  assert.equal(solveGardenPart(0, plot.id, 1, 'conversion', '200'), 'correct');
+  assert.equal(solveGardenPart(0, plot.id, 1, 'action', '', [], 100), 'wrong');
+  assert.equal(solveGardenPart(0, plot.id, 1, 'action', '', [], 200), 'correct');
+  assert.equal(solveGardenPart(0, plot.id, 2, 'conversion', '600'), 'stale');
   assert.ok(nextGardenDay());
-  assert.equal(solveGardenPart(0, plot.id, 2, 'conversion', '400'), 'correct');
+  assert.equal(solveGardenPart(0, plot.id, 2, 'conversion', '600'), 'correct');
 }));
 test('elk gewas doorloopt planten, verzorgen, oogsten en eenmalig verkopen', () => stored(() => {
   let earned = 0;

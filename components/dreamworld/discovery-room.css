@@ -9,7 +9,7 @@
 .discovery-room__viewport { position: absolute; inset: 0; overflow: auto; }
 .discovery-room__scene { position: absolute; width: max(100%, calc(100svh * var(--scene-ratio))); height: 100%; }
 .discovery-room .discovery-room__background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
-.discovery-room .ck-zone-gereedschap { z-index: 3; left: auto; right: var(--ck-rand); top: calc(var(--ck-tik-min) * 2 + var(--ck-rand)); }
+.discovery-room .ck-zone-gereedschap { z-index: 3; top: calc(var(--ck-tik-min) * 2 + var(--ck-rand)); }
 .discovery-room .ck-zone-gereedschap button { color: var(--ck-cacao); }
 .discovery-room__swipe { display: none; }
 .discovery-object { position: absolute; left: var(--object-x); top: var(--object-y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: var(--ck-onderkant); border: 0; padding: var(--ck-onderkant); background: none; color: var(--ck-cacao); cursor: pointer; min-height: var(--ck-tik-min); min-width: var(--ck-tik-min); }
@@ -41,3 +41,5 @@ body .ck-scherm.discovery-room .ck-zone-gereedschap {
 .discovery-crops { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-3); margin-block: var(--space-4); }
 .discovery-crops button { display: flex; align-items: center; gap: var(--space-2); min-height: var(--ck-tik-min); padding: var(--space-2); border: 0; border-radius: var(--ck-rond-knop); background: var(--ck-plekje); color: var(--ck-cacao); font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); cursor: pointer; }
 .discovery-crops img { width: var(--ck-tik-min); height: var(--ck-tik-min); object-fit: contain; }
+/* Een lang woord breekt netjes af in plaats van uit het vakje te steken. */
+.discovery-object__label { overflow-wrap: break-word; hyphens: auto; }

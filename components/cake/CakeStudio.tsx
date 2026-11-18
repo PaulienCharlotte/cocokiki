@@ -247,8 +247,9 @@ export default function CakeStudio({ onClose, onFreePlay }: { onClose: () => voi
   if (isOrder && !order.started) return <section className="taart-klaar"><article className="taart-klaar__kaart ck-paper-surface">
     <SpeechBubble character="seb" label="een verjaardagstaart">Mijn zusje is jarig! Ze houdt van roze en aardbeien. Versier jij een roze taart met minstens één aardbei?</SpeechBubble>
     <p>Verdien {TASK_REWARDS.cake} muntjes bij het afleveren.</p>
-    <Button variant="secondary" aria-pressed={timed} onClick={() => setTimed(value => !value)}>{timed ? 'Met tijdsbonus: aan' : 'Met tijdsbonus: uit'}</Button>
-    <p>Met tijdsbonus: {TASK_REWARDS.cakeSpeed} extra muntjes binnen 5 minuten. Daarna mag je rustig verder.</p>
+    {/* Geen tijdsbonus meer (services/economie.ts): versieren is creatief, geen race. */}
+    {TASK_REWARDS.cakeSpeed > 0 && <><Button variant="secondary" aria-pressed={timed} onClick={() => setTimed(value => !value)}>{timed ? 'Met tijdsbonus: aan' : 'Met tijdsbonus: uit'}</Button>
+    <p>Met tijdsbonus: {TASK_REWARDS.cakeSpeed} extra muntjes binnen 5 minuten. Daarna mag je rustig verder.</p></>}
     <Button onClick={() => {
       const next = { started: true, timed, elapsed: 0, delivered: false, reward: 0 };
       if (saveCakeOrder(next)) setOrder(next);

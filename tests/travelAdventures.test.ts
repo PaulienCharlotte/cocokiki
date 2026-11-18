@@ -130,5 +130,5 @@ test('mislukt bewaren rondt geen reisstap af en betaalt niet; opnieuw proberen b
   block(false);
   assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', all.at(-1)!));
   assert.ok(recordTravelStep(adventure, attempt.attemptId, 'facts', all.at(-1)!));
-  assert.equal(loadCurrency(), 10);
+  assert.equal(loadCurrency(), 0); // Stappen belonen niet meer los; de reisbonus komt aan het eind (services/economie.ts).
 }));

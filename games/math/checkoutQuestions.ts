@@ -10,13 +10,26 @@ const variants: Record<MathLevel, readonly Variant[]> = {
   4: ['combined', 'change', 'share', 'missing-subtract', 'groups', 'discount'],
   5: ['combined', 'missing-multiply', 'change', 'share', 'missing-subtract', 'discount', 'restock'],
 };
+/** Welke sommen je oefent in Winkelgekte: alles, of één rekenteken (handig als tempotoets). */
+export type CheckoutSoort = 'alles' | '+' | '-' | '*' | '/';
+const TEKEN_VAN: Record<Variant, CheckoutSoort> = {
+  total: '+', restock: '+', 'missing-add': '+', change: '-', discount: '-', sold: '-', 'missing-subtract': '-',
+  groups: '*', 'missing-multiply': '*', share: '/', combined: 'alles',
+};
+/** De varianten voor dit niveau en dit teken. Heeft het niveau dat teken niet, dan die van alle niveaus. */
+function variantenVoor(level: MathLevel, soort: CheckoutSoort): readonly Variant[] {
+  if (soort === 'alles') return variants[level];
+  const hier = variants[level].filter(v => TEKEN_VAN[v] === soort);
+  return hier.length ? hier : [...new Set(Object.values(variants).flat())].filter(v => TEKEN_VAN[v] === soort);
+}
 const value = (n: number): Expression => ({ value: n });
 const blank: Expression = { blank: true };
 const sum = (op: Operation, left: Expression, right: Expression): Expression => ({ op, left, right });
 
-export function createCheckoutQuestion(level: MathLevel, index = 0, random = Math.random): MathQuestion {
+export function createCheckoutQuestion(level: MathLevel, index = 0, random = Math.random, soort: CheckoutSoort = 'alles'): MathQuestion {
   const integer = (min: number, max: number) => min + Math.min(max - min, Math.floor(random() * (max - min + 1)));
-  const variant = variants[level][index % variants[level].length];
+  const lijst = variantenVoor(level, soort);
+  const variant = lijst[index % lijst.length];
   const limit = [20, 50, 100, 100, 1000][level - 1];
   let a = integer(2, Math.floor(limit / 2)), b = integer(1, Math.floor(limit / 2));
   let op: Operation = '+', left = sum('+', value(a), value(b)), right = blank;

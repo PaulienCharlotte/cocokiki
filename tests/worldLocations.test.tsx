@@ -130,7 +130,7 @@ test('losse spellen blijven bereikbaar in het spelmenu en Lua krijgt projecten',
   for (const id of ['clock', 'topo', 'flags-memory']) assert.ok(FAVORITE_GAME_CATALOG.some(item => item.id === id));
   assert.ok(!FAVORITE_GAME_CATALOG.some(item => item.id === 'plant-clinic'));
   assert.ok(FAVORITE_GAME_CATALOG.some(item => item.id === 'taartenatelier' && item.path === '/games/taartenatelier'));
-  assert.equal(DISCOVERY_ROOMS.lua.objects[0].path, '/opdrachten/luna-babykamer');
+  assert.equal(DISCOVERY_ROOMS.lua.objects[0].path, '/opdrachten?gebied=inrichten');
   assert.equal(DISCOVERY_ROOMS.seb.objects.find(item => item.id === 'atlas')?.path, '/encyclopedie?tab=plekken');
   assert.equal(DISCOVERY_ROOMS.seb.objects.find(item => item.id === 'topo')?.path, '/games/topo');
 });

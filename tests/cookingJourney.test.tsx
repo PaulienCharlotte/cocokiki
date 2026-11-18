@@ -162,7 +162,7 @@ test('een hervat recept slaat een inmiddels bekend ingrediënt over en opnieuw o
 
 test('ingredient discovery content defines the three requested questions and rewards', () => {
   assert.deepEqual(new Set(INGREDIENT_DISCOVERIES.map(item => item.ingredientId)), new Set(['banana', 'eggs', 'oats', 'yogurt', 'strawberry', 'flour', 'sugar', 'milk', 'blueberry', 'sunflower-oil', 'baking-powder', 'salt', 'vanilla-extract', 'wholewheat-pasta', 'brown-rice', 'chickpeas', 'tomato', 'pepper', 'spinach', 'apple', 'olive-oil']));
-  assert.ok(INGREDIENT_DISCOVERIES.every(item => item.rewardCoins === 5));
+  assert.ok(INGREDIENT_DISCOVERIES.every(item => item.rewardCoins === 2));
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.banana.questions[0].correctOptionId, 'tropical');
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.eggs.questions[0].correctOptionId, 'chicken');
   assert.equal(INGREDIENT_DISCOVERIES_BY_ID.oats.questions[0].correctOptionId, 'oats');
@@ -181,7 +181,7 @@ test('incorrect discovery answers persist an attempt and allow a retry without r
 
   const retry = answerDiscoveryQuestion(wrong.progress, recipe.id, 'tropical');
   assert.equal(retry.correct, true);
-  assert.equal(retry.coinDelta, 5);
+  assert.equal(retry.coinDelta, 2);
   assert.equal(retry.progress.journeys[recipe.id]?.discovery.attemptsByIngredient.banana, 2);
 });
 
@@ -206,11 +206,11 @@ test('all ingredient discoveries earn fifteen coins and advance to the math stag
     state = showDiscoveryQuestion(state, recipe.id);
     const config = INGREDIENT_DISCOVERIES_BY_ID[ingredientId];
     const result = answerDiscoveryQuestion(state, recipe.id, config.questions[0].correctOptionId);
-    assert.equal(result.coinDelta, 5);
+    assert.equal(result.coinDelta, 2);
     state = collectCurrentIngredient(showIngredientCollection(result.progress, recipe.id), recipe.id);
   }
   assert.equal(state.journeys[recipe.id]?.discovery.step, 'complete');
-  assert.equal(state.journeys[recipe.id]?.discovery.coinsEarned, 15);
+  assert.equal(state.journeys[recipe.id]?.discovery.coinsEarned, 6);
   const next = completeNutrientMemory(advanceJourney(state, recipe.id, 'nutrient-memory'), recipe.id, recipe.education!.nutrientMemory!.activityId);
   assert.equal(next.journeys[recipe.id]?.stage, 'challenges');
   assert.ok(next.journeys[recipe.id]?.completedStages.includes('discovery'));
@@ -257,7 +257,7 @@ test('math challenge catalog defines four unique data-driven challenges and thir
   assert.deepEqual(BANANA_PANCAKE_MATH_CHALLENGES.map(item => item.type), [
     'quantity-selection', 'recipe-scaling', 'interactive-weighing', 'sequence-ordering',
   ]);
-  assert.equal(BANANA_PANCAKE_MATH_CHALLENGES.reduce((sum, item) => sum + item.rewardCoins, MATH_COMPLETION_BONUS), 30);
+  assert.equal(BANANA_PANCAKE_MATH_CHALLENGES.reduce((sum, item) => sum + item.rewardCoins, MATH_COMPLETION_BONUS), 10);
 });
 
 test('math challenge validation accepts exact quantities, weight and sequence', () => {
@@ -280,7 +280,7 @@ test('math journey persists progress, awards at most thirty coins and unlocks sh
   state = secondWrong.progress;
 
   const firstCorrect = submitMathChallenge(state, 'banana-pancakes', 4);
-  assert.equal(firstCorrect.coinDelta, 5);
+  assert.equal(firstCorrect.coinDelta, 2);
   state = continueMathChallenges(firstCorrect.progress, 'banana-pancakes').progress;
   const resumed = migrateCookingProgress(JSON.parse(JSON.stringify(state)));
   assert.equal(resumed.journeys['banana-pancakes']?.math.currentChallengeIndex, 1);
@@ -288,8 +288,8 @@ test('math journey persists progress, awards at most thirty coins and unlocks sh
   assert.equal(resumed.journeys['banana-pancakes']?.math.attemptsByChallenge['banana-pancakes-egg-quantity'], 3);
 
   const completed = completeMath(resumed);
-  assert.equal(completed.coins, 25);
-  assert.equal(completed.state.journeys['banana-pancakes']?.math.coinsEarned, 30);
+  assert.equal(completed.coins, 8);
+  assert.equal(completed.state.journeys['banana-pancakes']?.math.coinsEarned, 10);
   assert.equal(completed.state.journeys['banana-pancakes']?.math.step, 'complete');
   assert.equal(nextRequiredStage(completed.state, 'banana-pancakes'), 'shopping');
   assert.equal(advanceJourney(completed.state, 'banana-pancakes', 'shopping').journeys['banana-pancakes']?.stage, 'shopping');
@@ -298,7 +298,7 @@ test('math journey persists progress, awards at most thirty coins and unlocks sh
 test('math replay remains reward-free and does not alter saved completion', () => {
   const saved = completeMath(mathReadyProgress()).state;
   const replay = createMathReplay(saved, 'banana-pancakes');
-  assert.equal(saved.journeys['banana-pancakes']?.math.coinsEarned, 30);
+  assert.equal(saved.journeys['banana-pancakes']?.math.coinsEarned, 10);
   assert.equal(replay.journeys['banana-pancakes']?.math.step, 'intro');
   const started = startMathChallenges(replay, 'banana-pancakes');
   const answer = submitMathChallenge(started, 'banana-pancakes', 4);

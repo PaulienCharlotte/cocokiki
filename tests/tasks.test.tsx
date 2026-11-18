@@ -67,14 +67,14 @@ test('opdrachtantwoorden gebruiken losse knoppen en Winkelgekte toont geen overb
 });
 
 
-test('vijf zelfstandig goede dagantwoorden betalen samen precies 100 CocoCoins, ook na herladen', () => stored(() => {
+test('vijf zelfstandig goede dagantwoorden betalen samen precies 25 CocoCoins, ook na herladen', () => stored(() => {
   const day = dagSleutel();
-  assert.equal(DAILY_REWARD, 20);
+  assert.equal(DAILY_REWARD, 5);
   for (const q of dailyQuestions(day)) assert.ok(answerDaily(day, q.id, q.antwoord));
-  assert.equal(loadCurrency(), 100);
-  assert.equal(dailyEarned(loadDailyPractice(day)), 100);
+  assert.equal(loadCurrency(), 25);
+  assert.equal(dailyEarned(loadDailyPractice(day)), 25);
   for (const q of dailyQuestions(day)) assert.equal(answerDaily(day, q.id, q.antwoord), false);
-  assert.equal(loadCurrency(), 100);
+  assert.equal(loadCurrency(), 25);
 }));
 
 test('oude dagantwoorden tonen de al ontvangen beloning en worden niet opgehoogd', () => {

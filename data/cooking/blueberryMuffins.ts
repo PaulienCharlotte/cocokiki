@@ -2,6 +2,7 @@ import type { CookingStepConfig, OvenConfig } from './preparation';
 import type { MathChallengeConfig, RecipeConfig } from './types';
 import { BAKING_ASSETS as a } from './muffinIngredients';
 import { recipeSpoonStock } from './recipeMeasures';
+import { OPDRACHT_BONUS, PER_ANTWOORD } from '../../services/economie';
 
 const kit = '/assets/library/cooking/kit/';
 export const MUFFIN_OVEN: OvenConfig = { targetTemperature: 200, minimumMinutes: 15, maximumMinutes: 20, temperatureTolerance: 15, preheatDegreesPerSecond: 24, gameSecondsPerMinute: .6, coolingSeconds: 4, minimumTemperature: 100, maximumTemperature: 260, temperatureStep: 5, minimumSelectableMinutes: 5, maximumSelectableMinutes: 30 };
@@ -11,14 +12,14 @@ const weigh = (id: string, title: string, target: number, asset: string, content
 const spoon = (id: string, title: string, target: number, asset: string): CookingStepConfig => ({ ...base, id, title, target, instruction: `${title}. Elk maatje is een kwart theelepel.`, mechanic: 'measure', vessel: 'spoon', vesselAsset: kit + 'spoon.webp', unitLabel: 'kwart tl', increments: [1, 2, 4], maximum: target + 4, asset });
 
 export const MUFFIN_MATH: MathChallengeConfig[] = [
-  { id: 'muffin-weigh', recipeId: 'blueberry-muffins', type: 'interactive-weighing', title: 'Weeg de bessen', instruction: 'Weeg 200 gram blauwe bessen.', learningObjective: 'Gewichten optellen', difficulty: 2, ingredientId: 'blueberry', targetGrams: 200, increments: [5, 25, 50], rewardCoins: 5, successFeedback: 'Precies 200 gram!' },
-  { id: 'muffin-share', recipeId: 'blueberry-muffins', type: 'quantity-selection', title: 'Bessen verdelen', instruction: '200 gram bessen voor 10 muffins. Hoeveel gram is dat gemiddeld per muffin?', learningObjective: 'Delen en verhoudingen', difficulty: 2, ingredientId: 'blueberry', baseServings: 10, targetServings: 1, baseQuantity: 200, correctQuantity: 20, minimum: 0, maximum: 100, step: 5, unit: 'g', rewardCoins: 5, successFeedback: '200 gedeeld door 10 is 20 gram.' },
-  { id: 'muffin-double', recipeId: 'blueberry-muffins', type: 'recipe-scaling', title: 'Een dubbele portie', instruction: 'Van 10 naar 20 muffins: verdubbel de bloem en bessen.', learningObjective: 'Een recept verdubbelen', difficulty: 2, baseServings: 10, targetServings: 20, quantities: [{ ingredientId: 'flour', base: 195, target: 390, step: 5, unit: 'g' }, { ingredientId: 'blueberry', base: 200, target: 400, step: 25, unit: 'g' }], rewardCoins: 5, successFeedback: 'Goed! 390 gram bloem en 400 gram bessen.' },
+  { id: 'muffin-weigh', recipeId: 'blueberry-muffins', type: 'interactive-weighing', title: 'Weeg de bessen', instruction: 'Weeg 200 gram blauwe bessen.', learningObjective: 'Gewichten optellen', difficulty: 2, ingredientId: 'blueberry', targetGrams: 200, increments: [5, 25, 50], rewardCoins: PER_ANTWOORD, successFeedback: 'Precies 200 gram!' },
+  { id: 'muffin-share', recipeId: 'blueberry-muffins', type: 'quantity-selection', title: 'Bessen verdelen', instruction: '200 gram bessen voor 10 muffins. Hoeveel gram is dat gemiddeld per muffin?', learningObjective: 'Delen en verhoudingen', difficulty: 2, ingredientId: 'blueberry', baseServings: 10, targetServings: 1, baseQuantity: 200, correctQuantity: 20, minimum: 0, maximum: 100, step: 5, unit: 'g', rewardCoins: PER_ANTWOORD, successFeedback: '200 gedeeld door 10 is 20 gram.' },
+  { id: 'muffin-double', recipeId: 'blueberry-muffins', type: 'recipe-scaling', title: 'Een dubbele portie', instruction: 'Van 10 naar 20 muffins: verdubbel de bloem en bessen.', learningObjective: 'Een recept verdubbelen', difficulty: 2, baseServings: 10, targetServings: 20, quantities: [{ ingredientId: 'flour', base: 195, target: 390, step: 5, unit: 'g' }, { ingredientId: 'blueberry', base: 200, target: 400, step: 25, unit: 'g' }], rewardCoins: PER_ANTWOORD, successFeedback: 'Goed! 390 gram bloem en 400 gram bessen.' },
 ];
 
 export const BLUEBERRY_MUFFINS: RecipeConfig = {
   id: 'blueberry-muffins', name: 'Blauwe-bessenmuffins', category: 'baking', availability: 'playable', requiredCompletedRecipes: 0, level: 2,
-  shortDescription: 'Maak beslag, vul tien vormpjes en bedien zelf de oven.', preparationMinutes: 30, servings: 10, image: a.muffin, contentStatus: 'ready', rewardCoins: 10,
+  shortDescription: 'Maak beslag, vul tien vormpjes en bedien zelf de oven.', preparationMinutes: 30, servings: 10, image: a.muffin, contentStatus: 'ready', rewardCoins: OPDRACHT_BONUS.receptKlaar,
   ingredients: [
     { ingredientId: 'flour', amount: 195, unit: 'gram', displayAmount: '195 g bloem' },
     { ingredientId: 'sugar', amount: 163, unit: 'gram', displayAmount: '150 g suiker + eventueel 1 eetlepel bovenop', optionalPortion: { amount: 13, stepId: 'fill', selectedChoice: 'sugar' } },

@@ -258,11 +258,11 @@ test('math rewards solved answers, repeats and prevents duplicate settlement', (
   assert.equal(finishMathLevel('multiply', 1, perfect).reward, 20);
   assert.equal(finishMathLevel('multiply', 1, perfect).reward, 0);
   // Moeilijker werk levert meer op: per opgave één munt extra per niveau.
-  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, 10 * (2 + level - 1));
-  assert.equal(loadCurrency(), 216);
+  for (const level of [2, 3, 4, 5] as const) assert.equal(finishMathLevel('multiply', level, perfect).reward, 10 * (2 + (level >= 4 ? 1 : 0)));
+  assert.equal(loadCurrency(), 136);
   assert.equal(finishMathLevel('multiply', 5, perfect).reward, 0);
   assert.equal(finishMathLevel('multiply', 1, { correct: 2, total: 10, score: 2, mistakes: 8 }).reward, 4);
-  assert.equal(loadCurrency(), 220);
+  assert.equal(loadCurrency(), 140);
   assert.deepEqual(loadMathProgress().games.multiply.completed, [1, 2, 3, 4, 5]);
   assert.deepEqual(loadMathProgress().games.divide.completed, []);
   assert.equal(loadMathProgress().games.multiply.best[1]?.correct, 10);
@@ -336,10 +336,10 @@ test('race uses shared coins without a game-specific daily cap and preserves old
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 69);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), day).reward, 0);
   assert.equal(finishMathLevel('race', 1, run(24, 'run-one'), day).ok, false);
-  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, 400);
-  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 750);
+  assert.equal(finishMathLevel('race', 2, run(100, 'run-two'), day).reward, 300);
+  assert.equal(finishMathLevel('race', 3, run(150, 'run-three'), day).reward, 450);
   assert.equal(loadMathProgress().games.race.best[3]?.score, 150);
-  assert.equal(loadCurrency(), before + 1219);
+  assert.equal(loadCurrency(), before + 819);
   assert.equal(raceCoinsAvailable(day), 0);
   assert.equal(raceCoinsAvailable(tomorrow), RACE_DAILY_COIN_CAP);
   assert.equal(finishMathLevel('race', 1, run(23, 'run-one'), tomorrow).reward, 0);
@@ -546,7 +546,7 @@ test('je kiest zelf welke tafels je oefent, ook meerdere tegelijk', () => {
   // Het spel zelf laadt Phaser, dus hier kijken we naar de bron: de keuze
   // staat er ook als je via het rekeneiland binnenkomt (geen !mathAdventure).
   const menu = readFileSync('games/red-baby-lua/RedBabyLuaGame.tsx', 'utf8');
-  assert.match(menu, /Welke tafels wil je oefenen/);
+  assert.match(menu, /Welke tafels\?/);
   assert.doesNotMatch(menu, /\{!mathAdventure && <><fieldset className="lua-modes"/);
   assert.match(menu, /table: \[\.\.\.LUA_LEVEL_TABLES\[mathAdventure\.level - 1\]\]/);
 });

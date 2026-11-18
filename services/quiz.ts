@@ -1,9 +1,10 @@
 import { alleVragen, type QuizVraag } from '../data/quiz/vragen';
 import { commitLocalState, readDocument } from './localState';
 import { awardCurrencyOnce } from './currency';
+import { PER_ANTWOORD } from './economie';
 
 export const QUIZ_KEY = 'cocokiki:quiz:v1';
-export const QUIZ_BELONING = 1;
+export const QUIZ_BELONING = PER_ANTWOORD;
 
 export interface QuizState {
   version: 1;

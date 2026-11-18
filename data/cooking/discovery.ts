@@ -2,6 +2,7 @@ import { GEZONDE_ONTDEKKINGEN } from './healthyDiscoveries';
 import { COOKING_ASSETS } from './catalog';
 import type { IngredientDiscoveryConfig } from './types';
 import { MUFFIN_DISCOVERIES } from './muffinIngredients';
+import { PER_ANTWOORD } from '../../services/economie';
 
 export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
   ...MUFFIN_DISCOVERIES,
@@ -20,7 +21,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       { nutrient: 'Vezels', role: 'Ondersteunen een normale spijsvertering.' },
     ],
     foodKnowledge: { label: 'Wist je dat?', text: 'Bananen groeien in grote trossen en worden meestal groen geplukt voor het vervoer.' },
-    rewardCoins: 5,
+    rewardCoins: PER_ANTWOORD,
     encyclopediaEntryId: 'banana',
     difficulty: 1,
     questions: [{
@@ -48,7 +49,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       { nutrient: 'Vitamine B12', role: 'Helpt bij de aanmaak van rode bloedcellen.' },
     ],
     foodKnowledge: { label: 'Keukenkennis', text: 'Bewaar eieren koel en was je handen nadat je rauw ei hebt aangeraakt.' },
-    rewardCoins: 5,
+    rewardCoins: PER_ANTWOORD,
     encyclopediaEntryId: 'eggs',
     difficulty: 1,
     questions: [{
@@ -77,7 +78,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       { nutrient: 'Koolhydraten', role: 'Leveren energie voor bewegen en leren.' },
     ],
     foodKnowledge: { label: 'Minder verspillen', text: 'Bewaar havermout droog en goed afgesloten; zo blijft het lang bruikbaar.' },
-    rewardCoins: 5,
+    rewardCoins: PER_ANTWOORD,
     encyclopediaEntryId: 'oats',
     difficulty: 1,
     questions: [{
@@ -103,7 +104,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       { nutrient: 'Calcium', role: 'Helpt botten en tanden gezond te houden.' },
     ],
     foodKnowledge: { label: 'Koel bewaren', text: 'Bewaar yoghurt in de koelkast en gebruik een schone lepel.' },
-    rewardCoins: 5, encyclopediaEntryId: 'yogurt', difficulty: 1,
+    rewardCoins: PER_ANTWOORD, encyclopediaEntryId: 'yogurt', difficulty: 1,
     questions: [{
       id: 'yogurt-from-milk', type: 'single-choice', prompt: 'Hoe wordt melk yoghurt?',
       options: [
@@ -124,7 +125,7 @@ export const INGREDIENT_DISCOVERIES: IngredientDiscoveryConfig[] = [
       { nutrient: 'Vezels', role: 'Ondersteunen een normale spijsvertering.' },
     ],
     foodKnowledge: { label: 'Voorbereiden', text: 'Was aardbeien en haal het groene kroontje eraf. Vraag hulp bij het snijden.' },
-    rewardCoins: 5, encyclopediaEntryId: 'strawberry', difficulty: 1,
+    rewardCoins: PER_ANTWOORD, encyclopediaEntryId: 'strawberry', difficulty: 1,
     questions: [{
       id: 'strawberry-growing', type: 'single-choice', prompt: 'Waar groeien aardbeien?',
       options: [

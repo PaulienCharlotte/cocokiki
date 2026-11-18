@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList, LogOut, LogIn } from 'lucide-react';
+import { ArrowLeft, House, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList, LogOut, LogIn } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -87,6 +87,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
       </button>
       <div className="world-hud__tools ck-glas">
         {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
+        {onNavigate && <IconButton className="world-desktop-tool" label="Naar mijn boomhut" size="small" icon={<House size={20} />} onClick={() => onNavigate('/treehouse')} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Alle spellen openen" size="small" icon={<Gamepad2 size={20} />} onClick={() => onNavigate('/mijn-spellen')} />}
         {onNavigate && <IconButton className="world-desktop-tool" label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
@@ -134,6 +135,7 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
           {navigationOpen && <nav className="world-hud__navigation" aria-label="Hoofdnavigatie">
             <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
             {onNavigate && <>
+              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/treehouse'); }}><House />Mijn boomhut</button>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 />Alle spellen</button>
               <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />To Do</button>

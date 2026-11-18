@@ -139,7 +139,7 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   const patient = { ...maakGeval(PATIENT_KINDS[0], () => 0), consultId: 'consult-1' };
 
   const eerste = finishConsult(staat, patient, 0, false);
-  assert.equal(eerste.coins, 30);
+  assert.equal(eerste.coins, 10);
   assert.equal(eerste.stampEarned, false);
   staat = eerste.state;
 
@@ -151,7 +151,7 @@ test('een stempel kost drie goede diagnoses en telt maar één keer per consult'
   // Een denkstap of herkansing verandert de beloning niet.
   staat = finishConsult(staat, { ...patient, consultId: 'consult-2' }, 0, true).state;
   const derde = finishConsult(staat, { ...patient, consultId: 'consult-3' }, 2, false);
-  assert.equal(derde.coins, 30);
+  assert.equal(derde.coins, 10);
   assert.equal(derde.stampEarned, true);
   assert.equal(hasStamp(derde.state, patient.speciesId), true);
   assert.equal(derde.state.correct[patient.speciesId], STAMPS_NEEDED);

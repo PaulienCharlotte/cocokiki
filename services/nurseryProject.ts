@@ -3,6 +3,7 @@ import { NURSERY_QUESTIONS, type NurseryItemId, type NurseryQuestionId } from '.
 import { INRICHT_PROJECT_BY_ID, LUNA_PROJECT, type InrichtProject } from '../data/projects';
 import { MIN_PLACEMENT_SCALE, MAX_PLACEMENT_SCALE, SCALE_STEP } from './roomInventory';
 import { commitLocalState, readDocument, readLocalState } from './localState';
+import { OPDRACHT_BONUS } from './economie';
 /**
  * De motor achter elke inrichtopdracht (zie data/projects/index.ts). Het
  * scherm kiest welke opdracht actief is; zonder keuze is dat Luna's kamer.
@@ -130,7 +131,7 @@ export function nurseryLayoutReady(s: NurseryState): boolean {
 export function finishNursery(revision: number): boolean {
   const s = loadNursery();
   if (s.revision !== revision || s.stage !== 'decorate' || NURSERY_QUESTIONS.some(id => !s.solved.includes(id)) || !nurseryLayoutReady(s)) return false;
-  return save(s, { ...s, stage: 'complete' }, { id: `${P.beloningPrefix}:finish`, amount: P.verkoop ?? s.solved.filter(id => !s.helped.includes(id)).length * TASK_REWARDS.nurseryFinishStep });
+  return save(s, { ...s, stage: 'complete' }, { id: `${P.beloningPrefix}:finish`, amount: Math.round((P.verkoop ?? OPDRACHT_BONUS.inrichten) * s.solved.filter(id => !s.helped.includes(id)).length / NURSERY_QUESTIONS.length) });
 }
 export function nurseryEarned(): number {
   try { return Object.entries(readLocalState().appliedTransactions).filter(([id]) => id.startsWith(`${P.beloningPrefix}:`)).reduce((sum, [, amount]) => sum + amount, 0); } catch { return 0; }

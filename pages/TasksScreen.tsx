@@ -21,7 +21,7 @@ import { loadNursery } from '../services/nurseryProject';
 import { BESTELLINGEN } from '../data/cooking/orders';
 import { LEARNING_COINS } from '../services/learningReward';
 import { DAILY_KEY, DAILY_REWARD, loadDailyPractice, dailyEarned } from '../services/dailyPractice';
-import { TRAVEL_STEP_TOTAL } from '../services/travelJourney';
+import { OPDRACHT_BONUS, PER_ANTWOORD } from '../services/economie';
 import './tasks.css';
 
 type Area = 'rekenen' | 'alles' | 'bakken' | 'planten' | 'inrichten' | 'reizen' | 'vandaag';
@@ -42,7 +42,16 @@ export default function TasksScreen({ coins = 0, onNavigate }: { coins?: number;
   useEffect(() => subscribeLocalState(() => setDaily(loadDailyPractice()), DAILY_KEY), []);
   const dailyDone = Object.keys(daily.answers).length;
   const progress = loadCookingProgress(), active = lopendeBestelling(progress), projectComplete = loadNursery('luna').stage === 'complete', kerstComplete = loadNursery('kerst').stage === 'complete';
-  const rewardFor = (id: string) => INRICHT_PROJECT_BY_ID[id === 'nursery' ? 'luna' : id]?.verkoop ?? (TRAVEL_ADVENTURES.find(item => item.id === id) ? TRAVEL_ADVENTURES.find(item => item.id === id)!.reward + TRAVEL_STEP_TOTAL : undefined) ?? BESTELLINGEN.find(order => order.id === id)?.bonus ?? (id === 'cake' ? TASK_REWARDS.cake : id === 'nursery' ? TASK_REWARDS.nurseryMax : id === 'clinic' ? TASK_REWARDS.clinic : id === 'garden' ? Math.max(...GARDEN_CROPS.map(crop => crop.coins)) : LEARNING_COINS);
+  // Eén regel voor elk kaartje: de bonus uit services/economie.ts. Sommen-spellen tonen wat één goede som oplevert.
+  const PER_SOM = new Set(['tempo', 'shop-race']);
+  const rewardFor = (id: string): number => PER_SOM.has(id) ? PER_ANTWOORD
+    : id === 'kerst' || id === 'nursery' ? OPDRACHT_BONUS.inrichten
+    : TRAVEL_ADVENTURES.some(item => item.id === id) ? OPDRACHT_BONUS.reis
+    : BESTELLINGEN.some(order => order.id === id) ? OPDRACHT_BONUS.bakken
+    : id === 'cake' ? OPDRACHT_BONUS.taart
+    : id === 'clinic' ? OPDRACHT_BONUS.plantGenezen
+    : id === 'garden' ? OPDRACHT_BONUS.oogstVerkopen
+    : PER_ANTWOORD;
   const finished = new Set(completedTasks().map(task => task.id));
   const travel = loadTravelAdventures();
   const invitations = loadVillageInvitations();
@@ -50,12 +59,12 @@ export default function TasksScreen({ coins = 0, onNavigate }: { coins?: number;
     ...TRAVEL_ADVENTURES.map(adventure => ({ id: adventure.id, area: 'reizen', titel: adventure.title, onder: 'Ontdek weetjes, speel memory en verken de kaart.', beeld: adventure.image, character: 'seb' as const })),
     ...openBestellingen(progress).map(order => ({ id: order.id, area: 'bakken', titel: `Bak voor ${CHARACTERS[order.klant].naam}`, onder: order.aanleiding, beeld: invitations.find(item => item.id === order.id)?.image ?? '/assets/library/cooking/kit/bowl-empty.webp', character: order.klant, meta: active?.bestelling.id === order.id ? 'Verder met je bestelling' : 'Bakken' })),
     { id: 'cake', area: 'bakken', titel: 'Sebs verjaardagstaart', onder: 'Versier een taart voor Sebs zusje.', beeld: '/assets/library/cooking/taarten/roze-rand.webp', character: 'seb' as const, meta: loadCakeOrder().delivered ? 'Afgeleverd' : 'Taart versieren' },
-    { id: 'tempo', area: 'rekenen', titel: 'Lua’s tempotoets', onder: 'Oefen één minuut keer- en deelsommen. Zo vaak als je wilt.', beeld: '/games/school/math/race.webp', character: 'lua' as const, meta: 'Munten voor elke goede som' },
+    { id: 'tempo', area: 'rekenen', titel: 'Lua’s tempotoets', onder: 'Oefen één minuut keer- en deelsommen. Zo vaak als je wilt.', beeld: '/games/school/math/race.webp', character: 'lua' as const, meta: undefined },
     { id: 'shop-race', area: 'bakken', titel: 'Help in de winkel', onder: 'Reken af voor klanten in Winkelgekte.', beeld: '/games/school/math/race.webp', character: 'coco' as const },
     { id: 'clinic', area: 'planten', titel: 'Help een plant', onder: 'Ontdek wat de plant nodig heeft.', beeld: PLANT_DOCTOR_EMBLEM, character: 'kiki' as const },
     { id: 'garden', area: 'planten', titel: 'Zaaien en verzorgen', onder: 'Ga verder in je moestuin.', beeld: '/assets/library/plants/garden/navigation.webp', character: 'kiki' as const },
-    { id: 'kerst', area: 'inrichten', titel: 'Coco’s kerstkamer', onder: INRICHT_PROJECT_BY_ID.kerst.onder, beeld: INRICHT_PROJECT_BY_ID.kerst.beeld, character: INRICHT_PROJECT_BY_ID.kerst.klant, meta: kerstComplete ? 'Afgerond' : `Tot ${TASK_REWARDS.nurseryMax} CocoCoins` },
-    { id: 'nursery', area: 'inrichten', titel: 'Luna’s kamer', onder: 'Meten, kiezen en inrichten met een budget van 500.', beeld: '/assets/library/projects/luna-crib.webp', character: 'luna' as const, meta: projectComplete ? 'Afgerond' : `Tot ${TASK_REWARDS.nurseryMax} CocoCoins` },
+    { id: 'kerst', area: 'inrichten', titel: 'Coco’s kerstkamer', onder: INRICHT_PROJECT_BY_ID.kerst.onder, beeld: INRICHT_PROJECT_BY_ID.kerst.beeld, character: INRICHT_PROJECT_BY_ID.kerst.klant, meta: kerstComplete ? 'Afgerond' : undefined },
+    { id: 'nursery', area: 'inrichten', titel: 'Luna’s kamer', onder: 'Meten, kiezen en inrichten met een budget van 500.', beeld: '/assets/library/projects/luna-crib.webp', character: 'luna' as const, meta: projectComplete ? 'Afgerond' : undefined },
   ].filter(card => !finished.has(card.id));
   // Eén vaste plek per categorie; een lopende opdracht krijgt voorrang.
   const categoryOrder = ['bakken', 'reizen', 'planten', 'rekenen', 'inrichten'];
@@ -96,8 +105,8 @@ export default function TasksScreen({ coins = 0, onNavigate }: { coins?: number;
       <header className="tasks-paper ck-paper-surface">
         <img className="tasks-paper__art" src="/assets/library/ui/daily-quest.webp" alt="" />
         <div className="tasks-paper__body">
-          <div className="tasks-paper__heading"><h1 className="tasks-bord">To Do</h1><InfoKnop titel="Opdrachten en beloningen" character="coco">Help een bewoner en verdien munten. Sebs reis geeft een extra bonus als je een 10 haalt op de hele toets. Oefenen blijft daarnaast gewoon munten opleveren.</InfoKnop></div>
-          <section className="tasks-daily" aria-labelledby="tasks-vandaag"><div className="tasks-daily__content"><h2 id="tasks-vandaag">Vijf voor vandaag</h2><span className="tasks-daily__reward"><span className="ck-munt" aria-hidden="true" />{dailyDone === 5 ? `${dailyEarned(daily)} verdiend` : `Tot +${DAILY_REWARD * 5}`} · {dailyDone}/5</span></div><button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}>{dailyDone === 5 ? 'Bekijk resultaat' : dailyDone ? 'Ga verder' : 'Begin vandaag'}</button></section>
+          <div className="tasks-paper__heading"><h1 className="tasks-bord">To Do</h1><InfoKnop titel="Opdrachten en beloningen" character="coco">Elke goede som geeft munten. Maak je een opdracht helemaal af, dan krijg je er nog een extraatje bij: dat staat op het kaartje. Met hulp verdien je niets.</InfoKnop></div>
+          <section className="tasks-daily" aria-labelledby="tasks-vandaag"><div className="tasks-daily__content"><h2 id="tasks-vandaag">Vijf voor vandaag</h2><span className="tasks-daily__reward"><span className="ck-munt" aria-hidden="true" />{dailyDone === 5 ? `${dailyEarned(daily)} verdiend` : `+${DAILY_REWARD * 5}`} · {dailyDone}/5</span></div><button type="button" className="ck-knop ck-knop--hoofd" onClick={() => choose('daily')}>{dailyDone === 5 ? 'Bekijk resultaat' : dailyDone ? 'Ga verder' : 'Begin vandaag'}</button></section>
         </div>
           <nav className="tasks-filters" aria-label="Soort opdracht">{areas.map(item => <button type="button" key={item.id} className="tasks-filter" data-wereld={WERELD[item.id]} aria-pressed={area === item.id} onClick={() => { setArea(item.id); strip.current?.scrollTo({ left: 0 }); const url = new URL(window.location.href); url.searchParams.set('gebied', item.id); window.history.replaceState({}, '', url); }}>{item.icon}<span>{item.name}</span></button>)}</nav>
       </header>
@@ -117,7 +126,7 @@ export default function TasksScreen({ coins = 0, onNavigate }: { coins?: number;
               <span className="tasks-briefje__plaatje"><img src={card.beeld} alt="" draggable={false} /><img className="tasks-briefje__avatar" src={PROFILE_AVATARS.find(avatar => avatar.id === (card.character === 'seb' ? 'stokstaartje' : card.character))?.image ?? CHARACTERS[card.character].beeld} alt={CHARACTERS[card.character].naam} /></span>
               <span className="tasks-briefje__categorie">{areas.find(item => item.id === card.area)?.name}</span>
               <strong>{card.titel}</strong>
-              <span className="tasks-beloning" aria-label={`${rewardFor(card.id)} CocoCoins`}><span className="ck-munt" aria-hidden="true" />{card.id === 'garden' || (card.id === 'nursery' && !INRICHT_PROJECT_BY_ID.luna.verkoop) ? 'Tot ' : '+'}{rewardFor(card.id)}{INRICHT_PROJECT_BY_ID[card.id === 'nursery' ? 'luna' : card.id]?.verkoop ? <small>verkoop</small> : ['tempo', 'shop-race'].includes(card.id) ? <small>per som</small> : null}</span>
+              <span className="tasks-beloning" aria-label={`${rewardFor(card.id)} CocoCoins`}><span className="ck-munt" aria-hidden="true" />+{rewardFor(card.id)}{PER_SOM.has(card.id) && <small>per som</small>}</span>
             </button>
           </li>)}
         </ul>

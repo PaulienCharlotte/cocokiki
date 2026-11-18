@@ -24,3 +24,47 @@
 .travel-route .ck-zegt__naam strong, .travel-facts .ck-zegt__naam strong { color: var(--ck-bes); }
 .travel-route__sheet > p:last-child { margin-bottom: var(--space-4); }
 @media(max-width:600px) { .travel-route { padding: calc(var(--space-12) + var(--space-6)) var(--space-3) var(--space-4); } .travel-route__sheet { padding: var(--space-8) var(--space-4); } .travel-route h1 { font-size: var(--ck-maat-knop); } .travel-facts { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) minmax(0,1fr); padding-top: calc(var(--space-12) + var(--space-6)); } .travel-facts__notes { padding: var(--space-5) var(--space-4); } }
+
+/* Het papier loopt mee: niet het hele vel scrolt (dan stopt de papierafbeelding),
+   alleen de lijst met plekken. Bovenin ruimte voor de punaise. */
+.travel-facts .travel-facts__notes { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding: var(--space-12) var(--space-5) var(--space-6); }
+.travel-facts .travel-facts__notes nav { flex: 1; min-height: 0; overflow-y: auto; margin: var(--space-4) 0; padding-right: var(--space-1); }
+.travel-facts .travel-facts__notes > .ck-button { align-self: flex-start; flex: none; }
+/* Zelfde knoppen als in de topo-game: één hoofdknop in de wereldkleur. */
+.travel-route__sheet > .ck-button { margin-top: var(--space-2); }
+/* Zelfde wereld als de topo-game: de kamer van Seb op de achtergrond, de kaart in een glazen lijst.
+   Het papiertje blijft: dat is het reisverhaal. */
+.travel-facts, .travel-play { background: var(--ck-hout) url('/dreamworld/topo-interior.webp') center / cover fixed; }
+.travel-facts .travel-facts__map { overflow: hidden; border-radius: var(--ck-rond-paneel); border: 2px solid var(--ck-glas-rand, var(--ck-wit)); box-shadow: 0 12px 32px rgba(40, 20, 5, .25); }
+@media (min-width: 601px) { .travel-facts { padding-top: calc(var(--space-12) * 2 + var(--touch-target) + var(--space-4)); } }
+/* De spellen in de reis (memory, aanwijzen) rekenen met de zones van .ck-scherm:
+   geef de reis dezelfde rand en container, anders klapt het memorybord in. */
+.travel-play { --ck-rand: var(--space-4); min-height: 100dvh; }
+/* Onder het topmenu van de app, net als in de topo-game. */
+.topo-app.travel-play .memory-status { top: calc(var(--ck-rand) + 64px); }
+.topo-app.travel-play .memory-game { top: calc(var(--ck-rand) + 64px + max(48px, 4.4cqw) + 20px); }
+.topo-app.topo-huisstijl.travel-play { background: var(--ck-hout) url('/dreamworld/topo-interior.webp') center / cover fixed; }
+@media (max-width: 600px) {
+  /* "Mijn reis" onder het eiland, naast de terugknop-kolom: niet over de kaarten. */
+  .travel-play .travel-play__pause { top: calc(var(--ck-rand) + 64px + max(48px, 4.4cqw) + 8px); left: calc(var(--space-4) + var(--touch-target) + var(--space-2)); }
+  /* Het eiland past binnen het scherm: kleinere bolletjes. */
+  .topo-app.travel-play .memory-status { max-width: calc(100% - var(--ck-rand) * 2); gap: 6px; padding-inline: 8px; }
+  .topo-app.travel-play .memory-status .ck-stip { width: 9px; height: 9px; }
+  .topo-app.travel-play .memory-status__stippen { gap: 3px; }
+}
+/* .ck-glas zet position: relative; deze knop moet echt vast op het scherm staan. */
+.travel-play__pause.travel-play__pause { position: fixed; }
+@media (max-width: 600px) {
+  /* Kaart onder "Mijn reis"; de lijst houdt altijd ruimte voor een paar plekken. */
+  .travel-facts { padding-top: calc(var(--ck-rand, 16px) + 64px + max(48px, 4.4cqw) + var(--touch-target) + 16px); }
+  .travel-facts .travel-facts__notes { padding-top: var(--space-10); }
+  .travel-facts .travel-facts__notes nav { min-height: calc(var(--touch-target) * 2.5); }
+  .travel-facts .ck-zegt__tekst, .travel-facts .ck-zegt__wolk { font-size: 16px; }
+}
+@media (max-width: 600px) {
+  /* Op de telefoon scrolt de pagina; het papier groeit mee met Seb en de lijst. */
+  .travel-facts.travel-facts { height: auto; min-height: 100dvh; grid-template-rows: 46dvh auto; }
+  .travel-facts .travel-facts__notes { overflow: visible; }
+  .travel-facts .travel-facts__notes nav { flex: none; max-height: 40dvh; }
+}
+@media (max-width: 600px) { .travel-play:has(.travel-facts) .travel-play__pause.travel-play__pause { position: absolute; } }

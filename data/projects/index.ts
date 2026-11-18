@@ -1,6 +1,7 @@
 import type { CharacterId } from '../characters';
 import { DECOR_PRODUCTS_BY_ID } from '../decorCatalog';
 import { NURSERY_ITEMS, PROJECT_BUDGET } from './nursery';
+import { OPDRACHT_BONUS } from '../../services/economie';
 
 /**
  * Inrichtopdrachten. Elke opdracht loopt hetzelfde: twee keer meten, kiezen
@@ -55,7 +56,7 @@ export const KERST_PROJECT: InrichtProject = {
   wens: 'Coco zoekt een kerstidee voor haar woonkamer. Ontwerp jij het? Dan koopt ze het van je!',
   inrichtZin: 'Versier de kamer zoals jij het mooi vindt. Hang de ster en de krans gerust aan de muur.',
   klaarZin: 'Wat een prachtig kerstidee! Coco koopt het van je.',
-  vrij: true, verkoop: 25,
+  vrij: true, verkoop: OPDRACHT_BONUS.inrichten,
   items: [
     { id: 'tree', name: 'Kerstboom', price: 85, image: decor('christmas-japandi-tree'), width: 17, frame: heel(1024, 1536), required: true },
     { id: 'gifts', name: 'Cadeautjes', price: 30, image: decor('christmas-wrapped-gifts'), width: 16, frame: heel(1536, 1024), required: true },

@@ -62,15 +62,26 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
   }, [playing, saveResult]);
   const close = () => { setPlaying(null); setRun(loadTravelJourney(adventure)); };
   const restart = () => setRound(value => value + 1);
-  const remaining = (phase: 'find' | 'master') => {
-    const list = locations.filter(place => !run?.[phase].includes(locationProgressKey(place)));
+  const remaining = (phase: 'find' | 'master', bron = run) => {
+    const list = locations.filter(place => !bron?.[phase].includes(locationProgressKey(place)));
     return list.length ? list : locations;
   };
-  const remainingPairs = pairs.filter(pair => !run?.memory.includes(pair.id));
-  const begin = (phase: TravelStep) => {
-    if (phase === 'find' || phase === 'master') setSessionLocations(remaining(phase));
+  const begin = (phase: TravelStep, bron = run) => {
+    const remainingPairs = pairs.filter(pair => !bron?.memory.includes(pair.id));
+    if (phase === 'find' || phase === 'master') setSessionLocations(remaining(phase, bron));
     if (phase === 'memory') setSessionPairs(remainingPairs.length ? remainingPairs : pairs);
     setPlaying(phase); restart();
+  };
+  /**
+   * Na een ronde meteen door: is deze stap af, dan begint de volgende; anders
+   * een nieuwe ronde met wat nog over is. Het overzicht ("Mijn reis") blijft
+   * altijd bereikbaar, maar je hoeft er niet steeds langs.
+   */
+  const verder = () => {
+    const saved = loadTravelJourney(adventure);
+    setRun(saved);
+    if (!saved || loadTravelAdventures().completed[adventure.id]) { close(); return; }
+    begin(currentTravelStep(adventure, saved), saved);
   };
   const fact = locations.find(place => place.id === factId);
   if (!run && !finished) return <main className="travel-route" data-wereld="wereld"><SpeechBubble character="seb">{notice || 'Ik pak onze reiskaart erbij.'}</SpeechBubble>{notice && <Button onClick={initialize}>Probeer opnieuw</Button>}</main>;
@@ -78,22 +89,21 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
     <Suspense fallback={<p>De reis wordt klaargezet…</p>}>
       {playing === 'facts' ? <main className="travel-facts">
         <section className="travel-facts__map"><Map selectedProvince={adventure.selection.areaId} locations={locations} showLabels onLocationClick={place => { setFactId(place.id); saveResult('facts', place.id); }} highlightedLocation={factId ?? undefined} /></section>
-        <aside className="travel-facts__notes ck-paper-surface"><SpeechBubble character="seb">Tik op een plek. Wat ontdek jij?</SpeechBubble>{fact && <><h2>{fact.name}</h2><p>{locationFact(fact).fact}</p></>}<nav aria-label="Plekken om te ontdekken">{locations.map(place => <button key={place.id} type="button" aria-pressed={factId === place.id} onClick={() => { setFactId(place.id); saveResult('facts', place.id); }}>{run?.facts.includes(place.id) ? '✓ ' : ''}{place.name}</button>)}</nav><Button onClick={close}>{step === 'facts' ? 'Pauzeer je reis' : 'Naar de memory'}</Button></aside>
+        <aside className="travel-facts__notes ck-paper-surface">{/* Seb vertelt het weetje zelf; geen losse kop en tekst eronder. */}<SpeechBubble character="seb" label={fact?.name}>{fact ? `${fact.name}: ${locationFact(fact).fact}` : 'Tik op een plek. Wat ontdek jij?'}</SpeechBubble><nav aria-label="Plekken om te ontdekken">{locations.map(place => <button key={place.id} type="button" aria-pressed={factId === place.id} onClick={() => { setFactId(place.id); saveResult('facts', place.id); }}>{run?.facts.includes(place.id) ? '✓ ' : ''}{place.name}</button>)}</nav>{step !== 'facts' && <Button onClick={verder}>Naar de memory</Button>}</aside>
       </main> : <main className="session-page">
-        {playing === 'memory' ? <Memory key={round} mode="memory" gids="seb" pairs={sessionPairs} choicePool={pairs} onAnswer={answer} onContinue={close} onRepeat={restart} onRetry={restart} onExit={close} />
+        {playing === 'memory' ? <Memory key={round} mode="memory" gids="seb" pairs={sessionPairs} choicePool={pairs} onAnswer={answer} onContinue={verder} onRepeat={restart} onRetry={restart} onExit={close} />
           : playing === 'test' ? <div className="test-workspace"><Test provinceId={adventure.selection.areaId} clusterId="all" studyPool={locations} adventureId={adventure.id} onExit={close} registerExit={registerTestExit} onPractice={() => begin('master')} /></div>
-          : <GameEngine key={round} mode={playing} areaId={adventure.selection.areaId} locations={sessionLocations} mapLocations={locations} timerEnabled={false} onAnswer={answer} onContinue={close} onRepeat={restart} onRetry={restart} onExit={close} />}
+          : <GameEngine key={round} mode={playing} areaId={adventure.selection.areaId} locations={sessionLocations} mapLocations={locations} timerEnabled={false} onAnswer={answer} onContinue={verder} onRepeat={restart} onRetry={restart} onExit={close} />}
       </main>}
     </Suspense>
-    {playing !== 'facts' && <button type="button" className="travel-play__pause ck-glas" onClick={() => { if (playing === 'test' && testExit.current) testExit.current(); else close(); }}>Mijn reis</button>}
+    <button type="button" className="travel-play__pause ck-glas" onClick={() => { if (playing === 'test' && testExit.current) testExit.current(); else close(); }}>Mijn reis</button>
     {notice && <p className="travel-route__notice" role="alert">{notice}</p>}
     {exitDialog}
   </div>;
   return <main className="travel-route" data-wereld="wereld">
     <article className="travel-route__sheet ck-paper-surface">
       <h1 className="ck-houtbord">{adventure.title}</h1>
-      <SpeechBubble character="seb">{finished ? 'Reis klaar! Blijf gerust oefenen.' : 'Op reis! Morgen verder mag ook.'}</SpeechBubble>
-      <p>Tot {adventure.reward + TRAVEL_STEP_TOTAL} CocoCoins voor deze reis, plus munten voor het oefenen.</p>
+      <SpeechBubble character="seb">{finished ? 'Reis klaar! Blijf gerust oefenen.' : `Op reis! Tot ${adventure.reward + TRAVEL_STEP_TOTAL} CocoCoins. Morgen verder mag ook.`}</SpeechBubble>
       <ol className="travel-route__steps">{TRAVEL_STEPS.map((phase, index) => {
         const done = finished || index < TRAVEL_STEPS.indexOf(step);
         const unlocked = finished || index <= TRAVEL_STEPS.indexOf(step);
@@ -101,7 +111,6 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
         return <li key={phase}><button type="button" aria-disabled={!unlocked} aria-current={phase === step && !finished ? 'step' : undefined} onClick={() => { if (!unlocked) { setNotice('Ontdek eerst de vorige stap.'); return; } setNotice(''); begin(phase); }}><span>{done ? '✓' : index + 1}</span><strong>{TRAVEL_STEP_LABELS[phase]}</strong>{count && <small>{count}</small>}</button></li>;
       })}</ol>
       {!finished && <Button onClick={() => begin(step)}>Ga verder</Button>}
-      <p>Je hoeft deze reis niet in één keer te doen. Je voortgang blijft bewaard.</p>
       {notice && <p role="status">{notice}</p>}
     </article>
     {exitDialog}

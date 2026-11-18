@@ -5,6 +5,7 @@ import { RACE_DAILY_COIN_CAP } from './config';
 import { CHECKOUT_FAST_AFTER } from './checkoutTiming';
 import { MATH_GAME_IDS, MATH_LEVELS, type MathGameId, type MathLevel, type MathProgress, type MathResult } from './types';
 import { learningReward } from '../../services/learningReward';
+import { MOEILIJK_EXTRA, REDACTIE_PER_SOM } from '../../services/economie';
 
 export const MATH_PROGRESS_KEY = 'cocokiki:math-progress:v1';
 export const RACE_EARNINGS_KEY = 'cocokiki:math-race-earnings:v1';
@@ -31,12 +32,13 @@ export function raceCoinsAvailable(now = new Date()): number {
  * hard loopt; dat rekenen we hier zelf uit, uit het aantal goede antwoorden.
  */
 export function difficultyBonus(level: MathLevel, snel = false): number {
-  return (MATH_LEVELS.includes(level) ? level - 1 : 0) + (snel ? 1 : 0);
+  // Zie services/economie.ts: alleen niveau 4 en 5 geven één munt extra.
+  return (MATH_LEVELS.includes(level) && level >= 4) || snel ? 1 : 0;
 }
 
 /** Munten per goed antwoord. Redactiesommen zijn meer denkwerk: 5 op niveau 1 tot 7 op niveau 5. */
 export function muntenPerAntwoord(game: MathGameId, level: MathLevel): number {
-  if (game === 'add-subtract') return 5 + Math.floor(((MATH_LEVELS.includes(level) ? level : 1) - 1) / 2);
+  if (game === 'add-subtract') return REDACTIE_PER_SOM + (level >= 4 ? MOEILIJK_EXTRA : 0);
   return learningReward(1, false, difficultyBonus(level));
 }
 

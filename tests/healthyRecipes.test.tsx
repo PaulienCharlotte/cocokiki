@@ -35,7 +35,7 @@ test('een voedingsverband is nodig voor verzamelen en beloont alleen de laatste 
   assert.equal(wrong.coinDelta, 0);
   assert.equal(wrong.correct, false);
   const final = answerDiscoveryQuestion(wrong.progress, recipe.id, config.questions[1].correctOptionId);
-  assert.equal(final.coinDelta, 5);
+  assert.equal(final.coinDelta, 2);
   assert.equal(answerDiscoveryQuestion(final.progress, recipe.id, config.questions[1].correctOptionId).coinDelta, 0);
   progress = collectCurrentIngredient(showIngredientCollection(final.progress, recipe.id), recipe.id);
   assert.ok(progress.discoveredIngredientIds.includes('apple'));

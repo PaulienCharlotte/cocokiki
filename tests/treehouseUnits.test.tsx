@@ -226,20 +226,20 @@ test('purchased rooms appear in the live layout, sell at the receipt value and c
     commitLocalState({}, [{ id: 'test-start', amount: 1000 }]);
     const originalRooms = loadTreehouseLayout();
     assert.equal(saveTreehouseLayout(originalRooms), true);
-    const bought = buyRoom('hobby-room', 'Atelier', 'live-room-purchase', 150);
+    const bought = buyRoom('hobby-room', 'Atelier', 'live-room-purchase', 300);
     assert.equal(bought.status, 'applied');
     assert.equal(loadTreehouseLayout().length, 6);
-    assert.equal(roomSaleAmount(bought.room!), 105);
+    assert.equal(roomSaleAmount(bought.room!), 210);
     const productId = Object.keys(DECOR_PRODUCTS_BY_ID)[0];
     commitLocalState({ [ROOM_INVENTORY_KEY]: JSON.stringify({ version: 1, owned: { [productId]: 1 }, appliedTransactions: [], placements: [{ id: 'test-furniture', productId, room: bought.room, x: 50, y: 70, view: 0, scale: 1 }] }) });
     assert.equal(loadRoomInventory().placements.length, 1);
     assert.equal(sellTreehouseRoom(bought.room!), true);
     assert.equal(loadRoomInventory().placements.length, 0);
     assert.equal(loadRoomInventory().owned[productId], 1);
-    assert.equal(loadCurrency(), 955);
+    assert.equal(loadCurrency(), 910);
     assert.equal(loadTreehouseLayout().length, 5);
     assert.equal(loadRoomExpansions().rooms.length, 0);
     assert.equal(sellTreehouseRoom(bought.room!), false);
-    assert.equal(loadCurrency(), 955);
+    assert.equal(loadCurrency(), 910);
   } finally { Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: original }); }
 });

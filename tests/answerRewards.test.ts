@@ -62,13 +62,13 @@ test('plant treatment saves the consult and remaining payment atomically after t
   const { claimConsult, createEmptyClinic, loadClinic, nextPatient } = await import('../services/plantClinic');
   stored(() => {
     const patient = nextPatient(createEmptyClinic(), () => 0, () => 'clinic-run')!;
-    rewardAnswer('clinic', patient.consultId, 'diagnosis', 5);
-    assert.equal(loadCurrency(), 5);
-    assert.equal(claimConsult(patient, 0, false)?.coins, 30);
-    assert.equal(loadCurrency(), 30);
+    rewardAnswer('clinic', patient.consultId, 'diagnosis', 2);
+    assert.equal(loadCurrency(), 2);
+    assert.equal(claimConsult(patient, 0, false)?.coins, 10);
+    assert.equal(loadCurrency(), 10);
     assert.equal(loadClinic().helped, 1);
     assert.equal(claimConsult(patient, 0, false)?.coins, 0);
-    assert.equal(loadCurrency(), 30);
+    assert.equal(loadCurrency(), 10);
   });
   stored(block => {
     const patient = nextPatient(createEmptyClinic(), () => 0, () => 'blocked-clinic')!;

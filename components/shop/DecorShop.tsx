@@ -1,3 +1,4 @@
+import KassaKorting from './KassaKorting';
 import './shop-layout.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Backpack as BackpackIcon, Armchair, ArrowLeft, ChevronRight, Info, Minus, Plus, ShoppingBasket, Sprout, Trash2, X } from 'lucide-react';
@@ -41,6 +42,8 @@ export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Teru
   const [infoSpecies, setInfoSpecies] = useState<string | null>(null);
   const [familyOpen, setFamilyOpen] = useState(false);
   const [adopted, setAdopted] = useState<AdoptedPlant[]>([]);
+  // Na 'Afrekenen' staat de kassa klaar: zelf rekenen geeft 10% korting.
+  const [kassa, setKassa] = useState(false);
   const definition = DECOR_STORES[store];
   const products = useMemo(() => DECOR_SHOP_PRODUCTS.filter(product => product.store === store && (category === 'all' || product.category === category)), [category, store]);
   const count = Object.values(basket).reduce<number>((total, amount) => total + Number(amount), 0);
@@ -49,7 +52,7 @@ export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Teru
 
   const adjust = (id: string, delta: number) => {
     if (!DECOR_PRODUCTS_BY_ID[id] || DECOR_PRODUCTS_BY_ID[id].retired) return;
-    setNotice('');
+    setNotice(''); setKassa(false);
     setBasket(current => {
       const amount = Math.max(0, Math.min(9, (current[id] ?? 0) + delta));
       const next = { ...current };
@@ -58,14 +61,15 @@ export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Teru
     });
   };
 
-  const checkout = () => {
+  const checkout = (bedrag = total) => {
     if (count === 0) return;
+    setKassa(false);
     const transactionId = createTransactionId(store);
     const nextInventory = addRoomPurchasesOnce(loadRoomInventory(), transactionId, basket);
-    const spend = spendCurrencyOnce(transactionId, total, { [ROOM_INVENTORY_KEY]: JSON.stringify(nextInventory) });
+    const spend = spendCurrencyOnce(transactionId, bedrag, { [ROOM_INVENTORY_KEY]: JSON.stringify(nextInventory) });
     if (spend.status === 'insufficient') {
       setCoins(spend.balance);
-      setNotice(`Je komt nog ${total - spend.balance} CocoCoins tekort.`);
+      setNotice(`Je komt nog ${bedrag - spend.balance} CocoCoins tekort.`);
       return;
     }
     if (spend.status !== 'applied') {
@@ -129,7 +133,7 @@ export default function DecorShop({ store, onBack, onNavigate, backLabel = 'Teru
           </div>; })}
         </div>
         <footer><div><span>Totaal</span><strong><CocoCoin size={16} /> {total}</strong></div><div><span>Beschikbaar</span><b><CocoCoin size={16} /> {coins}</b></div><div><span>Na aankoop</span><b className={coins - total < 0 ? 'is-low' : ''}><CocoCoin size={16} /> {coins - total}</b></div>
-          {notice && <p className="shop-notice" role="alert">{notice}</p>}<button className="shop-checkout" type="button" onClick={checkout} disabled={count === 0}>Afrekenen <ChevronRight /></button>
+          {notice && <p className="shop-notice" role="alert">{notice}</p>}{kassa ? <KassaKorting totaal={total} onBetaal={bedrag => checkout(bedrag)} /> : <button className="shop-checkout" type="button" onClick={() => setKassa(true)} disabled={count === 0}>Afrekenen <ChevronRight /></button>}
         </footer>
       </aside>
     </div>}

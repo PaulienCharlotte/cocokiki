@@ -1,0 +1,10 @@
+/* De kassa: Lua vraagt, jij tikt een bel. Zelfde bellen als in de rekenspellen. */
+.kassa { display: grid; gap: var(--space-3); justify-items: center; padding: var(--space-2) 0; }
+.kassa__ballon { align-self: stretch; }
+.kassa__ballon .ck-ballon__gezicht { width: 56px; height: 56px; }
+.kassa__ballon .ck-ballon__tekst { font-size: 18px; }
+.kassa__bellen { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
+.kassa__bel { width: 68px; height: 68px; font-size: 22px; }
+.kassa__bel.is-goed { animation: ck-pop .42s var(--ck-veer) both; filter: drop-shadow(0 0 16px var(--ck-zon)); }
+.kassa__zonder { min-height: 44px; padding: 0 var(--space-4); border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.kassa__zonder:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }

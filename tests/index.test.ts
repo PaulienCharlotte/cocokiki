@@ -54,3 +54,4 @@ import "./answerRewards.test";
 
 import "./travelAdventures.test";
 import './speechBubbleGuard.test';
+import './economie.test';

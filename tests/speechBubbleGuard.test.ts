@@ -49,3 +49,19 @@ test('geen tekst kleiner dan 16 px in de stijlbestanden', () => {
     }
   }
 });
+
+test('zijmenu\'s met gereedschap staan altijd links', () => {
+  // De basisregel in cocokiki-tokens.css wordt voor .ck-scherm al naar links gezet.
+  // Een eigen 'right:' zonder 'left:' zet het menu terug naar rechts; een
+  // liggende balk op een smal scherm heeft allebei.
+  for (const bestand of cssBestanden('.')) {
+    // treehouse-unit-test.css is een ontwikkelpagina met een actiebalk onderin, geen zijmenu.
+    if (bestand.includes('docs/') || bestand.endsWith('cocokiki-tokens.css') || bestand.endsWith('treehouse-unit-test.css')) continue;
+    const css = readFileSync(bestand, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    for (const [, selector, regels] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (!/gereedschap|__balk|toolbar/.test(selector)) continue;
+      const rechts = /(^|;|\s)right:\s*(?!auto)/.test(regels), links = /(^|;|\s)left:\s*(?!auto)/.test(regels);
+      assert.ok(!rechts || links, `${bestand}: ${selector.trim()} zet het zijmenu rechts`);
+    }
+  }
+});

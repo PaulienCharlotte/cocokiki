@@ -1,3 +1,4 @@
+import KassaKorting from '../components/shop/KassaKorting';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
@@ -57,6 +58,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
   const [listOpen, setListOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
+  const [kassa, setKassa] = useState(false);
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
   const total = basketTotal(session);
@@ -86,14 +88,15 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
     onProgressChange?.(next);
     return true;
   };
-  const checkout = () => {
+  const checkout = (bedrag?: number) => {
+    setKassa(false);
     const current = loadCookingProgress();
     const prepared = checkoutBasket(current, session, loadCurrency());
     if (prepared.status === 'empty') return setNotice('Je mandje is leeg.');
     if (prepared.status === 'insufficient') return setNotice(`Je hebt nog wat CocoCoins nodig! Je komt ${prepared.total - coins} tekort.`);
     if (prepared.status === 'invalid') return setNotice('Dit mandje kan niet worden afgerekend.');
     const purchased = prepared.status === 'duplicate' ? current : prepared.progress;
-    if (!commitProgress(purchased, { id: `shopping:${session.id}`, amount: prepared.total })) return;
+    if (!commitProgress(purchased, { id: `shopping:${session.id}`, amount: bedrag ?? prepared.total })) return;
     setCoins(loadCurrency());
     setBasketOpen(false);
     setPracticeOpen(false);
@@ -203,7 +206,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
             <p className="shop-notice">Je komt {deficit} CocoCoins tekort. Je mandje blijft bewaard.</p>
             {!practiceOpen && <Button onClick={() => { setNotice(''); setPracticeOpen(true); }}>Verdien met vragen</Button>}
           </>}
-          <Button variant={deficit > 0 ? 'quiet' : 'primary'} endIcon={<ChevronRight />} onClick={checkout} disabled={count === 0 || deficit > 0}>Afrekenen</Button>
+          {kassa && count > 0 && deficit <= 0 ? <KassaKorting totaal={total} onBetaal={bedrag => checkout(bedrag)} /> : <Button variant={deficit > 0 ? 'quiet' : 'primary'} endIcon={<ChevronRight />} onClick={() => setKassa(true)} disabled={count === 0 || deficit > 0}>Afrekenen</Button>}
         </footer>
       </aside>
     </div>}

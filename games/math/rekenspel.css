@@ -126,7 +126,7 @@
 @media (max-width: 540px) { .rekenspel.ck-scherm { --rs-boven: 68px; } }
 @container (max-width: 640px) {
   .rekenspel .rekenspel__veld { right: var(--ck-rand); top: calc(var(--rs-boven) + 124px); bottom: 220px; }
-  .rekenspel .rekenspel__gereedschap { flex-direction: row; top: calc(var(--rs-boven) + 56px); right: var(--ck-rand); border-radius: 999px; }
+  .rekenspel .rekenspel__gereedschap { flex-direction: row; top: calc(var(--rs-boven) + 56px); left: var(--ck-rand); right: var(--ck-rand); border-radius: 999px; }
   .rekenspel .rekenspel__personage { right: var(--ck-rand); bottom: calc(var(--ck-rand) + 92px); }
   .rekenspel .rekenspel__personage .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
   .rekenspel .rekenspel__veld .ck-zone-antwoord, .rekenspel .rekenspel__einde { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; }
@@ -233,7 +233,7 @@
 .rekenspel--add-subtract .rekenspel__gereedschap { top: calc(var(--space-12) * 2); }
 @media(max-width:700px) {
   .rekenspel--add-subtract .redactie-bladknop { top: calc(var(--space-12) + var(--space-6)); left: var(--space-2); }
-  .rekenspel--add-subtract .rekenspel__gereedschap { top: calc(var(--space-12) + var(--space-6)); right: var(--space-2); }
+  .rekenspel--add-subtract .rekenspel__gereedschap { top: calc(var(--space-12) + var(--space-6)); left: var(--space-2); right: var(--space-2); }
   .rekenspel.rekenspel--add-subtract .rekenspel__veld { top: calc(var(--space-12) * 2 + var(--space-8)); bottom: var(--space-3); left: var(--space-2); right: var(--space-2); justify-content: flex-start; overflow-y: auto; padding-bottom: var(--space-6); }
   .rekenspel.rekenspel--add-subtract .rekenspel__veld > div:not([hidden]) { padding: var(--space-4); margin: 0; }
   .rekenspel.rekenspel--add-subtract .redactie-verhaal { font-size: var(--font-size-md); line-height: var(--line-height-default); margin: 0 0 var(--space-3); }

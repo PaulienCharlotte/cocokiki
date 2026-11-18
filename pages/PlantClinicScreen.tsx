@@ -51,6 +51,7 @@ import {
   type Patient,
 } from '../services/plantClinic';
 import { awardCurrencyOnce } from '../services/currency';
+import { muntenVoorAntwoord } from '../services/economie';
 
 type Fase = 'onderzoek' | 'diagnose' | 'behandeling' | 'naam' | 'klaar';
 
@@ -215,7 +216,7 @@ export default function PlantClinicScreen() {
 
   const stelDiagnose = (keuze: PlantProblemCause) => {
     if (keuze === patient.cause) {
-      rewardAnswer('clinic', patient.consultId, 'diagnosis', 5);
+      rewardAnswer('clinic', patient.consultId, 'diagnosis', muntenVoorAntwoord());
       setFase('behandeling');
       setMelding(null);
       return;

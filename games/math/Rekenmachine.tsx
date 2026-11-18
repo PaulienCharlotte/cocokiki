@@ -1,5 +1,7 @@
-import React, { useRef, useState } from 'react';
-import HulpPaneel from '../../components/ui/HulpPaneel';
+import "./flashcard.css";
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { GripHorizontal, X } from 'lucide-react';
 
 /**
  * De rekenmachine van Baby Lua.
@@ -34,6 +36,13 @@ const TOETSEN: Toets[] = [
   { teken: '=', naam: 'is', links: 66.47, top: 82.01, breed: 19.43, hoog: 9.45 },
 ];
 const BEWERKINGEN = '÷×−+';
+const PLEK_KEY = 'cocokiki:rekenmachine-plek:v1';
+type Plek = { x: number; y: number };
+/** Binnen het scherm houden, ook als het venster kleiner wordt. */
+const binnen = (plek: Plek, breed: number, hoog: number): Plek => ({
+  x: Math.max(8, Math.min(window.innerWidth - breed - 8, plek.x)),
+  y: Math.max(8, Math.min(window.innerHeight - hoog - 8, plek.y)),
+});
 
 /** Netjes op het schermpje: komma in plaats van punt, en niet eindeloos lang. */
 export function toonGetal(waarde: number): string {
@@ -49,7 +58,23 @@ export function rekenUit(links: number, bewerking: string, rechts: number): numb
   return rechts === 0 ? NaN : links / rechts;
 }
 
-export default function Rekenmachine({ onClose, som = '' }: { onClose: () => void; som?: string }) {
+/**
+ * Een zwevende rekenmachine: klein, en versleepbaar aan de greep. Zo blijven
+ * de prijzen, de som en de antwoorden zichtbaar terwijl je rekent. Hij zweeft
+ * boven het spel zonder het te blokkeren; × of Escape sluit hem.
+ */
+export default function Rekenmachine({ onClose }: { onClose: () => void; som?: string }) {
+  const kast = useRef<HTMLElement>(null);
+  const sleep = useRef<{ id: number; dx: number; dy: number } | null>(null);
+  const [plek, setPlek] = useState<Plek | null>(() => { try { return JSON.parse(localStorage.getItem(PLEK_KEY) ?? 'null'); } catch { return null; } });
+  const sluit = useRef(onClose); sluit.current = onClose;
+  useEffect(() => {
+    kast.current?.querySelector<HTMLElement>('.rekenmachine__toets')?.focus({ preventScroll: true });
+    const toets = (event: KeyboardEvent) => { if (event.key === 'Escape') sluit.current(); };
+    document.addEventListener('keydown', toets);
+    return () => document.removeEventListener('keydown', toets);
+  }, []);
+  const maat = () => kast.current?.getBoundingClientRect() ?? { width: 240, height: 320 };
   const [invoer, setInvoer] = useState('0');
   const [vorige, setVorige] = useState<number | null>(null);
   const [bewerking, setBewerking] = useState<string | null>(null);
@@ -84,12 +109,27 @@ export default function Rekenmachine({ onClose, som = '' }: { onClose: () => voi
     druk(teken);
   };
 
-  return <HulpPaneel className="rekenmachine-dialoog" titel="Rekenmachine" sluitLabel="Rekenmachine sluiten" onClose={onClose}>
-    {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-    {/* De som blijft erbij staan: anders ben je hem kwijt zodra je rekent. */}
-    {som && <p className="rekenmachine__som">{som}</p>}
-    <div className="rekenmachine" onKeyDown={viaToetsenbord}>
-      <img src={BEELD} alt="" draggable={false} />
+  const greep = {
+    onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => {
+      const rect = kast.current!.getBoundingClientRect();
+      sleep.current = { id: event.pointerId, dx: event.clientX - rect.left, dy: event.clientY - rect.top };
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    onPointerMove: (event: React.PointerEvent) => {
+      const s = sleep.current; if (!s || s.id !== event.pointerId) return;
+      const { width, height } = maat();
+      setPlek(binnen({ x: event.clientX - s.dx, y: event.clientY - s.dy }, width, height));
+    },
+    onPointerUp: () => { sleep.current = null; try { if (plek) localStorage.setItem(PLEK_KEY, JSON.stringify(plek)); } catch { /* alleen gemak */ } },
+  };
+  const stijl = plek && typeof window !== 'undefined' ? (() => { const { width, height } = maat(); const p = binnen(plek, width, height); return { left: p.x, top: p.y, right: 'auto', bottom: 'auto' }; })() : undefined;
+  if (typeof document === 'undefined') return null;
+  return createPortal(<aside ref={kast} className="ck-glas rekenmachine-zwevend" role="dialog" aria-label="Rekenmachine" style={stijl}>
+    <div className="rekenmachine-zwevend__kop">
+      <button type="button" className="rekenmachine-zwevend__greep" aria-label="Rekenmachine verslepen" {...greep}><GripHorizontal size={22} aria-hidden="true" /></button>
+      <button type="button" className="rekenmachine-zwevend__sluit" aria-label="Rekenmachine sluiten" onClick={onClose}><X size={20} aria-hidden="true" /></button>
+    </div>
+    <div className="rekenmachine" onKeyDown={viaToetsenbord}>      <img src={BEELD} alt="" draggable={false} />
       <output
         className="rekenmachine__venster"
         aria-live="polite"
@@ -104,5 +144,5 @@ export default function Rekenmachine({ onClose, som = '' }: { onClose: () => voi
         onClick={() => druk(toets.teken)}
       ><span className="sr-only">{toets.teken}</span></button>)}
     </div>
-  </HulpPaneel>;
+  </aside>, document.body);
 }

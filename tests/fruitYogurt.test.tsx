@@ -102,7 +102,7 @@ test('fruit yogurt discoveries have valid answers and never reward the known ban
       state = collectCurrentIngredient(showIngredientCollection(result.progress, recipe.id), recipe.id);
     }
   }
-  assert.equal(reward, 10);
+  assert.equal(reward, 4);
   assert.equal(state.journeys[recipe.id]!.discovery.step, 'complete');
   assert.deepEqual(new Set(state.discoveredIngredientIds), new Set(['banana', 'yogurt', 'strawberry']));
 });

@@ -1,3 +1,4 @@
+import { PRIJS } from './economie';
 import { isBaseRoom, isExtraRoom, ROOM_TEMPLATE_ASSETS, ROOM_TEMPLATES, TREEHOUSE_ROOMS, type ExtraRoomId, type RoomTemplateId, type TreehouseRoomDefinition, type TreehouseRoomId } from '../data/treehouse';
 import { readDocument, readLocalState } from './localState';
 import { spendCurrencyOnce } from './currency';
@@ -25,13 +26,13 @@ export function loadRoomExpansions(): RoomExpansions {
 }
 export function nextRoomPrice(state: RoomExpansions, group: 'inside' | 'balcony'): number | null {
   if (state.rooms.length >= 11) return null;
-  return (group === 'inside' ? 150 : 100) + 100 * state.rooms.filter(room => roomGroup(room.template) === group).length;
+  return (group === 'inside' ? PRIJS.kamerBinnen : PRIJS.kamerBalkon) + PRIJS.kamerStap * state.rooms.filter(room => roomGroup(room.template) === group).length;
 }
 export function roomTemplatePrice(state: RoomExpansions, templateId: RoomTemplateId): number | null {
   const template = ROOM_TEMPLATES.find(item => item.id === templateId);
   if (!template) return null;
   const base = nextRoomPrice(state, template.group);
-  return base === null ? null : base + (templateId === 'garden-room' ? 150 : 0);
+  return base === null ? null : base + (templateId === 'garden-room' ? PRIJS.tuinkamerExtra : 0);
 }
 export function ownedRooms(state = loadRoomExpansions()): TreehouseRoomDefinition[] {
   const extensions = state.rooms.map(room => {

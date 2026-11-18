@@ -7,8 +7,9 @@ export const TRAVEL_STEPS = ['facts', 'memory', 'find', 'master', 'test'] as con
 export type TravelStep = typeof TRAVEL_STEPS[number];
 export type PracticeTravelStep = Exclude<TravelStep, 'test'>;
 export const TRAVEL_STEP_LABELS: Record<TravelStep, string> = { facts: 'Ontdek de weetjes', memory: 'Vind de setjes', find: 'Wijs alles aan', master: 'Wijs aan en spel', test: 'Laat zien wat je weet' };
-export const TRAVEL_STEP_REWARDS: Record<PracticeTravelStep, number> = { facts: 10, memory: 20, find: 25, master: 25 };
-export const TRAVEL_STEP_TOTAL = 80;
+/** De oefenstappen belonen al per goed antwoord; de reisbonus komt aan het eind (services/economie.ts). */
+export const TRAVEL_STEP_REWARDS: Record<PracticeTravelStep, number> = { facts: 0, memory: 0, find: 0, master: 0 };
+export const TRAVEL_STEP_TOTAL = 0;
 export interface TravelJourneyRun { attemptId: string; facts: string[]; memory: string[]; find: string[]; master: string[] }
 export function travelStepIds(adventure: TravelAdventure, step: PracticeTravelStep): string[] {
   if (step === 'memory') return memoryPairs(adventure.selection).map(pair => pair.id);
@@ -49,6 +50,6 @@ export function recordTravelStep(adventure: TravelAdventure, attemptId: string, 
   if (currentTravelStep(adventure, run) !== step) return false;
   const next = { ...run, [step]: [...run[step], id] };
   const completed = travelStepIds(adventure, step).every(key => next[step].includes(key));
-  const saved = commitLocalState({ [TRAVEL_JOURNEY_KEY]: JSON.stringify({ version: 1, runs: { ...readRuns(), [adventure.id]: next } }) }, completed ? [{ id: `travel-step:${adventure.id}:${step}:v1`, amount: TRAVEL_STEP_REWARDS[step] }] : []);
+  const saved = commitLocalState({ [TRAVEL_JOURNEY_KEY]: JSON.stringify({ version: 1, runs: { ...readRuns(), [adventure.id]: next } }) }, completed && TRAVEL_STEP_REWARDS[step] > 0 ? [{ id: `travel-step:${adventure.id}:${step}:v1`, amount: TRAVEL_STEP_REWARDS[step] }] : []);
   return saved.status === 'applied' || saved.status === 'duplicate';
 }

@@ -8,10 +8,14 @@ import type { TableChoice } from './game/types';
 import { MAX_TAFEL, TEMPO_DURATION_MS, tempoAnswer, tempoQuestion, type TempoSoort } from './tempo';
 import './lua-tempo.css';
 
-export default function LuaTempo({ table, onClose }: { table: TableChoice; onClose: () => void }) {
+/**
+ * De tempotoets. Met `direct` begint de minuut meteen: soort en tafels zijn
+ * dan al gekozen op het startscherm van Baby Lua.
+ */
+export default function LuaTempo({ table, onClose, soort: beginSoort = 'keer', direct = false }: { table: TableChoice; onClose: () => void; soort?: TempoSoort; direct?: boolean }) {
   const [phase, setPhase] = useState<'ready' | 'playing' | 'done'>('ready');
   // Zelf kiezen: keer, delen of door elkaar, en welke tafels (tot 20).
-  const [soort, setSoort] = useState<TempoSoort>('keer');
+  const [soort, setSoort] = useState<TempoSoort>(beginSoort);
   const [tafels, setTafels] = useState<number[]>(() => table === 'mix' ? Array.from({ length: 10 }, (_, i) => i + 1) : Array.isArray(table) ? table : [table]);
   const kies = (t: number) => setTafels(lijst => lijst.includes(t) ? lijst.filter(x => x !== t) : [...lijst, t].sort((x, y) => x - y));
   const [question, setQuestion] = useState(() => tempoQuestion(table));
@@ -43,6 +47,8 @@ export default function LuaTempo({ table, onClose }: { table: TableChoice; onClo
     transaction.current = `lua:tempo:${crypto.randomUUID()}`; deadline.current = Date.now() + TEMPO_DURATION_MS; ended.current = false;
     setQuestion(tempoQuestion(tafels, Math.random, undefined, soort)); setAnswer(''); setRemaining(60); setPhase('playing');
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (direct) start(); }, []);
   const advance = (kind: 'correct' | 'wrong' | 'skipped') => {
     if (ended.current) return;
     if (Date.now() >= deadline.current) { finish(); return; }

@@ -522,3 +522,14 @@
 /* Het huiswerkoverzicht: Lua's vraag en de bladen eronder, met lucht ertussen. */
 .redactie-bladen { display: grid; gap: var(--space-4); width: min(100%, 760px); margin-inline: auto; }
 .redactie-beeld { display: block; max-width: min(100%, 320px); margin: 0 auto var(--space-3); }
+
+/* Zwevende rekenmachine: klein, versleepbaar, en hij blokkeert het spel niet.
+   Standaard links naast de gereedschapsbalk, zodat de antwoorden rechts vrij blijven. */
+.rekenmachine-zwevend.rekenmachine-zwevend { position: fixed; z-index: 60; left: calc(var(--space-4) + var(--ck-tik-min, 56px) + var(--space-6)); top: calc(var(--space-12) * 2 + var(--space-4)); width: 240px; padding: var(--space-1) var(--space-2) var(--space-2); border-radius: var(--ck-rond-paneel, 28px); animation: ck-pop .3s var(--ck-veer) both; }
+.rekenmachine-zwevend .rekenmachine { width: 100%; }
+.rekenmachine-zwevend__kop { display: flex; align-items: center; justify-content: space-between; }
+.rekenmachine-zwevend__greep, .rekenmachine-zwevend__sluit { display: grid; place-items: center; min-width: 44px; min-height: 36px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--ck-cacao); cursor: pointer; }
+.rekenmachine-zwevend__greep { cursor: grab; touch-action: none; }
+.rekenmachine-zwevend__greep:active { cursor: grabbing; }
+.rekenmachine-zwevend__greep:focus-visible, .rekenmachine-zwevend__sluit:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+@media (max-width: 600px) { .rekenmachine-zwevend.rekenmachine-zwevend { left: var(--space-2); top: auto; bottom: 120px; width: 200px; } }

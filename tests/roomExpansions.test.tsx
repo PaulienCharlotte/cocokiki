@@ -65,38 +65,38 @@ test('legacy closed balcony supports keep their saved coordinates and owned room
 
 test('room and balcony purchases have separate prices, stable instances and atomic duplicate protection', () => memory(() => {
   saveCurrency(2000);
-  assert.equal(nextRoomPrice(loadRoomExpansions(), 'inside'), 150);
-  assert.equal(nextRoomPrice(loadRoomExpansions(), 'balcony'), 100);
+  assert.equal(nextRoomPrice(loadRoomExpansions(), 'inside'), 300);
+  assert.equal(nextRoomPrice(loadRoomExpansions(), 'balcony'), 250);
   const first = buyRoom('hobby-room', 'Mijn atelier', 'first-room');
-  assert.equal(first.status, 'applied'); assert.equal(loadCurrency(), 1850);
+  assert.equal(first.status, 'applied'); assert.equal(loadCurrency(), 1700);
   assert.deepEqual(buyRoom('hobby-room', 'Mijn atelier', 'first-room'), { status: 'duplicate', room: first.room });
-  assert.equal(loadCurrency(), 1850);
+  assert.equal(loadCurrency(), 1700);
   assert.equal(buyRoom('extra-bedroom', 'Ander', 'first-room').status, 'invalid');
   assert.equal(buyRoom('growing-deck', 'Kweekhoek', 'first-balcony').status, 'applied');
-  assert.equal(nextRoomPrice(loadRoomExpansions(), 'inside'), 250);
-  assert.equal(nextRoomPrice(loadRoomExpansions(), 'balcony'), 200);
+  assert.equal(nextRoomPrice(loadRoomExpansions(), 'inside'), 450);
+  assert.equal(nextRoomPrice(loadRoomExpansions(), 'balcony'), 400);
   const beforeQuote = loadCurrency();
   assert.equal(buyRoom('hobby-room', 'Verouderde prijs', 'old-quote', 150).status, 'price-changed');
   assert.equal(loadCurrency(), beforeQuote);
   assert.equal(buyRoom('hobby-room', 'Tweede atelier', 'second-room').status, 'applied');
   assert.equal(buyRoom('greenhouse', 'Kas', 'second-balcony').status, 'applied');
   assert.equal(buyRoom('extra-bedroom', 'Logeerkamer', 'third-room').status, 'applied');
-  assert.equal(loadCurrency(), 950);
+  assert.equal(loadCurrency(), 0);
   const saved = loadRoomExpansions();
   assert.equal(new Set(saved.rooms.map(room => room.id)).size, 5);
-  assert.equal(nextRoomPrice(saved, 'inside'), 450);
-  assert.equal(nextRoomPrice(saved, 'balcony'), 300);
+  assert.equal(nextRoomPrice(saved, 'inside'), 750);
+  assert.equal(nextRoomPrice(saved, 'balcony'), 550);
   assert.equal(ownedRooms().length, 10);
   assert.equal(ownedRooms().at(-1)?.label, 'Kas');
   assert.deepEqual(migrateRoomExpansions(JSON.parse(JSON.stringify(saved))), saved);
 }));
 
 test('insufficient funds and failed storage cannot charge coins or create rooms', () => memory((values, fail) => {
-  saveCurrency(149);
+  saveCurrency(299);
   const before = values.get(LOCAL_STATE_KEY);
   assert.equal(buyRoom('hobby-room', 'Atelier', 'poor').status, 'insufficient');
   assert.equal(values.get(LOCAL_STATE_KEY), before);
-  saveCurrency(150); const funded = values.get(LOCAL_STATE_KEY);
+  saveCurrency(300); const funded = values.get(LOCAL_STATE_KEY);
   fail(true);
   assert.equal(buyRoom('hobby-room', 'Atelier', 'retry').status, 'invalid');
   assert.equal(values.get(LOCAL_STATE_KEY), funded);
@@ -108,14 +108,14 @@ test('insufficient funds and failed storage cannot charge coins or create rooms'
 
 test('garden-room premium applies to new purchases without repricing old receipts', () => memory(() => {
   saveCurrency(1000);
-  assert.equal(roomTemplatePrice(loadRoomExpansions(), 'garden-room'), 250);
-  assert.equal(roomTemplatePrice(loadRoomExpansions(), 'growing-deck'), 100);
+  assert.equal(roomTemplatePrice(loadRoomExpansions(), 'garden-room'), 400);
+  assert.equal(roomTemplatePrice(loadRoomExpansions(), 'growing-deck'), 250);
   assert.equal(buyRoom('garden-room', 'Tuinkamer', 'stale-garden', 100).status, 'price-changed');
   assert.equal(loadCurrency(), 1000);
-  const bought = buyRoom('garden-room', 'Tuinkamer', 'new-garden', 250);
+  const bought = buyRoom('garden-room', 'Tuinkamer', 'new-garden', 400);
   assert.equal(bought.status, 'applied');
-  assert.equal(loadCurrency(), 750);
-  assert.equal(roomSaleAmount(bought.room!), 175);
+  assert.equal(loadCurrency(), 600);
+  assert.equal(roomSaleAmount(bought.room!), 280);
   const state = loadRoomExpansions();
   commitLocalState({ [ROOM_EXPANSIONS_KEY]: JSON.stringify({ ...state, rooms: [...state.rooms, { id: 'extra-2', template: 'garden-room', name: 'Oude tuinkamer', purchaseId: 'legacy-garden' }] }) }, [{ id: 'room:buy:legacy-garden', amount: -100 }]);
   assert.equal(roomSaleAmount('extra-2'), 70);
@@ -178,7 +178,7 @@ test('expansion screens use supplied assets and expose navigation, purchase and 
   assert.equal(resolveRoute('/treehouse/extra-6').route.page, 'treehouse-room');
   assert.equal(resolveRoute('/treehouse/extra-12').route.page, 'home');
   const dialog = renderToStaticMarkup(<RoomExpansionDialog onClose={() => undefined} onNavigate={() => undefined} />);
-  assert.ok(dialog.includes('150 CocoCoins') && dialog.includes('disabled'));
+  assert.ok(dialog.includes('300 CocoCoins') && dialog.includes('disabled'));
   assert.ok(!dialog.includes('Je saldo') && !dialog.includes('CocoCoins nodig'));
   for (const label of ['Hobbykamer', 'Extra slaapkamer', 'Kweekhoek', 'Kas']) assert.ok(dialog.includes(label));
   const source = readFileSync('components/treehouse/RoomInventoryDrawer.tsx', 'utf8');
@@ -193,7 +193,7 @@ test('building shop shows illustrated modules, tabs and prices before the icon s
   assert.match(html, /Badkamer/);
   assert.match(html, /Roze kamer/);
   assert.match(html, /role="tab"/);
-  assert.match(html, /150 CocoCoins/);
+  assert.match(html, /300 CocoCoins/);
   assert.match(html, /garden-room.webp/);
 }));
 
@@ -220,15 +220,15 @@ test('new room modules retain their actual assets, name and icon on reload', () 
 
 test('paid roofs persist, move with rooms and can be equipped again without paying twice', () => memory(() => {
   saveCurrency(500);
-  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'blue-roof', 80).status, 'applied');
-  assert.equal(loadCurrency(), 420);
+  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'blue-roof', 150).status, 'applied');
+  assert.equal(loadCurrency(), 350);
   assert.equal(loadTreehouseLayout().find(room => room.id === 'bedroom')!.roof, 'roofBlue');
-  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'blue-roof', 80).status, 'duplicate');
-  assert.equal(loadCurrency(), 420);
-  assert.equal(buyRoomRoof('bedroom', 'roofFlowers', 'flowers-roof', 100).status, 'applied');
+  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'blue-roof', 150).status, 'duplicate');
+  assert.equal(loadCurrency(), 350);
+  assert.equal(buyRoomRoof('bedroom', 'roofFlowers', 'flowers-roof', 200).status, 'applied');
   assert.equal(roofPrice('bedroom', 'roofBlue'), 0);
   assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'reuse-blue', 0).status, 'applied');
-  assert.equal(loadCurrency(), 320);
+  assert.equal(loadCurrency(), 150);
   const next = moveBuildRoom(loadTreehouseLayout(), 'bedroom', 1, 1)!;
   assert.ok(next);
   assert.equal(saveTreehouseLayout(next), true);
@@ -238,39 +238,39 @@ test('paid roofs persist, move with rooms and can be equipped again without payi
 }));
 
 test('roof failures and stale quotes cannot change coins or ownership', () => memory((values, fail) => {
-  saveCurrency(79);
+  saveCurrency(149);
   const poor = values.get(LOCAL_STATE_KEY);
-  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'poor-roof', 80).status, 'insufficient');
+  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'poor-roof', 150).status, 'insufficient');
   assert.equal(values.get(LOCAL_STATE_KEY), poor);
   saveCurrency(500);
   assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'bad-quote', 1).status, 'price-changed');
-  assert.equal(buyRoomRoof('terrace', 'roofBlue', 'terrace-roof', 80).status, 'invalid');
+  assert.equal(buyRoomRoof('terrace', 'roofBlue', 'terrace-roof', 150).status, 'invalid');
   const before = values.get(LOCAL_STATE_KEY);
   fail(true);
-  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'retry-roof', 80).status, 'invalid');
+  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'retry-roof', 150).status, 'invalid');
   assert.equal(values.get(LOCAL_STATE_KEY), before);
   fail(false);
   assert.equal(loadTreehouseRoofs().purchases.length, 0);
-  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'retry-roof', 80).status, 'applied');
+  assert.equal(buyRoomRoof('bedroom', 'roofBlue', 'retry-roof', 150).status, 'applied');
   values.set(TREEHOUSE_ROOFS_KEY, '{bad');
   // The authoritative document remains intact; legacy corrupt data cannot replace it.
   assert.equal(loadTreehouseRoofs().purchases.length, 1);
   commitLocalState({ [TREEHOUSE_ROOFS_KEY]: '{bad' });
   const corrupt = values.get(LOCAL_STATE_KEY);
-  assert.equal(buyRoomRoof('bedroom', 'roofFlowers', 'corrupt-roof', 100).status, 'invalid');
+  assert.equal(buyRoomRoof('bedroom', 'roofFlowers', 'corrupt-roof', 200).status, 'invalid');
   assert.equal(values.get(LOCAL_STATE_KEY), corrupt);
 }));
 
 test('selling an expansion also settles its purchased roofs exactly once', () => memory(() => {
   saveCurrency(500);
   const room = buyRoom('blush-room', 'Roze kamer', 'pink-room').room!;
-  assert.equal(buyRoomRoof(room, 'roofFlowers', 'pink-flowers', 100).status, 'applied');
-  assert.equal(roomSaleAmount(room), 175);
+  assert.equal(buyRoomRoof(room, 'roofFlowers', 'pink-flowers', 200).status, 'applied');
+  assert.equal(roomSaleAmount(room), 350);
   assert.equal(sellTreehouseRoom(room), true);
-  assert.equal(loadCurrency(), 425);
+  assert.equal(loadCurrency(), 350);
   assert.equal(loadTreehouseRoofs().purchases.length, 0);
   assert.equal(sellTreehouseRoom(room), false);
-  assert.equal(loadCurrency(), 425);
+  assert.equal(loadCurrency(), 350);
 }));
 
 test('all sixteen cells can persist and the full grid refuses further purchases', () => memory(() => {

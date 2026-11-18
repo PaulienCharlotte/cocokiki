@@ -6,6 +6,7 @@ import { BANANA_PANCAKE_MATH_CHALLENGES } from './mathChallenges';
 import { FRUIT_YOGURT_MATH, FRUIT_YOGURT_PREPARATION } from './fruitYogurt';
 import { BLUEBERRY_MUFFINS } from './blueberryMuffins';
 import { BAKING_ASSETS, MUFFIN_INGREDIENTS } from './muffinIngredients';
+import { OPDRACHT_BONUS, PER_ANTWOORD } from '../../services/economie';
 import type {
   CookingProgressState,
   CookingAssetRegistry,
@@ -108,7 +109,7 @@ export const RECIPES: RecipeConfig[] = [
   {
     id: 'banana-pancakes', name: 'Bananenpannenkoekjes', category: 'breakfast', availability: 'playable', requiredCompletedRecipes: 0, level: 1,
     shortDescription: 'Zachte pannenkoekjes van banaan, ei en havermout.', preparationMinutes: 15, servings: 2,
-    image: COOKING_ASSETS.recipes['banana-pancakes'], contentStatus: 'ready', rewardCoins: 10,
+    image: COOKING_ASSETS.recipes['banana-pancakes'], contentStatus: 'ready', rewardCoins: OPDRACHT_BONUS.receptKlaar,
     ingredients: [
       { ingredientId: 'banana', amount: 1, unit: 'piece', displayAmount: '1 banaan' },
       { ingredientId: 'eggs', amount: 2, unit: 'piece', displayAmount: '2 eieren' },
@@ -140,7 +141,7 @@ export const RECIPES: RecipeConfig[] = [
   {
     id: 'fruit-yogurt', name: 'Fruityoghurt met aardbei en banaan', category: 'snack', availability: 'playable', requiredCompletedRecipes: 1, level: 1,
     shortDescription: 'Een frisse kom yoghurt met banaan en aardbeien.', preparationMinutes: 5, servings: 1,
-    image: COOKING_ASSETS.recipes['fruit-yogurt'], contentStatus: 'ready', rewardCoins: 10,
+    image: COOKING_ASSETS.recipes['fruit-yogurt'], contentStatus: 'ready', rewardCoins: OPDRACHT_BONUS.receptKlaar,
     ingredients: [
       { ingredientId: 'yogurt', amount: 150, unit: 'milliliter', displayAmount: '150 ml yoghurt' },
       { ingredientId: 'strawberry', amount: 75, unit: 'gram', displayAmount: '75 g aardbeien' },

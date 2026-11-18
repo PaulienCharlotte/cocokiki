@@ -1,3 +1,4 @@
+import { winkelPrijs } from '../services/economie';
 export type DecorStoreId = 'furniture' | 'plants';
 export type DecorCategory = 'christmas' | 'bathroom' | 'sleeping' | 'seating' | 'storage' | 'tables' | 'rugs' | 'lighting' | 'large-plants' | 'hanging-plants' | 'flowering-plants' | 'small-plants';
 
@@ -246,6 +247,8 @@ export const DECOR_PRODUCTS_BY_ID = Object.fromEntries(
 const retiredRugs = new Set(['japandi-bath-mat', 'japandi-woven-rug', 'flower-rug', 'jute-rug', 'leaf-rug', 'pink-rug']);
 for (const product of DECOR_PRODUCTS) {
   if (retiredRugs.has(product.id)) product.retired = true;
+  // Prijzen volgen de economie (services/economie.ts), niet een losse waarde per product.
+  product.price = winkelPrijs(product.price);
 }
 export const DECOR_SHOP_PRODUCTS = DECOR_PRODUCTS.filter(product => !product.retired);
 

@@ -74,7 +74,9 @@ test('een latere stap verklapt nooit de uitkomst van een eerdere', () => {
       }
       // Wie alleen stap 1 ziet, kan het eindantwoord nergens aflezen.
       const laatste = somTekst(question.stappen, question.stappen.length - 1, 0, false);
-      assert.ok(!laatste.includes(String(question.answer)) || question.prompt.includes(String(question.answer)));
+      // Heel getal zoeken, niet als stukje tekst: antwoord 5 staat niet "in" 15 of 2,5.
+      const heel = (tekst: string) => new RegExp(`(^|[^\\d,.])${String(question.answer).replace('.', '[.,]')}($|[^\\d,.])`).test(tekst);
+      assert.ok(!heel(laatste) || heel(question.prompt), `eindantwoord ${question.answer} zichtbaar in "${laatste}"`);
     }
   }
 });

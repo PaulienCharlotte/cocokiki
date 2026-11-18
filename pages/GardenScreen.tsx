@@ -135,7 +135,8 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
         const result = solveGardenPart(selected, plot.id, plot.step, part, answer, positions, water);
         if (result === 'correct') {
           juich(); setHint(0); setHintLicht(false);
-          const message = plot.helpedParts?.includes(gardenPartKey(plot)) ? 'Met hulp afgerond. Je plant groeit verder.' : 'Zelf opgelost. +2 CocoCoins.';
+          const hulp = (['action', 'conversion'] as const).filter(deel => plot.helpedParts?.includes(`${plot.step}:${deel}`)).length;
+          const message = hulp >= 2 ? 'Met hulp afgerond. Je plant groeit verder.' : `${hulp ? 'Goed gedaan' : 'Zelf opgelost'}. +${4 - hulp * 2} CocoCoins.`;
           const lastPart = plot.step === 0 ? part === 'conversion' : part === 'action';
           if (lastPart) act(true, message); else { refresh(); setNotice(''); }
         } else if (result === 'stale' || result === 'save-failed') { refresh(); setNotice('Dit vak is veranderd of kon niet worden opgeslagen.'); }
@@ -207,6 +208,21 @@ export function GardenTaskPanel({ plot, crop, level, hint = false, blij = false,
     setError(result === 'wrong' ? 'Nog niet. Tik op de hint als je hulp wilt.' : result === 'correct' ? '' : 'Opslaan lukte niet. Kies dit vak opnieuw en probeer het nog eens.');
     return result;
   };
+  // Enter doet hetzelfde als de hoofdknop (plant mijn rij, geef water, verder),
+  // zodat je niet steeds naar de knop rechtsonder hoeft.
+  const submitRef = useRef(submit); submitRef.current = submit;
+  const knopZichtbaar = !(part === 'conversion' && !assisted);
+  useEffect(() => {
+    if (!knopZichtbaar) return;
+    const toets = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.repeat) return;
+      const doel = event.target as HTMLElement | null;
+      if (doel && (doel.tagName === 'BUTTON' || doel.tagName === 'A' || doel.tagName === 'INPUT')) return;
+      event.preventDefault(); submitRef.current();
+    };
+    window.addEventListener('keydown', toets);
+    return () => window.removeEventListener('keydown', toets);
+  }, [knopZichtbaar]);
   const kiesAntwoord = (value: number) => { if (submit(String(value)) === 'wrong') setFout(value); else setFout(null); };
   const vulTot = (event: React.PointerEvent<HTMLDivElement>) => {
     if (assisted || !(event.buttons & 1) && event.type !== 'pointerdown') return;

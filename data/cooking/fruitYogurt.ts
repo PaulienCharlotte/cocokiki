@@ -1,6 +1,7 @@
 import { ASSET_LIBRARY } from '../assetLibrary';
 import type { PreparationConfig } from './preparation';
 import type { MathChallengeConfig } from './types';
+import { PER_ANTWOORD } from '../../services/economie';
 
 export const FRUIT_YOGURT_ASSETS = {
   yogurt: '/assets/library/cooking/fruit-yogurt/yogurt-bowl.webp',
@@ -31,20 +32,20 @@ export const FRUIT_YOGURT_MATH: MathChallengeConfig[] = [
     title: 'Hoeveel yoghurt?', instruction: 'Hoeveel yoghurt hebben we nodig? Kijk naar het recept: 150 ml.',
     learningObjective: 'Een hoeveelheid in milliliters herkennen', difficulty: 1,
     ingredientId: 'yogurt', baseServings: 1, targetServings: 1, baseQuantity: 100, correctQuantity: 150,
-    minimum: 50, maximum: 300, step: 50, unit: 'ml', rewardCoins: 5, successFeedback: 'Precies! 150 ml yoghurt.',
+    minimum: 50, maximum: 300, step: 50, unit: 'ml', rewardCoins: PER_ANTWOORD, successFeedback: 'Precies! 150 ml yoghurt.',
   },
   {
     id: 'fruit-yogurt-weigh-strawberries', recipeId: 'fruit-yogurt', type: 'interactive-weighing',
     title: 'Weeg de aardbeien', instruction: 'Meet 75 gram aardbeien af.',
     learningObjective: 'Grammen afmeten met een weegschaal', difficulty: 1,
-    ingredientId: 'strawberry', targetGrams: 75, increments: [5, 25], rewardCoins: 5, successFeedback: 'Goed gewogen! 75 gram aardbeien.',
+    ingredientId: 'strawberry', targetGrams: 75, increments: [5, 25], rewardCoins: PER_ANTWOORD, successFeedback: 'Goed gewogen! 75 gram aardbeien.',
   },
   {
     id: 'fruit-yogurt-double', recipeId: 'fruit-yogurt', type: 'recipe-scaling',
     title: 'Yoghurt voor twee', instruction: 'Voor één portie gebruiken we 150 ml yoghurt. Hoeveel hebben we nodig voor twee porties?',
     learningObjective: 'Een hoeveelheid verdubbelen', difficulty: 1,
     baseServings: 1, targetServings: 2, quantities: [{ ingredientId: 'yogurt', base: 150, target: 300, step: 50, unit: 'ml' }],
-    rewardCoins: 5, successFeedback: 'Goed gerekend! 300 ml voor twee porties.',
+    rewardCoins: PER_ANTWOORD, successFeedback: 'Goed gerekend! 300 ml voor twee porties.',
   },
   {
     id: 'fruit-yogurt-order', recipeId: 'fruit-yogurt', type: 'sequence-ordering',
@@ -56,6 +57,6 @@ export const FRUIT_YOGURT_MATH: MathChallengeConfig[] = [
       { id: 'banana', label: 'Voeg banaan toe', assetId: 'banana' },
       { id: 'mix', label: 'Roer alles door elkaar', assetId: 'spoon' },
     ],
-    initialOrder: ['mix', 'banana', 'yogurt', 'strawberry'], rewardCoins: 5, successFeedback: 'Helemaal goed! Tijd voor je eigen kom fruityoghurt.',
+    initialOrder: ['mix', 'banana', 'yogurt', 'strawberry'], rewardCoins: PER_ANTWOORD, successFeedback: 'Helemaal goed! Tijd voor je eigen kom fruityoghurt.',
   },
 ];

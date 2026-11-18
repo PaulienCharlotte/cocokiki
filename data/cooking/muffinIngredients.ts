@@ -1,4 +1,5 @@
 import type { IngredientDiscoveryConfig, IngredientEntry } from './types';
+import { PER_ANTWOORD } from '../../services/economie';
 
 export const BAKING_ASSETS = {
   'baking-powder': '/assets/library/cooking/baking/baking-powder.webp',
@@ -23,5 +24,5 @@ const foods: Array<{ id: string; name: string; image: string; origin: string; re
 ];
 
 export const MUFFIN_INGREDIENTS: IngredientEntry[] = foods.map(f => ({ id: f.id, name: f.name, image: f.image, origin: f.origin, productionRegions: f.regions, season: f.id === 'blueberry' ? 'Vooral zomer; ingevroren het hele jaar' : 'Het hele jaar', nutrients: f.nutrients, nutrientIds: f.nutrientIds, facts: [f.fact], contentStatus: 'ready' }));
-export const MUFFIN_DISCOVERIES: IngredientDiscoveryConfig[] = foods.map(f => ({ ingredientId: f.id, title: `Ontdek ${f.name.toLowerCase()}!`, collectionLabel: f.name, educationalText: f.origin, heroFact: f.fact, origin: { label: 'Van oorsprong tot keuken', text: f.origin }, nutrition: f.nutrition, foodKnowledge: { label: 'In de keuken', text: f.fact }, rewardCoins: 5, encyclopediaEntryId: f.id, difficulty: 2,
+export const MUFFIN_DISCOVERIES: IngredientDiscoveryConfig[] = foods.map(f => ({ ingredientId: f.id, title: `Ontdek ${f.name.toLowerCase()}!`, collectionLabel: f.name, educationalText: f.origin, heroFact: f.fact, origin: { label: 'Van oorsprong tot keuken', text: f.origin }, nutrition: f.nutrition, foodKnowledge: { label: 'In de keuken', text: f.fact }, rewardCoins: PER_ANTWOORD, encyclopediaEntryId: f.id, difficulty: 2,
   questions: [{ id: `${f.id}-source`, type: 'single-choice', prompt: f.question, options: [{ id: 'source', label: f.answer }, { id: 'other', label: f.wrong[0] }, { id: 'different', label: f.wrong[1] }], correctOptionId: 'source', feedbackExplanation: f.origin + ' ' + f.fact, learningGoal: 'source' }] }));

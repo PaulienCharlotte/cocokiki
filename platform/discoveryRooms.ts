@@ -37,10 +37,10 @@ export const DISCOVERY_ROOMS: Record<ResidentId, DiscoveryRoom> = {
   seb: { title: 'Seb’s ontdekkingskamer', world: 'wereld', objects: [
     { id: 'topo', label: 'Ontdek de kaart', x: 15, y: 28, action: 'navigate', path: '/games/topo' },
     { id: 'atlas', label: 'Open je reisboek', x: 14, y: 56, action: 'navigate', path: '/encyclopedie?tab=plekken' },
-    { id: 'world-memory', label: 'Speel wereldkaartmemory', x: 57, y: 85, action: 'navigate', path: '/games/flags-memory' },
+    { id: 'world-memory', label: 'Speel wereldmemory', x: 57, y: 85, action: 'navigate', path: '/games/flags-memory' },
   ] },
   lua: { title: 'Lua’s werkplaats', aspectRatio: 1.5, world: 'school', objects: [
-    { id: 'blueprint', label: 'Richt de babykamer in', x: 16, y: 83, action: 'navigate', path: '/opdrachten/luna-babykamer' },
+    { id: 'blueprint', label: 'Richt een kamer in', x: 16, y: 83, action: 'navigate', path: '/opdrachten?gebied=inrichten' },
     { id: 'abacus', label: 'Speel keersommen', x: 39, y: 49, action: 'navigate', path: '/school/math/multiply' },
     { id: 'balance', label: 'Weeg en vergelijk', x: 56, y: 49, action: 'navigate', path: '/school/math/balance' },
     { id: 'measure', label: 'Meet iets op', x: 74, y: 52, action: 'navigate', path: '/school/math/maten' },

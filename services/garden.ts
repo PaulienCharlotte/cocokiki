@@ -1,6 +1,7 @@
 import { GARDEN_CROPS_BY_ID, gardenSeason, gardenTask, parseGardenNumber } from '../data/plants/garden';
 import { commitLocalState, readDocument, readLocalState } from './localState';
 import { COOKING_PROGRESS_KEY, loadCookingProgress } from './cookingProgress';
+import { TUIN_PER_STAP } from './economie';
 
 export const GARDEN_KEY = 'cocokiki:garden:v1';
 export type GardenPart = 'action' | 'conversion';
@@ -55,8 +56,13 @@ export function solveGardenPart(index: number, plotId: string, step: number, par
   const lastPart = step === 0 ? part === 'conversion' : part === 'action';
   if (lastPart) { changed.step += 1; changed.part = 'conversion'; if (step > 0) changed.lastCareDay = state.day; }
   else changed.part = part === 'action' ? 'conversion' : 'action';
-  const coins = plot.helpedParts?.includes(gardenPartKey(plot)) ? 0 : 2;
-  return saveGarden(state, next, {}, [{ id: `garden-task:${plot.id}:${step}:${part}`, amount: coins }]) ? 'correct' : 'save-failed';
+  // Eén beloning per stap, aan het eind: 4 munten als je beide delen zelf deed,
+  // 2 als je bij één deel hulp had. Zo maakt de volgorde (eerst rekenen of eerst
+  // meten) niet uit, en kun je niet twee keer belonen voor dezelfde stap.
+  if (!lastPart) return saveGarden(state, next) ? 'correct' : 'save-failed';
+  const geholpen = (['action', 'conversion'] as const).filter(deel => plot.helpedParts?.includes(`${step}:${deel}`)).length;
+  const coins = Math.max(0, TUIN_PER_STAP - geholpen * (TUIN_PER_STAP / 2));
+  return saveGarden(state, next, {}, coins ? [{ id: `garden-task:${plot.id}:${step}`, amount: coins }] : []) ? 'correct' : 'save-failed';
 }
 export const gardenNeedsCare = (state: GardenState): boolean => state.plots.some(plot => plot !== null && plot.step < 4 && (plot.step === 0 || plot.lastCareDay < state.day));
 export function nextGardenDay(): boolean {
