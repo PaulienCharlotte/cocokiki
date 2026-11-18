@@ -116,6 +116,12 @@
 .ck-dialog__actions { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-6); }
 .ck-dialog__actions .ck-button { width: 100%; }
 
+/* Oude effen UI-oppervlakken volgen het glas; getekende materiaalassets blijven intact. */
+.ck-dialog:not(.ck-paper-surface):not(.bakkerij-recept), .ck-surface { backdrop-filter: blur(var(--space-4)); border-color: var(--ck-glas-rand); }
+.ck-dialog:not(.ck-paper-surface):not(.bakkerij-recept) { background-color: var(--ck-glas); }
+.ck-dialog .ck-zegt__wolk { background-color: transparent; }
+.ck-dialog__copy h2, .ck-dialog__copy > p { color: var(--ck-cacao); }
+
 .ck-progress { width: 100%; color: var(--color-text); }
 .ck-progress__meta { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-2); font-size: var(--font-size-sm); }
 .ck-progress__meta span { color: var(--color-text-muted); font-weight: var(--font-weight-medium); }

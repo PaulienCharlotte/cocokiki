@@ -177,7 +177,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
               staat: wrongAnswer === option.id ? 'mis' : discovery.step === 'correct' && question.correctOptionId === option.id ? 'goed' : undefined,
             }))} />
           <div className="discovery-question-actions">
-            <Button size="large" disabled={!wrongAnswer && discovery.step !== 'correct'} onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>
+            {(wrongAnswer || discovery.step === 'correct') && <Button onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>}
             <Button variant="quiet" startIcon={<BookOpen size={17} />} onClick={() => discovery.step === 'correct' || wrongAnswer ? setFeedbackOpen(true) : setReviewing(true)}>{discovery.step === 'correct' || wrongAnswer ? 'Coco legt uit' : 'Geef me een tip'}</Button>
           </div>
         </>}

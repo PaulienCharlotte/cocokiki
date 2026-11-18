@@ -13,12 +13,12 @@
   --color-sky: #b9ddf2;
 
   --color-background: #fffaf5;
-  --color-background-soft: #f7f1eb;
-  --color-background-calm: #edf5f1;
-  --color-surface: #fffdf9;
-  --color-surface-soft: #f5efe9;
-  --color-surface-tinted: #f1e8f4;
-  --color-surface-glass: #fffdf9e8;
+  --color-background-soft: color-mix(in srgb, var(--ck-glas) 65%, transparent);
+  --color-background-calm: color-mix(in srgb, var(--ck-glas) 65%, transparent);
+  --color-surface: color-mix(in srgb, var(--ck-glas) 65%, transparent);
+  --color-surface-soft: color-mix(in srgb, var(--ck-glas) 65%, transparent);
+  --color-surface-tinted: color-mix(in srgb, var(--ck-glas) 65%, transparent);
+  --color-surface-glass: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   /* Gekoppeld aan de CocoKiki-huisstijl (styles/cocokiki-tokens.css): geen
      donkergroen meer, maar de kleur van de wereld waar je bent (standaard
      school). De donkere rand-variant, zodat tekst en witte letters leesbaar blijven. */

@@ -5,6 +5,9 @@
 .nursery-project__header > span { margin-left: auto; font-size: var(--font-size-sm); color: var(--color-text-muted); }
 .nursery-project__preview { width: 100%; max-height: 16rem; object-fit: cover; border-radius: var(--radius-control); }
 .nursery-project p { margin: 0; }
+.nursery-project__paper { backdrop-filter: blur(var(--space-4)); border: 1px solid var(--ck-glas-rand); box-shadow: none; }
+.nursery-project__paper .ck-zegt__wolk { background: transparent; }
+.nursery-project__paper .ck-zegt__naam strong { color: var(--ck-bes); }
 .nursery-measure, .nursery-budget { padding: var(--space-4); border-radius: var(--radius-control); background: var(--color-success-soft); display: flex; gap: var(--space-3); align-items: center; }
 .nursery-measure svg { flex: none; }
 .nursery-answer { display: grid; gap: var(--space-3); }

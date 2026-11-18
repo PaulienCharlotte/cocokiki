@@ -16,6 +16,8 @@ De getekende materialen en aankleding van de encyclopedie en het bestaande To Do
 
 Dieper in een spel hoeft niet alles op papier. Kies daar het materiaal dat bij de handeling hoort: het keukenblad, de moestuin of het werkvlak. De vaste bediening, letters, wereldkleuren, spraakwolk en reacties blijven gedeeld. Glas blijft voor de vaste bediening en panelen. Getekende materialen en de functionele spelbediening vormen zo samen één CocoKiki-stijl.
 
+Oude effen witte of grijze UI-vlakken gebruiken transparant glas, ook in gedeelde dialogen, winkels en inrichtopdrachten. De oude `color-surface`-aliassen verwijzen daarvoor naar het bestaande glastoken. Getekend papier, houten borden, productillustraties en andere gegenereerde materiaalassets blijven behouden. Vermijd gestapelde ondoorzichtige vakken en zware knoppen voor secundaire acties; antwoordregels en een kleine tipactie volstaan bij een kookvraag. Toon de vervolgactie pas wanneer het kind een antwoord heeft gekozen.
+
 ## De zes basisregels
 
 1. **De wereld is de interface.** Prijzen, maten en hoeveelheden hangen áán dingen in de wereld (hangkaartjes). Een plek waar iets moet gebeuren licht op (doel). Er komen geen vraagvakken of witte kaarten over de illustratie.

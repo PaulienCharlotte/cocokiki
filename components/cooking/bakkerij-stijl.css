@@ -151,6 +151,15 @@
 
 .discovery-question-actions { display: grid; width: 100%; gap: var(--space-2); min-height: calc(var(--touch-target) * 2 + var(--space-2)); }
 .discovery-question-actions > .ck-button { width: 100%; }
+.bakkerij-stijl .discovery-question-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; min-height: var(--touch-target); gap: var(--space-3); }
+.bakkerij-stijl .discovery-question-actions > .ck-button { width: auto; font-size: var(--ck-maat-tekst); }
+.bakkerij-stijl .discovery-question-actions > .ck-button--quiet { background: none; border-color: transparent; box-shadow: none; padding-inline: var(--space-2); }
+.bakkerij-stijl .ck-keuzes.is-los { gap: 0; }
+.bakkerij-stijl .ck-keuzes.is-los .ck-keuze { min-height: var(--touch-target); background: transparent; border: 0; border-bottom: 1px solid var(--ck-schaduw-rand); border-radius: 0; box-shadow: none; padding: var(--space-3) var(--space-2); }
+.bakkerij-stijl .ck-keuzes.is-los .ck-keuze:hover:not(:disabled), .bakkerij-stijl .ck-keuzes.is-los .ck-keuze:focus-visible { background: var(--ck-glas); }
+.bakkerij-stijl .ck-keuzes .ck-keuze__letter { background: transparent; color: var(--ck-cacao); }
+.bakkerij-stijl .discovery-card .ck-zegt__wolk { background: var(--ck-glas); }
+.bakkerij-stijl .discovery-card .ck-zegt__naam strong { color: var(--ck-bes); }
 .cooking-discovery-feedback .ck-zegt { margin: var(--space-4) 0; text-align: left; }
 .cooking-food-sprite { display: block; width: 100%; aspect-ratio: 3 / 2; background-size: 200% 200%; background-repeat: no-repeat; }
 .cooking-tap__vessel:has(.cooking-food-sprite) { width: 100%; }
