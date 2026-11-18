@@ -35,6 +35,22 @@ export function nurseryQuestion(state: NurseryState) {
   };
   return NURSERY_QUESTIONS.includes(state.stage as NurseryQuestionId) ? questions[state.stage as NurseryQuestionId] : null;
 }
+/**
+ * De antwoordbellen bij een rekenstap: het goede antwoord en de fouten die
+ * kinderen echt maken (een nul te veel of te weinig, vergeten af te trekken).
+ * Vaste volgorde per vraag, zodat de bellen niet verspringen bij opnieuw laden.
+ */
+export function nurseryChoices(state: NurseryState): number[] {
+  const q = nurseryQuestion(state); if (!q) return [];
+  const total = nurseryTotal(state), id = state.stage as NurseryQuestionId;
+  const valkuilen: Record<NurseryQuestionId, number[]> = {
+    height: [26, 0.26, 260], space: [200, 520, 80], total: [total + 50, total - 45, PROJECT_BUDGET],
+    change: [total, PROJECT_BUDGET - total + 100, PROJECT_BUDGET], rug: [12, 0.12, 120],
+  };
+  const lijst = [...new Set([q.answer, ...valkuilen[id]].map(n => Math.round(n * 100) / 100))].filter(n => n >= 0).slice(0, 4);
+  const draai = (id.length + total) % lijst.length;
+  return [...lijst.slice(draai), ...lijst.slice(0, draai)];
+}
 export function revealNursery(revision: number): boolean {
   const s = loadNursery(), id = s.stage as NurseryQuestionId;
   if (s.revision !== revision || !nurseryQuestion(s)) return false;

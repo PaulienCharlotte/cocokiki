@@ -305,11 +305,11 @@ test('een tandenborstelbeker kun je voor het plankje zetten, en weer erachter', 
   const [plankje3, beker3] = ['plankje', 'beker'].map(id => achter.placements.find(item => item.id === id)!);
   assert.ok(roomItemDepth(beker3) < roomItemDepth(plankje3), 'en met "Achter" gaat hij er weer achter');
 
-  // De knoppen zeggen met zoveel woorden wat ze doen; de iconen alleen niet.
+  // Voor en achter staan direct in het zijmenu, met een label dat zegt wat ze doen.
   const bron = readFileSync('components/treehouse/RoomInventoryDrawer.tsx', 'utf8');
-  assert.match(bron, /room-placement-options__laag/);
-  assert.match(bron, />Voor<\/Button>/);
-  assert.match(bron, />Achter<\/Button>/);
+  assert.match(bron, /<InrichtMenu/);
+  assert.match(bron, /naar voren plaatsen/);
+  assert.match(bron, /naar achteren plaatsen/);
 });
 
 test('een kamer is op elk scherm even breed als de tekening, en meubels mogen flink groter', () => {

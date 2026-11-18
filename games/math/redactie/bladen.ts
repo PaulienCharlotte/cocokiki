@@ -17,6 +17,7 @@ export interface Blad { nr: number; sommen: Redactiesom[] }
 type Regel = [vraag: string, som: string, antwoord: number, eenheid: string, tip: string, extra?: Partial<Stap>];
 const euro: Partial<Stap> = { soort: 'euro' };
 const klok: Partial<Stap> = { soort: 'tijd', verborgen: true };
+const tijdlijn = (van: string, tot: string): Partial<Stap> => ({ verborgen: true, tijdlijn: { van, tot } });
 
 const naarStappen = (regels: Regel[]) => regels.map(([vraag, som, antwoord, eenheid, tip, extra]) => ({ vraag, som, antwoord, eenheid, tip, ...extra }));
 function som(blad: number, nr: number, deel: {
@@ -339,7 +340,7 @@ const blad9: Redactiesom[] = [
 const blad10: Redactiesom[] = [
   som(10, 1, { verhaal: 'Op een motorcircuit wordt een wedstrijd van 10 ronden gehouden. Het circuit is 30 km lang. De start is om 15.05 uur. De winnaar finisht om 17.35 uur. Hoeveel km rijdt hij gemiddeld per uur?', nodig: ['10', '30', '15.05', '17.35'], zoek: 'de snelheid in km per uur', type: 'snelheid',
     aanpak: 'Afstand gedeeld door de uren.',
-    stappen: [['Hoeveel km rijdt hij?', '10 × 30', 300, 'km', '10 ronden van 30 km.'], ['Hoeveel hele uren van 15.05 tot 17.05?', '17 − 15', 2, 'uur', 'Van 15 uur tot 17 uur.'], ['Hoeveel minuten van 17.05 tot 17.35?', '35 − 5', 30, 'minuten', 'Vergelijk de minuten.'], ['Hoeveel uur is dat samen?', '{2} + 0,5', 2.5, 'uur', '30 minuten is een half uur: 0,5.'], ['Hoeveel km per uur?', '{1} ÷ {4}', 120, 'km per uur', 'Afstand gedeeld door de uren.']],
+    stappen: [['Hoeveel km rijdt hij?', '10 × 30', 300, 'km', '10 ronden van 30 km.'], ['Hoe lang rijdt hij, van 15.05 tot 17.35?', 'tijdlijn', 2.5, 'uur', 'Spring eerst hele uren, dan minuten. 30 minuten is een half uur: 0,5.', tijdlijn('15.05', '17.35')], ['Hoeveel km per uur?', '{1} ÷ {2}', 120, 'km per uur', 'Afstand gedeeld door de uren.']],
     controle: '2,5 uur × 120 km = 300 km.' }),
   som(10, 2, { verhaal: 'Een vliegtuig vertrekt om 15.15 uur van Schiphol. Het komt om 23.15 in New York aan. De gemiddelde snelheid is 980 km per uur. Hoeveel km is de afstand Schiphol - New York?', nodig: ['15.15', '23.15', '980'], zoek: 'de afstand in km', type: 'snelheid',
     aanpak: 'Hoeveel uur vliegt hij? Keer de snelheid.',
@@ -359,7 +360,7 @@ const blad10: Redactiesom[] = [
     controle: 'Van 5 december tot 26 december is 21 dagen.' }),
   som(10, 6, { verhaal: "Greg staat 's morgens om 8.10 uur op. Hij heeft een afspraak bij de tandarts om 10.35 uur. Hoeveel tijd heeft hij nog voor hij bij de tandarts moet zijn?", nodig: ['8.10', '10.35'], zoek: 'de tijd tot de afspraak, in minuten', type: 'tijdsduur',
     aanpak: 'Spring naar het hele uur, dan verder.',
-    stappen: [['Hoeveel minuten van 8.10 tot 9.00?', '60 − 10', 50, 'minuten', 'Een uur heeft 60 minuten.'], ['Plus het uur van 9.00 tot 10.00?', '{1} + 60', 110, 'minuten', 'Een heel uur is 60 minuten.'], ['Plus de 35 minuten tot 10.35?', '{2} + 35', 145, 'minuten', 'Tel het laatste stukje erbij.']],
+    stappen: [['Hoeveel minuten van 8.10 tot 10.35?', 'tijdlijn', 145, 'minuten', 'Spring naar 9.00, dan een heel uur, dan het laatste stukje. Een uur is 60 minuten.', tijdlijn('8.10', '10.35')]],
     controle: '145 minuten is 2 uur en 25 minuten.' }),
   som(10, 7, { verhaal: 'Op een plein liggen 75 tegels in de lengte en 50 tegels in de breedte. Hoeveel tegels liggen er op het plein?', nodig: ['75', '50'], zoek: 'het aantal tegels', type: 'omtrekOppervlakte',
     aanpak: 'Het hele plein ligt vol: lengte keer breedte.',

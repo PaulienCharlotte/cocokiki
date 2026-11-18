@@ -53,6 +53,12 @@ export interface Stap {
    * deze woorden, en `antwoord` is de plek van het goede in de lijst.
    */
   keuzes?: string[];
+  /**
+   * Een tijdsduur tussen twee kloktijden: je springt over de tijdlijn in
+   * plaats van de tijden af te trekken (17.35 − 15.05 is geen 2,30 uur).
+   * Met eenheid 'uur' zet je de minuten om met de kwartierstrook.
+   */
+  tijdlijn?: { van: string; tot: string };
 }
 
 export interface Redactiesom extends MathQuestion {

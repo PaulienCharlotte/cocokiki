@@ -305,3 +305,30 @@
   .rekenspel.rekenspel--add-subtract .redactie-oordeel { font-size: 20px; }
   .rekenspel.rekenspel--add-subtract .redactie-stempel { width: 70px; height: 70px; font-size: 17px; }
 }
+
+/* ---- Tijdlijn: springen van kloktijd naar kloktijd, dan omzetten naar uren ---- */
+.rekenspel .tijdlijn { display: grid; gap: 18px; width: 100%; padding: 8px 4px 4px; }
+.rekenspel .tijdlijn__lijn { position: relative; height: 96px; margin: 0 36px; }
+.rekenspel .tijdlijn__lijn::before { content: ""; position: absolute; left: 0; right: 0; bottom: 30px; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--ck-wereld) 25%, var(--ck-room)); }
+.rekenspel .tijdlijn__paal { position: absolute; bottom: 0; transform: translateX(-50%); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; color: var(--ck-cacao); }
+.rekenspel .tijdlijn__paal::before { content: ""; position: absolute; left: 50%; bottom: 26px; width: 4px; height: 16px; margin-left: -2px; border-radius: 2px; background: var(--ck-cacao); }
+.rekenspel .tijdlijn__boog { position: absolute; bottom: 34px; height: 40px; border: 4px solid var(--ck-druif); border-bottom: 0; border-radius: 999px 999px 0 0; display: grid; place-items: start center; animation: ck-pop .35s var(--ck-veer); }
+.rekenspel .tijdlijn__boog.is-uur { border-color: var(--ck-wereld); }
+.rekenspel .tijdlijn__boog small { margin-top: -28px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; color: var(--ck-cacao); white-space: nowrap; }
+.rekenspel .tijdlijn__wijzer { position: absolute; bottom: 22px; transform: translateX(-50%); min-width: 56px; padding: 2px 8px; border-radius: 999px; background: var(--ck-zon); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; text-align: center; box-shadow: 0 3px 0 var(--ck-zon-rand, var(--ck-cacao)); transition: left .35s var(--ck-veer); }
+.rekenspel .tijdlijn__wijzer.is-fout { animation: ck-wiebel 320ms ease both; }
+.rekenspel .tijdlijn__wijzer.is-er { animation: ck-pop .4s var(--ck-veer); }
+.rekenspel .tijdlijn__sprongen, .rekenspel .tijdlijn__kwartieren { display: flex; flex-wrap: wrap; gap: 12px; }
+.rekenspel .tijdlijn__sprong, .rekenspel .tijdlijn__terug { min-width: 56px; min-height: 56px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--ck-druif); box-shadow: 0 5px 0 var(--ck-druif-rand); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; cursor: pointer; transition: transform .15s var(--ck-veer); }
+.rekenspel .tijdlijn__sprong.is-uur { background: var(--ck-wereld); box-shadow: 0 5px 0 var(--ck-wereld-rand); }
+.rekenspel .tijdlijn__terug { padding: 0; display: grid; place-items: center; background: var(--ck-room); color: var(--ck-cacao); box-shadow: 0 5px 0 color-mix(in srgb, var(--ck-cacao) 25%, transparent); }
+.rekenspel .tijdlijn__sprong:hover, .rekenspel .tijdlijn__kwartier:hover { transform: translateY(-3px); }
+.rekenspel .tijdlijn__sprong:active, .rekenspel .tijdlijn__kwartier:active { transform: translateY(5px); box-shadow: none; }
+.rekenspel .tijdlijn__sprong:disabled { opacity: .5; }
+.rekenspel .tijdlijn__duur { margin: 0; font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-cacao); animation: ck-pop .35s var(--ck-veer); }
+.rekenspel .tijdlijn__kwartier { display: grid; justify-items: center; gap: 4px; min-width: 96px; padding: 10px 14px; border: 0; border-radius: 18px; background: var(--ck-room); box-shadow: 0 5px 0 color-mix(in srgb, var(--ck-wereld) 40%, transparent); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-size: 18px; cursor: pointer; transition: transform .15s var(--ck-veer); }
+.rekenspel .tijdlijn__kwartier small { font-family: var(--ck-font-tekst); font-weight: 800; font-size: 16px; }
+.rekenspel .tijdlijn__taart { width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--ck-wereld); background: conic-gradient(var(--ck-wereld) var(--deel), var(--ck-wit) 0); }
+.rekenspel .tijdlijn__optellen { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-cacao); }
+.rekenspel .tijdlijn__optellen input { width: 96px; min-height: 56px; margin: 0 6px; border-radius: 16px; border: 3px solid var(--ck-wereld); background: var(--ck-wit); text-align: center; font: inherit; color: var(--ck-cacao); }
+@media (max-width: 600px) { .rekenspel .tijdlijn__lijn { margin: 0 28px; } .rekenspel .tijdlijn__sprong { padding: 0 12px; font-size: 18px; } }

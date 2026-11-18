@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { Backpack, BringToFront, Check, SendToBack, Droplet, Info, Minus, MoreHorizontal, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
-import { Button, Dialog, IconButton } from '../../design-system';
+import { Backpack, BringToFront, Check, SendToBack, Droplet, Info, Minus, PackageOpen, PackagePlus, Plus, RotateCcw, RotateCw, X } from 'lucide-react';
+import { IconButton } from '../../design-system';
 import './room-placement.css';
 import { DECOR_PRODUCTS_BY_ID, type DecorProduct } from '../../data/decorCatalog';
 import type { TreehouseRoomId } from '../../data/treehouse';
@@ -11,6 +11,7 @@ import { PLANT_SPECIES_BY_ID, plantStageImage } from '../../data/plants/species'
 import { loadPlantFamily, plantCondition, savePlantFamily, stageLabel, waterPlant } from '../../services/plantFamily';
 import PlantFlashcard from '../plants/PlantFlashcard';
 import InventorySellButton from './InventorySellButton';
+import InrichtMenu from './InrichtMenu';
 import { subscribeLocalState } from '../../services/localState';
 
 interface Props {
@@ -34,7 +35,6 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   const [open, setOpen] = useState(false);
   const [inventory, setInventory] = useState<RoomInventoryState>(loadRoomInventory);
   const [selected, setSelected] = useState<string | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const [ghost, setGhost] = useState<{ product: DecorProduct; x: number; y: number; returnable: boolean } | null>(null);
   const [overReturn, setOverReturn] = useState(false);
   const [notice, setNotice] = useState('');
@@ -82,14 +82,12 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
   useEffect(() => {
     setInventory(loadRoomInventory());
     setSelected(null);
-    setDetailsOpen(false);
     setOpen(false);
     drag.current = null;
     setGhost(null);
     setPreview(null);
   }, [room]);
 
-  useEffect(() => { setDetailsOpen(false); }, [selected]);
 
   useEffect(() => {
     const update = (event: Event) => setInventory((event as CustomEvent<RoomInventoryState>).detail ?? loadRoomInventory());
@@ -142,7 +140,7 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
     const move = (event: PointerEvent) => {
       const active = drag.current;
       if (!active || event.pointerId !== active.pointerId) return;
-      if (!active.active && Math.hypot(event.clientX - active.startX, event.clientY - active.startY) < 6) return;
+      if (!active.active && Math.hypot(event.clientX - active.startX, event.clientY - active.startY) < 10) return;
       event.preventDefault();
       const viewport = sceneRef.current?.parentElement;
       if (viewport && event.clientX < 45) viewport.scrollLeft -= 14;
@@ -170,7 +168,9 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
             const point = coordinates(event.clientX, event.clientY);
             if (point) commit(current => moveRoomItem(current, active.placementId!, point.x - active.offsetX, point.y - active.offsetY));
           }
-          setSelected(active.active ? null : active.placementId);
+          // Na een klik én na verschuiven staat het menu klaar; een trillende muis
+          // mag de keuze niet laten verdwijnen.
+          setSelected(active.active && isReturnTarget(event.clientX, event.clientY) ? null : active.placementId);
         } else {
           const validDrop = event.clientY > 75 && event.clientX >= 0 && event.clientX <= window.innerWidth && event.clientY <= window.innerHeight;
           if (!active.active || validDrop) place(active.product, active.active ? event.clientX : window.innerWidth / 2, active.active ? event.clientY : window.innerHeight * .72, !active.active);
@@ -255,25 +255,18 @@ export default function RoomInventoryDrawer({ room, sceneRef, onNavigate }: Prop
             </>;
           })()}
           {isSelected && !preview && !open && !plantCard && <>
-            {typeof document !== 'undefined' && createPortal(<div className="room-placement-toolbar" role="toolbar" aria-label={`${product.name} aanpassen`}>
-              <IconButton label={`${product.name} kleiner maken`} title="Kleiner" icon={<Minus />} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))} />
-              <IconButton label={`${product.name} groter maken`} title="Groter" icon={<Plus />} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))} />
-              {product.views > 1 && <IconButton label={`${product.name} naar rechts draaien`} title="Draaien" icon={<RotateCw />} onClick={() => commit(current => turnRoomItem(current, item.id, 1))} />}
-              <IconButton label={`Meer opties voor ${product.name}`} title="Meer opties" icon={<MoreHorizontal />} aria-expanded={detailsOpen} onClick={() => setDetailsOpen(true)} />
+            {typeof document !== 'undefined' && createPortal(<InrichtMenu label={`${product.name} aanpassen`}>
+              <IconButton className="ck-gereedschap" label={`${product.name} groter maken`} title="Groter" icon={<Plus />} disabled={item.scale >= MAX_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, 1))} />
+              <IconButton className="ck-gereedschap" label={`${product.name} kleiner maken`} title="Kleiner" icon={<Minus />} disabled={item.scale <= MIN_PLACEMENT_SCALE} onClick={() => commit(current => resizeRoomItem(current, item.id, -1))} />
+              {product.views > 1 && <IconButton className="ck-gereedschap" label={`${product.name} naar rechts draaien`} title="Draai rechts" icon={<RotateCw />} onClick={() => commit(current => turnRoomItem(current, item.id, 1))} />}
+              {product.views > 1 && <IconButton className="ck-gereedschap" label={`${product.name} naar links draaien`} title="Draai links" icon={<RotateCcw />} onClick={() => commit(current => turnRoomItem(current, item.id, -1))} />}
+              <IconButton className="ck-gereedschap" label={`${product.name} naar voren plaatsen`} title="Naar voren" icon={<BringToFront />} onClick={() => commit(current => layerRoomItem(current, item.id, 1))} />
+              <IconButton className="ck-gereedschap" label={`${product.name} naar achteren plaatsen`} title="Naar achteren" icon={<SendToBack />} onClick={() => commit(current => layerRoomItem(current, item.id, -1))} />
+              {plantOf(item) && <IconButton className="ck-gereedschap" label={`${plantOf(item)!.nickname} water geven`} title="Water geven" icon={<Droplet />} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }} />}
+              {PLANT_SPECIES_BY_ID[product.id] && <IconButton className="ck-gereedschap" label="Meer over deze plant" title="Over deze plant" icon={<Info />} onClick={() => setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname })} />}
+              <IconButton className="ck-gereedschap" label={`${product.name} terug in de rugzak`} title="Terug in rugzak" icon={<PackagePlus />} onClick={() => { commit(current => returnRoomItem(current, item.id)); setSelected(null); }} />
               <IconButton label="Klaar met aanpassen" title="Klaar" variant="primary" icon={<Check />} onClick={() => setSelected(null)} />
-            </div>, document.body)}
-            <Dialog open={detailsOpen} title={product.name} onClose={() => setDetailsOpen(false)} primaryAction={<Button onClick={() => setDetailsOpen(false)}>Verder inrichten</Button>}>
-              <div className="room-placement-options">
-                <div className="room-placement-options__laag" role="group" aria-label="Voor of achter andere spullen">
-                  <Button variant="secondary" startIcon={<BringToFront />} aria-label={`${product.name} naar voren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, 1))}>Voor</Button>
-                  <Button variant="secondary" startIcon={<SendToBack />} aria-label={`${product.name} naar achteren plaatsen`} onClick={() => commit(current => layerRoomItem(current, item.id, -1))}>Achter</Button>
-                </div>
-                {product.views > 1 && <Button variant="quiet" startIcon={<RotateCcw />} aria-label={`${product.name} naar links draaien`} onClick={() => commit(current => turnRoomItem(current, item.id, -1))}>Draai naar links</Button>}
-                {plantOf(item) && <Button variant="quiet" startIcon={<Droplet />} aria-label={`${plantOf(item)!.nickname} water geven`} onClick={() => { savePlantFamily(waterPlant(loadPlantFamily(), plantOf(item)!.id)); setInventory(loadRoomInventory()); }}>Water geven</Button>}
-                {PLANT_SPECIES_BY_ID[product.id] && <Button variant="quiet" startIcon={<Info />} onClick={() => { setDetailsOpen(false); setPlantCard({ speciesId: product.id, nickname: plantOf(item)?.nickname }); }}>Meer over deze plant</Button>}
-                <Button variant="quiet" startIcon={<PackagePlus />} aria-label={`${product.name} terug in voorraad`} onClick={() => { commit(current => returnRoomItem(current, item.id)); setDetailsOpen(false); setSelected(null); }}>Terug in berging</Button>
-              </div>
-            </Dialog>
+            </InrichtMenu>, document.body)}
           </>}
 
         </div>;

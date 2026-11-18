@@ -3,6 +3,7 @@ import { Button } from '../../design-system';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Check, Highlighter, Info, X } from 'lucide-react';
 import MathHelp from './MathHelp';
+import Tijdlijn from './Tijdlijn';
 import SpeechBubble from '../../components/ui/SpeechBubble';
 import ChoiceList from '../../components/ui/ChoiceList';
 import { REDACTIE_TYPEN_BY_ID, soortKeuzes, type Steun } from './redactie/catalogus';
@@ -92,7 +93,7 @@ export default function RedactieChallenge({ question, steun, niveau = 1, locked,
   const [eigenSom, setEigenSom] = useState<Record<number, string>>({});
   const sleutel = `${question.id}:${index}`;
   const opties = useMemo(() => juist && steunvorm !== 'bouw' ? somOpties(juist, steunvorm === 'kies-twee' ? 2 : 4, sleutel) : [], [juist, steunvorm, sleutel]);
-  const getallen = useMemo(() => juist && steunvorm === 'bouw' ? bouwGetallen(juist, [...(index === 0 ? routes.slice(1).flatMap(r => { const a = leesSom(r[0].som); return a ? [a.links, a.rechts] : []; }) : []), ...alternatieven.flatMap(t => { const a = leesSom(t); return a ? [a.links, a.rechts] : []; }), ...question.nodig, ...antwoorden.map((a, i) => a === null ? '' : schrijf(a, stappen[i]))], sleutel) : [], [juist, steunvorm, sleutel, question, antwoorden, alternatieven, routes, index, stappen]);
+  const getallen = useMemo(() => juist && steunvorm === 'bouw' ? bouwGetallen(juist, [...(index === 0 ? routes.slice(1).flatMap(r => { const a = leesSom(r[0].som); return a ? [a.links, a.rechts] : []; }) : []), ...alternatieven.flatMap(t => { const a = leesSom(t); return a ? [a.links, a.rechts] : []; }), ...question.nodig.filter(g => !stappen.some(s => s.tijdlijn && (s.tijdlijn.van === g || s.tijdlijn.tot === g))), ...antwoorden.map((a, i) => a === null ? '' : schrijf(a, stappen[i]))], sleutel) : [], [juist, steunvorm, sleutel, question, antwoorden, alternatieven, routes, index, stappen]);
   // Een getal dat niet in het verhaal staat (zoals 60) krijgt erbij wat het betekent.
   const weetje = (g: string) => delen.includes(g) ? null : routes.map(r => r[index]?.weetjes?.[g]).find(Boolean) ?? (g === '60' ? 'minuten in een uur' : null);
   // Instructieniveau: op niveau 1 legt Lua elke stap uit, op niveau 2 krijg je een korte tip, daarna niets vooraf.
@@ -279,7 +280,7 @@ export default function RedactieChallenge({ question, steun, niveau = 1, locked,
           const klaar = i < index, nu = i === index;
           if (!klaar && !nu && steun !== 'volledig') return null;
           return <li key={i} className={klaar ? 'is-klaar' : nu ? 'is-nu' : 'is-later'}>
-            <span className="story-stappen__kop"><b aria-hidden="true">{i + 1}</b>{klaar || (nu && tussenvraagZichtbaar(niveau)) ? item.vraag : nu ? `Stap ${i + 1}: wat reken je nu uit?` : `Stap ${i + 1}`}</span>
+            <span className="story-stappen__kop"><b aria-hidden="true">{i + 1}</b>{klaar || (nu && (tussenvraagZichtbaar(niveau) || !!item.tijdlijn)) ? item.vraag : nu ? `Stap ${i + 1}: wat reken je nu uit?` : `Stap ${i + 1}`}</span>
             {nu && uitlegVooraf && <SpeechBubble character="lua" label={niveau === 1 ? 'zo werkt het' : 'tip'} className="redactie-uitleg">{uitlegVooraf}</SpeechBubble>}
             {nu && kiesbaar && !somKlaar && juist ? <div className="redactie-somkeuze">
               <p className="redactie-somkeuze__vraag">{steunvorm === 'bouw' ? 'Maak de som die je nu nodig hebt.' : 'Welke som maak je nu?'}</p>
@@ -300,6 +301,8 @@ export default function RedactieChallenge({ question, steun, niveau = 1, locked,
               {!item.verborgen && <span><RekenTekst tekst={`${eigenSom[i] ?? somTekst(stappen, i, index, false, antwoorden)} =`} /></span>}
               {klaar
                 ? <output>{schrijf(antwoorden[i] ?? 0, item)}</output>
+                : nu && item.tijdlijn
+                  ? <Tijdlijn van={item.tijdlijn.van} tot={item.tijdlijn.tot} eenheid={item.eenheid} onKlaar={lever} />
                 : nu && item.keuzes
                   ? <ChoiceList label={item.vraag} choices={item.keuzes.map((keuze, k) => ({ id: String(k), label: keuze }))} onChoose={id => lever(Number(id))} />
                 : nu
@@ -310,12 +313,12 @@ export default function RedactieChallenge({ question, steun, niveau = 1, locked,
                     />
                   : <output aria-label="nog niet aan de beurt">?</output>}
             </span>}
-            {(klaar || nu) && <small className="redactie-eenheid">{item.eenheid}</small>}</>}
+            {(klaar || (nu && !item.tijdlijn)) && <small className="redactie-eenheid">{item.eenheid}</small>}</>}
           </li>;
         })}
       </ol>
       {rekenFout && <p className="redactie-tip" role="status">{somKlaar ? 'Je plan klopt! ' : ''}Reken nog eens na.</p>}
-      {!stap?.keuzes && (somKlaar || !kiesbaar) && <button type="submit" disabled={waarde.trim() === ''}>
+      {!stap?.keuzes && !stap?.tijdlijn && (somKlaar || !kiesbaar) && <button type="submit" disabled={waarde.trim() === ''}>
         {index === stappen.length - 1 ? 'Dit is het antwoord' : 'Volgende stap'}
         <ArrowRight size={18} aria-hidden="true" />
       </button>}

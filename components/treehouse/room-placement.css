@@ -1,22 +1,39 @@
-/* De vloer blijft vrij; alleen de veelgebruikte acties staan in de kamer. */
+/* Het inrichtmenu: links, verticaal, zoals de gereedschapszone in de spellen.
+   Versleepbaar met de greep; dan zetten we left/top inline. */
 .room-placement-toolbar {
   position: fixed;
   z-index: 50;
-  top: calc(var(--space-12) * 3);
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--space-4);
+  top: calc(var(--space-12) * 2 + var(--space-4));
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-2);
-  max-width: calc(100vw - var(--space-4) * 2);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-glass);
+  max-height: calc(100dvh - var(--space-12) * 2 - var(--space-8));
+  overflow-y: auto;
+  border-radius: var(--ck-rond-paneel, var(--radius-card));
   box-shadow: var(--shadow-soft);
+  touch-action: none;
 }
 .room-placement-toolbar .ck-icon-button { flex-shrink: 0; }
-.room-placement-options { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
-.room-placement-options__laag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.room-placement-toolbar .ck-gereedschap { background: transparent; border: 0; box-shadow: none; color: var(--ck-cacao); }
+.room-placement-toolbar__greep {
+  width: var(--touch-target);
+  height: calc(var(--touch-target) / 2);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ck-cacao);
+  cursor: grab;
+  touch-action: none;
+}
+.room-placement-toolbar__greep:active { cursor: grabbing; }
+.room-placement-toolbar__greep:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+.room-placement-toolbar__greep svg { width: var(--space-5); height: var(--space-5); }
 @media (max-width: 600px) {
-  .room-placement-toolbar { top: calc(var(--space-12) * 3 - var(--space-2)); }
+  .room-placement-toolbar { left: var(--space-2); top: calc(var(--space-12) * 2 + var(--space-6)); gap: 0; padding: var(--space-1); }
 }
