@@ -6,7 +6,7 @@ import { Button, Dialog, IconButton } from '../../design-system';
 import ClockTimeLine from './ClockTimeLine';
 import AnalogClock from './AnalogClock';
 import { formatDigitalTime, formatDutchTime, generateTime, minuteStepForLevel, normalizeClockTime, sameClockTime } from './timeEngine';
-import { ClockCompletion, ClockGameHeader } from './ClockControls';
+import { ClockCompletion, ClockGameHeader, KlokStippen } from './ClockControls';
 import type { ClockLevel, ClockTime } from './types';
 
 interface SetClockGameProps {
@@ -88,7 +88,7 @@ export default function SetClockGame({ initialLevel, completedLevels, onBack, on
     <ClockGameHeader title="Zet de klok" level={level} completed={completedLevels} onBack={onBack} onLevelChange={reset} extraTools={<IconButton className="ck-gereedschap" label="Tijdlijn openen" icon={<Ruler size={22} />} onClick={() => setTimelineOpen(true)} />} />
     <section className="clock-instruction" aria-live="polite">
       <h2><span>Zet op </span>{formatDutchTime(target)}</h2>
-      <small>{Math.min(score + 1, ROUND_COUNT)}/{ROUND_COUNT}</small>
+      <KlokStippen klaar={Math.min(score, ROUND_COUNT)} totaal={ROUND_COUNT} label="Opdrachten" />
     </section>
     <div className="clock-set__workspace">
       <AnalogClock time={answer} color="wood" interactive level={level} onChange={value => { setAnswer(value); setFeedback(null); }} />

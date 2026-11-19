@@ -32,12 +32,12 @@ html,body{margin:0;height:100%;background:#2a1a10;font-family:Nunito,system-ui,s
 .ck-zone-menu .k{width:3.6cqw;height:3.6cqw;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .ck-zone-menu .k:hover{background:rgba(255,255,255,.4)}
 .ck-zone-menu img{width:3.6cqw;height:3.6cqw;border-radius:50%;object-fit:cover;object-position:top;border:2px solid #fff}
-/* ZONE 4 rechts: gereedschapsbalk */
-.ck-zone-gereedschap{position:absolute;right:1.6cqw;top:8.6cqw;display:flex;flex-direction:column;gap:.5cqw;padding:.5cqw;border-radius:2.6cqw;z-index:20}
+/* ZONE 4 links: gereedschapsbalk */
+.ck-zone-gereedschap{position:absolute;left:1.6cqw;top:8.6cqw;display:flex;flex-direction:column;gap:.5cqw;padding:.5cqw;border-radius:2.6cqw;z-index:20}
 .ck-zone-gereedschap .k{width:4cqw;height:4cqw;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s var(--veer);position:relative}
 .ck-zone-gereedschap .k:hover{transform:scale(1.1);background:rgba(255,255,255,.4)}
 .ck-zone-gereedschap .k.is-aan{background:var(--actief);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.18)}
-.ck-zone-gereedschap .k .tip{position:absolute;right:120%;background:var(--cacao);color:#fff;font-weight:800;font-size:1cqw;padding:.3cqw .7cqw;border-radius:.6cqw;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.ck-zone-gereedschap .k .tip{position:absolute;left:120%;background:var(--cacao);color:#fff;font-weight:800;font-size:1cqw;padding:.3cqw .7cqw;border-radius:.6cqw;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
 .ck-zone-gereedschap .k:hover .tip{opacity:1}
 .ck-zone-gereedschap .lijn{height:1px;margin:.2cqw .6cqw;background:rgba(74,42,26,.18)}
 /* ZONE 5 linksonder: personage */
@@ -49,7 +49,7 @@ html,body{margin:0;height:100%;background:#2a1a10;font-family:Nunito,system-ui,s
 .ballon div{font-family:'Baloo 2';font-weight:700;font-size:1.9cqw;line-height:1.15}
 .ballon.nieuw{animation:pop .5s var(--veer)}
 /* ZONE 6 rechtsonder: antwoorden of hoofdknop */
-.ck-zone-antwoord{position:absolute;right:7.6cqw;bottom:1.6cqw;display:flex;gap:1.4cqw;z-index:12;align-items:flex-end}
+.ck-zone-antwoord{position:absolute;right:1.6cqw;bottom:1.6cqw;display:flex;gap:1.4cqw;z-index:12;align-items:flex-end}
 .ck-zone-antwoord .uitleg{position:absolute;right:0;top:-2.6cqw;font-weight:900;font-size:1.05cqw;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);white-space:nowrap}
 .ck-bel{width:8.4cqw;height:8.4cqw;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2';font-weight:800;font-size:3.3cqw;color:#fff;cursor:grab;touch-action:none;text-shadow:0 .2cqw 0 rgba(0,0,0,.18);transition:transform .35s var(--veer),opacity .3s;animation:zweef 3s ease-in-out infinite}
 .ck-bel:nth-child(3){animation-delay:-.7s}.ck-bel:nth-child(4){animation-delay:-1.4s}.ck-bel:nth-child(5){animation-delay:-2.1s}

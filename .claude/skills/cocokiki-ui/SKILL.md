@@ -3,6 +3,8 @@ name: cocokiki-ui
 description: De vormtaal van CocoKiki — tokens, design-system-componenten, schermopbouw en de regels per speltype. Gebruik dit vóór het bouwen of verbouwen van een scherm, een spel of een dialoog in deze repo, en bij elke vraag of iets "er consistent uitziet".
 ---
 
+> **Verouderd, niet meer leidend.** De huisstijl staat in `docs/HUISSTIJL.md`, `styles/cocokiki-tokens.css` en `docs/voorbeelden/`. Waar dit bestand daarmee botst, volg je de huisstijl. Gebruik dit alleen als achtergrond bij oude code. Zie `docs/OMBOUWPLAN.md`.
+
 # De vormtaal van CocoKiki
 
 CocoKiki is één wereld met meerdere spellen. De spellen mogen anders

@@ -2,7 +2,7 @@
 
 ## Bij elke opdracht (zet dit vóór je vraag)
 
-Volg de CocoKiki-huisstijl uit docs/HUISSTIJL.md en gebruik alleen styles/cocokiki-tokens.css. Bouw volgens de voorbeelden in docs/voorbeelden/: dezelfde zeven vaste plekken (terug linksboven, statuseiland midden boven, menu rechtsboven, gereedschapsbalk rechts, personage linksonder, antwoorden rechtsonder, wereld als speelveld). Prijzen en maten hangen aan dingen in de wereld, geen witte vakken. Geen bladerknoppen of tussenschermen. Elke actie krijgt beweging en geluid. Loop aan het eind de checklist uit AGENTS.md na.
+Volg de CocoKiki-huisstijl uit docs/HUISSTIJL.md en gebruik alleen styles/cocokiki-tokens.css. Bouw volgens de voorbeelden in docs/voorbeelden/: dezelfde zeven vaste plekken (terug linksboven, statuseiland midden boven, menu rechtsboven, gereedschapsbalk links onder de terugknop, personage linksonder, antwoorden rechtsonder, wereld als speelveld). Prijzen en maten hangen aan dingen in de wereld, geen witte vakken. Geen bladerknoppen of tussenschermen. Elke actie krijgt beweging en geluid. Loop aan het eind de checklist uit AGENTS.md na.
 
 Mijn vraag: …
 
@@ -12,7 +12,7 @@ Lees docs/HUISSTIJL.md, styles/cocokiki-tokens.css en de voorbeelden in docs/voo
 
 ## Eenmalig: bestaande schermen inventariseren
 
-Zoek alle schermen waar nog eigen kleuren, lettertypes, witte kaarten, grijze randen, saliegroen, bladerknoppen ("Som 1 van 10") of hulpmiddelen op een andere plek dan de gereedschapsbalk rechts worden gebruikt. Maak een lijst per scherm. Verander nog niets.
+Zoek alle schermen waar nog eigen kleuren, lettertypes, witte kaarten, grijze randen, saliegroen, bladerknoppen ("Som 1 van 10") of hulpmiddelen op een andere plek dan de gereedschapsbalk links worden gebruikt. Maak een lijst per scherm. Verander nog niets.
 
 ## Per scherm ombouwen
 

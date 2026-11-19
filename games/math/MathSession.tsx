@@ -1,10 +1,8 @@
 import { rewardAnswer } from '../../services/answerRewards';
 import { muntenPerAntwoord } from './progress';
-import { IconButton, Button } from '../../design-system';
-import HulpPaneel from '../../components/ui/HulpPaneel';
 import InfoKnop from '../../components/ui/InfoKnop';
 import NiveauKnop from '../../components/ui/NiveauKnop';
-import { BookOpen, Calculator, Lightbulb, Ruler, Volume2, VolumeX } from 'lucide-react';
+import { Calculator, Lightbulb, Ruler, Volume2, VolumeX } from 'lucide-react';
 import NiveauPaneel from './NiveauPaneel';
 import { afgerondeRedactieronde, noteerRedactieAntwoord, type RedactieAntwoorden } from './redactie/navigatie';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -48,7 +46,6 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
   game: Exclude<MathGameId, 'race'>; level: MathLevel; blad?: Blad; onFinish: (result: MathResult) => void; onSound?: (correct: boolean) => void; onVraag?: (vraag: string) => void;
   sound?: boolean; onToggleSound?: () => void; onLevel?: (level: MathLevel) => void; einde?: RekenEinde;
 }) {
-  const [bladOpen, setBladOpen] = useState(false);
   const [rekenmachine, setRekenmachine] = useState(false), [maten, setMaten] = useState(false), [niveauKiezen, setNiveauKiezen] = useState(false);
   useActivityAnalytics(game === 'maten' ? null : `math:${game}`);
   // Een huiswerkblad heeft vaste sommen; anders komt er elke ronde een nieuw deck.
@@ -147,8 +144,9 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
     className={`ck-scherm rekenspel rekenspel--${game}${feedback ? ` is-${feedback}` : ''}${einde ? ' is-einde' : ''}`} data-wereld="school" aria-label="Rekenavontuur">
 
     {/* 2. Statuseiland: tien bolletjes voor tien opdrachten, en het niveau.
-        Bij een redactieblad kun je op een bolletje tikken om terug te kijken. */}
-    {game !== 'add-subtract' && <>
+        Bij een redactieblad kun je op een bolletje tikken om terug te kijken
+        (huisstijl: geen bladerknoppen of somlijst). */}
+    {<>
     <div className={`ck-zone-status ck-glas rekenspel__status${einde ? ' is-open' : ''}`}>
       <span className="rekenspel__stippen" role={foutenMogen ? 'group' : 'img'} aria-label={`Opdracht ${index + 1} van ${questions.length}, ${klaar} klaar`}>
         {questions.map((_, i) => {
@@ -163,13 +161,10 @@ export default function MathSession({ game, level, blad, onFinish, onSound = () 
       <span className="ck-status-extra" aria-live="polite">{einde && einde.saved && <><span className="rekenspel__scheid" /><span className="ck-munt rekenspel__munt" aria-hidden="true" /><b>+{einde.reward}</b></>}</span>
     </div>
     </>}
-    {game === 'add-subtract' && <>
-    {bladOpen && <HulpPaneel titel={blad ? `Blad ${blad.nr}` : 'Mijn sommen'} sluitLabel="Somnavigatie sluiten" onClose={() => setBladOpen(false)}><div className="redactie-bladkeuze">{questions.map((_, i) => <Button key={i} variant={i === index ? 'secondary' : 'quiet'} aria-current={i === index ? 'step' : undefined} onClick={() => { blader(i); setBladOpen(false); }}>Som {i + 1}{Object.hasOwn(redactieAntwoorden.current, i) ? ' ✓' : ''}</Button>)}</div></HulpPaneel>}</>}
 
     {/* 4. Gereedschap in de vaste volgorde: hint · rekenmachine · maten — geluid */}
     <div className="ck-zone-gereedschap ck-glas rekenspel__gereedschap" role="toolbar" aria-label="Gereedschap">
-      {game === 'add-subtract' && <IconButton className="ck-gereedschap redactie-boek" label={`${blad ? `Blad ${blad.nr}, ` : ''}som ${index + 1} van ${questions.length}, kies een som`} icon={<><BookOpen /><small>{index + 1}</small></>} onClick={() => setBladOpen(true)} />}
-      <InfoKnop character="lua">Markeer eerst de getallen die je nodig hebt. Kies daarna je som en reken hem uit. Het hersentje kiest je niveau. Bij redactiesommen kun je de rekenmachine en het meetlatje gebruiken; het boekje kiest een andere som.</InfoKnop>
+      <InfoKnop character="lua">Markeer eerst de getallen die je nodig hebt. Kies daarna je som en reken hem uit. Het hersentje kiest je niveau. Bij redactiesommen kun je de rekenmachine en het meetlatje gebruiken; tik op een bolletje bovenin om een andere som te kiezen.</InfoKnop>
       {onLevel && <NiveauKnop niveau={level} onClick={() => setNiveauKiezen(true)} />}
       {!foutenMogen && <button type="button" className={`ck-gereedschap${hint || feedback === 'wrong' ? ' is-aan' : ''}`} aria-label="Tip van Baby Lua" aria-pressed={hint} disabled={feedback === 'correct' || !!einde} onClick={() => setHint(value => !value)}><Lightbulb size={22} aria-hidden="true" /></button>}
       {game === 'add-subtract' && <button type="button" className={`ck-gereedschap${rekenmachine ? ' is-aan' : ''}`} aria-label="Rekenmachine" aria-haspopup="dialog" onClick={() => setRekenmachine(true)}><Calculator size={22} aria-hidden="true" /></button>}

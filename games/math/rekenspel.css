@@ -255,7 +255,7 @@
 @media(min-width:701px) { .rekenspel .rekenspel__veld, .rekenspel.rekenspel--add-subtract .rekenspel__veld { left: calc(var(--space-12) * 2); right: var(--space-4); } }
 @media(max-width:700px) { .rekenspel .rekenspel__veld { left: var(--space-2); right: var(--space-2); }.rekenspel .rekenspel__gereedschap { top: calc(var(--space-12) + var(--space-6)); }.rekenspel .rekenspel__lijn { display: none; } }
 @media(max-width:700px) {
- .rekenspel:not(.rekenspel--add-subtract) .rekenspel__status { top: calc(var(--space-12) * 2 + var(--space-8)); left: 50%; transform: translateX(-50%); }
+ .rekenspel .rekenspel__status { top: calc(var(--space-12) * 2 + var(--space-8)); left: 50%; transform: translateX(-50%); }
  .rekenspel:not(.rekenspel--add-subtract) .rekenspel__veld { top: calc(var(--space-12) * 4); }
 }
 
@@ -332,3 +332,12 @@
 .rekenspel .tijdlijn__optellen { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px; color: var(--ck-cacao); }
 .rekenspel .tijdlijn__optellen input { width: 96px; min-height: 56px; margin: 0 6px; border-radius: 16px; border: 3px solid var(--ck-wereld); background: var(--ck-wit); text-align: center; font: inherit; color: var(--ck-cacao); }
 @media (max-width: 600px) { .rekenspel .tijdlijn__lijn { margin: 0 28px; } .rekenspel .tijdlijn__sprong { padding: 0 12px; font-size: 18px; } }
+
+/* Telefoon: de gereedschapsbalk staat links en verticaal (zie cocokiki-tokens.css),
+   dus het werkveld laat links ruimte vrij en staat er niet meer onder. */
+@media(max-width:700px) {
+  .rekenspel .rekenspel__veld,
+  .rekenspel.rekenspel--add-subtract .rekenspel__veld { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); }
+}
+
+@media(max-width:700px) { .rekenspel.rekenspel--add-subtract .rekenspel__veld { top: calc(var(--space-12) * 4); } }

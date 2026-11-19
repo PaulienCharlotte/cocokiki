@@ -31,6 +31,7 @@ export type AppRoute =
   | { page: 'clock'; path: '/school/clock' }
   | { page: 'math'; path: string; mathGame?: MathGameId }
   | { page: 'design-system'; path: '/design-system' }
+  | { page: 'spelscherm-test'; path: '/spelscherm-test' }
   | { page: 'treehouse-unit-test'; path: '/treehouse/unit-test' }
   | { page: 'game'; path: string; gameId: 'topo' | 'red-baby-lua' };
 
@@ -109,6 +110,7 @@ export function resolveRoute(pathname: string): { route: AppRoute; redirect: boo
   else if (canonical === '/school/clock') route = { page: 'clock', path: '/school/clock' };
   else if (canonical === '/school/math') route = { page: 'math', path: '/school/math' };
   else if (canonical === '/design-system') route = { page: 'design-system', path: '/design-system' };
+  else if (canonical === '/spelscherm-test') route = { page: 'spelscherm-test', path: '/spelscherm-test' };
   else if (canonical === '/treehouse/unit-test') route = { page: 'treehouse-unit-test', path: '/treehouse/unit-test' };
   else route = GAME_ROUTES[canonical] ?? { page: 'home', path: '/' };
   return { route, redirect: normalized !== route.path };

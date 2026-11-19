@@ -38,7 +38,7 @@ Voordat je iets aan de interface verandert of een nieuw scherm maakt:
 Als iets in de huisstijl niet beschreven staat, kies dan wat het meest op de voorbeelden lijkt. Meld dat in je samenvatting. Val nooit terug op een standaard of "neutrale" stijl.
 
 ### Controleer voordat je klaar bent
-- [ ] Staan terug, statuseiland, menu, gereedschapsbalk, personage en antwoorden op hun vaste plek?
+- [ ] Staan terug, statuseiland, menu, gereedschapsbalk, personage en antwoorden op hun vaste plek? (De gereedschapsbalk staat **links**, onder de terugknop. Niet rechts.)
 - [ ] Staat het gereedschap in de vaste volgorde, en alleen wat dit spel nodig heeft?
 - [ ] Hangen prijzen, maten en hoeveelheden aan dingen in de wereld, in plaats van in een wit vak?
 - [ ] Geen bladerknoppen, keuzelijsten of tussenschermen in het spel?

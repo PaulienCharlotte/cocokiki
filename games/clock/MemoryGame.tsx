@@ -3,7 +3,7 @@ import { learningReward } from '../../services/learningReward';
 import React, { useEffect, useRef, useState } from 'react';
 import AnalogClock from './AnalogClock';
 import { createMemoryDeck, formatDigitalTime } from './timeEngine';
-import { ClockCompletion, ClockGameHeader } from './ClockControls';
+import { ClockCompletion, ClockGameHeader, KlokStippen } from './ClockControls';
 import type { ClockLevel, MemoryCardData } from './types';
 
 interface MemoryGameProps {
@@ -67,7 +67,7 @@ export default function MemoryGame({ initialLevel, completedLevels, onBack, onCo
 
   return <main className="clock-game clock-memory">
     <ClockGameHeader title="Klokmemory" level={level} completed={completedLevels} onBack={onBack} onLevelChange={reset} />
-    <div className="clock-round-meta"><span>Vind de paren</span><strong>{matched.length}/{deck.length / 2}</strong></div>
+    <div className="clock-round-meta"><span>Vind de paren</span><KlokStippen klaar={matched.length} totaal={deck.length / 2} label="Paren gevonden" /></div>
     <section className="clock-memory__grid" aria-label="Klokmemory kaarten">
       {deck.map(card => {
         const revealed = open.includes(card.id) || matched.includes(card.pairId);

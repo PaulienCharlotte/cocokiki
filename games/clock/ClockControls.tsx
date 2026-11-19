@@ -41,6 +41,13 @@ export function ClockGameHeader({ title, level, onBack, onLevelChange, completed
     <header className="clock-game-header"><h1 className="ck-houtbord">{title}</h1></header></>;
 }
 
+/** Voortgang als bolletjes, nooit als "1/5" (huisstijl). */
+export function KlokStippen({ klaar, totaal, label }: { klaar: number; totaal: number; label: string }) {
+  return <span className="klok-stippen ck-glas" role="img" aria-label={`${label}: ${klaar} van ${totaal}`}>
+    {Array.from({ length: totaal }, (_, i) => <span key={i} className={`ck-stip${i < klaar ? ' ck-stip--klaar' : ''}${i === klaar ? ' ck-stip--nu' : ''}`} />)}
+  </span>;
+}
+
 export function ClockCompletion({ reward, onReplay, onHub }: { reward: number; onReplay: () => void; onHub: () => void }) {
   return <section className="clock-completion" aria-live="polite">
     <span className="clock-completion__check"><Check aria-hidden="true" /></span>

@@ -1,0 +1,71 @@
+/* Aanvulling op styles/cocokiki-tokens.css voor <SpelScherm>.
+   Alleen variabelen uit de huisstijl; geen eigen kleuren. */
+@import '../styles/cocokiki-tokens.css';
+
+.ck-spelscherm { font-family: var(--ck-font-tekst); font-weight: 700; color: var(--ck-cacao); min-height: 100dvh; height: 100dvh; }
+
+/* 7. Speelveld: de wereld vult het hele scherm en beweegt licht mee */
+.ck-spelscherm__wereld { position: absolute; inset: -12px; transition: transform .4s ease-out; z-index: 0; }
+.ck-spelscherm__wereld > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ck-spelscherm__veld { position: absolute; inset: 0; z-index: 1; }
+
+/* Knoppen in terug en menu */
+.ck-spelscherm .ck-zone-terug,
+.ck-spelscherm__menuknop { border: 0; cursor: pointer; color: var(--ck-cacao); font: inherit; }
+.ck-spelscherm__menuknop { width: max(44px, 3.8cqw); height: max(44px, 3.8cqw); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; transition: transform var(--ck-normaal) var(--ck-veer); }
+.ck-spelscherm__menuknop:hover { transform: scale(1.1); }
+.ck-spelscherm__menuknop img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+/* Statuseiland */
+.ck-spelscherm .ck-zone-status { font-family: var(--ck-font-kop); font-weight: 800; font-size: max(18px, 1.6cqw); }
+.ck-spelscherm__scheid { width: 2px; height: 50%; background: var(--ck-schaduw-rand); border-radius: 2px; }
+.ck-spelscherm__stippen { display: flex; gap: .5cqw; align-items: center; }
+.ck-spelscherm__stippen button { padding: 0; cursor: pointer; }
+
+/* Gereedschap: lijn tussen gereedschap en geluid */
+.ck-spelscherm__lijn { width: 60%; height: 2px; margin: .2cqw auto; background: var(--ck-schaduw-rand); border-radius: 2px; }
+
+/* Personage */
+.ck-spelscherm .ck-zone-personage .ck-ballon__gezicht { transition: transform .4s var(--ck-veer); }
+.ck-spelscherm .ck-ballon__tekst.is-nieuw { animation: ck-pop 420ms var(--ck-veer) both; }
+
+/* Bel: tekst en eenheid */
+.ck-spelscherm .ck-bel { border: 0; padding: 0; isolation: isolate; }
+.ck-bel__eenheid { position: absolute; bottom: 18%; font-size: max(14px, 1.2cqw); }
+.ck-spelscherm__uitleg { font-family: var(--ck-font-kop); font-size: max(16px, 1.3cqw); align-self: center; }
+
+/* Hangkaartje: kleine regel onder de prijs */
+.ck-hangkaartje__label small { display: block; font-family: var(--ck-font-tekst); font-weight: 800; font-size: max(16px, 1.1cqw); }
+
+/* Paneel: houten titel en sluitknop */
+.ck-spelscherm__paneelkop { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; margin-bottom: 1.2cqw; }
+.ck-spelscherm__paneelkop h2 { margin: 0; padding: .4cqw 1.6cqw; font-family: var(--ck-font-kop); font-size: var(--ck-maat-kop); color: var(--ck-room); }
+.ck-spelscherm__sluit { border: 0; background: transparent; cursor: pointer; color: var(--ck-cacao); width: var(--ck-tik-min); height: var(--ck-tik-min); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.ck-spelscherm__achter { position: absolute; inset: 0; z-index: 24; background: transparent; border: 0; }
+
+/* Beloning: vonken en vliegende munten */
+.ck-vonk { position: absolute; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; z-index: 40; }
+.ck-vonk--1 { background: var(--ck-zon); }
+.ck-vonk--2 { background: var(--ck-bes); }
+.ck-vonk--3 { background: var(--ck-tuin); }
+.ck-vonk--4 { background: var(--ck-wereld); }
+.ck-vonk--5 { background: var(--ck-wit); }
+.ck-vliegmunt { position: absolute; pointer-events: none; z-index: 40; transition: left .7s var(--ck-veer), top .7s var(--ck-veer), transform .7s; }
+
+/* Telefoon: personage en antwoorden schuiven niet over elkaar */
+@media (max-width: 700px) {
+  .ck-spelscherm { --ck-rand: 8px; }
+  /* Bovenaan: terug en menu op rij 1, het statuseiland eronder in het midden */
+  .ck-spelscherm .ck-zone-status { top: calc(var(--ck-rand) * 2 + 48px); gap: 8px; padding: 0 12px 0 6px; }
+  /* Gereedschap blijft links en verticaal, onder de terugknop (ook op een telefoon) */
+  body .ck-scherm.ck-spelscherm .ck-zone-gereedschap { left: var(--ck-rand); right: auto; top: calc(var(--ck-rand) * 3 + 96px); flex-direction: column; width: auto; max-width: none; overflow: visible; border-radius: var(--ck-rond-paneel); padding: 4px; gap: 2px; }
+  .ck-spelscherm .ck-zone-gereedschap .ck-gereedschap { width: 48px; height: 48px; }
+  /* Onderaan: vier bellen op één rij, het personage erboven */
+  .ck-spelscherm .ck-zone-antwoord { left: var(--ck-rand); right: var(--ck-rand); justify-content: center; gap: 8px; }
+  .ck-spelscherm .ck-bel { width: 72px; height: 72px; font-size: 28px; }
+  .ck-spelscherm__uitleg { display: none; }
+  .ck-spelscherm .ck-zone-personage { bottom: calc(var(--ck-rand) * 2 + 72px); }
+  .ck-spelscherm .ck-zone-personage .ck-ballon__gezicht { width: 60px; height: 60px; }
+  .ck-spelscherm .ck-zone-personage .ck-ballon__tekst { max-width: calc(100vw - 100px); margin-bottom: 0; font-size: 18px; }
+  .ck-spelscherm .ck-paneel { width: auto; left: var(--ck-rand); }
+}

@@ -30,6 +30,7 @@ const TreehouseInterior = lazy(() => import('./pages/TreehouseInterior'));
 const ShopScreen = lazy(() => import('./pages/ShopScreen'));
 const PlantClinicScreen = lazy(() => import('./pages/PlantClinicScreen'));
 const DesignSystemPreview = lazy(() => import('./pages/DesignSystemPreview'));
+const SpelSchermTest = lazy(() => import('./pages/SpelSchermTest'));
 const ClockModule = lazy(() => import('./games/clock/ClockModule'));
 const MathModule = lazy(() => import('./games/math/MathModule'));
 const IslandEnvironment = lazy(() => import('./pages/IslandEnvironment'));
@@ -205,6 +206,9 @@ const GameApp: React.FC = () => {
   ><Suspense key={current.route.path + window.location.search} fallback={<LoadingScreen />}>{worldContent}</Suspense></AppShell></div>;
   if (current.route.page === 'design-system') return <Suspense fallback={<LoadingScreen />}>
     <DesignSystemPreview onHome={() => navigate('/')} />
+  </Suspense>;
+  if (current.route.page === 'spelscherm-test') return <Suspense fallback={<LoadingScreen />}>
+    <SpelSchermTest onHome={() => navigate('/')} />
   </Suspense>;
   return null;
 };

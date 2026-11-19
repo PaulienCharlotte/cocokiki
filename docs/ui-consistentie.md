@@ -1,3 +1,5 @@
+> **Verouderd, niet meer leidend.** De huisstijl staat in `docs/HUISSTIJL.md`, `styles/cocokiki-tokens.css` en `docs/voorbeelden/`. Waar dit bestand daarmee botst, volg je de huisstijl. Gebruik dit alleen als achtergrond bij oude code. Zie `docs/OMBOUWPLAN.md`.
+
 # Waar de vormtaal nog niet klopt
 
 De regels staan in `.claude/skills/cocokiki-ui/SKILL.md`. Dit bestand is de

@@ -28,11 +28,11 @@
 .checkout-conveyor { position: relative; flex: none; width: min(1000px, 100%); aspect-ratio: 3.2; overflow: hidden; isolation: isolate; container-type: inline-size; }
 .checkout-conveyor__belt { position: absolute; top: 48%; left: 0; width: 100%; aspect-ratio: 6.2; overflow: hidden; z-index: 1; }
 .checkout-conveyor__belt > img { position: absolute; width: 100%; height: auto; top: -60%; left: 0; pointer-events: none; }
-.checkout-conveyor__treads { position: absolute; top: 11%; height: 30%; left: 9%; right: 9%; transform: skewX(-12deg); opacity: .25; background: repeating-linear-gradient(90deg, transparent 0 48px, #171c1e 49px 51px); }
+.checkout-conveyor__treads { position: absolute; top: 11%; height: 30%; left: 9%; right: 9%; transform: skewX(-12deg); opacity: .25; background: repeating-linear-gradient(90deg, transparent 0 48px, var(--ck-cacao) 49px 51px); }
 .is-running .checkout-conveyor__treads { animation: checkout-belt-turn 1.1s linear infinite; }
 .checkout-conveyor__goods { position: absolute; z-index: 2; bottom: 33%; display: flex; align-items: flex-end; gap: 12px; transform: translateX(-50%); width: 28%; transition: left 50ms linear; }
 .checkout-conveyor__product { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.checkout-conveyor__product > img { display: block; width: 100%; height: 110px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 5px 3px #231c2538); }
+.checkout-conveyor__product > img { display: block; width: 100%; height: 110px; object-fit: contain; object-position: bottom; filter: drop-shadow(0 5px 3px color-mix(in srgb, var(--ck-cacao) 22%, transparent)); }
 .checkout-conveyor.is-falling .checkout-conveyor__goods { animation: checkout-fall .75s ease-in forwards; }
 .checkout-game .checkout-answers { width: 100%; }
 .checkout-game .math-answers { width: 100%; margin: 0; }

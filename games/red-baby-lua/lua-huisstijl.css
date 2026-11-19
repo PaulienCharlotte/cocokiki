@@ -95,3 +95,10 @@
 .lua-huisstijl .lua-menu .lua-tables .lua-mix { grid-column: auto; min-width: 0; width: 46px; height: 46px; border-radius: 50%; font-size: 16px; }
 /* Het startpaneel iets lager en compacter, zodat het houten bord niet onder het topmenu verdwijnt. */
 @media (min-width: 761px) { .lua-huisstijl .lua-menu { top: calc(50% + 28px); transform: translate(-50%, -50%); gap: 10px; padding-top: 40px; } }
+
+/* Telefoon: de gereedschapsbalk staat links en verticaal (zie cocokiki-tokens.css),
+   dus het menu en het bord laten links ruimte vrij en staan er niet onder. */
+@media(max-width:700px) {
+  .lua-game-shell.lua-huisstijl .lua-menu { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); width: auto; transform: none; }
+  .lua-game-shell.lua-huisstijl .lua-menu .lua-tables > div { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}

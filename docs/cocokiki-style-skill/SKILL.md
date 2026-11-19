@@ -3,6 +3,8 @@ name: cocokiki-natural-game-style
 description: Apply CocoKiki's muted natural visual language when creating or changing CocoKiki game screens, controls, illustrated worlds, characters, and reusable UI components. Use only for CocoKiki product design and implementation.
 ---
 
+> **Verouderd, niet meer leidend.** De huisstijl staat in `docs/HUISSTIJL.md`, `styles/cocokiki-tokens.css` en `docs/voorbeelden/`. Waar dit bestand daarmee botst, volg je de huisstijl. Gebruik dit alleen als achtergrond bij oude code. Zie `docs/OMBOUWPLAN.md`.
+
 # CocoKiki Natural Game Style
 
 Keep CocoKiki playful and child-friendly without using loud primary colors.

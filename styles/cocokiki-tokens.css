@@ -291,10 +291,12 @@
 /* 3. Menu — rechtsboven: winkel, To Do, profiel (altijd die volgorde) */
 .ck-zone-menu { position: absolute; right: var(--ck-rand); top: var(--ck-rand); height: max(48px, 4.4cqw); border-radius: 999px; display: flex; align-items: center; gap: .4cqw; padding: 0 .4cqw; z-index: 20; }
 
-/* 4. Gereedschapsbalk — rechts, verticaal.
+/* 4. Gereedschapsbalk — LINKS, verticaal, onder de terugknop (besloten 19 nov 2026).
+      Links = de help-kant, samen met het personage; rechts blijft vrij voor menu en antwoorden.
+      Op een telefoon wordt het één rij onder de bovenbalk (zie onderaan).
       Vaste volgorde: hint · rekenmachine · liniaal/maten · kalender · mand — lijn — geluid.
       Toon alleen wat het spel nodig heeft. .is-aan = in gebruik of oplichten als hint */
-.ck-zone-gereedschap { position: absolute; right: var(--ck-rand); top: calc(var(--ck-rand) * 2 + max(48px, 4.4cqw)); display: flex; flex-direction: column; gap: .5cqw; padding: .5cqw; border-radius: 2.6cqw; z-index: 20; }
+.ck-zone-gereedschap { position: absolute; left: var(--ck-rand); top: calc(var(--ck-rand) * 2 + max(48px, 4.4cqw)); display: flex; flex-direction: column; gap: .5cqw; padding: .5cqw; border-radius: 2.6cqw; z-index: 20; }
 .ck-gereedschap { width: max(48px, 4cqw); height: max(48px, 4cqw); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: var(--ck-cacao); cursor: pointer; transition: transform .2s var(--ck-veer); }
 .ck-gereedschap:hover { transform: scale(1.1); background: rgba(255, 255, 255, .4); }
 .ck-gereedschap.is-aan { background: var(--ck-actief); color: #fff; box-shadow: 0 3px 0 rgba(0, 0, 0, .18); }
@@ -304,8 +306,8 @@
 .ck-zone-personage .ck-ballon__tekst { max-width: 30cqw; margin-bottom: 3cqw; background: linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .78)); }
 .ck-zone-personage.is-blij .ck-ballon__gezicht { transform: translateY(-1.2cqw) rotate(-8deg) scale(1.08); }
 
-/* 6. Antwoorden of hoofdknop — rechtsonder, naast de gereedschapsbalk */
-.ck-zone-antwoord { position: absolute; right: calc(var(--ck-rand) + 6cqw); bottom: var(--ck-rand); display: flex; gap: 1.4cqw; align-items: flex-end; z-index: 12; }
+/* 6. Antwoorden of hoofdknop — rechtsonder */
+.ck-zone-antwoord { position: absolute; right: var(--ck-rand); bottom: var(--ck-rand); display: flex; gap: 1.4cqw; align-items: flex-end; z-index: 12; }
 
 /* 7. Speelveld = alles daartussen. Geen UI-blokken; wel hangkaartjes, doelen en objecten */
 
@@ -355,10 +357,12 @@
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
 }
 
-/* Gereedschap staat overal links; een telefoon krijgt één rij eronder. */
-body .ck-scherm .ck-zone-gereedschap, body .my-games .ck-zone-gereedschap { left: var(--space-4); right: auto; }
+/* Gereedschapsbalk op een telefoon: blijft LINKS en verticaal, onder de terugknop,
+   met iets kleinere knoppen. Nooit een rij bovenaan. */
 body .ck-scherm .ck-zone-gereedschap > .ck-icon-button { background: transparent; border: 0; box-shadow: none; color: var(--ck-cacao); }
+body .my-games .ck-zone-gereedschap { left: var(--space-4); right: auto; }
 @media(max-width:700px) {
- body .ck-scherm .ck-zone-gereedschap, body .my-games .ck-zone-gereedschap { left: var(--space-2); right: var(--space-2); top: calc(var(--space-12) + var(--space-6)); flex-direction: row; align-items: center; gap: var(--space-1); width: auto; max-width: calc(100% - var(--space-4)); overflow-x: auto; box-sizing: border-box; border-radius: var(--radius-pill); }
+ body .ck-scherm .ck-zone-gereedschap, body .my-games .ck-zone-gereedschap { left: var(--space-2); right: auto; flex-direction: column; align-items: center; gap: 2px; padding: 4px; width: auto; max-width: none; max-height: calc(100% - var(--space-12) * 3); overflow-y: auto; box-sizing: border-box; border-radius: var(--ck-rond-paneel); }
  body .ck-scherm .ck-zone-gereedschap > * { flex-shrink: 0; }
+ body .ck-scherm .ck-zone-gereedschap .ck-gereedschap { width: 44px; height: 44px; }
 }

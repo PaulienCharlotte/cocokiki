@@ -4,47 +4,47 @@
 :root {
   color-scheme: light;
 
-  --color-cream: #fff7ed;
-  --color-sage: #a8bfa0;
-  --color-peach: #f5b5a6;
-  --color-lilac: #c9a7db;
-  --color-honey: #f5c875;
-  --color-brown: #795a49;
-  --color-sky: #b9ddf2;
+  /* Oude namen, nu gekoppeld aan de huisstijl (styles/cocokiki-tokens.css).
+     Geen eigen kleurcodes meer: alles verwijst naar --ck-variabelen.
+     Gebruik in nieuwe code direct de --ck-variabelen. (Stap 4 van docs/OMBOUWPLAN.md) */
+  --color-cream: var(--ck-room);
+  --color-sage: color-mix(in srgb, var(--ck-tuin) 55%, var(--ck-room)); /* saliegroen bestaat niet meer: licht tuingroen */
+  --color-peach: color-mix(in srgb, var(--ck-keuken) 40%, var(--ck-room));
+  --color-lilac: color-mix(in srgb, var(--ck-druif) 40%, var(--ck-room));
+  --color-honey: var(--ck-zon);
+  --color-brown: var(--ck-hout-donker);
+  --color-sky: color-mix(in srgb, var(--ck-wereld) 40%, var(--ck-room));
 
-  --color-background: #fffaf5;
+  --color-background: var(--ck-room);
   --color-background-soft: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   --color-background-calm: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   --color-surface: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   --color-surface-soft: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   --color-surface-tinted: color-mix(in srgb, var(--ck-glas) 65%, transparent);
   --color-surface-glass: color-mix(in srgb, var(--ck-glas) 65%, transparent);
-  /* Gekoppeld aan de CocoKiki-huisstijl (styles/cocokiki-tokens.css): geen
-     donkergroen meer, maar de kleur van de wereld waar je bent (standaard
-     school). De donkere rand-variant, zodat tekst en witte letters leesbaar blijven. */
-  --color-primary: var(--ck-actief-rand, #15836F);
-  --color-primary-hover: color-mix(in srgb, var(--ck-actief-rand, #15836F) 85%, #000);
-  --color-primary-pressed: color-mix(in srgb, var(--ck-actief-rand, #15836F) 75%, #000);
-  --color-on-primary: #fffaf5;
-  --color-secondary: #eee3f3;
-  --color-secondary-hover: #e4d4ec;
-  --color-on-secondary: #5a3f67;
-  --color-text: #4A2A1A; /* huisstijl: cacao */
-  --color-text-muted: #6f625d;
-  --color-text-subtle: #81736d;
-  /* Alias: was overal in gebruik, maar nooit gedefinieerd. */
+  /* De kleur van de wereld waar je bent (standaard school), in de donkere randvariant. */
+  --color-primary: var(--ck-actief-rand);
+  --color-primary-hover: color-mix(in srgb, var(--ck-actief-rand) 85%, var(--ck-cacao));
+  --color-primary-pressed: color-mix(in srgb, var(--ck-actief-rand) 75%, var(--ck-cacao));
+  --color-on-primary: var(--ck-room);
+  --color-secondary: color-mix(in srgb, var(--ck-druif) 15%, var(--ck-room));
+  --color-secondary-hover: color-mix(in srgb, var(--ck-druif) 25%, var(--ck-room));
+  --color-on-secondary: var(--ck-cacao);
+  --color-text: var(--ck-cacao);
+  --color-text-muted: var(--ck-cacao-zacht);    /* geen grijs */
+  --color-text-subtle: var(--ck-cacao-zacht);
   --color-text-soft: var(--color-text-muted);
-  --color-border: #d9cfc5;
-  --color-border-strong: #b9aa9e;
-  --color-success: #2A8F40; /* huisstijl: tuin-rand */
-  --color-success-soft: #e4eee2;
-  --color-error: #9b504b;
-  --color-error-soft: #f8e4df;
-  --color-reward: #f5c875;
-  --color-reward-strong: #7a5b22;
-  --color-focus: #76538a;
-  --color-focus-ring: #76538a52;
-  --color-overlay: #332a276b;
+  --color-border: var(--ck-schaduw-rand);
+  --color-border-strong: var(--ck-hout-licht);
+  --color-success: var(--ck-tuin-rand);
+  --color-success-soft: color-mix(in srgb, var(--ck-tuin) 18%, var(--ck-room));
+  --color-error: var(--ck-hout-donker);         /* nooit rood bij een fout */
+  --color-error-soft: color-mix(in srgb, var(--ck-zon) 22%, var(--ck-room));
+  --color-reward: var(--ck-zon);
+  --color-reward-strong: var(--ck-cacao);
+  --color-focus: var(--ck-druif);
+  --color-focus-ring: color-mix(in srgb, var(--ck-druif) 32%, transparent);
+  --color-overlay: color-mix(in srgb, var(--ck-cacao) 42%, transparent);
 
   /* Huisstijl: Nunito voor tekst (Baloo 2 voor koppen staat in cocokiki-tokens.css). */
   --font-family-friendly: "Nunito", system-ui, sans-serif;
@@ -77,9 +77,9 @@
   --radius-dialog: 28px;
   --radius-pill: 999px;
 
-  --shadow-soft: 0 10px 30px #4f403217;
-  --shadow-raised: 0 18px 48px #4f403226;
-  --shadow-dialog: 0 28px 80px #30282338;
+  --shadow-soft: 0 10px 30px color-mix(in srgb, var(--ck-cacao) 9%, transparent);
+  --shadow-raised: 0 18px 48px color-mix(in srgb, var(--ck-cacao) 15%, transparent);
+  --shadow-dialog: 0 28px 80px color-mix(in srgb, var(--ck-cacao) 22%, transparent);
 
   --touch-target: 44px;
   --motion-fast: 140ms;

@@ -161,3 +161,7 @@ body .tuin.ck-scherm .tuin-status { top: var(--tuin-boven); left: var(--space-4)
  .tuin .garden-ruler { width: calc(100% - var(--space-8)); }
  .tuin .garden-jug { width: calc(var(--space-12) * 2.8); height: calc(var(--space-12) * 4.7); }
 }
+
+/* Telefoon: de gereedschapsbalk staat links en verticaal (zie cocokiki-tokens.css),
+   dus het veld laat links ruimte vrij in plaats van rechts. */
+@media(max-width:700px) { .tuin .tuin__veld { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); } }

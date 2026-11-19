@@ -36,12 +36,16 @@ Elk spel en elke opdracht gebruikt deze zeven zones. Bouw ze met de klassen uit 
 | 1 | Terug | linksboven | `.ck-zone-terug` | precies één terugknop |
 | 2 | Statuseiland | midden boven | `.ck-zone-status` | munten · voortgang als bolletjes · niveau. Rekt uit bij een beloning (`.is-open`) en krimpt weer |
 | 3 | Menu | rechtsboven | `.ck-zone-menu` | winkel · To Do · profiel, altijd in deze volgorde |
-| 4 | Gereedschapsbalk | rechts, verticaal | `.ck-zone-gereedschap` | vaste volgorde: hint · rekenmachine · liniaal/maten · kalender · mand — lijn — geluid. Toon alleen wat het spel nodig heeft |
+| 4 | Gereedschapsbalk | links, verticaal, onder de terugknop (telefoon: één rij onder de bovenbalk) | `.ck-zone-gereedschap` | vaste volgorde: hint · rekenmachine · liniaal/maten · kalender · mand — lijn — geluid. Toon alleen wat het spel nodig heeft |
 | 5 | Personage | linksonder | `.ck-zone-personage` | wie de vraag stelt, met ballon |
-| 6 | Antwoorden of hoofdknop | rechtsonder, naast de gereedschapsbalk | `.ck-zone-antwoord` | bellen om te tikken of te slepen, óf één hoofdknop |
+| 6 | Antwoorden of hoofdknop | rechtsonder | `.ck-zone-antwoord` | bellen om te tikken of te slepen, óf één hoofdknop |
 | 7 | Speelveld | de rest | — | de wereld, met hangkaartjes, doelen en objecten |
 
 Op het eiland zelf (laag 1) staan alleen zone 2 (munten) en zone 3. Daar mag het CocoKiki-logo linksboven staan in plaats van de terugknop.
+
+**Versleepbaar:** de gereedschapsbalk heeft bovenaan een greep (puntjes). Een kind kan hem wegschuiven als hij over een som of tekst staat; de plek wordt onthouden voor alle spellen, en dubbeltikken op de greep zet hem terug. Dit gebeurt automatisch voor elke `.ck-zone-gereedschap` (`design-system/versleepbareBalk.ts`). Toch blijft de regel: ontwerp elk scherm zo dat de balk op zijn vaste plek niets bedekt.
+
+**Waarom links?** De linkerkant is de help-kant: daar staan het personage en de hint. De rechterkant is de doe-kant: menu en antwoorden. Zo blijft rechts rustig en houdt een (meestal rechtshandig) kind de hand vrij om bellen te slepen. De afbeeldingen in `docs/cocokiki_huisstijl.html` tonen de balk nog rechts; de tekst hier is leidend.
 
 ## Navigatie
 
@@ -130,9 +134,9 @@ Zet de glans van het glas mee met de muis of vinger door `--ck-glans-x` te vulle
 |---|---|
 | Eiland (laag 1) | Volledige illustratie. Logo, statuseiland (alleen munten) en menu. Glimmende ronde wereldknoppen op de gebouwen. Zoomknoppen in glas rechtsonder. |
 | Wereld (laag 2) | Volledige illustratie met het personage groot in beeld. Houten naambord. Keuzes als speelkaartjes onderin of rechts, nooit over het gezicht. Zones 1, 2 en 3. |
-| Spel of opdracht (laag 3) | Alle zeven zones. Het onderwerp zit in de wereld, met hangkaartjes en een doel. Personage linksonder, bellen rechtsonder, gereedschap rechts. |
+| Spel of opdracht (laag 3) | Alle zeven zones. Het onderwerp zit in de wereld, met hangkaartjes en een doel. Personage linksonder, bellen rechtsonder, gereedschap links. |
 | Paneel (winkel, To Do, boeken) | Glazen paneel van rechts over de huidige laag. Bovenbalk blijft gelijk. |
-| Tekenen / versieren | Werkvlak in het midden. Penselen en kleuren in de gereedschapsbalk rechts, "Klaar" als hoofdknop in zone 6. |
+| Tekenen / versieren | Werkvlak in het midden. Penselen en kleuren in de gereedschapsbalk links, "Klaar" als hoofdknop in zone 6. |
 
 ## Teksttoon
 - Personages spreken het kind aan met "je", kort en vrolijk, zonder uitroeptekens achter elke zin.
@@ -142,7 +146,7 @@ Zet de glans van het glas mee met de muis of vinger door `--ck-glans-x` te vulle
 
 ## Nooit doen
 - Grote witte of beige vlakken over de illustratie, of een vraag in een wit kader.
-- Hulpmiddelen ergens anders dan in de gereedschapsbalk rechts, of twee terugknoppen.
+- Hulpmiddelen ergens anders dan in de gereedschapsbalk links, of twee terugknoppen.
 - Bladerknoppen, keuzelijsten of tussenschermen in een spel ("Som 1 van 10", "Volgende som").
 - Dunne grijze randen, tabellen of rijen met vinkjes.
 - Grijs, saliegroen of kleuren die niet in `cocokiki-tokens.css` staan.

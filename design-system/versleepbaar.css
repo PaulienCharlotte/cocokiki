@@ -1,0 +1,11 @@
+/* Greep van de versleepbare gereedschapsbalk. Alleen huisstijlvariabelen. */
+.ck-versleepbaar { transition: translate 0s; }
+.ck-versleepbaar.is-slepen { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ck-actief) 45%, transparent), 0 18px 40px color-mix(in srgb, var(--ck-cacao) 30%, transparent); z-index: 40; }
+.ck-greep {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 100%; min-width: 44px; height: 28px; padding: 0; border: 0; border-radius: var(--ck-rond-knop);
+  background: transparent; color: var(--ck-cacao-zacht); cursor: grab; touch-action: none;
+}
+.ck-greep:hover { color: var(--ck-cacao); background: color-mix(in srgb, var(--ck-wit) 40%, transparent); }
+.ck-versleepbaar.is-slepen .ck-greep { cursor: grabbing; color: var(--ck-actief); }
+.ck-greep:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 2px; }

@@ -9,6 +9,9 @@ import './app.css';
 import './design-system/components.css';
 import './pages/world.css';
 import './styles/mobiel-schaal.css';
+import { startVersleepbareBalk } from './design-system/versleepbareBalk';
+
+startVersleepbareBalk();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

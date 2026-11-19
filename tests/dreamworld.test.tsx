@@ -162,12 +162,14 @@ test('village buildings are navigable without badges and the full menu stays ava
   assert.equal((world.match(/class="dream-hotspot"/g) ?? []).length, 5);
   for (const action of ['Bak met Coco', 'Plant met Kiki', 'Help Baby Lua', 'Ontdek met Seb', 'Versier je boomhut']) assert.ok(world.includes(action));
   assert.doesNotMatch(world, /village-destination__sign|village-destination__character|village-world__welcome/);
-  assert.match(world, /aria-label="Alle spellen openen"/);
-  assert.match(world, /aria-label="Encyclopedie openen"/);
+  // Huisstijl: rechtsboven alleen winkel · To Do · profiel; de rest zit in het profielmenu.
+  assert.match(world, /aria-label="To Do openen"/);
+  assert.match(world, /aria-label="Profielmenu openen"/);
+  assert.doesNotMatch(world, /aria-label="Alle spellen openen"|aria-label="Navigatiemenu openen"/);
   assert.ok(existsSync(`public${ISLAND_ICONS_IMAGE}`));
   assert.deepEqual(Object.keys(ISLAND_ICON_POSITIONS).sort(), DREAM_ISLANDS.map(island => island.id).sort());
   assert.equal(new Set(Object.values(ISLAND_ICON_POSITIONS).map(position => position.join(':'))).size, 6);
-  assert.match(world, /aria-label="Winkels openen"/);
+  assert.match(world, /aria-label="Winkel openen"/);
   assert.doesNotMatch(world, /aria-label="Kaart naar (links|rechts)"/);
   for (const asset of ['/dreamworld/village/landscape-quests.webp', '/dreamworld/village/portrait-v2.webp']) {
     assert.ok(existsSync(`public${asset}`));
@@ -178,7 +180,7 @@ test('village buildings are navigable without badges and the full menu stays ava
     assert.ok(world.includes(`aria-label="${destination.label} openen"`));
   }
   const shell = renderToStaticMarkup(<AppShell coins={20} onHome={() => undefined} onNavigate={() => undefined}>Spel</AppShell>);
-  assert.match(shell, /aria-label="Winkels openen"/);
+  assert.match(shell, /aria-label="Winkel openen"/);
   const menu = renderToStaticMarkup(<ShopMenu onClose={() => undefined} onNavigate={() => undefined} />);
   for (const shop of WORLD_SHOPS) assert.ok(menu.includes(shop.label));
 });

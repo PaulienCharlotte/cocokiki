@@ -149,3 +149,8 @@
 .klok-avontuur .clock-set .clock-game__actions .ck-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: auto; min-height: var(--touch-target); padding: var(--space-3) var(--space-4); }
 .klok-avontuur .clock-set .clock-game__actions .ck-button span { color: inherit; font: inherit; }
 .klok-avontuur .clock-set .clock-game__actions .ck-button svg { width: var(--space-5); height: var(--space-5); }
+
+/* Voortgang als bolletjes in een glazen pilletje (geen "1/5") */
+.klok-scherm .klok-stippen { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; }
+/* Telefoon: links ruimte voor de verticale gereedschapsbalk */
+@media(max-width:700px) { .klok-scherm .clock-game { padding-left: calc(var(--space-2) * 2 + 52px); padding-right: var(--space-2); box-sizing: border-box; } }

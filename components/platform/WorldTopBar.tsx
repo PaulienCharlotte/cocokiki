@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { ArrowLeft, House, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, Menu, ChefHat, ClipboardList, LogOut, LogIn } from 'lucide-react';
+import { ArrowLeft, House, Gamepad2, ShoppingBag, Map, BookOpen, ChevronDown, UserRound, ClipboardList, LogOut, LogIn } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../../design-system';
 import { loadProfileAvatar, PROFILE_AVATARS, saveProfileAvatar } from '../../services/profile';
 import type { ProfileAvatarId } from '../../services/profile';
@@ -24,16 +24,6 @@ interface WorldTopBarProps {
 
 export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug naar de wereld', embedded = false, onNavigate, activePath, worldShortcut = false }: WorldTopBarProps) {
   const [profileOpen, setProfileOpen] = useState(false);
-  const [navigationOpen, setNavigationOpen] = useState(false);
-  const navigationRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!navigationOpen) return;
-    const close = (event: PointerEvent) => { if (!navigationRef.current?.contains(event.target as Node)) setNavigationOpen(false); };
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setNavigationOpen(false); };
-    document.addEventListener('pointerdown', close);
-    document.addEventListener('keydown', escape);
-    return () => { document.removeEventListener('pointerdown', close); document.removeEventListener('keydown', escape); };
-  }, [navigationOpen]);
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
   const [uitlogOpen, setUitlogOpen] = useState(false);
   const [uitlogBezig, setUitlogBezig] = useState(false);
@@ -86,17 +76,15 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
         <strong>{coins}</strong>
       </button>
       <div className="world-hud__tools ck-glas">
-        {(worldShortcut || onNavigate) && <IconButton className="world-desktop-tool world-map-shortcut" label="Dreamworld-kaart" size="small" icon={<Map size={20} />} onClick={onHome} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Naar mijn boomhut" size="small" icon={<House size={20} />} onClick={() => onNavigate('/treehouse')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Winkels openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Alle spellen openen" size="small" icon={<Gamepad2 size={20} />} onClick={() => onNavigate('/mijn-spellen')} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="Encyclopedie openen" size="small" icon={<BookOpen size={20} />} onClick={() => onNavigate(ENCYCLOPEDIA_PATH)} />}
-        {onNavigate && <IconButton className="world-desktop-tool" label="To Do openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         {/* In een spel met een eigen statuseiland staan de munten hier, in het menu. */}
         <button type="button" className="world-hud__balance ck-bovenbalk__munten-klein" aria-label={`${coins} CocoCoins · Mijn munten openen`} onClick={() => onNavigate?.('/munten')}>
           <span className="ck-munt" />
           <strong>{coins}</strong>
         </button>
+        {/* Huisstijl: rechtsboven precies winkel · To Do · profiel, op elk scherm.
+            Kaart, boomhut, alle spellen en encyclopedie zitten in het profielmenu. */}
+        {onNavigate && <IconButton className="world-hud__menuknop" label="Winkel openen" size="small" icon={<ShoppingBag size={20} />} onClick={() => onNavigate('/shop')} />}
+        {onNavigate && <IconButton className="world-hud__menuknop" label="To Do openen" size="small" icon={<ClipboardList size={20} />} onClick={() => onNavigate('/opdrachten')} />}
         <div className="world-profile" ref={profileRef}>
           <button
             className="world-profile__trigger"
@@ -118,6 +106,9 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               setProfileOpen(false);
               setAvatarDialogOpen(true);
             }}><UserRound size={21} />Mijn profiel</button>
+            {(worldShortcut || onNavigate) && <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onHome(); }}><Map size={21} />Wereldkaart</button>}
+            {onNavigate && <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onNavigate('/treehouse'); }}><House size={21} />Mijn boomhut</button>}
+            {onNavigate && <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 size={21} />Alle spellen</button>}
             {onNavigate && <button
               type="button"
               role="menuitem"
@@ -129,19 +120,6 @@ export default function WorldTopBar({ coins, onHome, onBack, backLabel = 'Terug 
               ? <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); setUitlogFout(''); setUitlogOpen(true); }}><LogOut size={21} />Uitloggen</button>
               : <button type="button" role="menuitem" onClick={naarInloggen}><LogIn size={21} />Inloggen</button>)}
           </div>}
-        </div>
-        <div className="world-hud__mobile-menu" ref={navigationRef}>
-          <IconButton label="Navigatiemenu openen" icon={<Menu size={20} />} aria-expanded={navigationOpen} onClick={() => { setNavigationOpen(open => !open); setProfileOpen(false); }} />
-          {navigationOpen && <nav className="world-hud__navigation" aria-label="Hoofdnavigatie">
-            <button type="button" onClick={() => { setNavigationOpen(false); onHome(); }}><Map />Wereldkaart</button>
-            {onNavigate && <>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/treehouse'); }}><House />Mijn boomhut</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/shop'); }}><ShoppingBag />Winkels</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/mijn-spellen'); }}><Gamepad2 />Alle spellen</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate('/opdrachten'); }}><ClipboardList />To Do</button>
-              <button type="button" onClick={() => { setNavigationOpen(false); onNavigate(ENCYCLOPEDIA_PATH); }}><BookOpen />Encyclopedie</button>
-            </>}
-          </nav>}
         </div>
       </div>
     </header>

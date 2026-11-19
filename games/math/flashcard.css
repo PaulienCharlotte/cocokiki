@@ -13,7 +13,7 @@
   .math-module.math-adventure { padding-top: calc(var(--space-12) * 2 + var(--space-6)); }
 }
 .math-adventure { position: relative; padding-top: 100px; padding-bottom: 28px; }
-.math-adventure::before { content: ''; position: fixed; inset: 0; background: #28352b38; backdrop-filter: blur(3px); pointer-events: none; }
+.math-adventure::before { content: ''; position: fixed; inset: 0; background: color-mix(in srgb, var(--ck-cacao) 22%, transparent); backdrop-filter: blur(3px); pointer-events: none; }
 .math-adventure--multiply::before { display: none; }
 .math-game { position: relative; z-index: 1; width: min(820px,100%); min-height: calc(100dvh - 128px); display: flex; align-items: center; justify-content: center; }
 .math-session, .math-lua { width: 100%; padding: var(--space-6) var(--space-8) var(--space-6); background: var(--color-surface); border: 0; border-radius: var(--radius-card); box-shadow: var(--shadow-raised); }
@@ -74,7 +74,7 @@
 
 .adventure-plant { display: none; }
 .berry-game { padding-top: 0; }
-.berry-harvest { width: 100%; min-height: 96px; margin-bottom: 24px; padding: 0 0 20px; background: none; border-radius: 0; box-shadow: none; border-bottom: 1px solid #edf0e9; }
+.berry-harvest { width: 100%; min-height: 96px; margin-bottom: 24px; padding: 0 0 20px; background: none; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--ck-plekje); }
 .berry-harvest__label { min-height: 28px; margin-bottom: 6px; font-size: 16px; }
 .berry-supply { gap: 6px; min-height: 50px; }
 .berry-baskets { width: 100%; max-width: 660px; margin: auto; gap: 18px; }
@@ -82,9 +82,9 @@
 .berry-basket__target { background: none; border: 0; }
 .berry-basket__target:disabled { opacity: 1; }
 .berry-basket__target > span { background: none; padding: 0; font-size: 20px; }
-.berry-basket.is-ready .berry-basket__target { background: #f2f6ed; border: 1px dashed #9caf8f; }
-.berry-basket__art { height: calc(100% - 44px); filter: drop-shadow(0 5px 4px #26382a18); }
-.berry-game .math-drag-tile img { filter: drop-shadow(0 2px 2px #26382a20); }
+.berry-basket.is-ready .berry-basket__target { background: var(--ck-plekje); border: 1px dashed var(--ck-hout-licht); }
+.berry-basket__art { height: calc(100% - 44px); filter: drop-shadow(0 5px 4px color-mix(in srgb, var(--ck-cacao) 9%, transparent)); }
+.berry-game .math-drag-tile img { filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--ck-cacao) 13%, transparent)); }
 .berry-undo { margin-top: 16px; }
 .berry-demo { top: 43px; }
 .winter-scene { height: 300px; width: min(600px,100%); }
@@ -92,7 +92,7 @@
 .winter-hollow__art { display: block; width: 100%; height: 100%; object-fit: contain; }
 .winter-hollow__inside { inset: 30% 22% 30%; border-radius: 0; background: none; padding: 0; overflow: visible; align-content: center; }
 .winter-total { bottom: -18px; background: none; font-size: 18px; padding: 0; }
-.winter-squirrel { width: 27%; height: 56%; bottom: 0; left: 0; object-fit: contain; filter: drop-shadow(0 4px 4px #26382a18); }
+.winter-squirrel { width: 27%; height: 56%; bottom: 0; left: 0; object-fit: contain; filter: drop-shadow(0 4px 4px color-mix(in srgb, var(--ck-cacao) 9%, transparent)); }
 .winter-bird { width: 18%; height: 35%; top: 0; right: 0; object-fit: contain; }
 .winter-find { background: none; top: 8%; width: 23%; left: 0; padding: 0; }
 .winter-find .quantity { padding-bottom: 6px; }
@@ -102,7 +102,7 @@
 .quantity-token--cookie, .quantity-token--acorn { width: 30px; height: 30px; background: none; border: 0; border-radius: 0; box-shadow: none; }
 .quantity-token img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .quantity-token--cookie::after { display: none; }
-.quantity-token b { right: -4px; bottom: -3px; font-size: var(--font-size-sm); background: #fff; border: 1px solid #e7ebdf; border-radius: 4px; }
+.quantity-token b { right: -4px; bottom: -3px; font-size: var(--font-size-sm); background: var(--ck-wit); border: 1px solid var(--ck-plekje); border-radius: 4px; }
 .winter-hollow__inside .quantity-token { width: 22px; height: 25px; }
 .cookie-scene { height: 260px; }
 .cookie-tray { width: 64%; left: 18%; height: 86%; }
@@ -115,13 +115,13 @@
 .honey-jar__glass { display: grid; grid-template-rows: 54px 1fr; height: 100%; background: none; border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
 .honey-jar__glass > span { position: static; background: none; padding: 0 0 10px; font-size: 23px; line-height: 1.25; }
 .honey-jar__art { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; }
-.honey-meter { position: absolute; left: -22px; top: 24%; bottom: 8%; width: 12px; border: 1px solid #e3d5b2; border-radius: 6px; background: #fbf7ec; overflow: hidden; }
-.honey-meter__fill { position: absolute; bottom: 0; width: 100%; background: #d4a743; border-radius: 5px; transition: height 350ms ease; }
+.honey-meter { position: absolute; left: -22px; top: 24%; bottom: 8%; width: 12px; border: 1px solid var(--ck-plekje); border-radius: 6px; background: var(--ck-room); overflow: hidden; }
+.honey-meter__fill { position: absolute; bottom: 0; width: 100%; background: var(--ck-hout-licht); border-radius: 5px; transition: height 350ms ease; }
 .honey-bee { width: 48px; height: 48px; top: 0; left: 12%; background: none; border-radius: 0; object-fit: contain; transform: none; }
 .honey-bee:nth-child(2) { top: 0; left: auto; right: 8%; }
 .honey-bee::before, .honey-bee::after { display: none; }
 .checkout-game { justify-content: flex-start; }
-.checkout-hud { background: none; padding: 0 0 16px; gap: 16px; border-bottom: 1px solid #edf0e9; border-radius: 0; }
+.checkout-hud { background: none; padding: 0 0 16px; gap: 16px; border-bottom: 1px solid var(--ck-plekje); border-radius: 0; }
 .checkout-game .math-prompt { margin-top: 22px; }
 .checkout-counter { min-height: 230px; background: none; border: 0; border-radius: 0; }
 .checkout-product strong { background: none; padding: 0; }
@@ -130,7 +130,7 @@
 .checkout-start h2 { background: none; }
 .checkout-game .adventure-feedback { margin-top: 14px; }
 .math-lua { padding: 0; overflow: hidden; border: 0; border-radius: 0; box-shadow: none; }
-.checkout-product .checkout-symbol { width: 100px; height: 100px; margin: 20px; color: #61765e; stroke-width: 1.5; }
+.checkout-product .checkout-symbol { width: 100px; height: 100px; margin: 20px; color: var(--ck-cacao-zacht); stroke-width: 1.5; }
 .checkout-product > span { display: block; margin-top: 8px; font-size: 18px; font-weight: 650; text-align: center; }
 .checkout-counter--single .checkout-product { width: min(100%, 340px); }
 .math-lua .lua-game-shell { height: 610px; min-height: 0; border-radius: 14px; }
@@ -228,9 +228,9 @@
 .cookie-order > img { width: 110px; height: 110px; object-fit: contain; }
 .cookie-order > strong { font-size: 20px; }
 .cookie-order__story { max-width: 480px; margin: 0; text-align: center; font-size: 17px; line-height: 1.5; }
-.cookie-order__batch { display: flex; align-items: center; gap: 12px; min-height: 56px; font-size: 20px; color: #465e43; }
+.cookie-order__batch { display: flex; align-items: center; gap: 12px; min-height: 56px; font-size: 20px; color: var(--ck-tuin-rand); }
 .cookie-order__batch img { width: 48px; height: 48px; object-fit: contain; }
-.cookie-order.is-complete { color: #465e43; }
+.cookie-order.is-complete { color: var(--ck-tuin-rand); }
 @media (max-width: 600px) { .math-workbench__equation { font-size: var(--font-size-xl); } .math-workbench input { width: calc(var(--space-12) + var(--space-8)); } }
 
 /*
@@ -335,8 +335,8 @@
   background: none;
   cursor: pointer;
 }
-.rekenmachine__toets:active { transform: translateY(2%) scale(.97); background: #3b241a1f; }
-.rekenmachine__toets.is-actief { background: #3b241a1f; }
+.rekenmachine__toets:active { transform: translateY(2%) scale(.97); background: color-mix(in srgb, var(--ck-cacao) 12%, transparent); }
+.rekenmachine__toets.is-actief { background: color-mix(in srgb, var(--ck-cacao) 12%, transparent); }
 .rekenmachine__toets:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
   .rekenmachine__toets:active { transform: none; }
