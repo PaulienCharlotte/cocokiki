@@ -1,12 +1,21 @@
 import type { Plugin } from 'vite';
 
-/** Alleen door Vite gehashte bestanden zijn onveranderlijk. Library-URL's niet. */
+const IMAGE_FOLDERS = ['assets/library', 'assets/baby-lua', 'dreamworld', 'games', 'images'];
+export const IMAGE_CACHE = 'public, max-age=604800, stale-while-revalidate=86400';
+
+/** Alleen door Vite gehashte bestanden zijn onveranderlijk. Library-URL's een week. */
 export function netlifyCacheHeaders(files: string[]): string {
   const hashed = files.filter(file => /^assets\/.+-[\w-]{8,}\.(?:js|css|webp|png|svg|woff2?)$/.test(file)).sort();
   return [
     '# Automatisch gegenereerd door de lokale production build.',
     ...hashed.map(file => `/${file}\n  Cache-Control: public, max-age=31536000, immutable`),
-    '/*\n  Cache-Control: public, max-age=0, must-revalidate',
+    // Vaste afbeeldingen (geen hash in de naam): een week bewaren en op de
+    // achtergrond verversen. Zo vraagt een telefoon niet bij elk bezoek elk
+    // plaatje opnieuw na. Vervang je een plaatje inhoudelijk, geef het dan een
+    // nieuwe naam (bijv. -v2), dan ziet iedereen het meteen.
+    // HTML, JSON en de rest houden Netlify's standaard (steeds opnieuw navragen);
+    // daarom geen algemene /*-regel die met deze regels zou samenvallen.
+    ...IMAGE_FOLDERS.map(folder => `/${folder}/*\n  Cache-Control: ${IMAGE_CACHE}`),
     '',
   ].join('\n\n');
 }

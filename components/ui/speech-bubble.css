@@ -28,3 +28,9 @@
 
 /* Minimale informatie: alleen wie het zegt. Het onderwerp blijft voor schermlezers. */
 .ck-zegt .ck-zegt__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Vast linksonder (zone 5 uit de huisstijl): het personage praat vanaf zijn
+   vaste plek, niet midden in de inhoud. Gebruik <SpeechBubble vast>. */
+.ck-zegt.ck-zegt.is-vast { position: fixed; z-index: 30; left: var(--space-3); bottom: var(--space-3); right: auto; width: min(560px, calc(100vw - var(--space-3) * 2)); align-items: flex-end; }
+.ck-zegt.is-vast .ck-zegt__wolk.ck-zegt__wolk { background: color-mix(in srgb, var(--ck-wit) 92%, transparent); box-shadow: 0 5px 0 var(--ck-schaduw-rand); margin-bottom: var(--space-4); }
+.ck-zegt.is-vast .ck-zegt__wolk::before { top: auto; bottom: var(--space-4); margin-top: 0; }

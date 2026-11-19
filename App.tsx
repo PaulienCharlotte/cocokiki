@@ -7,7 +7,7 @@ import { GAMES_BY_ID } from './platform/gameRegistry';
 import { resolveRoute, type AppRoute } from './platform/routes';
 import { CURRENCY_CHANGE_EVENT, loadCurrency, saveCurrency } from './services/currency';
 import './components/cooking/foundation.css';
-import { guardedNavigation, hasNavigationGuard } from './services/navigationGuard';
+import { guardedNavigation, hasNavigationGuard, runBackHandler } from './services/navigationGuard';
 import { ISLANDS_BY_ID, islandForActivity } from './platform/dreamworld';
 import './components/dreamworld/dreamworld.css';
 import './components/memory-compact.css';
@@ -139,7 +139,7 @@ const GameApp: React.FC = () => {
   const shopRoom = (current.route.page === 'store' || current.route.path === '/shop') ? roomReturn(window.location.search) : null;
   const orderReturn = current.route.page === 'taartenatelier' && new URLSearchParams(window.location.search).has('order') ? { path: '/opdrachten?gebied=bakken', label: 'Terug naar To Do' } : undefined;
   const backTarget = (shopRoom ? { path: shopRoom, label: 'Verder inrichten' } : undefined) ?? sourceLocation ?? orderReturn ?? (current.route.page === 'plant-clinic' || current.route.path === '/treehouse' ? { path: '/', label: 'Terug naar Dreamworld' } : BACK_TARGET[current.route.page] ?? (parentIsland ? { path: parentIsland.path, label: `Terug naar ${parentIsland.label.toLowerCase()}` } : undefined));
-  const back = () => navigate(backTarget?.path ?? '/');
+  const back = () => { if (runBackHandler()) return; navigate(backTarget?.path ?? '/'); };
   const worldContent = current.route.page === 'island'
       ? residentLocation ? <WorldLocationLayout key={residentLocation.id} location={residentLocation} onNavigate={navigate} /> : <IslandEnvironment island={ISLANDS_BY_ID[current.route.islandId]} onNavigate={navigate} />
       : current.route.page === 'nursery-project'

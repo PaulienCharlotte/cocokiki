@@ -167,3 +167,7 @@
 .bestel-briefje { background: transparent; padding: 0 var(--space-2); }
 @media (max-width: 600px) { .bestel-kaart .ck-zegt__gids { width: calc(var(--space-8) * 2); height: calc(var(--space-8) * 2); } }
 .bestel-kaart .bestel-kaart__sluit + .ck-zegt.ck-zegt { margin-top: calc(var(--touch-target) - var(--space-2)); }
+
+/* De ballon staat vast linksonder (<SpeechBubble vast>): de kaart laat
+   onderaan ruimte, zodat de ballon niets bedekt. */
+.bestel-kaart:has(.is-vast) { margin-bottom: 140px; max-height: calc(100dvh - var(--space-12) * 2 - 160px); overflow-y: auto; }

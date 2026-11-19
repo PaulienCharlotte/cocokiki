@@ -88,3 +88,7 @@ main.nutrient-memory-screen::after { display: none; }
 @media (max-width: 720px) {
   .terrace-doctor-trigger.terrace-doctor-trigger { top: 140px; }
 }
+
+/* De ballon van Coco staat vast linksonder (<SpeechBubble vast>): de kookkaart
+   laat onderaan ruimte, zodat de ballon niets bedekt. */
+.cooking-card:has(.is-vast) { margin-bottom: 140px; }

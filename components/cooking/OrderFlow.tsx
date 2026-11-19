@@ -58,14 +58,14 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
     if (!wachtend.length && !onCakeOrder) return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart ck-paper-surface">
         {showBack && <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />}
-        <SpeechBubble character="coco" label="de toonbank">Er wacht nu niemand. Blader gerust in het kookboek en bak iets voor jezelf.</SpeechBubble>
+        <SpeechBubble vast character="coco" label="de toonbank">Er wacht nu niemand. Blader gerust in het kookboek en bak iets voor jezelf.</SpeechBubble>
         <Button size="large" onClick={onExit}>Naar het overzicht</Button>
       </section>
     </main>;
     return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart ck-paper-surface">
         {showBack && <IconButton className="bestel-kaart__terug" label="Terug naar het bakkerijoverzicht" icon={<ArrowLeft size={19} />} onClick={onExit} />}
-        <SpeechBubble character="coco" label="de toonbank">{opdrachtAantal ? 'Er liggen opdrachten klaar. Wie help je het eerst?' : 'Alle opdrachten zijn afgeleverd. Bekijk je taart of kies zelf een recept.'}</SpeechBubble>
+        <SpeechBubble vast character="coco" label="de toonbank">{opdrachtAantal ? 'Er liggen opdrachten klaar. Wie help je het eerst?' : 'Alle opdrachten zijn afgeleverd. Bekijk je taart of kies zelf een recept.'}</SpeechBubble>
         {melding && <p className="bestel-melding" role="alert">{melding}</p>}
         <CardGrid
           label="Kies wie je helpt"
@@ -94,7 +94,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
     return <main className="bakkerij-stijl bestel-scherm">
       <section className="bestel-kaart ck-paper-surface">
         {terugNaarToonbank}
-        <SpeechBubble character={bestelling.klant} label="de bestelling" aside={<span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>}>
+        <SpeechBubble vast character={bestelling.klant} label="de bestelling" aside={<span className="bestel-eters"><Users size={15} aria-hidden="true" />{bestelling.eters}</span>}>
           {bestelling.korteWens ?? bestelling.wens}
         </SpeechBubble>
         <p className="bestel-briefje"><strong>{eisInWoorden(bestelling)}</strong><span>voor {bestelling.eters} mensen</span></p>
@@ -127,7 +127,7 @@ export default function OrderFlow({ progress, onSave, onStart, onExit, onCakeOrd
   return <main className="bakkerij-stijl bestel-scherm">
     <section className="bestel-kaart ck-paper-surface">
       {terugNaarToonbank}
-      <SpeechBubble character="coco" label="hoeveel maak je er" tone={klaar ? 'goed' : 'default'}>
+      <SpeechBubble vast character="coco" label="hoeveel maak je er" tone={klaar ? 'goed' : 'default'}>
         {klaar
           ? `${goed} keer bakken dus. Dan heb je er genoeg. Zet hem maar klaar.`
           : `Voor ${bestelling.eters} mensen. Eén baksel geeft ${gekozenRecept.servings} porties. Hoe vaak bak je?`}

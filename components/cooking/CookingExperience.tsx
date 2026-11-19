@@ -249,14 +249,14 @@ export default function CookingExperience(props: Props) {
       </Dialog>}
       <article className={`cooking-card${isCooktopScene ? ' cooking-card--heat' : ''}${step.foodSprite && step.mechanic === 'repeat' ? ' cooking-card--cutting' : ''}`}>
         {!isCooktopScene && <h1 id="cooking-step-title">{step.title}</h1>}
-        {!isCooktopScene && step.mechanic !== 'oven' && <SpeechBubble character="coco" className="cooking-card__coach" tone={message || stockMessage ? 'alert' : 'default'}>
+        {!isCooktopScene && step.mechanic !== 'oven' && <SpeechBubble vast character="coco" className="cooking-card__coach" tone={message || stockMessage ? 'alert' : 'default'}>
           {(step.foodSprite && step.mechanic === 'repeat'
             ? `${['Tik om de appel te halveren.', 'Maak partjes zonder klokhuis.', 'Snijd de partjes in blokjes.', 'Je appelblokjes zijn klaar.'][Math.min(3, state.count)]} Thuis helpt een volwassene met het mes.`
             : uitleg(step.title, step.instruction) || step.hint)}
           {(message || stockMessage) && <span className="cooking-card__notice">{message ?? stockMessage}</span>}
           {stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}
         </SpeechBubble>}
-        {(isCooktopScene || step.mechanic === "oven") && (message || stockMessage) && <SpeechBubble character="coco" className="cooking-card__coach" tone="alert">{message ?? stockMessage}{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</SpeechBubble>}
+        {(isCooktopScene || step.mechanic === "oven") && (message || stockMessage) && <SpeechBubble vast character="coco" className="cooking-card__coach" tone="alert">{message ?? stockMessage}{stockMessage && onShop && <button className="cooking-button" onClick={onShop}>Naar de winkel</button>}</SpeechBubble>}
         <div className={`cooking-card__scene cooking-card__scene--${step.mechanic}${isCooktopScene ? ' cooking-card__scene--cooktop' : ''}${step.station === 'kitchen' || isCooktopScene ? '' : ' has-surface'}${kijktTerug ? ' is-terugblik' : ''}`} inert={kijktTerug || undefined} style={step.station === 'kitchen' || isCooktopScene ? undefined : { backgroundImage: `url(${background})` }}>
           <React.Fragment key={`${session.attemptId}:${step.id}:${retry}`}><CookingInteraction cooktopZone={cooktopZone} step={step} state={state} oven={session.oven} onOvenChange={changeOven} onChange={patch => change(patch)} onComplete={patch => change(patch ?? {}, true)} onMiss={setMessage} /></React.Fragment>
         </div>

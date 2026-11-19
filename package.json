@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "test": "node scripts/test.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "afbeeldingen:comprimeer": "node scripts/comprimeerAfbeeldingen.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.40.0",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "sharp": "^0.35.5",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

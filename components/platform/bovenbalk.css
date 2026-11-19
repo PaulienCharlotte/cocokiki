@@ -84,3 +84,12 @@ body .ck-bovenbalk .world-hud__tools { margin-left: auto; flex-shrink: 0; }
  body .ck-bovenbalk .world-hud__tools > button.world-hud__balance { min-width: 0; gap: var(--space-1); padding-inline: var(--space-2); }
  body .ck-bovenbalk .ck-bovenbalk__munten-klein strong { font-size: var(--font-size-lg); }
 }
+
+/* Het profielmenu ligt over het spel heen: bijna dicht glas met een sterke
+   vervaging, zodat wat eronder staat niet door de tekst heen leest. */
+body .ck-bovenbalk .world-profile__menu {
+  background: color-mix(in srgb, var(--ck-room) 94%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  backdrop-filter: blur(22px) saturate(1.4);
+}
+body .ck-bovenbalk .world-profile__menu > button svg { color: var(--ck-hout-donker); }

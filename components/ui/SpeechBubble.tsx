@@ -24,11 +24,13 @@ interface SpeechBubbleProps {
   illustration?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  /** Vast linksonder in beeld, op de plek van het personage (zone 5 uit de huisstijl). */
+  vast?: boolean;
 }
 
-export default function SpeechBubble({ character, label, aside, tone = 'default', textId, illustration, children, className }: SpeechBubbleProps) {
+export default function SpeechBubble({ character, label, aside, tone = 'default', textId, illustration, children, className, vast = false }: SpeechBubbleProps) {
   const { naam, beeld } = CHARACTERS[character];
-  return <div className={`ck-zegt${tone === 'default' ? '' : ` is-${tone}`}${className ? ` ${className}` : ''}`} role="status">
+  return <div className={`ck-zegt${tone === 'default' ? '' : ` is-${tone}`}${vast ? ' is-vast' : ''}${className ? ` ${className}` : ''}`} role="status">
     <img className="ck-zegt__gids" src={PROFILE_AVATARS.find(avatar => avatar.id === (character === 'seb' ? 'stokstaartje' : character))?.image ?? beeld} alt={naam} />
     <div className="ck-zegt__wolk">
       {illustration && <div className="ck-zegt__illustratie">{illustration}</div>}

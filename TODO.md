@@ -1,8 +1,51 @@
 # CocoKiki backlog
 
-Laatst bijgewerkt: 14 november 2026
+Laatst bijgewerkt: 19 november 2026
 
 De volgorde hieronder volgt de afhankelijkheden: eerst gedeelde structuur, daarna de visuele basis, vervolgens merkonderdelen en ten slotte het interactieve spelmaatje.
+
+## Huisstijl-ombouw en snelheid (19 november 2026)
+
+Lees eerst `docs/OMBOUWPLAN.md` (het plan met de stand per stap) en
+`docs/briefing/WENSEN.md` (Charlottes wensen met screenshots). De huisstijl in
+`docs/HUISSTIJL.md` en `styles/cocokiki-tokens.css` is leidend. Afgesproken:
+gereedschapsbalk **links** (versleepbaar), één terugknop, voortgang als bolletjes,
+spraakwolk vast linksonder (`<SpeechBubble vast>`), redactiesom blijft op een schrift.
+
+### Al gedaan (19 november)
+- [x] Gedeeld `<SpelScherm>` met de zeven zones + testpagina `/spelscherm-test`.
+- [x] Gereedschapsbalk overal links, ook op telefoon, en versleepbaar.
+- [x] Oude kleuren in `design-system/tokens.css` verwijzen naar de huisstijl.
+- [x] Rekenen: geen losse kleurcodes, bolletjes in plaats van tellers, ruimte voor de balk.
+- [x] Menu rechtsboven: munten · winkel · To Do · profiel; de rest in het profielmenu.
+- [x] Keuken: spraakwolken vast linksonder; kookavontuur-ontdekken met één terugknop.
+- [x] Snelheid: afbeeldingen een week in de browsercache; 98 grote afbeeldingen −31%
+  (`npm run afbeeldingen:comprimeer` voor nieuwe plaatjes).
+
+### Nog te doen (op volgorde)
+- [ ] **Keuken:** geen pop-ups meer ("Goed ontdekt!", "Coco's kooktip"); reactie in de
+  spraakwolk, munten, vanzelf verder. Eerst uitleg, dan de vraag. Wolken max. 2 regels.
+- [ ] **Keuken:** fornuis/kookstap zonder gestapelde doorzichtige panelen; één stap
+  tegelijk, geen "6/18"-balk. Groenten wassen: één terugknop, wolk onderin.
+  Andere kookavontuur-stappen ook één terugknop (`registerBackHandler`).
+- [ ] **Moestuin:** grote bakken (2 per rij), plaatje van het gewas in de bak in plaats
+  van een afgekapte naam, Kiki onderin, "Tuindag · Lente" als naambord.
+- [ ] **Plantendokter:** plant groot in beeld, Kiki onderin, antwoordtegels, bolletjes,
+  geen "Ik weet genoeg"-knop.
+- [ ] **Topografie:** kaart als speelveld, verzameling in plaats van vinkjeslijst, Seb onderin.
+- [ ] **Boodschappen:** tik op ingrediënt in het lijstje = winkel springt naar dat
+  product en laat het oplichten; één terugknop; geen tekst over tekst.
+- [ ] **Interieur:** voortgangsbolletjes liggen over een label; verplaatsen.
+- [ ] **Rekenen:** getekend schrift voor de redactiesom (wacht op asset); lichte tekst op
+  de bladenkiezer; statuseiland voor de klok.
+- [ ] **Snelheid:** kleinere telefoonversies van de zwaarste achtergronden.
+- [ ] **App-breed:** munten naar het statuseiland zodra elk spel `<SpelScherm>` gebruikt;
+  `app.css` en `pages/world.css` zonder losse kleurcodes.
+- [ ] **Test:** economietest "na een half uur hetzelfde spel…" faalt (181 ≠ 182); al vóór 19 nov.
+
+### Assets die Charlotte laat maken (komen in `_inbox-…`)
+- [ ] Moestuin: 6 gewassen × 3 groeistadia (`_inbox-moestuin/`).
+- [ ] Rekenen: opengeslagen getekend schrift (`_inbox-rekenen/`).
 
 ## Nieuwe klusjes — spelevaring en navigatie (14 november 2026)
 

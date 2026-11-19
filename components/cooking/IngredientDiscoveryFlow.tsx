@@ -3,7 +3,8 @@ import { learningReward } from '../../services/learningReward';
 import './bakkerij-stijl.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles } from 'lucide-react';
-import { Button, Dialog, ProgressIndicator, IconButton } from '../../design-system';
+import { Button, Dialog, IconButton } from '../../design-system';
+import { registerBackHandler } from '../../services/navigationGuard';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
 import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
@@ -36,6 +37,9 @@ interface IngredientDiscoveryFlowProps {
 }
 
 export default function IngredientDiscoveryFlow({ recipe, progress, onProgressChange, onExit, onReplay = onExit, replay = false }: IngredientDiscoveryFlowProps) {
+  // De terugknop linksboven gaat één laag terug: naar het kookboek (huisstijl: één terugknop).
+  const exitRef = useRef(onExit); exitRef.current = onExit;
+  useEffect(() => registerBackHandler(() => exitRef.current()), []);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
@@ -95,7 +99,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   if (discovery.step === 'complete') {
     const nextStage = nextRequiredStage(progress, recipe.id);
     const goToNext = () => replay ? onExit() : nextStage && commit(advanceJourney(progress, recipe.id, nextStage));
-    return <main className="bakkerij-stijl discovery-stage">
+  return <main className="bakkerij-stijl discovery-stage">
       <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
       <section className="discovery-card discovery-card--completion" aria-labelledby="discovery-complete-title">
         <div className="discovery-stage__topbar"><IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} /></div>
@@ -150,11 +154,11 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
       <div className="stage-chrome">
         <div className="discovery-stage__topbar">
-          <IconButton label="Terug naar het kookboek" icon={<ArrowLeft size={19} />} onClick={onExit} />
           <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)}><BookOpen size={17} />Bekijk recept</button>
         </div>
         <JourneyStageProgress journey={journey} />
-        <ProgressIndicator label="Ontdekt" value={progressValue} max={recipeIngredientIds.length} />
+        {/* Voortgang als bolletjes, niet als "0/9" (huisstijl). */}
+        <span className="discovery-stippen" role="img" aria-label={`Ontdekt: ${progressValue} van ${recipeIngredientIds.length}`}>{recipeIngredientIds.map((id, i) => <span key={id} className={`ck-stip${i < progressValue ? ' ck-stip--klaar' : ''}${i === progressValue ? ' ck-stip--nu' : ''}`} />)}</span>
       </div>
 
       <div className="discovery-card__content" key={`${ingredientId}-${discovery.step}`}>
@@ -170,7 +174,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
         {!reviewing && (discovery.step === 'question' || discovery.step === 'correct') && <>
           <CookingAssetImage className="discovery-card__ingredient" src={ingredient.image} alt={ingredient.name} />
           <p className="discovery-card__eyebrow">{ingredient.name}</p>
-          <SpeechBubble character="coco" label="Denk mee" textId="discovery-title">{question.prompt}</SpeechBubble>
+          <SpeechBubble character="coco" label="Denk mee" textId="discovery-title" vast>{question.prompt}</SpeechBubble>
           <ChoiceList vorm="los" label="Kies je antwoord" disabled={Boolean(wrongAnswer) || discovery.step === 'correct'} onChoose={answer}
             choices={discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map(option => ({
               id: option.id, label: option.label,

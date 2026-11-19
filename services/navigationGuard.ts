@@ -11,3 +11,20 @@ export function guardedNavigation(proceed: () => void): void {
   const guard = guards.reduce<typeof guards[number] | null>((chosen, entry) => !chosen || entry.priority >= chosen.priority ? entry : chosen, null);
   if (guard) guard.run(proceed); else proceed();
 }
+
+/* Terugknop linksboven: een scherm met een eigen laag (bijv. een kookavontuur
+   binnen het kookboek) kan "één laag terug" zelf afhandelen. Zo is er precies
+   één terugknop (huisstijl) en gaat die altijd één laag omhoog. */
+type BackHandler = () => void;
+const backHandlers: BackHandler[] = [];
+export function registerBackHandler(handler: BackHandler): () => void {
+  backHandlers.push(handler);
+  return () => { const index = backHandlers.lastIndexOf(handler); if (index >= 0) backHandlers.splice(index, 1); };
+}
+/** Geeft true als een scherm de terugstap zelf heeft afgehandeld. */
+export function runBackHandler(): boolean {
+  const handler = backHandlers[backHandlers.length - 1];
+  if (!handler) return false;
+  handler();
+  return true;
+}

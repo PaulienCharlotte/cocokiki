@@ -34,7 +34,8 @@ test('alleen inhoudsgehashte buildbestanden krijgen immutable, HTML en library-a
   const headers = netlifyCacheHeaders(['assets/index-AbCd1234.js', 'assets/styles-aBcD1234.css', 'assets/world-map-v2-CSHY8QvW.webp', 'assets/library/cooking/pan.webp', 'assets/plain.js', 'index.html']);
   assert.match(headers, /\/assets\/index-AbCd1234\.js\n  Cache-Control: public, max-age=31536000, immutable/);
   assert.match(headers, /\/assets\/world-map-v2-CSHY8QvW\.webp\n  Cache-Control: public, max-age=31536000, immutable/);
-  assert.doesNotMatch(headers, /library|plain\.js|\/index\.html\n/);
-  assert.match(headers, /\/\*\n  Cache-Control: public, max-age=0, must-revalidate/);
-  assert.ok(headers.indexOf('immutable') < headers.indexOf('/*'));
+  assert.doesNotMatch(headers, /plain\.js|\/index\.html\n/);
+  // Vaste afbeeldingen een week; geen algemene /*-regel die ermee samenvalt.
+  assert.match(headers, /\/assets\/library\/\*\n  Cache-Control: public, max-age=604800, stale-while-revalidate=86400/);
+  assert.doesNotMatch(headers, /^\/\*\n/m);
 });

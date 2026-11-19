@@ -44,7 +44,7 @@ export default function OrderDelivery({ bestelling, recipe, keer, bonus, inEenKe
         <CookingAssetImage src={recipe.image} alt={recipe.name} />
       </div>
       <p className="bestel-aflevering__kop">Afgeleverd bij {klant.naam}</p>
-      <SpeechBubble character={bestelling.klant} tone="goed">{bestelling.dank}</SpeechBubble>
+      <SpeechBubble vast character={bestelling.klant} tone="goed">{bestelling.dank}</SpeechBubble>
       <dl className="bestel-bon">
         <div><dt>Gemaakt</dt><dd>{recipe.name}</dd></div>
         <div><dt>Gebakken</dt><dd>{keer}× · {stuks} {stuks === 1 ? 'portie' : 'porties'}</dd></div>

@@ -14,6 +14,39 @@ synchroniseren via GitHub. Codex heeft tot zondag 22 november 2026 geen tokens.
 
 ---
 
+## Briefing van Charlotte (19 nov 2026)
+
+Volledige wensen met screenshots: `docs/briefing/WENSEN.md`. Per wens waar het in dit plan zit:
+
+| Wens | Status | Waar |
+|---|---|---|
+| 1. Alle opdrachten dezelfde interface | 🟡 bezig | Stap 3 (`<SpelScherm>`) + stap 5 per gebied |
+| 2. Spraakwolk onderin | 🟡 keuken klaar; rekenen had het al | Stap 5: tuin, plantendokter, topo nog doen |
+| 3. Geen pop-ups ("Goed ontdekt!", "Coco's kooktip") | ⬜ | Stap 5 keuken: reactie in de ballon, munten, vanzelf verder |
+| 4. Eerst uitleg, dan de vraag (koken) | ⬜ | Stap 5 keuken: ontdekflow omdraaien |
+| 5. Ballon max. 2 regels | ⬜ | Stap 5 per gebied; teksten inkorten |
+| 6. Mobiel: geen panelen over elkaar | 🟡 | Stap 5: fornuis (08) en moestuin (10) hebben voorrang |
+| 7. Boodschappen: tik op ingrediënt = naar product | ⬜ | Nieuw gebied in stap 5 |
+| 8. App laadt traag | ⬜ | Zie "Snelheid" hieronder |
+
+Ook uit de briefing: twee terugknoppen weg (keuken ontdekken ✅, groenten wassen,
+boodschappen nog doen), interieur (01) is het goede voorbeeld, maar de bolletjes
+liggen daar over een label.
+
+## Snelheid (wens 8)
+
+Gemeten 19 nov 2026: 103 afbeeldingen zijn groter dan 250 kB (samen 39 MB); veel
+schermen laden er een paar van 500–800 kB. Alle vaste afbeeldingen krijgen nu
+`max-age=0, must-revalidate`, dus de telefoon vraagt bij elk bezoek per plaatje
+opnieuw na of het nog klopt. Phaser (1,6 MB) laadt alleen bij Baby Lua.
+
+- ✅ A. Afbeeldingen een week bewaren in de browser, op de achtergrond verversen (`scripts/netlifyCacheHeaders.ts`). Werkt pas na een deploy naar Netlify. Vervang je een plaatje inhoudelijk: nieuwe bestandsnaam.
+- ✅ B. 98 grote afbeeldingen lichter gemaakt: 36,2 → 25,0 MB (−31%), zelfde
+  afmetingen en bestandsnamen, doorzichtigheid behouden. Nieuwe afbeeldingen:
+  `npm run afbeeldingen:comprimeer` (hulpmiddel `sharp`, alleen lokaal).
+  Nog te doen: kleinere telefoonversies voor de zwaarste achtergronden.
+- ✅ C. Onderzocht: de drie ongebruikte zware bestanden (`lua-workshop.png`, `brace.png`, `landscape-v2.webp`, samen 3,9 MB) worden door de app nooit geladen. Weghalen maakt de app niet sneller; laten staan.
+
 ## Stap 1: inventariseren ✅ (19 nov 2026)
 
 Er is nog niets veranderd. Losse kleurcodes per stijlbestand (excl. docs/public):
@@ -121,7 +154,19 @@ Telkens één gebied, met het gedeelde component, en testen op desktop + 360 px.
      (`data/plants/garden.ts`). Naam mag als hangkaartje erbij.
    - Liefst groeistadia per gewas (zaadje → plantje → oogstklaar). Die plaatjes
      bestaan nog niet: kunnen buiten Codex gegenereerd worden (zie Assets).
-3. ⬜ Keuken (Coco)
+3. 🟡 Keuken (Coco) – begonnen (19 nov 2026):
+   - ✅ `<SpeechBubble vast>`: de ballon staat vast linksonder (zone 5). Aan bij de
+     ontdekvraag in een kookavontuur.
+   - ✅ Ook vast linksonder: kooktips/coach tijdens het koken, de toonbank,
+     de bestelling, "hoeveel maak je er" en het afleveren. Kaarten laten ruimte.
+   - ✅ Kookavontuur (ontdekken): tweede terugknop weg; de terugknop linksboven gaat
+     nu één laag terug naar het kookboek (`registerBackHandler`). "0/9" is bolletjes.
+   - ⬜ Nog niet in de browser gezien: de kookstap zelf en het afleveren (lastig te
+     bereiken); wel getypecheckt.
+   - ⬜ Andere kookavontuur-stappen (voedingsmemory, koken) hebben mogelijk nog een
+     eigen terugknop; zelfde aanpak toepassen.
+   - ⬜ Uitleg in `IngredientDiscoveryCard`: lange tekst, eerst inkorten tot max. twee
+     regels, de rest als verzamelkaart; daarna ook vast zetten.
 4. ⬜ Topografie (Seb)
 5. ⬜ Boomhut en dreamworld
 6. ⬜ Wereldkaart (`pages/world.css`)
