@@ -50,3 +50,29 @@
   .test-focused__form { gap: var(--space-2); }
   .test-focused__place label { font-size: var(--font-size-md); }
 }
+
+/* ===== Toets volgens de briefing (20 nov 2026) =====
+   Kaart over het hele scherm, bolletjes bovenin, Seb linksonder, gereedschap links. */
+.toets-game.test-focused { position: fixed; inset: 0; display: block; overflow: hidden; max-width: 100vw; padding: 0; background: none; }
+.toets-game .toets-map-stage { position: absolute; inset: 0; height: 100%; min-height: 0; max-height: none; border-radius: 0; margin: 0; }
+.toets-game .toets-map { height: 100%; }
+.toets-game .toets-stippen {
+  position: absolute; z-index: 1050; top: calc(var(--space-12) + var(--space-6)); left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+  max-width: min(90vw, 44rem); padding: 8px 14px; border-radius: 999px; box-sizing: border-box;
+}
+.toets-game .toets-stip { padding: 0; cursor: pointer; }
+.toets-game .toets-stip.is-goed { background: var(--ck-tuin); border-color: var(--ck-wit); }
+.toets-game .toets-stip.is-fout { background: var(--ck-zon); border-color: var(--ck-wit); }
+.toets-game .toets-gereedschap { z-index: 1050; top: calc(var(--space-12) * 2 + var(--space-8)); }
+.toets-game .ck-zegt.is-vast { z-index: 1100; }
+.toets-game .toets-wolkknop { display: flex; margin-top: var(--space-2); }
+.toets-game .toets-invul {
+  position: absolute; z-index: 1100; left: 50%; transform: translateX(-50%); bottom: 170px;
+  display: flex; gap: var(--space-2); width: min(92vw, 28rem); padding: 8px; border-radius: 999px; box-sizing: border-box;
+}
+.toets-game .toets-invul input { flex: 1; min-width: 0; border: 0; background: var(--ck-wit); border-radius: 999px; padding: 0 16px; font: inherit; font-size: 18px; color: var(--ck-cacao); min-height: 48px; }
+.toets-game .toets-zoom-controls { z-index: 1050; bottom: 240px; top: auto; }
+@media (max-width: 700px) {
+  .toets-game .toets-stippen, .toets-game .toets-invul { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); transform: none; width: auto; max-width: none; border-radius: var(--ck-rond-paneel); }
+}

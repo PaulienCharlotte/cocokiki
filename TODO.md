@@ -53,8 +53,14 @@ spraakwolk vast linksonder (`<SpeechBubble vast>`), redactiesom blijft op een sc
   je drie aantekeningen als kaartjes; Kiki's wolk heeft de knop "Stel je diagnose" (20 nov).
 - [x] **Topografie (ontdekken):** kaart over het hele scherm, verzameling als bolletjes bovenin
   (tik = weetje opnieuw), Seb vast linksonder, "Naar de memory" rechtsonder (20 nov).
-- [ ] **Topografie:** memory, aanwijzen en toets nog nalopen op dezelfde opbouw;
-  knop "Mijn reis" is een tweede uitgang naast de terugknop.
+- [x] **Topografie:** knop "Mijn reis" weg (terugknop gaat terug naar het reisoverzicht);
+  memory past op telefoon; aanwijzen/spellen: kaart over het hele scherm, bolletjes,
+  Seb stelt de vraag, hint en "toon antwoord" in de balk links (20 nov).
+- [x] **Topografie-toets:** kaart over het hele scherm, bolletjes bovenin (tik = naar die
+  plek; na nakijken groen/geel), Seb vraagt per plek en heeft "Kijk je toets na" en
+  "Oefen lastige plekken" in zijn wolk; gereedschap links (uitleg, later terugkomen,
+  eerder nakijken, ouders). Geen bladerpijlen of wit werkblad meer (20 nov).
+- [ ] **Topografie (gewoon oefenen):** gebruikt hetzelfde aanwijsspel; nog niet bekeken.
 - [x] **Boodschappen:** tik op een ingrediënt (strip of lijstje) = winkel springt naar dat
   product en laat het oplichten; één terugknop (linksboven, gaat terug naar de keuken);
   "Stoppen" weg; "Nog …" niet meer over de namen (20 nov).

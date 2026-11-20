@@ -71,3 +71,32 @@
 .topo-app.topo-huisstijl .set-keuze button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .8); border-radius: 999px; background: rgba(255, 255, 255, .7); color: var(--ck-cacao); font-family: var(--ck-font-tekst); font-weight: 800; font-size: 16px; }
 .topo-app.topo-huisstijl .set-keuze button.is-actief { background: var(--ck-actief); border-color: var(--ck-actief); color: var(--ck-wit); }
 .topo-travel-message { margin: 0; max-width: 48ch; font: 800 var(--ck-maat-tekst)/1.2 var(--ck-font-kop); color: var(--ck-cacao); }
+
+/* ===== Aanwijzen en spellen volgens de briefing (20 nov 2026) =====
+   Kaart over het hele scherm, bolletjes bovenin, Seb linksonder,
+   hint en "toon antwoord" in de gereedschapsbalk links. */
+.practice-layout.topo-speelveld { position: fixed; inset: 0; display: block; overflow: hidden; max-width: 100vw; }
+.topo-speelveld .practice-map { position: absolute; inset: 0; }
+.topo-speelveld .practice-map > * { height: 100%; }
+.topo-speelveld .topo-stippen {
+  position: absolute; z-index: 1050; top: calc(var(--space-12) + var(--space-6)); left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+  max-width: min(90vw, 44rem); padding: 8px 14px; border-radius: 999px; box-sizing: border-box;
+}
+.topo-speelveld .topo-stippen .timer { margin-left: 6px; font-family: var(--ck-font-kop); font-weight: 800; color: var(--ck-cacao); display: inline-flex; gap: 4px; align-items: center; }
+.topo-speelveld .topo-gereedschap { z-index: 1050; top: calc(var(--space-12) * 2 + var(--space-8)); }
+.topo-speelveld .ck-zegt.is-vast { z-index: 1100; }
+.topo-speelveld .topo-volgende { display: inline-flex; gap: 6px; align-items: center; margin-top: var(--space-2); }
+.topo-speelveld .topo-invul {
+  position: absolute; z-index: 1100; left: 50%; transform: translateX(-50%); bottom: 170px;
+  display: flex; gap: var(--space-2); width: min(92vw, 28rem); padding: 8px; border-radius: 999px; box-sizing: border-box;
+}
+.topo-speelveld .topo-invul input { flex: 1; min-width: 0; border: 0; background: var(--ck-wit); border-radius: 999px; padding: 0 16px; font: inherit; font-size: 18px; color: var(--ck-cacao); min-height: 48px; }
+.topo-speelveld .map-zoom-controls { bottom: 210px; top: auto; }
+@media (max-width: 700px) {
+  .topo-speelveld .topo-stippen { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); transform: none; max-width: none; border-radius: var(--ck-rond-paneel); }
+  .topo-speelveld .topo-invul { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); transform: none; width: auto; }
+}
+.topo-speelveld .practice-map .interactive-map-shell,
+.topo-speelveld .practice-map .interactive-map-canvas { height: 100%; min-height: 100%; max-height: none; border-radius: 0; }
+.practice-layout.topo-speelveld .practice-map { height: 100%; min-height: 0; max-height: none; border-radius: 0; margin: 0; }

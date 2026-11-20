@@ -11,7 +11,7 @@ import SpeechBubble from '../ui/SpeechBubble';
 import { Button } from '../../design-system';
 import './travel-journey.css';
 import TopoExitDialog from './TopoExitDialog';
-import { registerNavigationGuard } from '../../services/navigationGuard';
+import { registerBackHandler, registerNavigationGuard } from '../../services/navigationGuard';
 const GameEngine = lazy(() => import('../GameEngine'));
 const Memory = lazy(() => import('../LocationMemoryGame'));
 const Test = lazy(() => import('../ToetsGame'));
@@ -61,6 +61,11 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
     else if ((playing === 'find' || playing === 'master') && correct) saveResult(playing, id);
   }, [playing, saveResult]);
   const close = () => { setPlaying(null); setRun(loadTravelJourney(adventure)); };
+  // Eén terugknop (linksboven): tijdens een onderdeel gaat die terug naar het reisoverzicht.
+  // Dat was eerst de losse knop "Mijn reis".
+  const terugRef = useRef<() => void>(() => undefined);
+  terugRef.current = () => { if (playing === 'test' && testExit.current) testExit.current(); else close(); };
+  useEffect(() => playing ? registerBackHandler(() => terugRef.current()) : undefined, [playing]);
   const restart = () => setRound(value => value + 1);
   const remaining = (phase: 'find' | 'master', bron = run) => {
     const list = locations.filter(place => !bron?.[phase].includes(locationProgressKey(place)));
@@ -107,7 +112,6 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
           : <GameEngine key={round} mode={playing} areaId={adventure.selection.areaId} locations={sessionLocations} mapLocations={locations} timerEnabled={false} onAnswer={answer} onContinue={verder} onRepeat={restart} onRetry={restart} onExit={close} />}
       </main>}
     </Suspense>
-    <button type="button" className="travel-play__pause ck-glas" onClick={() => { if (playing === 'test' && testExit.current) testExit.current(); else close(); }}>Mijn reis</button>
     {notice && <p className="travel-route__notice" role="alert">{notice}</p>}
     {exitDialog}
   </div>;

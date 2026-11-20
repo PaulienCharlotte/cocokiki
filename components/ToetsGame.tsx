@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import { PROVINCES, LOCATIONS } from '../constants';
 import { Location } from '../types';
-import { CheckCircle, XCircle, RotateCcw, Maximize2, Minimize2, Shuffle, HelpCircle, Settings2, ArrowLeft, ArrowRight, ListChecks } from 'lucide-react';
+import { CheckCircle, XCircle, RotateCcw, Shuffle, HelpCircle, Settings2, ArrowRight, ListChecks, ClipboardCheck } from 'lucide-react';
 import { UNLABELED_TILE_URL } from './InteractiveMap';
 import { Button, Dialog, IconButton } from '../design-system';
 import TipCoach from './TipCoach';
@@ -360,63 +360,52 @@ const ToetsGame: React.FC<Props> = ({ provinceId, clusterId, studyPool, register
       ref={containerRef}
       className={`toets-game test-focused${isFullscreen ? ' is-fullscreen' : ''}`}
     >
-      <header className="test-focused__toolbar">
-        <div><strong>{submitted ? 'Jouw toets' : 'Topo-toets'}</strong><span aria-live="polite">{submitted ? `${result?.correct} van ${locations.length} goed · ${result?.grade}` : `${filled} van ${locations.length} ingevuld`}</span>{travelMessage && <SpeechBubble character="seb" className="topo-travel-message">{travelMessage}</SpeechBubble>}</div>
-        <div>
-          {submitted && travelSaveFailed && <Button variant="quiet" size="small" onClick={claimTravel}>Bewaar reisbeloning</Button>}
-          {!submitted && <Button variant="quiet" size="small" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}>Toets nakijken</Button>}
-          <IconButton label="Uitleg van Seb" icon={<HelpCircle size={20} />} onClick={() => setPanel('help')} />
-          <IconButton label="Toetsinstellingen voor ouders" icon={<Settings2 size={20} />} onClick={() => setPanel('settings')} />
-        </div>
-      </header>
-      {/* Map */}
+      {/* Briefing 19 nov: kaart als speelveld, bolletjes in plaats van "x van y ingevuld",
+          geen bladerpijlen, Seb vraagt per plek, gereedschap in de balk links. */}
+      <div className="toets-stippen ck-glas" role="group" aria-label={submitted ? `${result?.correct} van ${locations.length} goed` : `${filled} van ${locations.length} ingevuld`}>
+        {locations.map(location => {
+          const ingevuld = Boolean(answers[location.id]?.trim());
+          const staat = submitted ? (result?.details[location.id] ? ' is-goed' : ' is-fout') : ingevuld ? ' ck-stip--klaar' : '';
+          return <button key={location.id} type="button" className={`ck-stip toets-stip${staat}${active?.id === location.id ? ' ck-stip--nu' : ''}`}
+            aria-label={`${locationLabel(location)}${ingevuld ? ', ingevuld' : ''}`} onClick={() => setActiveId(location.id)} />;
+        })}
+      </div>
+      <nav className="ck-zone-gereedschap ck-glas toets-gereedschap" aria-label="Gereedschap">
+        <button type="button" className="ck-gereedschap" aria-label="Uitleg van Seb" title="Uitleg van Seb" onClick={() => setPanel('help')}><HelpCircle size={22} /></button>
+        {!submitted && <button type="button" className="ck-gereedschap" aria-label="Later terugkomen" title={`Later terugkomen${deferredIds.length ? ` (${deferredIds.length})` : ''}`} onClick={deferActive}><RotateCcw size={22} /></button>}
+        {!submitted && <button type="button" className="ck-gereedschap" aria-label="Toets nu nakijken" title="Toets nu nakijken" disabled={!locations.length} onClick={() => filled < locations.length ? setPanel('submit') : submit()}><ClipboardCheck size={22} /></button>}
+        {submitted && <button type="button" className="ck-gereedschap" aria-label="Antwoorden bekijken" title="Antwoorden bekijken" onClick={() => setPanel('review')}><ListChecks size={22} /></button>}
+        <button type="button" className="ck-gereedschap" aria-label="Toetsinstellingen voor ouders" title="Voor ouders" onClick={() => setPanel('settings')}><Settings2 size={22} /></button>
+      </nav>
       <div className="toets-map-stage">
         <div ref={mapContainerRef} className="toets-map" />
         {worksheet.dataset && !worksheet.data && <div className="worksheet-map-status" role="status">{worksheet.error ? 'De kaartvormen laden niet. Laad de pagina opnieuw.' : 'Kaartvormen laden…'}</div>}
-
-        {/* Fullscreen toggle — top-right of map */}
-        <button
-          onClick={toggleFullscreen}
-          title={isFullscreen ? 'Verkleinen' : 'Volledig scherm'}
-          className="toets-map-button toets-fullscreen-button"
-        >
-          {isFullscreen
-            ? <Minimize2 />
-            : <Maximize2 />}
-        </button>
-
         <div className="toets-zoom-controls">
           <button onClick={() => mapRef.current?.zoomIn()} aria-label="Inzoomen">+</button>
           <button onClick={() => mapRef.current?.zoomOut()} aria-label="Uitzoomen">−</button>
         </div>
       </div>
-
-      <section className="test-focused__answer" aria-label="Antwoord bij de gekozen plek">
-        {active ? <>
-          <div className="test-focused__place">
-            <IconButton label="Vorige plek" icon={<ArrowLeft size={20} />} onClick={() => selectNext(-1)} />
-            <label htmlFor="topo-active-answer">{submitted ? locationLabel(active) : `Hoe heet ${locationLabel(active).toLowerCase()}?`}</label>
-            <IconButton label="Volgende plek" icon={<ArrowRight size={20} />} onClick={() => selectNext(1)} />
-          </div>
-          {!submitted ? <form className="test-focused__form" onSubmit={event => { event.preventDefault(); saveAndNext(); inputRef.current?.focus(); }}>
-            <input ref={inputRef} id="topo-active-answer" aria-label={`Naam bij ${locationLabel(active).toLowerCase()}`} value={answers[active.id] ?? ''} onChange={event => handleChange(active.id, event.target.value)} placeholder="Naam…" autoComplete="off" autoCorrect="off" spellCheck={false} />
-            <Button type="submit" size="small" endIcon={<ArrowRight size={20} />} disabled={!answers[active.id]?.trim()}>Volgende plek</Button>
-          </form> : <p className={`test-focused__feedback ${result?.details[active.id] ? 'is-correct' : 'is-wrong'}`}>
-            {result?.details[active.id] ? <CheckCircle size={20} /> : <XCircle size={20} />}<span>{answers[active.id] || 'Niet ingevuld'}{!result?.details[active.id] && <strong>Het is {active.name}.</strong>}</span>
-          </p>}
-        </> : <p>Kies eerst een gebied voor je toets.</p>}
-        <div className="test-focused__actions">
-          {!submitted ? <>
-            <Button variant="quiet" size="small" startIcon={<RotateCcw size={18} />} onClick={deferActive}>Later terugkomen{deferredIds.length > 0 ? ` (${deferredIds.length})` : ''}</Button>
-          </> : <>
-            <Button variant="secondary" size="small" startIcon={<ListChecks size={18} />} onClick={() => setPanel('review')}>Antwoorden bekijken</Button>
-            {onPractice && result && result.correct < result.total && <Button size="small" startIcon={<RotateCcw size={18} />} onClick={() => onPractice(locations.filter(location => !result.details[location.id]).map(location => location.id))}>Oefen lastige plekken</Button>}
-          </>}
-        </div>
-      </section>
+      {active && !submitted && <form className="test-focused__form toets-invul ck-glas" onSubmit={event => { event.preventDefault(); saveAndNext(); inputRef.current?.focus(); }}>
+        <input ref={inputRef} id="topo-active-answer" aria-label={`Naam bij ${locationLabel(active).toLowerCase()}`} value={answers[active.id] ?? ''} onChange={event => handleChange(active.id, event.target.value)} placeholder="Naam…" autoComplete="off" autoCorrect="off" spellCheck={false} />
+        <button type="submit" className="ck-knop ck-knop--hoofd" aria-label="Volgende plek" disabled={!answers[active.id]?.trim()}><ArrowRight size={20} /></button>
+      </form>}
+      <SpeechBubble vast character="seb" tone={submitted && active && result?.details[active.id] ? 'goed' : 'default'}>
+        {!active ? 'Kies eerst een gebied voor je toets.'
+          : submitted ? <>
+              {travelMessage ? `${travelMessage} ` : `${result?.correct} van ${locations.length} goed. `}
+              {`${locationLabel(active)}: ${result?.details[active.id] ? `goed, ${active.name}!` : `het is ${active.name}.`}`}
+              {onPractice && result && result.correct < result.total && <button type="button" className="ck-knop ck-knop--hoofd toets-wolkknop" onClick={() => onPractice(locations.filter(location => !result.details[location.id]).map(location => location.id))}>Oefen lastige plekken</button>}
+              {travelSaveFailed && <button type="button" className="ck-knop ck-knop--zacht toets-wolkknop" onClick={claimTravel}>Bewaar reisbeloning</button>}
+            </>
+          : filled === locations.length ? <>
+              Alles ingevuld! Wil je je toets nakijken?
+              <button type="button" className="ck-knop ck-knop--hoofd toets-wolkknop" onClick={submit}>Kijk je toets na</button>
+            </>
+          : `Hoe heet ${locationLabel(active).toLowerCase()}?`}
+      </SpeechBubble>
       {panel === 'resume' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Er is een vorige uitslag" description="Wil je een nieuwe toets beginnen of je vorige uitslag bekijken?" onClose={restoreResult} primaryAction={<Button onClick={restart}>Nieuwe toets beginnen</Button>} secondaryAction={<Button variant="secondary" onClick={restoreResult}>Vorige uitslag bekijken</Button>} />}
       {panel === 'help' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Zo werkt de toets" onClose={() => setPanel(null)} primaryAction={<Button onClick={() => setPanel(null)}>Ik ga beginnen</Button>}>
-        <TipCoach coach="seb">Tik op een nummer of letter op de kaart. Typ de naam en kies Volgende plek. Weet je het even niet? Kies Later terugkomen. Die plek komt na de andere lege plekken terug. Klaar met alles? Kies bovenaan Toets nakijken.</TipCoach>
+        <TipCoach coach="seb">Tik op een nummer op de kaart of een bolletje bovenin. Typ de naam en tik op het pijltje. Weet je het even niet? Tik links op het rondje-pijltje: die plek komt later terug. Alles ingevuld? Dan kijk je je toets na.</TipCoach>
       </Dialog>}
       {panel === 'settings' && <Dialog open className="topo-paper-dialog ck-paper-surface" title="Voor ouders" onClose={() => setPanel(null)} primaryAction={<Button variant="secondary" startIcon={<Shuffle size={18} />} disabled={submitted} onClick={shuffle}>Nummering husselen</Button>} secondaryAction={<Button variant="quiet" onClick={() => setPanel('restart')}>Nieuwe toets</Button>}>
         <p>Nummers en letters wisselen van plek. Ingevulde antwoorden blijven bij de juiste locatie bewaard.</p>

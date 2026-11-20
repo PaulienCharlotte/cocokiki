@@ -62,3 +62,14 @@
   :is(.ck-scherm, .topo-huisstijl) .memory-gids { right: var(--ck-rand); }
   :is(.ck-scherm, .topo-huisstijl) .memory-gids .ck-ballon__tekst { max-width: none; margin-bottom: 0; }
 }
+
+/* Telefoon: het statuseiland blijft binnen het scherm. Veel bolletjes lopen
+   door op een tweede regel; het niveaulabel mag inkorten. */
+@media (max-width: 700px) {
+  .ck-scherm .ck-zone-status { max-width: calc(100vw - var(--space-2) * 2); flex-wrap: wrap; justify-content: center; height: auto; min-height: 48px; padding-block: 6px; box-sizing: border-box; }
+  .ck-scherm .ck-zone-status .ck-niveau { max-width: 40vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (max-width: 700px) {
+  .memory-status.memory-status { flex-wrap: wrap; justify-content: center; height: auto; min-height: 48px; padding-block: 6px; overflow: hidden; box-sizing: border-box; row-gap: 4px; }
+  .memory-status .ck-niveau { max-width: 100%; white-space: nowrap; }
+}
