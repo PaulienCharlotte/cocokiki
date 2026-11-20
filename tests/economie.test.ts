@@ -62,7 +62,7 @@ test('na een half uur hetzelfde spel krijg je de helft, en de eindafrekening vul
     rewardAnswer('math:test', 'r1', 'extra', 2, dag);
     assert.equal(loadCurrency(), DAG_LIMIET_PER_SPEL + 1);
     // De ingehouden munt telt als afgerekend.
-    assert.equal(answerCoins('math:test', 'r1'), DAG_LIMIET_PER_SPEL + 2);
+    assert.equal(answerCoins('math:test', 'r1', dag), DAG_LIMIET_PER_SPEL + 2);
     // Een ander spel telt apart; morgen begint het opnieuw.
     assert.equal(bedragMetDaglimiet('clock:test', 2, dag), 2);
     assert.equal(bedragMetDaglimiet('math:test', 2, new Date(2026, 10, 19, 10)), 2);

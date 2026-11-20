@@ -29,3 +29,8 @@
 
 /* Voortgang als bolletjes in plaats van "0/9" */
 .discovery-stippen { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); padding: var(--space-2) 0; }
+/* Na een fout staat de vraag nog even in beeld; Coco geeft in de wolk de hint. */
+.discovery-vraag-herhaling { margin: 0 0 var(--space-2); text-align: center; font-family: var(--ck-font-kop); font-weight: 700; font-size: 18px; color: var(--ck-cacao); }
+.discovery-card__content .discovery-question-actions:has(> :only-child) { justify-content: center; }
+/* Munten-kaartje bovenin, zodat het de spraakwolk linksonder niet bedekt. */
+.discovery-stage .reward-toast { top: calc(var(--space-12) * 2); bottom: auto; }

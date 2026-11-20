@@ -37,11 +37,11 @@ export function rewardAnswer(scope: string, round: string, answer: string | numb
   const result = commitLocalState({ [MUNTEN_VANDAAG_KEY]: JSON.stringify(teller) }, [{ id, amount: bedrag }]);
   return { applied: result.status === 'applied', balance: result.balance };
 }
-export function answerCoins(scope: string, round: string): number {
+export function answerCoins(scope: string, round: string, nu = new Date()): number {
   const prefix = `answer:${scope}:${round}:`;
   try {
     const betaald = Object.entries(readLocalState().appliedTransactions).filter(([id]) => id.startsWith(prefix)).reduce((sum, [, amount]) => sum + amount, 0);
     // Wat de daglimiet inhield telt als afgerekend, anders vult de eindafrekening het weer aan.
-    return betaald + (leesVandaag().ingehouden?.[`${scope}:${round}`] ?? 0);
+    return betaald + (leesVandaag(nu).ingehouden?.[`${scope}:${round}`] ?? 0);
   } catch { return 0; }
 }

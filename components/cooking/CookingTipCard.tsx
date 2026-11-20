@@ -1,18 +1,19 @@
 import React, { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
 import type { CookingTip } from '../../data/cooking/tips';
+import SpeechBubble from '../ui/SpeechBubble';
+import { kortVoorWolk } from './IngredientDiscoveryFlow';
+
+/**
+ * Coco's kooktip: geen pop-up meer (briefing 19 nov), maar een korte zin in
+ * haar spraakwolk linksonder. Hij verdwijnt vanzelf, of eerder als je erop tikt.
+ */
 export default function CookingTipCard({ tip, onDismiss }: { tip: CookingTip; onDismiss: () => void }) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const sluit = useRef(onDismiss); sluit.current = onDismiss;
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
-    dialog.current?.showModal();
-    return () => { dialog.current?.close(); previous?.focus(); };
-  }, []);
-  const content = <dialog ref={dialog} className="cooking-tip" aria-label="Tip van Coco" onCancel={event => { event.preventDefault(); onDismiss(); }}>
-    <img src="/assets/library/cooking/coco-chef-tip.webp" alt="Coco" />
-    <div><small>Coco’s kooktip</small><h2>{tip.title}</h2><p>{tip.text}</p><button className="cooking-tip__continue" type="button" onClick={onDismiss}>Verder koken</button></div>
-    <button type="button" title="Tip sluiten" aria-label="Tip sluiten" onClick={onDismiss}><X /></button>
-  </dialog>;
-  return typeof document === 'undefined' ? content : createPortal(content, document.body);
+    const timer = window.setTimeout(() => sluit.current(), 7000);
+    return () => window.clearTimeout(timer);
+  }, [tip]);
+  return <div className="cooking-tip-wolk" onClick={() => sluit.current()} role="presentation">
+    <SpeechBubble character="coco" label="kooktip" vast>{kortVoorWolk(tip.text || tip.title)}</SpeechBubble>
+  </div>;
 }

@@ -1,124 +1,89 @@
-.maten {
-  display: grid;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  background: var(--color-surface);
-}
-.maten > * + * { border-top: 1px solid var(--color-border); }
-.maten-vak { margin: 0; padding: var(--space-4); }
+/* Het maten-hulpmiddel: een echte trap met treden, gekleurde tegels en
+   een grote uitkomst. Alleen variabelen uit de huisstijl. */
+.maten { display: grid; gap: var(--space-4); color: var(--ck-cacao); font-family: var(--ck-font-tekst); font-weight: 700; }
 
-/* De soortenkiezer is één schuifje, geen rij losse pillen. */
-.maten-soorten {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-  padding: var(--space-2);
-  background: var(--color-background-soft);
+/* Vijf gekleurde tegels met een plaatje */
+.maten-soorten { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: var(--space-2); }
+.maten-soort {
+  display: grid; justify-items: center; gap: 4px; padding: 10px 6px 12px; border: 0; border-radius: var(--ck-rond-tegel);
+  color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; cursor: pointer;
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--ck-cacao) 30%, transparent);
+  transition: transform var(--ck-normaal) var(--ck-veer), box-shadow var(--ck-normaal);
 }
-.maten-soorten button {
-  flex: 1 1 auto;
-  min-height: var(--space-8);
-  padding: var(--space-1) var(--space-3);
-  border: 0;
-  border-radius: var(--radius-control);
-  background: none;
-  color: var(--color-text-muted);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  cursor: pointer;
-}
-.maten-soorten button.is-actief { background: var(--color-surface); color: var(--color-primary); box-shadow: var(--shadow-soft); }
+.maten-soort__icoon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: color-mix(in srgb, var(--ck-wit) 28%, transparent); }
+.maten-soort__icoon svg { width: 24px; height: 24px; stroke-width: 2.4; }
+.maten-soort--1 { background: var(--ck-wereld); box-shadow: 0 5px 0 var(--ck-wereld-rand); }
+.maten-soort--2 { background: var(--ck-bes);    box-shadow: 0 5px 0 var(--ck-bes-rand); }
+.maten-soort--3 { background: var(--ck-tuin);   box-shadow: 0 5px 0 var(--ck-tuin-rand); }
+.maten-soort--4 { background: var(--ck-druif);  box-shadow: 0 5px 0 var(--ck-druif-rand); }
+.maten-soort--5 { background: var(--ck-zon);    box-shadow: 0 5px 0 var(--ck-zon-rand); color: var(--ck-cacao); text-shadow: none; }
+.maten-soort:hover { transform: translateY(-3px) rotate(-1.5deg); }
+.maten-soort:active { transform: translateY(4px); box-shadow: none; }
+.maten-soort:not(.is-actief) { opacity: .72; }
+.maten-soort.is-actief { opacity: 1; transform: translateY(-2px) scale(1.04); outline: 3px solid var(--ck-wit); outline-offset: -3px; }
+.maten-soort:focus-visible, .maten-trede:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 3px; }
 
-.maten-trap-schuif { overflow-x: auto; }
+/* De trap: de eerste tree is het hoogst, elke volgende tree een stapje lager */
+.maten-trap-schuif { overflow-x: auto; padding: 4px 2px 6px; }
 .maten-trap {
-  display: grid;
-  grid-template-columns: repeat(var(--maten), minmax(3rem, 1fr));
-  /* De rij voor de brug blijft leeg gereserveerd, anders springt de trap
-     omhoog zodra je twee maten kiest. */
-  grid-template-rows: auto var(--space-7);
-  gap: var(--space-1);
+  display: grid; grid-template-columns: repeat(var(--maten), minmax(46px, 1fr)); grid-template-rows: auto 1fr;
+  align-items: end; column-gap: 4px; row-gap: 6px; min-width: calc(var(--maten) * 50px); min-height: 190px;
 }
-.maten-trap button {
-  min-height: var(--touch-target);
-  padding: var(--space-2) var(--space-1);
-  border: 1px solid transparent;
-  border-radius: var(--radius-control);
-  background: var(--color-background-soft);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--font-size-sm);
-  cursor: pointer;
+.maten-trede {
+  grid-row: 2; align-self: end; position: relative;
+  height: calc(150px - var(--trede) * (110px / var(--maten)));
+  display: flex; align-items: flex-start; justify-content: center; padding: 10px 0 0; border: 0;
+  border-radius: 14px 14px 6px 6px; cursor: pointer;
+  background: linear-gradient(180deg, var(--ck-hout-licht), var(--ck-hout));
+  box-shadow: inset 0 -6px 0 var(--ck-hout-donker), 0 4px 0 var(--ck-schaduw-rand);
+  color: var(--ck-room); font-family: var(--ck-font-kop); font-weight: 800; font-size: 20px;
+  text-shadow: 0 2px 0 var(--ck-hout-donker);
+  transition: transform var(--ck-normaal) var(--ck-veer), background var(--ck-normaal);
 }
-.maten-trap button.is-basis { font-weight: var(--font-weight-bold); }
-.maten-trap button:hover { background: var(--color-border); }
-.maten-trap button.is-gekozen { border-color: var(--color-primary); background: var(--color-success-soft); color: var(--color-primary); font-weight: var(--font-weight-bold); }
+.maten-trede:hover { transform: translateY(-4px); }
+.maten-trede.is-basis { background: linear-gradient(180deg, color-mix(in srgb, var(--ck-zon) 70%, var(--ck-wit)), var(--ck-zon)); box-shadow: inset 0 -6px 0 var(--ck-zon-rand), 0 4px 0 var(--ck-schaduw-rand); color: var(--ck-cacao); text-shadow: none; }
+.maten-trede.is-gekozen { background: var(--ck-actief); box-shadow: inset 0 -6px 0 var(--ck-actief-rand), 0 0 0 3px var(--ck-wit), 0 6px 14px color-mix(in srgb, var(--ck-cacao) 25%, transparent); color: var(--ck-wit); text-shadow: none; animation: ck-pop 420ms var(--ck-veer) both; }
 
-/* De brug: één balkje van de ene gekozen maat tot de andere. */
+/* De brug: een boog over de gekozen treden, met de sprong erop */
 .maten-brug {
-  grid-row: 2;
-  align-self: center;
-  margin: 0;
-  padding: var(--space-1);
-  border-radius: var(--radius-pill);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-  text-align: center;
+  grid-row: 1; position: relative; margin: 0; height: 34px;
+  border: 3px dashed var(--ck-actief); border-bottom: 0; border-radius: 40px 40px 0 0;
+  display: flex; justify-content: center; animation: ck-pop 420ms var(--ck-veer) both;
+}
+.maten-brug span {
+  position: absolute; top: -18px; padding: 4px 14px; border-radius: 999px;
+  background: var(--ck-zon); color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-zon-rand);
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 22px; white-space: nowrap;
 }
 
-.maten-uitkomst { display: grid; gap: var(--space-1); }
-.maten-uitkomst p {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  margin: 0;
-  font-size: var(--font-size-xl);
+/* De uitkomst: groot en vrolijk */
+.maten-uitkomst { display: grid; justify-items: center; gap: var(--space-2); }
+.maten-uitkomst p { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2); margin: 0; }
+.maten-uitkomst i { font-style: normal; font-family: var(--ck-font-kop); font-weight: 800; font-size: 32px; }
+.maten-uitkomst small { font-size: 16px; color: var(--ck-cacao); }
+.maten-getal {
+  display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 16px; border-radius: 999px;
+  background: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-schaduw-rand);
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 32px; line-height: 1;
 }
-.maten-uitkomst input {
-  width: calc(var(--space-12) + var(--space-6));
-  min-height: var(--touch-target);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-background-soft);
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--font-size-xl);
-  text-align: center;
+.maten-getal span { font-size: 20px; }
+.maten-getal input { width: 4.5ch; border: 0; background: transparent; color: var(--ck-cacao); font: inherit; text-align: right; }
+.maten-getal input:focus-visible { outline: 3px solid var(--ck-actief); outline-offset: 4px; border-radius: 8px; }
+.maten-getal--uit { background: var(--ck-zon); box-shadow: 0 4px 0 var(--ck-zon-rand); animation: ck-pop 420ms var(--ck-veer) both; }
+
+.maten-hint { margin: 0; text-align: center; font-family: var(--ck-font-kop); font-size: 18px; }
+
+/* Weetjes als kleine kaartjes */
+.maten-weetjes { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.maten-weetjes li { padding: 6px 12px; border-radius: 14px; font-size: 16px; transform: rotate(-1deg); }
+.maten-weetjes li:nth-child(2n) { transform: rotate(1deg); }
+.maten-soort { min-width: 0; overflow-wrap: anywhere; hyphens: auto; line-height: 1.1; text-align: center; }
+.maten-brug span { left: 50%; transform: translateX(-50%); }
+@media(max-width:700px) {
+  .maten-soorten { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .maten-soort { padding: 6px 4px 8px; font-size: 16px; }
+  .maten-soort__icoon { width: 30px; height: 30px; }
+  .maten-soort__icoon svg { width: 18px; height: 18px; }
+  .maten-trap { min-height: 160px; }
+  .maten-trede { height: calc(124px - var(--trede) * (88px / var(--maten))); font-size: 18px; }
 }
-.maten-uitkomst input:focus-visible { background: var(--color-surface); }
-.maten-uitkomst i { color: var(--color-text-muted); font-style: normal; }
-.maten-uitkomst output { color: var(--color-primary); font-weight: var(--font-weight-bold); }
-.maten-uitkomst small,
-.maten-hint { color: var(--color-text-muted); font-size: var(--font-size-sm); }
-
-.maten-weetjes {
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-background-soft);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
-
-/* ---- In de huisstijl, in het glazen hulppaneel (components/ui/HulpPaneel) ---- */
-.hulp-paneel .maten { gap: 12px; overflow: visible; border: 0; border-radius: 0; background: none; font-family: var(--ck-font-tekst); color: var(--ck-cacao); }
-.hulp-paneel .maten > * + * { border-top: 0; }
-.hulp-paneel .maten-vak { padding: 14px 16px; border-radius: 20px; background: rgba(255, 248, 236, .72); }
-.hulp-paneel .maten-soorten { gap: 4px; padding: 5px; border-radius: 999px; background: rgba(255, 255, 255, .45); border: 1px solid rgba(255, 255, 255, .7); }
-.hulp-paneel .maten-soorten button { min-height: 44px; border-radius: 999px; color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; }
-.hulp-paneel .maten-soorten button.is-actief { background: var(--ck-actief); color: var(--ck-wit); box-shadow: 0 3px 0 var(--ck-actief-rand); }
-.hulp-paneel .maten-trap button { min-height: 52px; border: 2px solid var(--ck-wit); border-radius: 16px; background: var(--ck-glas); color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; box-shadow: 0 4px 0 var(--ck-schaduw-rand); transition: transform .2s var(--ck-veer); }
-.hulp-paneel .maten-trap button:hover { background: var(--ck-wit); transform: translateY(-2px); }
-.hulp-paneel .maten-trap button.is-basis { box-shadow: 0 4px 0 var(--ck-schaduw-rand), inset 0 0 0 2px color-mix(in srgb, var(--ck-actief) 40%, transparent); }
-.hulp-paneel .maten-trap button.is-gekozen { border-color: var(--ck-wit); background: var(--ck-zon); color: var(--ck-cacao); box-shadow: 0 4px 0 var(--ck-zon-rand); }
-.hulp-paneel .maten-brug { border-radius: 999px; background: var(--ck-actief); color: var(--ck-wit); font-family: var(--ck-font-kop); font-weight: 800; font-size: 17px; }
-.hulp-paneel .maten-uitkomst p { font-family: var(--ck-font-kop); font-weight: 800; font-size: 24px; color: var(--ck-cacao); }
-.hulp-paneel .maten-uitkomst input { min-height: 52px; border: 3px solid var(--ck-actief); border-radius: 14px; background: var(--ck-room); font: inherit; color: var(--ck-cacao); text-align: center; }
-.hulp-paneel .maten-uitkomst output { padding: 2px 12px; border-radius: 12px; background: var(--ck-zon); box-shadow: 0 3px 0 var(--ck-zon-rand); }
-.hulp-paneel .maten-uitkomst small, .hulp-paneel .maten-hint, .hulp-paneel .maten-weetjes { font-size: 16px; font-weight: 700; color: var(--ck-cacao); }
-.hulp-paneel .maten-weetjes { margin: 0; padding: 0 4px; }

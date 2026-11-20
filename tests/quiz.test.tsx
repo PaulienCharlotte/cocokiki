@@ -76,7 +76,7 @@ test('de kaart toont de vraag met zijn keuzes en de juiste gids', () => {
   assert.doesNotMatch(kaart, /is-goed/);
   // Kiki hoort bij de planten, Coco bij het eten; verwisselen mag niet.
   assert.match(kaart, vandaag.bron === 'planten' ? /Kiki/ : /Coco/);
-  assert.match(kaart, vandaag.bron === 'planten' ? /avatars\/kiki\// : /avatars\/coco/);
+  assert.match(kaart, vandaag.bron === 'planten' ? /avatars\/kiki/ : /avatars\/coco/);
 });
 
 test('elke bron heeft een gids die bij zijn gebied hoort', () => {

@@ -56,3 +56,11 @@
 .ck-answer-button.ck-button:disabled { opacity: 1; }
 .ck-answer-button.is-goed { background: var(--color-success-soft); border-color: var(--color-primary); }
 .ck-answer-button.is-mis { background: var(--color-error-soft); color: var(--color-error); border-color: var(--color-error); }
+
+/* Huisstijl: bij een fout geen rood en geen kruisje. Het antwoord wiebelt
+   even en blijft zacht gemarkeerd; het personage geeft de hint. */
+.ck-keuze.is-mis, .ck-keuzes.is-los .ck-keuze.is-mis, .ck-answer-button.is-mis {
+  color: var(--ck-cacao); border-color: var(--ck-schaduw-rand);
+  background: color-mix(in srgb, var(--ck-zon) 18%, var(--ck-room)); box-shadow: none;
+  animation: ck-wiebel .4s ease;
+}

@@ -23,25 +23,34 @@ spraakwolk vast linksonder (`<SpeechBubble vast>`), redactiesom blijft op een sc
   (`npm run afbeeldingen:comprimeer` voor nieuwe plaatjes).
 
 ### Nog te doen (op volgorde)
-- [ ] **Keuken:** geen pop-ups meer ("Goed ontdekt!", "Coco's kooktip"); reactie in de
-  spraakwolk, munten, vanzelf verder. Eerst uitleg, dan de vraag. Wolken max. 2 regels.
+- [x] **Keuken:** ontdekken: eerst vertelt Coco een weetje (max. 2 regels), dan de vraag.
+  Geen pop-up "Goed ontdekt!" meer: reactie in de wolk, munten, vanzelf verder.
+  Kooktip staat in de wolk (geen pop-up, pauzeert het spel niet). Keuzelijsten: geen
+  rood of kruisje meer bij een fout, maar een wiebel (19 nov).
+- [ ] **Keuken:** overige lange wolkteksten inkorten (`IngredientDiscoveryCard`, coach).
 - [ ] **Keuken:** fornuis/kookstap zonder gestapelde doorzichtige panelen; één stap
   tegelijk, geen "6/18"-balk. Groenten wassen: één terugknop, wolk onderin.
   Andere kookavontuur-stappen ook één terugknop (`registerBackHandler`).
-- [ ] **Moestuin:** grote bakken (2 per rij), plaatje van het gewas in de bak in plaats
-  van een afgekapte naam, Kiki onderin, "Tuindag · Lente" als naambord.
+- [x] **Moestuin:** 2 bakken per rij op telefoon, gewasplaatje + hele naam bij de bak,
+  Kiki altijd linksonder, "Tuindag · Lente" als houten naambord (19 nov).
+- [x] **Moestuin:** meetlat ligt op telefoon tussen de bakken en Kiki (19 nov).
+- [x] **Maten-hulpmiddel** (rekenen, moestuin, interieur): speels herontworpen als echte
+  houten trap met gekleurde tegels, boog met "× 10" en grote uitkomst (19 nov).
+- [ ] **Moestuin:** groeistadia-plaatjes inbouwen zodra ze er zijn.
 - [ ] **Plantendokter:** plant groot in beeld, Kiki onderin, antwoordtegels, bolletjes,
   geen "Ik weet genoeg"-knop.
 - [ ] **Topografie:** kaart als speelveld, verzameling in plaats van vinkjeslijst, Seb onderin.
-- [ ] **Boodschappen:** tik op ingrediënt in het lijstje = winkel springt naar dat
-  product en laat het oplichten; één terugknop; geen tekst over tekst.
-- [ ] **Interieur:** voortgangsbolletjes liggen over een label; verplaatsen.
-- [ ] **Rekenen:** getekend schrift voor de redactiesom (wacht op asset); lichte tekst op
-  de bladenkiezer; statuseiland voor de klok.
+- [x] **Boodschappen:** tik op een ingrediënt (strip of lijstje) = winkel springt naar dat
+  product en laat het oplichten; één terugknop (linksboven, gaat terug naar de keuken);
+  "Stoppen" weg; "Nog …" niet meer over de namen (20 nov).
+- [ ] **Boodschappen:** mandje naar de statuspil (briefing 11).
+- [x] **Interieur:** kaartje "muur … cm" hing achter het statuseiland; lager gehangen.
+- [ ] **Rekenen:** getekend schrift voor de redactiesom (wacht op asset); statuseiland voor
+  de klok. (Bladenkiezer gecontroleerd: tekst is goed leesbaar.)
 - [ ] **Snelheid:** kleinere telefoonversies van de zwaarste achtergronden.
 - [ ] **App-breed:** munten naar het statuseiland zodra elk spel `<SpelScherm>` gebruikt;
   `app.css` en `pages/world.css` zonder losse kleurcodes.
-- [ ] **Test:** economietest "na een half uur hetzelfde spel…" faalt (181 ≠ 182); al vóór 19 nov.
+- [x] **Test:** economietest gerepareerd; de eindafrekening keek naar de echte datum i.p.v. de testdatum.
 
 ### Assets die Charlotte laat maken (komen in `_inbox-…`)
 - [ ] Moestuin: 6 gewassen × 3 groeistadia (`_inbox-moestuin/`).

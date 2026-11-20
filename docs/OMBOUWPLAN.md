@@ -22,11 +22,11 @@ Volledige wensen met screenshots: `docs/briefing/WENSEN.md`. Per wens waar het i
 |---|---|---|
 | 1. Alle opdrachten dezelfde interface | 🟡 bezig | Stap 3 (`<SpelScherm>`) + stap 5 per gebied |
 | 2. Spraakwolk onderin | 🟡 keuken klaar; rekenen had het al | Stap 5: tuin, plantendokter, topo nog doen |
-| 3. Geen pop-ups ("Goed ontdekt!", "Coco's kooktip") | ⬜ | Stap 5 keuken: reactie in de ballon, munten, vanzelf verder |
-| 4. Eerst uitleg, dan de vraag (koken) | ⬜ | Stap 5 keuken: ontdekflow omdraaien |
+| 3. Geen pop-ups ("Goed ontdekt!", "Coco's kooktip") | ✅ 19 nov | Stap 5 keuken: reactie in de ballon, munten, vanzelf verder |
+| 4. Eerst uitleg, dan de vraag (koken) | ✅ 19 nov | Stap 5 keuken: ontdekflow omdraaien |
 | 5. Ballon max. 2 regels | ⬜ | Stap 5 per gebied; teksten inkorten |
 | 6. Mobiel: geen panelen over elkaar | 🟡 | Stap 5: fornuis (08) en moestuin (10) hebben voorrang |
-| 7. Boodschappen: tik op ingrediënt = naar product | ⬜ | Nieuw gebied in stap 5 |
+| 7. Boodschappen: tik op ingrediënt = naar product | ✅ 20 nov | Nieuw gebied in stap 5 |
 | 8. App laadt traag | ⬜ | Zie "Snelheid" hieronder |
 
 Ook uit de briefing: twee terugknoppen weg (keuken ontdekken ✅, groenten wassen,
@@ -146,8 +146,8 @@ Telkens één gebied, met het gedeelde component, en testen op desktop + 360 px.
      weergavefout in de telefoonpreview; op desktop en nu ook op 360 px is het goed).
    - ✅ Klok: "1/5" en "x/y paren" vervangen door bolletjes; op telefoon ruimte voor de balk.
      (Nog niet in het statuseiland: dat wacht op het app-brede menupunt.)
-   - ⬜ Huiswerkbladen-kiezer: tekst op de kaartjes is erg licht.
-2. ⬜ Tuin (Kiki) – heeft al een voorbeeld. Wensen van Charlotte (19 nov 2026):
+   - ✅ Huiswerkbladen-kiezer: gecontroleerd, tekst is goed leesbaar (het lichte kwam door het doorzichtige profielmenu).
+2. 🟡 Tuin (Kiki) – moestuin-overzicht klaar 19 nov (bakken, plaatjes, Kiki, naambord); meetlat in opdracht en groeistadia nog open. – heeft al een voorbeeld. Wensen van Charlotte (19 nov 2026):
    - Moestuinbakken veel groter; ze vullen het veld, vooral op telefoon (nu te smal).
    - In een bak staat het **plaatje van wat er groeit** (wortel, radijs …) in plaats van
      een afgekapte naam ("W…"). Plaatjes van alle zes gewassen bestaan al

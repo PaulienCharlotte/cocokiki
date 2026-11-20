@@ -1,6 +1,7 @@
 import KassaKorting from '../components/shop/KassaKorting';
-import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { registerBackHandler } from '../services/navigationGuard';
+import { Check, ChevronDown, ChevronRight, ListChecks, Minus, Plus, ShoppingBasket, Trash2, X } from 'lucide-react';
 import { INGREDIENTS_BY_ID, RECIPES_BY_ID } from '../data/cooking/catalog';
 import type { CookingProgressState, RecipeId } from '../data/cooking/types';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS, SHOP_PRODUCTS_BY_ID, type ShopCategory } from '../data/shopCatalog';
@@ -59,6 +60,22 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
   const [notice, setNotice] = useState('');
   const [checkoutComplete, setCheckoutComplete] = useState(false);
   const [kassa, setKassa] = useState(false);
+  // Tik op een ingrediënt in het lijstje: de winkel springt naar dat product en laat het oplichten.
+  const [oplichten, setOplichten] = useState<string | null>(null);
+  const productenRef = useRef<HTMLDivElement>(null);
+  const gaNaarProduct = (productId: string) => {
+    if (!SHOP_PRODUCTS_BY_ID[productId]) return;
+    setCategory('all'); setListOpen(false); setOplichten(productId);
+    window.setTimeout(() => productenRef.current?.querySelector(`[data-product="${productId}"]`)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center', inline: 'center' }), 60);
+  };
+  useEffect(() => {
+    if (!oplichten) return;
+    const timer = window.setTimeout(() => setOplichten(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [oplichten]);
+  // Eén terugknop (linksboven): die gaat één laag terug, zoals de oude knop in de winkel deed.
+  const terugRef = useRef<() => void>(() => undefined);
+  useEffect(() => activeStore === 'groceries' ? registerBackHandler(() => terugRef.current()) : undefined, [activeStore]);
   useEffect(() => subscribeLocalState(() => setProgress(loadCookingProgress()), COOKING_PROGRESS_KEY), []);
   const products = useMemo(() => category === 'all' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(product => product.category === category), [category]);
   const total = basketTotal(session);
@@ -126,6 +143,7 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
     else if ((recipeId || initialStore) && onExit) onExit();
     else setActiveStore(null);
   };
+  terugRef.current = backToOverview;
 
   if (!activeStore) return <ShopStreet onOpenGroceries={() => setActiveStore('groceries')} onOpenDecor={setActiveStore} />;
   if (activeStore !== 'groceries') return <DecorShop store={activeStore} onBack={() => setActiveStore(null)} onNavigate={onNavigate} />;
@@ -135,7 +153,6 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
     <button className="shop-dismiss" type="button" onClick={backToOverview} aria-label={overviewLabel} />
     <section className={`shop-catalog${recipeId && recipeRequirementsSatisfied(progress, recipeId) ? ' has-recipe-ready' : ''}`} aria-labelledby="shop-title">
       <header className="shop-catalog__header">
-        <button className="shop-icon-button" type="button" onClick={backToOverview} aria-label={overviewLabel} title={overviewLabel}><ArrowLeft /></button>
         <span className="shop-catalog__mark" aria-hidden="true"><ShoppingBasket size={20} /></span>
         <div><small>{recipeId ? 'Receptboodschappen' : 'Vrij winkelen'}</small><h1 id="shop-title">Winkel</h1></div>
         <div className="shop-catalog__actions">
@@ -149,20 +166,19 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
       </div>}
 
       {recipeId && <div className="shopping-strip">
-        <button type="button" className="shopping-strip__toggle" onClick={() => setListOpen(value => !value)} aria-expanded={listOpen} aria-label={`Jouw receptlijstje, ${completedRequirements} van ${requirements.length} compleet`}>
-          <span className="shopping-strip__mark" aria-hidden="true"><ListChecks /></span>
-          <span className="shopping-strip__items" aria-hidden="true">
-            {requirements.map(item => <i key={item.ingredientId} className={item.collected ? 'is-complete' : ''}>
+        <div className="shopping-strip__toggle">
+          <button type="button" className="shopping-strip__mark" onClick={() => setListOpen(value => !value)} aria-expanded={listOpen} aria-label={`Jouw receptlijstje, ${completedRequirements} van ${requirements.length} compleet`}><ListChecks aria-hidden="true" /></button>
+          <span className="shopping-strip__items">
+            {requirements.map(item => <button type="button" key={item.ingredientId} className={item.collected ? 'is-complete' : ''} onClick={() => gaNaarProduct(item.ingredientId)} aria-label={`Ga naar ${INGREDIENTS_BY_ID[item.ingredientId].name}`}>
               <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
               <em>{item.collected ? <Check /> : missingBadge(item.amount - item.inventory - item.basket, item.unit)}</em>
-            </i>)}
+            </button>)}
           </span>
-          <span className="shopping-strip__count">{completedRequirements}/{requirements.length}</span>
-          <ChevronDown className={listOpen ? 'is-open' : ''} aria-hidden="true" />
-        </button>
+          <button type="button" className="shopping-strip__open" onClick={() => setListOpen(value => !value)} aria-label={listOpen ? 'Lijstje sluiten' : 'Lijstje openen'}><ChevronDown className={listOpen ? 'is-open' : ''} aria-hidden="true" /></button>
+        </div>
 
         {listOpen && <div className="shopping-strip__details">
-          {requirements.map(item => <div className={item.collected ? 'is-complete' : ''} key={item.ingredientId}>
+          {requirements.map(item => <button type="button" className={item.collected ? 'is-complete' : ''} key={item.ingredientId} onClick={() => gaNaarProduct(item.ingredientId)}>
             <img src={INGREDIENTS_BY_ID[item.ingredientId].image} alt="" />
             <p>
               <strong>{INGREDIENTS_BY_ID[item.ingredientId].name}</strong>
@@ -171,15 +187,15 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
             <b className={item.collected ? 'is-complete' : ''}>
               {item.collected ? 'Klaar' : missingLabel(item.amount - item.inventory - item.basket, item.unit)}
             </b>
-          </div>)}
+          </button>)}
         </div>}
       </div>}
 
       <nav className="shop-categories" aria-label="Productcategorieën">
         {SHOP_CATEGORIES.map(option => <button key={option.id} type="button" aria-pressed={category === option.id} onClick={() => setCategory(option.id)}>{option.label}</button>)}
       </nav>
-      <div className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
-        {products.map(item => <article className="shop-product" role="listitem" key={item.id}>
+      <div ref={productenRef} className="shop-products" role="list" aria-live="polite" aria-label={`${products.length} producten`} tabIndex={0}>
+        {products.map(item => <article className={`shop-product${oplichten === item.id ? ' is-oplichten' : ''}`} data-product={item.id} role="listitem" key={item.id}>
           {item.id === 'strawberry' && <span className="shop-product__badge">{seasonLabel}</span>}
           <img className="shop-product__art" src={item.image} alt="" loading="lazy" decoding="async" /><strong>{item.name}</strong><small>{item.packageLabel}</small>
           <div className="shop-product__buy"><span><CocoCoin size={18} />{session.priceSnapshot.prices[item.id]}</span><button type="button" onClick={() => updateSession(adjustBasket(session, item.id, 1))} aria-label={`Voeg ${item.name} toe`}><Plus /></button></div>
@@ -228,6 +244,5 @@ export default function ShopScreen({ recipeId: requestedRecipeId, initialStore, 
         </ul>
       </>}
     </PurchaseSuccess>}
-    {recipeId && <button className="shop-exit" type="button" onClick={onExit}>Stoppen</button>}
   </main>;
 }

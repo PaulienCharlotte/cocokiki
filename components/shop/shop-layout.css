@@ -92,3 +92,35 @@
 @media(max-width:700px) { .shop-room .shop-catalog { width: 100%; }.shop-room .shop-products { gap: var(--space-3); }.shop-room .shop-product { padding: var(--space-2); grid-template-rows: calc(var(--space-12) * 3) minmax(3em, auto) minmax(1.5em, auto) var(--touch-target); }.decor-shop .decor-product { grid-template-rows: calc(var(--space-12) * 4) var(--touch-target); } }
 .shop-room { height: 100dvh; padding: calc(var(--space-12) * 2) var(--space-4) var(--space-4); align-items: stretch; }
 @media(max-width:700px) { .shop-room { padding: calc(var(--space-12) + var(--space-8)) var(--space-2) var(--space-2); }.shop-room .shop-catalog { max-height: none; } }
+
+/* Boodschappenlijstje (briefing 19 nov): elk ingrediënt is een knop die naar
+   het product in de winkel springt. Alleen huisstijlvariabelen. */
+.shop-room .shopping-strip__toggle { display: flex; align-items: center; gap: var(--space-2); width: 100%; }
+.shop-room .shopping-strip__toggle > button, .shop-room .shopping-strip__items > button { border: 0; background: none; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.shop-room .shopping-strip__items { display: flex; gap: var(--space-2); overflow-x: auto; min-width: 0; flex: 1; }
+.shop-room .shopping-strip__items > button { position: relative; flex: none; transition: transform var(--ck-normaal) var(--ck-veer); }
+.shop-room .shopping-strip__items > button:hover { transform: translateY(-3px); }
+.shop-room .shopping-strip__open { width: var(--ck-tik-min); height: var(--ck-tik-min); display: grid; place-items: center; flex: none; }
+.shop-room .shopping-strip__details > button {
+  display: grid; grid-template-columns: var(--space-8) minmax(0, 1fr) auto; align-items: center; gap: var(--space-2);
+  width: 100%; min-height: var(--ck-tik-min); padding: var(--space-1) 0; border: 0; border-top: 1px solid var(--ck-schaduw-rand);
+  background: none; color: var(--ck-cacao); font: inherit; text-align: left; cursor: pointer;
+}
+.shop-room .shopping-strip__details > button:first-child { border-top: 0; }
+.shop-room .shopping-strip__details > button:hover { background: color-mix(in srgb, var(--ck-zon) 14%, transparent); }
+.shop-room .shopping-strip__details b { color: var(--ck-cacao); }
+@media (max-width: 700px) {
+  /* Telefoon: "Nog 150 g" netjes onder de naam, nooit eroverheen. */
+  .shop-room .shopping-strip__details > button { grid-template-columns: var(--space-8) minmax(0, 1fr); grid-template-rows: auto auto; }
+  .shop-room .shopping-strip__details > button img { grid-row: 1 / span 2; }
+  .shop-room .shopping-strip__details > button b { grid-column: 2; justify-self: start; }
+}
+/* Het product waar je naartoe sprong licht even op in de wereldkleur. */
+.shop-room .shop-product.is-oplichten { animation: ck-pop 420ms var(--ck-veer) both; box-shadow: 0 0 0 4px var(--ck-actief), 0 0 24px color-mix(in srgb, var(--ck-zon) 60%, transparent); border-radius: var(--ck-rond-kaart); }
+/* Zonder eigen terugknop: mandje-icoon · titel · mandjeknop. */
+.shop-room .shop-catalog__header { grid-template-columns: auto minmax(0, 1fr) auto; }
+.shop-room .shop-catalog__header small { overflow-wrap: normal; white-space: nowrap; }
+@media (max-width: 700px) { .shop-room .shop-catalog__header { grid-template-columns: auto minmax(0, 1fr) auto; } }
+/* Regels groeien mee met hun inhoud, zodat "Nog …" nooit over de volgende regel valt. */
+.shop-room .shopping-strip__details { grid-auto-rows: max-content; align-content: start; }
+.shop-room .shopping-strip__details > button { height: auto; min-height: max-content; row-gap: 2px; }

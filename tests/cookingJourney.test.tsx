@@ -4,7 +4,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import RecipeCard from '../components/cooking/RecipeCard';
 import RecipeOverviewDialog from '../components/cooking/RecipeOverviewDialog';
-import IngredientDiscoveryFlow from '../components/cooking/IngredientDiscoveryFlow';
+import IngredientDiscoveryFlow, { kortVoorWolk } from '../components/cooking/IngredientDiscoveryFlow';
 import MathChallengeFlow from '../components/cooking/MathChallengeFlow';
 import { createCookingSession, goBackPreparation, migrateCookingSession, resumePreparation } from '../data/cooking/session';
 import { EQUIPMENT, INGREDIENTS, RECIPES, RECIPES_BY_ID, getCompletedRecipes } from '../data/cooking/catalog';
@@ -459,10 +459,11 @@ test('discovery UI keeps one focused educational interaction visible', () => {
   assert.doesNotMatch(learn, /Waarom groeien bananen goed in tropische gebieden/);
   const questionState = showDiscoveryQuestion(state, recipe.id);
   const question = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={questionState} onProgressChange={() => undefined} onExit={() => undefined} />);
-  assert.match(question, /Waarom groeien bananen goed in tropische gebieden/);
-  assert.match(question, /Ze hebben warmte en voldoende water nodig/);
-  assert.match(question, /ck-keuzes is-los/);
-  assert.match(question, /Geef me een tip/);
+  // Briefing 19 nov: eerst vertelt Coco een weetje in de wolk, dan pas de vraag.
+  assert.match(question, /Wist je dat/);
+  assert.match(question, /Naar de vraag/);
+  assert.doesNotMatch(question, /ck-keuzes is-los/);
+  assert.doesNotMatch(question, /role="dialog"/);
 });
 
 test('seasonal prices follow the configured catalog and remain stable per session', () => {
@@ -588,15 +589,14 @@ test('terugbladeren verzet alleen waar je kijkt', () => {
   assert.equal(bewaard.stepId, stappen[3].id);
 });
 
-test('een goed ontdekantwoord voegt geen uitleg of beloningsblok aan de vraag toe', () => {
+test('een goed ontdekantwoord: Coco reageert kort in de wolk, zonder pop-up', () => {
   const recipe = RECIPES_BY_ID['banana-pancakes'];
   const state = showDiscoveryQuestion(beginDiscoveryStage(startJourney(createEmptyCookingProgress(), recipe), recipe.id), recipe.id);
   const discovery = state.journeys[recipe.id]!.discovery;
   const question = INGREDIENT_DISCOVERIES_BY_ID[discovery.currentIngredientId!]!.questions[discovery.questionIndex];
   const result = answerDiscoveryQuestion(state, recipe.id, question.correctOptionId);
   const html = renderToStaticMarkup(<IngredientDiscoveryFlow recipe={recipe} progress={result.progress} onProgressChange={() => undefined} onExit={() => undefined} />);
-  assert.match(html, /Coco legt uit/);
-  assert.match(html, /discovery-question-actions/);
-  assert.doesNotMatch(html, /reward-toast/);
-  assert.ok(!html.includes(question.feedbackExplanation));
+  assert.match(html, /Goed! /);
+  assert.ok(html.includes(kortVoorWolk(question.feedbackExplanation)));
+  assert.doesNotMatch(html, /role="dialog"|Volgende vraag/);
 });

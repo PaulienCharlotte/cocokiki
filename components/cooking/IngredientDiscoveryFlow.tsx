@@ -3,11 +3,11 @@ import { learningReward } from '../../services/learningReward';
 import './bakkerij-stijl.css';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles } from 'lucide-react';
-import { Button, Dialog, IconButton } from '../../design-system';
+import { Button, IconButton } from '../../design-system';
 import { registerBackHandler } from '../../services/navigationGuard';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
-import type { CookingProgressState, RecipeConfig } from '../../data/cooking/types';
+import type { CookingProgressState, DiscoveryQuestion, IngredientDiscoveryConfig, RecipeConfig } from '../../data/cooking/types';
 import {
   advanceJourney,
   answerDiscoveryQuestion,
@@ -36,11 +36,28 @@ interface IngredientDiscoveryFlowProps {
   replay?: boolean;
 }
 
+/** Eén korte gedachte voor de spraakwolk: de eerste zin, hooguit ~130 tekens (max. 2 regels). */
+export function kortVoorWolk(tekst: string): string {
+  const schoon = tekst.replace(/\s+/g, ' ').trim();
+  const zin = schoon.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? schoon;
+  return zin.length <= 130 ? zin : `${zin.slice(0, 127).replace(/\s+\S*$/, '')}…`;
+}
+
+/** Wat Coco vertelt vóór de vraag: het weetje dat bij het leerdoel van de vraag hoort. */
+export function uitlegVoorVraag(config: IngredientDiscoveryConfig, question: DiscoveryQuestion): string {
+  const voeding = config.nutrition[0];
+  const bron = question.learningGoal === 'nutrition' && voeding ? `${voeding.nutrient}: ${voeding.role}`
+    : question.learningGoal === 'origin' || question.learningGoal === 'source' || question.learningGoal === 'geography' ? config.origin.text
+    : config.foodKnowledge.text || config.heroFact;
+  return kortVoorWolk(bron || config.heroFact);
+}
+
 export default function IngredientDiscoveryFlow({ recipe, progress, onProgressChange, onExit, onReplay = onExit, replay = false }: IngredientDiscoveryFlowProps) {
   // De terugknop linksboven gaat één laag terug: naar het kookboek (huisstijl: één terugknop).
   const exitRef = useRef(onExit); exitRef.current = onExit;
   useEffect(() => registerBackHandler(() => exitRef.current()), []);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  // Eerst vertelt Coco iets, dan pas de vraag (wens 4 uit de briefing).
+  const [naarVraag, setNaarVraag] = useState(false);
   const [wrongAnswer, setWrongAnswer] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [toastCoins, setToastCoins] = useState(0);
@@ -70,7 +87,7 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   };
 
   useEffect(() => {
-    setFeedbackOpen(false);
+    setNaarVraag(false);
     setWrongAnswer(null);
     setReviewing(false);
     setToastCoins(0);
@@ -79,6 +96,14 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   useEffect(() => {
     if (discovery?.step === 'learn' && !pendingSave) commit(showDiscoveryQuestion(progress, recipe.id));
   }, [discovery?.step, ingredientId, pendingSave]);
+
+  // Goed antwoord: Coco reageert in de wolk, munten vliegen, en het spel gaat vanzelf verder.
+  const verderRef = useRef<() => void>(() => undefined);
+  useEffect(() => {
+    if (discovery?.step !== 'correct') return;
+    const timer = window.setTimeout(() => verderRef.current(), 2600);
+    return () => window.clearTimeout(timer);
+  }, [discovery?.step, ingredientId, discovery?.questionIndex]);
 
   if (!journey) return null;
   if (pendingSave) return <main className="bakkerij-stijl discovery-stage"><section className="discovery-card"><p role="alert">Opslaan lukt even niet. Je munten en voortgang blijven bewaard.</p><Button onClick={() => commit(pendingSave)}>Probeer opnieuw</Button><Button variant="quiet" onClick={onExit}>Terug</Button></section></main>;
@@ -126,7 +151,6 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   const answer = (optionId: string) => {
     const result = answerDiscoveryQuestion(progress, recipe.id, optionId);
     if (!commit(result.progress)) return;
-    setFeedbackOpen(true);
     if (!result.correct) {
       setWrongAnswer(optionId);
       return;
@@ -137,11 +161,16 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
   };
 
   const continueDiscovery = () => {
-    setFeedbackOpen(false);
-    if (wrongAnswer) { setWrongAnswer(null); return; }
+    setWrongAnswer(null);
     commit(collectCurrentIngredient(showIngredientCollection(progress, recipe.id), recipe.id));
   };
-  const nextLabel = discovery.questionIndex + 1 < config.questions.length ? 'Volgende vraag' : completedCount + 1 === recipeIngredientIds.length ? 'Ontdekken afronden' : 'Volgend ingrediënt';
+  verderRef.current = continueDiscovery;
+  const uitleg = uitlegVoorVraag(config, question);
+  const toonUitleg = discovery.step === 'question' && !naarVraag && !wrongAnswer;
+  const wolk = discovery.step === 'correct' ? `Goed! ${kortVoorWolk(question.feedbackExplanation)}`
+    : wrongAnswer ? `Bijna. ${uitleg}`
+    : toonUitleg ? uitleg
+    : question.prompt;
 
   const skip = () => {
     if (!commit(skipKnownIngredient(progress, recipe.id))) return;
@@ -174,25 +203,22 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
         {!reviewing && (discovery.step === 'question' || discovery.step === 'correct') && <>
           <CookingAssetImage className="discovery-card__ingredient" src={ingredient.image} alt={ingredient.name} />
           <p className="discovery-card__eyebrow">{ingredient.name}</p>
-          <SpeechBubble character="coco" label="Denk mee" textId="discovery-title" vast>{question.prompt}</SpeechBubble>
-          <ChoiceList vorm="los" label="Kies je antwoord" disabled={Boolean(wrongAnswer) || discovery.step === 'correct'} onChoose={answer}
-            choices={discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map(option => ({
-              id: option.id, label: option.label,
-              staat: wrongAnswer === option.id ? 'mis' : discovery.step === 'correct' && question.correctOptionId === option.id ? 'goed' : undefined,
-            }))} />
-          <div className="discovery-question-actions">
-            {(wrongAnswer || discovery.step === 'correct') && <Button onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>}
-            <Button variant="quiet" startIcon={<BookOpen size={17} />} onClick={() => discovery.step === 'correct' || wrongAnswer ? setFeedbackOpen(true) : setReviewing(true)}>{discovery.step === 'correct' || wrongAnswer ? 'Coco legt uit' : 'Geef me een tip'}</Button>
-          </div>
+          <SpeechBubble character="coco" label={toonUitleg ? 'Wist je dat' : 'Denk mee'} textId="discovery-title" tone={discovery.step === 'correct' ? 'goed' : 'default'} vast>{wolk}</SpeechBubble>
+          {toonUitleg
+            ? <div className="discovery-question-actions"><Button size="large" onClick={() => setNaarVraag(true)}>Naar de vraag</Button></div>
+            : <>
+              {wrongAnswer && <p className="discovery-vraag-herhaling">{question.prompt}</p>}
+              <ChoiceList vorm="los" label="Kies je antwoord" disabled={discovery.step === 'correct'} onChoose={answer}
+                choices={discoveryOptions(question, journey.startedAt, completedCount + discovery.questionIndex).map(option => ({
+                  id: option.id, label: option.label,
+                  staat: wrongAnswer === option.id ? 'mis' : discovery.step === 'correct' && question.correctOptionId === option.id ? 'goed' : undefined,
+                }))} />
+              {discovery.step === 'correct' && toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
+            </>}
         </>}
         {alreadyCollected && (discovery.step === 'learn' || discovery.step === 'question') && <Button variant="quiet" startIcon={<SkipForward size={18} />} onClick={skip}>Ingrediënt overslaan</Button>}
       </div>
     </section>
-    <Dialog className="recipe-dialog bakkerij-recept cooking-discovery-feedback" open={feedbackOpen} title={wrongAnswer ? 'Coco helpt je' : 'Goed ontdekt!'} onClose={() => setFeedbackOpen(false)}
-      primaryAction={<Button onClick={continueDiscovery}>{wrongAnswer ? 'Probeer nog eens' : nextLabel}</Button>}>
-      <SpeechBubble character="coco" label="Coco legt uit">{question.feedbackExplanation}</SpeechBubble>
-      {!wrongAnswer && toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
-    </Dialog>
     <RecipeOverviewDialog recipe={showRecipe ? recipe : null} progress={progress} journey={journey} onClose={() => setShowRecipe(false)} onStart={() => setShowRecipe(false)} onReplay={replay ? undefined : () => onReplay()} />
   </main>;
 }

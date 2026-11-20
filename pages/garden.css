@@ -165,3 +165,31 @@ body .tuin.ck-scherm .tuin-status { top: var(--tuin-boven); left: var(--space-4)
 /* Telefoon: de gereedschapsbalk staat links en verticaal (zie cocokiki-tokens.css),
    dus het veld laat links ruimte vrij in plaats van rechts. */
 @media(max-width:700px) { .tuin .tuin__veld { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); } }
+
+/* ===== Moestuin volgens de briefing (19 nov 2026) =====
+   Grote bakken, gewasplaatje met de hele naam, Kiki altijd linksonder,
+   "Tuindag · seizoen" als houten naambord. */
+.tuin .tuin-dagbord { display: inline-block; font-size: max(18px, 1.5cqw); white-space: nowrap; }
+.tuin .tuin-dagbord .tuin-dag, .tuin .tuin-dagbord .tuin-seizoen { font: inherit; color: inherit; }
+body .tuin.ck-scherm .tuin-status { background: transparent; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; padding: 0; }
+body .tuin.ck-scherm .tuin-status::before { display: none; }
+.tuin .tuin-volgende-dag > svg { color: var(--ck-room); filter: drop-shadow(0 2px 0 var(--ck-hout-donker)); }
+.tuin .tuin-bordje { display: inline-flex; align-items: center; gap: var(--space-2); max-width: none; overflow: visible; text-overflow: clip; padding: 4px 14px 4px 6px; }
+.tuin .tuin-bordje__plaatje { width: 32px; height: 32px; object-fit: contain; flex: none; }
+/* Kiki laat onderaan ruimte vrij: het veld eindigt boven haar ballon. */
+.tuin .tuin__veld { bottom: calc(var(--space-12) * 3); }
+@media(max-width:700px) {
+  .tuin .tuin__veld { top: calc(var(--space-12) * 4); bottom: calc(var(--space-12) * 3); overflow-y: auto; }
+  .tuin .garden__beds { position: static; container-type: normal; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; gap: var(--space-4) var(--space-3); padding-bottom: var(--space-4); }
+  .tuin .tuin-bak { width: 100%; }
+  .tuin .tuin-bordje { font-size: 16px; padding-right: 10px; }
+  .tuin .tuin-bordje__plaatje { width: 26px; height: 26px; }
+}
+@media(min-width:701px) { body .tuin.ck-scherm .tuin-status { left: 50%; right: auto; transform: translateX(-50%); } }
+/* Telefoon, tijdens een opdracht: de meetlat ligt tussen de bakken en Kiki,
+   en het veld met de bakken eindigt erboven (scrollen kan). */
+@media(max-width:700px) {
+  .tuin .garden-ruler, .tuin .garden-measure, .tuin .tuin-omreken-doel { bottom: 190px; left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); transform: none; }
+  .tuin:has(.garden-ruler, .garden-measure, .tuin-omreken-doel) .tuin__veld { bottom: 280px; }
+}
+@media(max-width:700px) { .tuin .garden-ruler { overflow-x: auto; max-width: none; } }

@@ -174,7 +174,10 @@ test('tips trigger once per attempt, dismiss safely, survive reload and reset on
   assert.equal(loadCurrency(), 0);
   assert.deepEqual(loadCookingProgress().inventory, before);
   assert.equal(eligibleCookingTip([tip], { ...createCookingSession(banana), completedStepIds: ['cook'] })?.id, tip.id);
-  assert.match(renderToStaticMarkup(<CookingTipCard tip={tip} onDismiss={() => undefined} />), /Tip sluiten/);
+  // Briefing 19 nov: de kooktip staat in Coco's wolk, geen pop-up.
+  const tipHtml = renderToStaticMarkup(<CookingTipCard tip={tip} onDismiss={() => undefined} />);
+  assert.match(tipHtml, /ck-zegt[^"]*is-vast/);
+  assert.doesNotMatch(tipHtml, /<dialog/);
   const completionTip = { ...tip, displayMode: 'completion' as const };
   assert.equal(eligibleCookingTip([completionTip], createCookingSession(banana)), undefined);
   assert.ok(eligibleCookingTip([completionTip], { ...createCookingSession(banana), completed: true }));

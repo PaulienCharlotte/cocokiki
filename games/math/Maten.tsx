@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import './maten.css';
 import HulpPaneel from '../../components/ui/HulpPaneel';
+import { Box, CupSoda, Ruler, Square, Weight } from 'lucide-react';
+import { geluid } from '../../design-system/geluid';
+
+const SOORT_ICOON = [<Ruler key="l" />, <CupSoda key="i" />, <Weight key="g" />, <Square key="o" />, <Box key="v" />];
 
 /**
  * Maten omrekenen.
@@ -57,44 +61,49 @@ export default function Maten({ onClose }: { onClose: () => void }) {
 
   return <HulpPaneel className="maten-dialoog" titel="Maten" sluitLabel="Maten sluiten" onClose={onClose}>
     <div className="maten">
+      {/* Wat meet je? Vijf gekleurde tegels met een plaatje. */}
       <nav className="maten-soorten" aria-label="Wat wil je omrekenen?">
         {TRAPPEN.map((item, index) => <button key={item.naam} type="button" aria-pressed={index === soort}
-          className={index === soort ? 'is-actief' : undefined} onClick={() => kiesSoort(index)}>{item.naam}</button>)}
+          className={`maten-soort maten-soort--${index + 1}${index === soort ? ' is-actief' : ''}`} onClick={() => { geluid.tik(); kiesSoort(index); }}>
+          <span className="maten-soort__icoon" aria-hidden="true">{SOORT_ICOON[index]}</span>{item.naam}
+        </button>)}
       </nav>
 
-      <div className="maten-vak maten-trap-schuif">
+      {/* De trap: grote maten bovenaan, kleine onderaan. Tik twee treden aan. */}
+      <div className="maten-trap-schuif">
         <div className="maten-trap" role="group" aria-label="Kies twee maten" style={{ ['--maten' as string]: trap.maten.length }}>
+          {klaar && <p className="maten-brug" style={{ gridColumn: `${Math.min(van, naar) + 1} / ${Math.max(van, naar) + 2}` }}>
+            <span>{stappen > 0 ? '×' : '÷'} {toonMaat(sprong)}</span>
+          </p>}
           {trap.maten.map((maat, index) => <button
-            key={maat} type="button" aria-pressed={index === van || index === naar}
-            className={`${index === van || index === naar ? 'is-gekozen' : ''}${maat === trap.basis ? ' is-basis' : ''}`}
-            onClick={() => tik(index)}
-          >{maat}</button>)}
-        {/* De brug tussen de twee gekozen maten, met de sprong erop. */}
-        {klaar && <p className="maten-brug" style={{ gridColumn: `${Math.min(van, naar) + 1} / ${Math.max(van, naar) + 2}` }}>
-          {stappen > 0 ? '×' : '÷'} {toonMaat(sprong)}
-        </p>}
+            key={`${trap.naam}-${maat}`} type="button" aria-pressed={index === van || index === naar}
+            className={`maten-trede${index === van || index === naar ? ' is-gekozen' : ''}${maat === trap.basis ? ' is-basis' : ''}`}
+            style={{ ['--trede' as string]: index, gridColumn: index + 1 }}
+            onClick={() => { geluid.tik(); tik(index); }}
+          ><span>{maat}</span></button>)}
         </div>
       </div>
 
       {klaar
-        ? <div className="maten-vak maten-uitkomst" role="status">
+        ? <div className="maten-uitkomst" role="status">
             <p>
-              <label>
+              <label className="maten-getal">
                 <span className="sr-only">Hoeveel {trap.maten[van]}?</span>
                 <input type="text" inputMode="decimal" value={aantal} onChange={event => setAantal(event.target.value)} />
+                <span>{trap.maten[van]}</span>
               </label>
-              <span>{trap.maten[van]}</span>
               <i aria-hidden="true">=</i>
-              <output>{uitkomst === null ? '—' : toonMaat(uitkomst)}</output>
-              <span>{trap.maten[naar]}</span>
+              <output className="maten-getal maten-getal--uit">{uitkomst === null ? '—' : toonMaat(uitkomst)}<span>{trap.maten[naar]}</span></output>
             </p>
-            <small>{Math.abs(stappen)} {Math.abs(stappen) === 1 ? 'stap' : 'stappen'} naar {stappen > 0 ? 'rechts' : 'links'}</small>
+            <small>{Math.abs(stappen)} {Math.abs(stappen) === 1 ? 'tree' : 'treden'} naar {stappen > 0 ? 'beneden: keer' : 'boven: gedeeld door'} {trap.factor}</small>
           </div>
-        : <p className="maten-vak maten-hint">{van === null
-            ? `Tik twee maten aan. Elke stap naar rechts is × ${trap.factor}.`
-            : `Je koos ${trap.maten[van]}. Tik nu de maat aan waar je naartoe wilt.`}</p>}
+        : <p className="maten-hint">{van === null
+            ? `Tik twee treden aan. Elke tree naar beneden is × ${trap.factor}.`
+            : `Je koos ${trap.maten[van]}. Tik nu de tree waar je naartoe wilt.`}</p>}
 
-      <p className="maten-weetjes">{[...trap.weetjes, ...WEETJES].join(' · ')}</p>
+      <ul className="maten-weetjes" aria-label="Handige weetjes">
+        {[...trap.weetjes, ...WEETJES].map(weetje => <li key={weetje} className="ck-papier">{weetje}</li>)}
+      </ul>
     </div>
   </HulpPaneel>;
 }

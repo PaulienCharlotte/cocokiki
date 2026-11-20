@@ -95,7 +95,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
 
     {/* 2. Statuseiland: tuindag, groei van het gekozen vak, niveau */}
     <div className="ck-zone-status ck-glas tuin-status">
-      <button type="button" className="tuin-volgende-dag" disabled={gardenNeedsCare(state)} title={gardenNeedsCare(state) ? 'Verzorg eerst je planten vandaag' : 'Volgende tuindag'} aria-label={`Tuindag ${state.day}, ${SEASONS[season]}. Volgende tuindag`} onClick={() => { kies(null); act(nextGardenDay(), 'Een nieuwe tuindag. Kijk welke vakken water nodig hebben.'); }}><span><b className="tuin-dag">Tuindag {state.day}</b><small className="tuin-seizoen">{SEASONS[season]}</small></span><ArrowRight size={20} aria-hidden="true" /></button>
+      <button type="button" className="tuin-volgende-dag" disabled={gardenNeedsCare(state)} title={gardenNeedsCare(state) ? 'Verzorg eerst je planten vandaag' : 'Volgende tuindag'} aria-label={`Tuindag ${state.day}, ${SEASONS[season]}. Volgende tuindag`} onClick={() => { kies(null); act(nextGardenDay(), 'Een nieuwe tuindag. Kijk welke vakken water nodig hebben.'); }}><span className="ck-houtbord tuin-dagbord"><b className="tuin-dag">Tuindag {state.day}</b> · <span className="tuin-seizoen">{SEASONS[season]}</span></span><ArrowRight size={20} aria-hidden="true" /></button>
       {plot && <><span className="tuin-scheid" aria-hidden="true" /><span className="tuin-stippen" role="img" aria-label={stages[plot.step]}>{stages.slice(1).map((_, i) => <span key={i} className={`ck-stip${i < plot.step ? ' ck-stip--klaar' : ''}${i === plot.step ? ' ck-stip--nu' : ''}`} />)}</span></>}
     </div>
 
@@ -122,7 +122,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
           {selected === index && <div className="ck-doel tuin-doel" aria-hidden="true" />}
           {selected === index && kaartje ? <button type="button" className="ck-hangkaartje tuin-hangkaartje" aria-label={crop ? `Over ${crop.name}` : undefined} onClick={() => { if (crop) { setFacts(crop); setPaneel('gewas'); } }}>
             <span className="ck-hangkaartje__touw" /><span className="ck-hangkaartje__label ck-glas">{kaartje}{inTaak && crop && <small>{crop.name}</small>}</span>
-          </button> : <span className="tuin-bordje ck-glas" aria-hidden="true">{plot ? GARDEN_CROPS_BY_ID[plot.cropId].name : `Vak ${index + 1}`}</span>}
+          </button> : <span className="tuin-bordje ck-glas" aria-hidden="true">{plot && <img className="tuin-bordje__plaatje" src={GARDEN_CROPS_BY_ID[plot.cropId].image} alt="" />}{plot ? GARDEN_CROPS_BY_ID[plot.cropId].name : `Vak ${index + 1}`}</span>}
         </div>)}
       </div>
     </div>
@@ -143,7 +143,8 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
         return result;
       }} />
       : <>
-        {(notice || hint || selected !== null) && <Kiki blij={blij}>{zin}</Kiki>}
+        {/* Kiki staat altijd linksonder (huisstijl, zone 5). */}
+        <Kiki blij={blij}>{zin}</Kiki>
         <div className="ck-zone-antwoord tuin-antwoord">
           {plot?.step === 4 && crop && selected !== null ? <button type="button" className="ck-knop ck-knop--hoofd" onClick={() => { const id = plot.id; act(harvestGarden(selected, id), 'Je oogst ligt in je mand. Verkoop hem of breng hem naar Coco.'); juich(); setPaneel('oogst'); }}>Oogsten</button>
             : null}

@@ -128,11 +128,12 @@ test('full recipe restart restores memory even after a legacy completed recipe',
   assert.ok(next.completions[recipe.id]!.rewardClaimed);
 });
 
-test('Coco tip uses chef illustration and positive ingredient copy; menu has no dead actions', () => {
+test('Coco tip staat in haar wolk met positieve tekst; menu heeft geen dode knoppen', () => {
   const tip = RECIPES_BY_ID['fruit-yogurt'].cookingTips![0];
   assert.doesNotMatch(tip.title + tip.text, /suiker/);
   const html = renderToStaticMarkup(<CookingTipCard tip={tip} onDismiss={() => undefined} />);
-  assert.match(html, /<dialog|coco-chef-tip.webp/);
-  assert.match(html, /Verder koken/);
+  // Briefing 19 nov: de tip staat in Coco's wolk (geen pop-up, geen knop).
+  assert.match(html, /is-vast/);
+  assert.doesNotMatch(html, /<dialog/);
   assert.doesNotMatch(renderToStaticMarkup(<WorldTopBar coins={0} onHome={() => undefined} />), /aria-disabled="true"/);
 });
