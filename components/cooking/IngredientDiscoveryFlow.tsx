@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, SkipForward, Sparkles } from 'lucide-react';
 import { Button, IconButton } from '../../design-system';
 import { registerBackHandler } from '../../services/navigationGuard';
+import { vliegNaar } from '../../design-system/vliegNaar';
 import { INGREDIENTS_BY_ID } from '../../data/cooking/catalog';
 import { INGREDIENT_DISCOVERIES_BY_ID } from '../../data/cooking/discovery';
 import type { CookingProgressState, DiscoveryQuestion, IngredientDiscoveryConfig, RecipeConfig } from '../../data/cooking/types';
@@ -21,7 +22,6 @@ import CookingAssetImage from './CookingAssetImage';
 import IngredientDiscoveryCard from './IngredientDiscoveryCard';
 import JourneyStageProgress from './JourneyStageProgress';
 import RecipeOverviewDialog from './RecipeOverviewDialog';
-import RewardToast from './RewardToast';
 import { discoveryOptions } from '../../data/cooking/discoveryOptions';
 import { nextRequiredStage } from '../../services/cookingProgress';
 import SpeechBubble from '../ui/SpeechBubble';
@@ -158,6 +158,10 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
     if (result.coinDelta === 0) rewardAnswer('ingredient-discovery', `${recipe.id}:${journey.startedAt}`, `${ingredient.id}:${question.id}`, learningReward());
     setWrongAnswer(null);
     setToastCoins(result.coinDelta);
+    // Beloning vliegt: het ingrediënt naar het profiel (encyclopedie), de munten naar de teller.
+    const plaatje = document.querySelector('.discovery-card__ingredient');
+    vliegNaar(plaatje, { beeld: ingredient.image, label: '+', doel: '.world-profile__trigger', vertraging: 250 });
+    if (result.coinDelta > 0) vliegNaar(plaatje, { label: `+${result.coinDelta}`, doel: '.ck-bovenbalk__munten-klein .ck-munt, .ck-bovenbalk__munten .ck-munt', vertraging: 550 });
   };
 
   const continueDiscovery = () => {
@@ -180,16 +184,14 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
 
   return <main className="bakkerij-stijl discovery-stage">
     <img className="discovery-stage__background" src="/assets/library/treehouse/rooms/kitchen-furnished.webp" alt="" />
+    {/* Het stappenmenu staat los van het papier: een smalle strook erboven. */}
+    <div className="stage-chrome discovery-kop">
+      <JourneyStageProgress journey={journey} />
+      {/* Voortgang als bolletjes, niet als "0/9" (huisstijl). */}
+      <span className="discovery-stippen" role="img" aria-label={`Ontdekt: ${progressValue} van ${recipeIngredientIds.length}`}>{recipeIngredientIds.map((id, i) => <span key={id} className={`ck-stip${i < progressValue ? ' ck-stip--klaar' : ''}${i === progressValue ? ' ck-stip--nu' : ''}`} />)}</span>
+      <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)} aria-label="Bekijk recept" title="Bekijk recept"><BookOpen size={22} /></button>
+    </div>
     <section ref={cardRef} className={`discovery-card discovery-card--${discovery.step}`} aria-labelledby="discovery-title">
-      <div className="stage-chrome">
-        <div className="discovery-stage__topbar">
-          <button type="button" className="discovery-recipe-link" onClick={() => setShowRecipe(true)}><BookOpen size={17} />Bekijk recept</button>
-        </div>
-        <JourneyStageProgress journey={journey} />
-        {/* Voortgang als bolletjes, niet als "0/9" (huisstijl). */}
-        <span className="discovery-stippen" role="img" aria-label={`Ontdekt: ${progressValue} van ${recipeIngredientIds.length}`}>{recipeIngredientIds.map((id, i) => <span key={id} className={`ck-stip${i < progressValue ? ' ck-stip--klaar' : ''}${i === progressValue ? ' ck-stip--nu' : ''}`} />)}</span>
-      </div>
-
       <div className="discovery-card__content" key={`${ingredientId}-${discovery.step}`}>
         {(discovery.step === 'learn' || reviewing) && <>
           {alreadyCollected && <span className="discovery-collected-badge"><Check size={16} />Al verzameld</span>}
@@ -213,7 +215,6 @@ export default function IngredientDiscoveryFlow({ recipe, progress, onProgressCh
                   id: option.id, label: option.label,
                   staat: wrongAnswer === option.id ? 'mis' : discovery.step === 'correct' && question.correctOptionId === option.id ? 'goed' : undefined,
                 }))} />
-              {discovery.step === 'correct' && toastCoins > 0 && <RewardToast message={`${config.collectionLabel} ontdekt`} coins={toastCoins} />}
             </>}
         </>}
         {alreadyCollected && (discovery.step === 'learn' || discovery.step === 'question') && <Button variant="quiet" startIcon={<SkipForward size={18} />} onClick={skip}>Ingrediënt overslaan</Button>}

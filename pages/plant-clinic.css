@@ -44,3 +44,84 @@ main.clinic.ck-scherm { box-sizing: border-box; padding: calc(var(--space-12) * 
 }
 .clinic .ck-keuzes.is-los .ck-keuze, .clinic .ck-keuzes.is-los .ck-keuze > span { text-align: left; }
 .clinic .clinic__beloning { margin: 0; padding: var(--space-3); border-radius: var(--radius-control); }
+
+/* ===== Plantendokter volgens de briefing (20 nov 2026) =====
+   Strook boven het papier (stappen · patiënten als bolletjes · stempels),
+   Kiki vast linksonder, op het papier alleen de plant en de keuzes als tegels. */
+.clinic { align-content: start; gap: var(--space-3); }
+.clinic .clinic-kop {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-2);
+  width: fit-content; max-width: min(100%, 44rem); box-sizing: border-box; padding: 6px 12px; border-radius: 999px;
+  background: color-mix(in srgb, var(--ck-room) 86%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 4px 0 var(--ck-schaduw-rand); color: var(--ck-cacao);
+}
+.clinic .clinic-kop .journey-stages { display: flex; gap: 4px; margin: 0; padding: 0; width: auto; list-style: none; }
+.clinic .clinic-kop .journey-stages li { flex: none; width: auto; padding: 0; }
+.clinic .clinic-kop .journey-stages li::after { display: none; }
+.clinic .clinic-kop .journey-stages__icon { width: 30px; height: 30px; }
+.clinic .clinic-kop .journey-stages__icon svg { width: 16px; height: 16px; }
+.clinic .clinic-kop .journey-stages__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.clinic-kop__stippen { display: flex; gap: 5px; align-items: center; }
+.clinic-kop__stempels { display: inline-flex; align-items: center; gap: 4px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 18px; }
+.clinic-kop__stempels svg { width: 20px; height: 20px; color: var(--ck-tuin-rand); }
+
+/* Het papier laat onderaan ruimte voor Kiki's wolk */
+.clinic .clinic__card:has(.is-vast) { margin-bottom: 150px; }
+.clinic .clinic__plant { width: min(100%, 16rem); }
+
+/* Keuzes als losse tegels in plaats van regels met lijntjes */
+.clinic .ck-keuzes.is-los { display: grid; gap: var(--space-2); border: 0; }
+.clinic .ck-keuzes.is-los .ck-keuze {
+  border: 0; border-radius: var(--ck-rond-tegel); padding: 12px 14px;
+  background: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-schaduw-rand);
+  transition: transform var(--ck-normaal) var(--ck-veer);
+}
+.clinic .ck-keuzes.is-los .ck-keuze:hover { transform: translateY(-2px); }
+.clinic .ck-keuzes.is-los .ck-keuze.is-goed { background: color-mix(in srgb, var(--ck-tuin) 22%, var(--ck-wit)); }
+
+@media (max-width: 700px) {
+  /* Telefoon: links ruimte voor de verticale gereedschapsbalk */
+  .clinic { padding-left: calc(var(--space-2) * 2 + 52px); padding-right: var(--space-2); }
+  .clinic .clinic__plant { width: min(100%, 12rem); }
+  .clinic .clinic__card:has(.is-vast) { margin-bottom: 170px; }
+}
+@media (max-width: 700px) {
+  .clinic .clinic__card { padding: var(--space-3); gap: var(--space-2); }
+  .clinic .clinic__plant { width: min(100%, 9.5rem); }
+  .clinic .ck-keuzes.is-los .ck-keuze { padding: 8px 12px; }
+}
+@media (min-width: 701px) { .clinic .clinic__plant { width: min(100%, 11rem); } .clinic .clinic__card { padding: var(--space-5) var(--space-8); gap: var(--space-3); } }
+/* Telefoon: links ruimte voor de verticale gereedschapsbalk (wint van oudere regels). */
+@media (max-width: 700px) { main.clinic.ck-scherm { padding-left: calc(var(--space-2) * 2 + 52px); padding-right: var(--space-2); } }
+
+/* Onderzoek in drie stappen (20 nov): drie tegels op een rij. De tegel die nu
+   aan de beurt is pulseert; klaar = groen vinkje; de rest wacht rustig. */
+.clinic .clinic__stappen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin: 0 0 var(--space-3); padding: 0; list-style: none; }
+.clinic .clinic__stap {
+  position: relative; display: grid; justify-items: center; gap: 4px; width: 100%; min-height: 96px; padding: 10px 6px;
+  border: 0; border-radius: var(--ck-rond-tegel); background: var(--ck-wit); box-shadow: 0 4px 0 var(--ck-schaduw-rand);
+  color: var(--ck-cacao); font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; line-height: 1.1; text-align: center; cursor: pointer;
+  transition: transform var(--ck-normaal) var(--ck-veer), opacity var(--ck-normaal);
+}
+.clinic .clinic__stap img { width: 40px; height: 40px; object-fit: contain; }
+.clinic .clinic__stap:disabled { cursor: default; opacity: .55; box-shadow: none; }
+.clinic .clinic__stap.is-nu { box-shadow: 0 0 0 3px var(--ck-actief), 0 4px 0 var(--ck-actief-rand); animation: ck-puls 1.8s ease-in-out infinite; }
+.clinic .clinic__stap.is-nu:hover { transform: translateY(-3px); }
+.clinic .clinic__stap.is-klaar { background: color-mix(in srgb, var(--ck-tuin) 18%, var(--ck-wit)); opacity: 1; }
+.clinic .clinic__stap-vink { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; padding: 2px; border-radius: 50%; background: var(--ck-tuin); color: var(--ck-wit); }
+@media (max-width: 700px) { .clinic .clinic__stap { min-height: 84px; font-size: 16px; } .clinic .clinic__stap img { width: 32px; height: 32px; } }
+.clinic .clinic__stappen > li { display: block; height: auto; width: auto; min-height: 0; margin: 0; padding: 0; background: none; border: 0; }
+
+/* Aantekeningen na het onderzoek: drie kaartjes die één voor één binnenkomen. */
+.clinic .clinic__aantekeningen { display: grid; gap: var(--space-2); margin: 0 0 var(--space-3); padding: 0; list-style: none; }
+.clinic .clinic__aantekening {
+  display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: var(--space-2); height: auto; margin: 0;
+  padding: 8px 12px; border-radius: 14px; background: var(--ck-room); box-shadow: 0 3px 0 var(--ck-schaduw-rand);
+  transform: rotate(-.6deg); animation: ck-pop 420ms var(--ck-veer) both;
+}
+.clinic .clinic__aantekening:nth-child(2) { transform: rotate(.6deg); }
+.clinic .clinic__aantekening img { width: 36px; height: 36px; object-fit: contain; }
+.clinic .clinic__aantekening p { margin: 0; font-size: 16px; font-weight: 700; color: var(--ck-cacao); line-height: 1.3; }
+.clinic .clinic__diagnoseknop { display: block; margin: 0 auto; }
+.clinic .clinic__card:has(.clinic__aantekeningen) .clinic__plant { width: min(100%, 6.5rem); }
+.clinic .ck-zegt .clinic__diagnoseknop { display: flex; margin: var(--space-2) 0 0; min-height: 48px; padding: 8px 18px; font-size: 18px; }

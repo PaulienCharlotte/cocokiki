@@ -193,3 +193,16 @@ body .tuin.ck-scherm .tuin-status::before { display: none; }
   .tuin:has(.garden-ruler, .garden-measure, .tuin-omreken-doel) .tuin__veld { bottom: 280px; }
 }
 @media(max-width:700px) { .tuin .garden-ruler { overflow-x: auto; max-width: none; } }
+
+/* 20 nov: onder een bak alleen het plaatje van wat erin groeit (de naam staat
+   in de knop voor schermlezers). Lege bakken hebben geen bordje. */
+.tuin .tuin-bordje--plaatje { padding: 4px; border-radius: 50%; }
+.tuin .tuin-bordje--plaatje .tuin-bordje__plaatje { width: 36px; height: 36px; }
+/* Een gekozen bak tilt op maar wordt niet groter, zodat hij nooit over zijn buren schuift. */
+.tuin .garden-bed:hover, .tuin .garden-bed.is-gekozen { transform: translateY(-4px); }
+@media(max-width:700px) {
+  .tuin .garden__beds { gap: var(--space-5) var(--space-4); }
+  .tuin .tuin-bak { min-width: 0; }
+  .tuin .garden-bed { width: 100%; }
+}
+@media(max-width:700px) { .tuin:not(:has(.garden-ruler, .garden-measure, .tuin-omreken-doel)) .tuin__veld { bottom: 200px; } }

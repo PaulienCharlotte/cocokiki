@@ -6,10 +6,9 @@ import './plant-clinic.css';
 import SpeechBubble from '../components/ui/SpeechBubble';
 import InfoKnop from '../components/ui/InfoKnop';
 import CocoCoin from '../components/platform/CocoCoin';
-import { PLANT_DOCTOR_EMBLEM } from '../data/plants/branding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, type PanInfo } from 'framer-motion';
-import { BookOpen, CloudMoon, Droplet, Droplets, Flower2, Hourglass, Lightbulb, Lamp, Scissors, Search, Snowflake, Stamp, Stethoscope, Sun, Trophy, Umbrella, Wind } from 'lucide-react';
+import { BookOpen, Check, CloudMoon, Droplet, Droplets, Flower2, Hourglass, Lightbulb, Lamp, Scissors, Search, Snowflake, Stamp, Stethoscope, Sun, Trophy, Umbrella, Wind } from 'lucide-react';
 import { Button, Dialog, IconButton } from '../design-system';
 import { ASSET_LIBRARY } from '../data/assetLibrary';
 import { PLANT_SPECIES_BY_ID, plantProduct } from '../data/plants/species';
@@ -56,6 +55,8 @@ import { muntenVoorAntwoord } from '../services/economie';
 type Fase = 'onderzoek' | 'diagnose' | 'behandeling' | 'naam' | 'klaar';
 
 const SPOTS: ClueSpot[] = ['blad', 'aarde', 'plek'];
+/** De drie onderzoekstegels, in de vaste volgorde van het spreekuur. */
+const ONDERZOEK_TEGEL: Record<ClueSpot, string> = { blad: 'Bekijk het blad', aarde: 'Voel de aarde', plek: 'Vraag het baasje' };
 
 /** Waaróm je daar moet kijken. Zonder die reden is "kijk daar" geen hint. */
 const ONDERZOEK_WAAROM: Record<ClueSpot, string> = {
@@ -140,6 +141,8 @@ export default function PlantClinicScreen() {
   /** Wat het kind zelf heeft waargenomen, en of het het baasje al sprak. */
   const [waargenomen, setWaargenomen] = useState<{ aarde?: boolean; blad?: boolean }>({});
   const [misKijk, setMisKijk] = useState<string | null>(null);
+  /** Of het kind het blad al van dichtbij bekijkt (dan staan de keuzes in beeld). */
+  const [bladKijken, setBladKijken] = useState(false);
   const [naamGoed, setNaamGoed] = useState<boolean | null>(null);
   const [boekOpen, setBoekOpen] = useState(false);
   /** Welke boekpagina open ligt; null betekent: het overzicht met zes tegels. */
@@ -176,6 +179,7 @@ export default function PlantClinicScreen() {
     setLoep(null);
     setWaargenomen({});
     setMisKijk(null);
+    setBladKijken(false);
     setNaamGoed(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -283,10 +287,11 @@ export default function PlantClinicScreen() {
   /** Kiki is de enige stem: de vraag, de aanwijzing en het oordeel komen uit haar mond. */
   // Alleen de blaadjes kun je zien. Hoe de aarde voelt en waar hij staat
   // kun je niet van een plaatje aflezen: dat onderzoek je, of je vraagt het.
-  const ONDERZOEK_VRAAG = !waargenomen.blad ? 'Wat zie je aan de plant?'
-    : !waargenomen.aarde && getoond !== 'aarde' ? 'Voel aan de aarde.'
-    : !gevonden.includes('plek') && getoond !== 'plek' ? 'Vraag hoe hij verzorgd wordt.'
-    : 'Weet je genoeg?';
+  // Kiki wijst steeds precies één stap aan: dezelfde tegel die oplicht.
+  const ONDERZOEK_VRAAG = !waargenomen.blad ? (bladKijken ? 'Wat zie je aan de plant?' : 'Laten we hem onderzoeken. Tik op: Bekijk het blad.')
+    : !gevonden.includes('aarde') ? 'Tik nu op: Voel de aarde.'
+    : !gevonden.includes('plek') ? 'Tik nu op: Vraag het baasje.'
+    : 'Lees je aantekeningen rustig. Weet je wat er mis is?';
   const bericht = melding ? melding
     : fase === 'naam' ? 'Hij is gered! Wist je nog hoe deze plant heet?'
     : fase === 'klaar' ? (naamGoed === null ? TREATMENT_SUCCESS[juist]
@@ -295,6 +300,7 @@ export default function PlantClinicScreen() {
     : fase !== 'onderzoek' ? KIKI_VRAAG[fase]
     // Tijdens het onderzoek bevestigt Kiki wat je zag en stelt ze meteen de
     // volgende vraag, zodat er nooit keuzes zonder vraag op het scherm staan.
+    : gevonden.length >= 3 ? ONDERZOEK_VRAAG
     : `${getoond === 'plek' ? `${baasjeTekst(species, patient)} `
         : getoond ? `${clueText(species, patient, getoond)} `
         : ''}${ONDERZOEK_VRAAG}`.trim();
@@ -305,26 +311,21 @@ export default function PlantClinicScreen() {
       <IconButton className="ck-gereedschap" label="Plantenboek openen" icon={<BookOpen />} onClick={() => { setBoekPagina(null); setBoekOpen(true); }} />
       {fase !== 'klaar' && fase !== 'naam' && <IconButton className="ck-gereedschap" label="Hint van Kiki" icon={<Lightbulb />} onClick={vraagHint} />}
     </nav>
-    <section className={`clinic__card is-${fase}`}>
-      <header className="clinic__top">
-        <img className="clinic__emblem" src={PLANT_DOCTOR_EMBLEM} alt="Plantendokter" />
-        <div>
-          <h1 id="clinic-title">Plantendokter</h1>
-        </div>
-        <div className="clinic__tellers">
-          <p className="clinic__consult" aria-label={`Patiënt ${consult} van ${CONSULTS_PER_SPREEKUUR}`}>{consult}/{CONSULTS_PER_SPREEKUUR}</p>
-          <p className="clinic__passport" aria-label={`Plantenpaspoort: ${voortgang.earned} van ${voortgang.total} stempels`}>
-            <Stamp aria-hidden="true" />{voortgang.earned}/{voortgang.total}
-          </p>
-        </div>
-      </header>
-
+    {/* Kop en voortgang staan los van het papier, als smalle strook erboven. */}
+    <div className="clinic-kop">
+      <h1 id="clinic-title" className="sr-only">Plantendokter</h1>
       <StageProgress
         stages={SPREEKUUR_STAPPEN}
         current={fase === 'naam' ? 'klaar' : fase}
         completed={fase === 'klaar' || fase === 'naam' ? SPREEKUUR_STAPPEN.map(stap => stap.id).filter(id => id !== 'klaar') : []}
         label="Voortgang spreekuur"
       />
+      <span className="clinic-kop__stippen" role="img" aria-label={`Patiënt ${consult} van ${CONSULTS_PER_SPREEKUUR}`}>
+        {Array.from({ length: CONSULTS_PER_SPREEKUUR }, (_, i) => <span key={i} className={`ck-stip${i + 1 < consult || (i + 1 === consult && fase === 'klaar') ? ' ck-stip--klaar' : ''}${i + 1 === consult && fase !== 'klaar' ? ' ck-stip--nu' : ''}`} />)}
+      </span>
+      <span className="clinic-kop__stempels" aria-label={`Plantenpaspoort: ${voortgang.earned} van ${voortgang.total} stempels`}><Stamp aria-hidden="true" />{voortgang.earned}</span>
+    </div>
+    <section className={`clinic__card is-${fase}`}>
 
       <div className="clinic__plant">
         <img src={plaatje} alt={fase === 'klaar' ? `${species.commonName}, weer gezond` : genezen ? 'De plant is weer gezond' : 'Een zieke plant'} />
@@ -336,40 +337,47 @@ export default function PlantClinicScreen() {
         </>}
       </div>
 
-      <SpeechBubble className="clinic__bubbel" character="kiki" label={fase === 'onderzoek' ? 'Onderzoek' : fase === 'diagnose' ? 'Wat is er mis?' : fase === 'behandeling' ? 'Help de plant' : 'Goed verzorgd'} tone={melding ? 'alert' : genezen ? 'goed' : 'default'}>{bericht}</SpeechBubble>
+      <SpeechBubble vast className="clinic__bubbel" character="kiki" label={fase === 'onderzoek' ? 'Onderzoek' : fase === 'diagnose' ? 'Wat is er mis?' : fase === 'behandeling' ? 'Help de plant' : 'Goed verzorgd'} tone={melding ? 'alert' : genezen ? 'goed' : 'default'}>{misKijk && fase === 'onderzoek' ? misKijk : bericht}{fase === 'onderzoek' && gevonden.length >= 3 && <button type="button" className="ck-knop ck-knop--hoofd clinic__diagnoseknop" onClick={() => { setFase('diagnose'); setMelding(null); setLoep(null); }}>Stel je diagnose</button>}</SpeechBubble>
 
       {fase === 'onderzoek' && <div className="clinic__onderzoek">
-        {/* Eerst de aarde, dan de blaadjes: de bladtekst noemt de aarde soms,
-            en dan heb je die al zelf bepaald. */}
-        {!waargenomen.blad
-          ? <ChoiceList
-              vorm="los"
-              label="Wat zie je aan de plant?"
-              choices={bladkeuzes.map(tekst => ({ id: tekst, label: tekst }))}
-              onChoose={id => neemWaar('blad', id === clueText(species, patient, 'blad'))}
-            />
-          : <ul className="clinic__chips" aria-label="Wat je al onderzocht hebt">
-                {SPOTS.map(spot => <li key={spot}>
-                  <button
-                    type="button"
-                    className={`clinic__chip${gevonden.includes(spot) ? ' is-done' : ''}${getoond === spot ? ' is-nu' : ''}`}
-                    onClick={() => (spot === 'plek' ? vraagBaasje() : (bekijk(spot), setGetoond(spot)))}
-                    aria-label={CLUE_LABEL[spot]}
-                  ><img src={CLUE_ICOON[spot]} alt="" />{CLUE_KORT[spot]}</button>
-                </li>)}
-              </ul>}
-        {misKijk && <p className="clinic__miskijk" role="status">{misKijk}</p>}
-        {/* Voelen en vragen zijn geen vragen aan het kind: dat kun je niet
-            van een plaatje aflezen. Je doet het, en Kiki vertelt wat je merkt. */}
-        {waargenomen.blad && !waargenomen.aarde && <Button variant="secondary" fullWidth pill onClick={voelAanDeAarde}>
-          Voel aan de aarde
-        </Button>}
-        {waargenomen.blad && waargenomen.aarde && !gevonden.includes('plek') && <Button variant="secondary" fullWidth pill onClick={vraagBaasje}>
-          Vraag hoe hij verzorgd wordt
-        </Button>}
-        <Button variant="primary" fullWidth pill disabled={gevonden.length < 3} onClick={() => { setFase('diagnose'); setMelding(null); setLoep(null); }}>
-          Ik weet genoeg
-        </Button>
+        {/* Drie onderzoekstegels. Er licht er steeds één op; die noemt Kiki ook. */}
+        {gevonden.length < 3 && <ol className="clinic__stappen" aria-label="Onderzoek in drie stappen">
+          {SPOTS.map(spot => {
+            const klaar = gevonden.includes(spot);
+            const nu = !klaar && spot === volgende;
+            return <li key={spot}><button
+              type="button"
+              className={`clinic__stap${klaar ? ' is-klaar' : ''}${nu ? ' is-nu' : ''}`}
+              aria-current={nu ? 'step' : undefined}
+              disabled={!nu && !klaar}
+              onClick={() => {
+                if (spot === 'blad') { setBladKijken(true); bekijk('blad'); }
+                else if (spot === 'aarde') voelAanDeAarde();
+                else vraagBaasje();
+              }}
+            >
+              <img src={CLUE_ICOON[spot]} alt="" />
+              <span>{ONDERZOEK_TEGEL[spot]}</span>
+              {klaar && <Check className="clinic__stap-vink" aria-hidden="true" />}
+            </button></li>;
+          })}
+        </ol>}
+        {/* Na de derde stap: je aantekeningen op een rij, zodat je rustig kunt
+            lezen. Jij bepaalt wanneer je naar de diagnose gaat. */}
+        {gevonden.length >= 3 && <>
+          <ul className="clinic__aantekeningen" aria-label="Je aantekeningen">
+            {SPOTS.map((spot, i) => <li key={spot} className="clinic__aantekening" style={{ animationDelay: `${i * 220}ms` }}>
+              <img src={CLUE_ICOON[spot]} alt="" />
+              <p>{spot === 'plek' ? baasjeTekst(species, patient) : clueText(species, patient, spot)}</p>
+            </li>)}
+          </ul>
+        </>}
+        {bladKijken && !waargenomen.blad && <ChoiceList
+          vorm="los"
+          label="Wat zie je aan de plant?"
+          choices={bladkeuzes.map(tekst => ({ id: tekst, label: tekst }))}
+          onChoose={id => neemWaar('blad', id === clueText(species, patient, 'blad'))}
+        />}
       </div>}
 
       {fase === 'diagnose' && <>

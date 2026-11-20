@@ -89,7 +89,18 @@ export default function TravelJourney({ adventure }: { adventure: TravelAdventur
     <Suspense fallback={<p>De reis wordt klaargezet…</p>}>
       {playing === 'facts' ? <main className="travel-facts">
         <section className="travel-facts__map"><Map selectedProvince={adventure.selection.areaId} locations={locations} showLabels onLocationClick={place => { setFactId(place.id); saveResult('facts', place.id); }} highlightedLocation={factId ?? undefined} /></section>
-        <aside className="travel-facts__notes ck-paper-surface">{/* Seb vertelt het weetje zelf; geen losse kop en tekst eronder. */}<SpeechBubble character="seb" label={fact?.name}>{fact ? `${fact.name}: ${locationFact(fact).fact}` : 'Tik op een plek. Wat ontdek jij?'}</SpeechBubble><nav aria-label="Plekken om te ontdekken">{locations.map(place => <button key={place.id} type="button" aria-pressed={factId === place.id} onClick={() => { setFactId(place.id); saveResult('facts', place.id); }}>{run?.facts.includes(place.id) ? '✓ ' : ''}{place.name}</button>)}</nav>{step !== 'facts' && <Button onClick={verder}>Naar de memory</Button>}</aside>
+        {/* Briefing 19 nov: de kaart is het speelveld. De verzameling is een strook
+            bolletjes (geen vinkjeslijst), Seb vertelt vanaf zijn vaste plek linksonder. */}
+        <nav className="travel-verzameling ck-glas" aria-label="Plekken om te ontdekken">
+          {locations.map(place => {
+            const ontdekt = run?.facts.includes(place.id) ?? false;
+            return <button key={place.id} type="button" title={place.name} aria-label={`${place.name}${ontdekt ? ', ontdekt' : ''}`} aria-pressed={factId === place.id}
+              className={`ck-stip travel-verzameling__stip${ontdekt ? ' ck-stip--klaar' : ''}${factId === place.id ? ' ck-stip--nu' : ''}`}
+              onClick={() => { setFactId(place.id); saveResult('facts', place.id); }} />;
+          })}
+        </nav>
+        <SpeechBubble vast character="seb" label={fact?.name}>{fact ? `${fact.name}: ${locationFact(fact).fact}` : 'Tik op een plek op de kaart. Wat ontdek jij?'}</SpeechBubble>
+        {step !== 'facts' && <div className="ck-zone-antwoord travel-facts__verder"><Button onClick={verder}>Naar de memory</Button></div>}
       </main> : <main className="session-page">
         {playing === 'memory' ? <Memory key={round} mode="memory" gids="seb" pairs={sessionPairs} choicePool={pairs} onAnswer={answer} onContinue={verder} onRepeat={restart} onRetry={restart} onExit={close} />
           : playing === 'test' ? <div className="test-workspace"><Test provinceId={adventure.selection.areaId} clusterId="all" studyPool={locations} adventureId={adventure.id} onExit={close} registerExit={registerTestExit} onPractice={() => begin('master')} /></div>

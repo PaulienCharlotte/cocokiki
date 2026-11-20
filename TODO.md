@@ -28,18 +28,33 @@ spraakwolk vast linksonder (`<SpeechBubble vast>`), redactiesom blijft op een sc
   Kooktip staat in de wolk (geen pop-up, pauzeert het spel niet). Keuzelijsten: geen
   rood of kruisje meer bij een fout, maar een wiebel (19 nov).
 - [ ] **Keuken:** overige lange wolkteksten inkorten (`IngredientDiscoveryCard`, coach).
-- [ ] **Keuken:** fornuis/kookstap zonder gestapelde doorzichtige panelen; één stap
-  tegelijk, geen "6/18"-balk. Groenten wassen: één terugknop, wolk onderin.
-  Andere kookavontuur-stappen ook één terugknop (`registerBackHandler`).
+- [x] **Keuken:** kookstappen (fornuis én gewone stappen): één terugknop (linksboven,
+  terug naar de keuken), geen "Vorige stap" of "6/18" maar bolletjes, dichte balk,
+  geen keuken die erdoorheen schemert, korte boodschappenmelding in de wolk (20 nov).
+- [ ] **Keuken:** voedingsmemory-stap nog nalopen op een eigen terugknop.
 - [x] **Moestuin:** 2 bakken per rij op telefoon, gewasplaatje + hele naam bij de bak,
   Kiki altijd linksonder, "Tuindag · Lente" als houten naambord (19 nov).
 - [x] **Moestuin:** meetlat ligt op telefoon tussen de bakken en Kiki (19 nov).
 - [x] **Maten-hulpmiddel** (rekenen, moestuin, interieur): speels herontworpen als echte
   houten trap met gekleurde tegels, boog met "× 10" en grote uitkomst (19 nov).
+- [x] **Moestuin:** onder een bak alleen het gewasplaatje (geen tekst, lege bakken geen
+  bordje); bakken schuiven niet meer over elkaar op smalle telefoons (20 nov).
+- [x] **Keuken (ontdekken):** stappenmenu los van het schatpapier als smalle strook;
+  op het papier alleen plaatje en vraag, zonder scrollen. Ontdekt ingrediënt en munten
+  vliegen als plaatje naar profiel en teller (`design-system/vliegNaar.ts`) (20 nov).
+- [x] **Rekenmachine:** kommatoets (0-toets gesplitst in 0 en ,), groter (340–380 px) (20 nov).
 - [ ] **Moestuin:** groeistadia-plaatjes inbouwen zodra ze er zijn.
-- [ ] **Plantendokter:** plant groot in beeld, Kiki onderin, antwoordtegels, bolletjes,
-  geen "Ik weet genoeg"-knop.
-- [ ] **Topografie:** kaart als speelveld, verzameling in plaats van vinkjeslijst, Seb onderin.
+- [x] **Plantendokter:** strook boven het papier (stappen · patiënten als bolletjes ·
+  stempels), Kiki vast linksonder, plant groter, keuzes als tegels, geen "Ik weet
+  genoeg" (gaat vanzelf door), hint bij een fout in Kiki's wolk (20 nov).
+- [x] **Plantendokter-onderzoek:** drie onderzoekstegels (Bekijk het blad · Voel de aarde ·
+  Vraag het baasje); de tegel die aan de beurt is pulseert en Kiki noemt hem; klaar = vinkje.
+  Losse chips en de witte knoppen zijn weg. Balk niet meer over het papier. Na stap 3 staan
+  je drie aantekeningen als kaartjes; Kiki's wolk heeft de knop "Stel je diagnose" (20 nov).
+- [x] **Topografie (ontdekken):** kaart over het hele scherm, verzameling als bolletjes bovenin
+  (tik = weetje opnieuw), Seb vast linksonder, "Naar de memory" rechtsonder (20 nov).
+- [ ] **Topografie:** memory, aanwijzen en toets nog nalopen op dezelfde opbouw;
+  knop "Mijn reis" is een tweede uitgang naast de terugknop.
 - [x] **Boodschappen:** tik op een ingrediënt (strip of lijstje) = winkel springt naar dat
   product en laat het oplichten; één terugknop (linksboven, gaat terug naar de keuken);
   "Stoppen" weg; "Nog …" niet meer over de namen (20 nov).

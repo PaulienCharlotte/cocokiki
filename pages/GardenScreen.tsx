@@ -122,7 +122,7 @@ export default function GardenScreen({ onNavigate }: { onNavigate: (path: string
           {selected === index && <div className="ck-doel tuin-doel" aria-hidden="true" />}
           {selected === index && kaartje ? <button type="button" className="ck-hangkaartje tuin-hangkaartje" aria-label={crop ? `Over ${crop.name}` : undefined} onClick={() => { if (crop) { setFacts(crop); setPaneel('gewas'); } }}>
             <span className="ck-hangkaartje__touw" /><span className="ck-hangkaartje__label ck-glas">{kaartje}{inTaak && crop && <small>{crop.name}</small>}</span>
-          </button> : <span className="tuin-bordje ck-glas" aria-hidden="true">{plot && <img className="tuin-bordje__plaatje" src={GARDEN_CROPS_BY_ID[plot.cropId].image} alt="" />}{plot ? GARDEN_CROPS_BY_ID[plot.cropId].name : `Vak ${index + 1}`}</span>}
+          </button> : plot ? <span className="tuin-bordje tuin-bordje--plaatje ck-glas" aria-hidden="true"><img className="tuin-bordje__plaatje" src={GARDEN_CROPS_BY_ID[plot.cropId].image} alt="" /></span> : null}
         </div>)}
       </div>
     </div>

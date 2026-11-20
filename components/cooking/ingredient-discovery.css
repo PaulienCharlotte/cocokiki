@@ -34,3 +34,26 @@
 .discovery-card__content .discovery-question-actions:has(> :only-child) { justify-content: center; }
 /* Munten-kaartje bovenin, zodat het de spraakwolk linksonder niet bedekt. */
 .discovery-stage .reward-toast { top: calc(var(--space-12) * 2); bottom: auto; }
+
+/* 20 nov: het stappenmenu staat los van het papier, als smalle glazen strook.
+   Kleine stapicoontjes · bolletjes · receptboekje. Zo blijft er op het papier
+   alleen het plaatje en de vraag over, zonder scrollen. */
+.bakkerij-stijl .stage-chrome.discovery-kop {
+  display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; justify-content: center;
+  width: min(52rem, 100%); box-sizing: border-box; padding: 6px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--ck-room) 86%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 4px 0 var(--ck-schaduw-rand); border-bottom: 0; z-index: 2;
+}
+.bakkerij-stijl .discovery-kop .journey-stages { margin: 0; gap: 4px; flex: none; }
+.bakkerij-stijl .discovery-kop .journey-stages__icon { width: 30px; height: 30px; }
+.bakkerij-stijl .discovery-kop .journey-stages__icon svg { width: 16px; height: 16px; }
+.bakkerij-stijl .discovery-kop .journey-stages li.is-current .journey-stages__icon { outline-width: 3px; }
+.bakkerij-stijl .discovery-kop .discovery-stippen { padding: 0; gap: 5px; flex: none; }
+.bakkerij-stijl .discovery-kop .discovery-stippen .ck-stip { width: 10px; height: 10px; }
+.bakkerij-stijl .discovery-kop .discovery-recipe-link { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ck-cacao); cursor: pointer; }
+.bakkerij-stijl .discovery-kop .discovery-recipe-link:hover { background: color-mix(in srgb, var(--ck-wit) 50%, transparent); }
+.discovery-card:has(.is-vast) { max-height: calc(100dvh - 300px); }
+.bakkerij-stijl .stage-chrome.discovery-kop { width: fit-content; max-width: 100%; }
+.bakkerij-stijl .discovery-kop .journey-stages { display: flex; width: auto; justify-content: flex-start; padding: 0; list-style: none; }
+.bakkerij-stijl .discovery-kop .journey-stages li { flex: none; width: auto; min-width: 0; padding: 0; }
+@media(max-width:700px) { .discovery-card:has(.is-vast) { margin-bottom: 180px; max-height: calc(100dvh - 340px); } }

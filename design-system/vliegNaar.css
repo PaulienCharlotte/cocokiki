@@ -1,0 +1,15 @@
+/* Vliegende beloning (zie vliegNaar.ts). Alleen huisstijlvariabelen. */
+.ck-vlieger {
+  position: fixed; z-index: 90; pointer-events: none; display: grid; place-items: center;
+  width: 64px; height: 64px; border-radius: 50%;
+  background: color-mix(in srgb, var(--ck-wit) 85%, transparent);
+  box-shadow: 0 0 0 3px var(--ck-zon), 0 8px 20px color-mix(in srgb, var(--ck-cacao) 25%, transparent);
+}
+.ck-vlieger img { width: 46px; height: 46px; object-fit: contain; }
+.ck-vlieger b {
+  position: absolute; right: -6px; top: -6px; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 999px;
+  display: grid; place-items: center; background: var(--ck-zon); color: var(--ck-cacao);
+  font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; box-shadow: 0 2px 0 var(--ck-zon-rand);
+}
+.ck-vlieger--munt { width: 44px; height: 44px; background: transparent; box-shadow: none; }
+.ck-vlieger--munt .ck-munt { width: 40px; height: 40px; }

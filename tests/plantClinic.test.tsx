@@ -188,14 +188,17 @@ test('het spreekuur begint met onderzoeken, niet met gokken', () => {
   // Het spreekuur begint met zelf kijken: eerst de aarde, met drie keuzes.
   // Je begint met het enige dat echt te zien is: de blaadjes. Voelen aan de
   // aarde kan niet door een scherm, dus daar is geen vraag van gemaakt.
-  assert.match(scherm, /Wat zie je aan de plant\?/);
+  // 20 nov: drie onderzoekstegels; Kiki wijst de eerste aan (bekijk het blad).
+  assert.match(scherm, /Bekijk het blad/);
+  assert.match(scherm, /Tik op: Bekijk het blad/);
   assert.doesNotMatch(scherm, /Hoe voelt de aarde\?/);
   // Het wijzende handje is weg: volgen is geen onderzoeken.
   assert.doesNotMatch(scherm, /clinic__handje/);
-  // Pas als je gekeken hebt mag je zeggen dat je genoeg weet.
-  assert.match(scherm, /Ik weet genoeg<\/span><\/button>/);
-  // De plantennaam staat bovenaan; een losse schermtitel leidt alleen af.
+  // Briefing 19 nov: geen knop "Ik weet genoeg"; na het onderzoek gaat het vanzelf door.
+  assert.doesNotMatch(scherm, /Ik weet genoeg/);
+  // De titel is er voor schermlezers; in beeld staat de strook met de voortgang.
   assert.match(scherm, />Plantendokter</);
+  assert.match(scherm, /clinic-kop/);
   // De diagnose en de behandeling komen pas later.
   assert.doesNotMatch(scherm, new RegExp(PLANT_PROBLEM_LABEL['te-veel-zon']));
 });
@@ -232,10 +235,13 @@ test('alles staat op één kaart en Kiki komt pas bij een hint', () => {
   // De chips komen pas als je alles bekeken hebt; aan het begin is er één
   // vraag en verder niets.
   assert.equal(scherm.split('clinic__chip').length - 1, 0);
-  assert.equal(scherm.split('ck-keuzes').length - 1, 1);
+  // Drie onderzoekstegels; de keuzes over het blad komen pas na een tik op de eerste.
+  assert.equal((scherm.match(/class="clinic__stap[" ]/g) ?? []).length, 3);
+  assert.equal(scherm.split('ck-keuzes').length - 1, 0);
   // De knoppen komen uit het ontwerpsysteem, niet uit eigen maaksel.
-  assert.match(scherm, /ck-button ck-button--primary/);
   assert.match(scherm, /ck-icon-button/);
+  // Kiki praat vanaf haar vaste plek linksonder (briefing 19 nov).
+  assert.match(scherm, /clinic__bubbel[^"]*|is-vast/);
   // Kiki staat niet in beeld tot er om hulp gevraagd wordt.
   assert.doesNotMatch(scherm, /kiki-tip/);
   assert.doesNotMatch(scherm, /Kiki zegt/);
@@ -270,7 +276,7 @@ test('de bonusvraag biedt drie namen met precies één goede', () => {
 test('de naam van de patiënt blijft geheim tot de plant gered is', () => {
   const scherm = renderToStaticMarkup(<PlantClinicScreen />);
   assert.match(scherm, /Plantendokter/);
-  assert.match(scherm, /Wat zie je aan de plant/);
+  assert.match(scherm, /Bekijk het blad/);
   // Geen enkele soortnaam mag al in beeld staan.
   for (const species of PLANT_SPECIES) {
     assert.ok(!scherm.includes(species.scientificName), `${species.scientificName} verklapt de plant`);

@@ -84,3 +84,11 @@ body:has(.cooking-stage--heat) .world-hud { background: var(--color-surface); ba
 .cooktop-canvas__pour { animation: cooktop-pour var(--motion-gentle) var(--ease-storybook); }
 @keyframes cooktop-pour { from { transform: translateY(-70px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .cooktop-canvas__pour { animation: none; } }
+
+/* Briefing 19 nov: één scherm, geen doorschijnende lagen over de keuken heen.
+   Eigen achtergrond, een dichte glazen balk, bolletjes in plaats van "6 / 18". */
+.cooking-stage--heat { background: color-mix(in srgb, var(--ck-room) 82%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.bakkerij-stijl .cooking-stage__bar { background: color-mix(in srgb, var(--ck-room) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.bakkerij-stijl .cooking-stappen { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; padding: var(--space-1) var(--space-2); }
+.bakkerij-stijl .cooking-stappen .ck-stip { width: 10px; height: 10px; }
+.cooking-stage--heat .cooking-stage__shell:has(.is-vast) { padding-bottom: 104px; }

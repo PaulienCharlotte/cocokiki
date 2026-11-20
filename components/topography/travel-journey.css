@@ -68,3 +68,24 @@
   .travel-facts .travel-facts__notes nav { flex: none; max-height: 40dvh; }
 }
 @media (max-width: 600px) { .travel-play:has(.travel-facts) .travel-play__pause.travel-play__pause { position: absolute; } }
+
+/* ===== Verkennen volgens de briefing (20 nov 2026) =====
+   Kaart over het hele scherm, verzameling als bolletjes bovenin, Seb linksonder. */
+.travel-facts.travel-facts { display: block; position: relative; padding: 0; }
+.travel-facts .travel-facts__map { position: absolute; inset: 0; }
+.travel-facts .travel-facts__map > * { height: 100%; }
+.travel-verzameling {
+  position: absolute; z-index: 5; top: calc(var(--space-12) + var(--space-6)); left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px;
+  max-width: min(90vw, 44rem); padding: 8px 14px; border-radius: 999px;
+}
+.travel-verzameling__stip { padding: 0; cursor: pointer; width: 16px; height: 16px; }
+.travel-verzameling__aantal { margin-left: 4px; font-family: var(--ck-font-kop); font-weight: 800; font-size: 16px; color: var(--ck-cacao); }
+.travel-facts__verder { z-index: 6; }
+@media (max-width: 700px) { .travel-verzameling { left: calc(var(--space-2) * 2 + 52px); right: var(--space-2); transform: none; max-width: none; border-radius: var(--ck-rond-paneel); } }
+/* Seb's wolk en de knop liggen boven de kaart (Leaflet gebruikt hoge lagen). */
+.travel-facts .ck-zegt.is-vast, .travel-facts .travel-facts__verder { z-index: 1100; }
+.travel-facts .travel-verzameling { z-index: 1050; }
+.travel-facts.travel-facts, .travel-facts .travel-facts__map { overflow: hidden; max-width: 100vw; }
+.travel-facts .leaflet-bottom { bottom: 170px; }
+.travel-facts .map-zoom-controls { bottom: 210px; top: auto; }

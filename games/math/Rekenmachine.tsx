@@ -16,7 +16,7 @@ import { GripHorizontal, X } from 'lucide-react';
 const BEELD = '/assets/library/math/rekenmachine.webp';
 /** Het venster en elke toets, in procenten van de tekening. */
 const VENSTER = { links: 19, top: 19.5, breed: 61, hoog: 17.5 };
-type Toets = { teken: string; naam: string; links: number; top: number; breed: number; hoog: number };
+type Toets = { teken: string; naam: string; links: number; top: number; breed: number; hoog: number; getekend?: boolean };
 const TOETSEN: Toets[] = [
   { teken: '7', naam: 'zeven', links: 13.84, top: 41.39, breed: 16.93, hoog: 9.68 },
   { teken: '8', naam: 'acht', links: 31.94, top: 41.39, breed: 16.68, hoog: 9.68 },
@@ -31,7 +31,9 @@ const TOETSEN: Toets[] = [
   { teken: '3', naam: 'drie', links: 49.96, top: 64.33, breed: 16.85, hoog: 9.76 },
   { teken: '−', naam: 'min', links: 68.06, top: 63.57, breed: 17.68, hoog: 8.00 },
   { teken: 'C', naam: 'wissen', links: 11.84, top: 76.60, breed: 18.43, hoog: 14.18 },
-  { teken: '0', naam: 'nul', links: 31.69, top: 76.07, breed: 34.20, hoog: 11.51 },
+  // De brede 0 is gesplitst in 0 en een komma (300 : 2,5 moet kunnen).
+  { teken: '0', naam: 'nul', links: 31.4, top: 75.6, breed: 17.4, hoog: 12.4, getekend: true },
+  { teken: ',', naam: 'komma', links: 48.8, top: 75.6, breed: 17.4, hoog: 12.4, getekend: true },
   { teken: '+', naam: 'plus', links: 67.56, top: 73.78, breed: 18.85, hoog: 6.94 },
   { teken: '=', naam: 'is', links: 66.47, top: 82.01, breed: 19.43, hoog: 9.45 },
 ];
@@ -83,6 +85,12 @@ export default function Rekenmachine({ onClose }: { onClose: () => void; som?: s
 
   const druk = (teken: string) => {
     if (teken === 'C') { setInvoer('0'); setVorige(null); setBewerking(null); opnieuw.current = true; return; }
+    if (teken === ',') {
+      const begint = opnieuw.current;
+      setInvoer(huidig => (begint ? '0,' : huidig.includes(',') ? huidig : `${huidig},`.slice(0, 10)));
+      opnieuw.current = false;
+      return;
+    }
     if (/\d/.test(teken)) {
       // De vlag nu uitlezen: React draait de functie hieronder pas later,
       // en dan staat hij allang weer op false.
@@ -102,7 +110,7 @@ export default function Rekenmachine({ onClose }: { onClose: () => void; som?: s
 
   const viaToetsenbord = (event: React.KeyboardEvent) => {
     const vertaling: Record<string, string> = { '/': '÷', '*': '×', '-': '−', '+': '+', Enter: '=', Escape: 'C', Backspace: 'C' };
-    const teken = /^\d$/.test(event.key) ? event.key : vertaling[event.key];
+    const teken = /^\d$/.test(event.key) ? event.key : event.key === ',' || event.key === '.' ? ',' : vertaling[event.key];
     if (!teken) return;
     if (event.key === 'Escape') return;
     event.preventDefault();
@@ -138,11 +146,11 @@ export default function Rekenmachine({ onClose }: { onClose: () => void; som?: s
       {TOETSEN.map(toets => <button
         key={toets.teken}
         type="button"
-        className={`rekenmachine__toets${BEWERKINGEN.includes(toets.teken) && bewerking === toets.teken ? ' is-actief' : ''}`}
+        className={`rekenmachine__toets${toets.getekend ? ' is-getekend' : ''}${BEWERKINGEN.includes(toets.teken) && bewerking === toets.teken ? ' is-actief' : ''}`}
         aria-label={toets.naam}
         style={{ left: `${toets.links}%`, top: `${toets.top}%`, width: `${toets.breed}%`, height: `${toets.hoog}%` }}
         onClick={() => druk(toets.teken)}
-      ><span className="sr-only">{toets.teken}</span></button>)}
+      >{toets.getekend ? <span aria-hidden="true">{toets.teken}</span> : <span className="sr-only">{toets.teken}</span>}</button>)}
     </div>
   </aside>, document.body);
 }
